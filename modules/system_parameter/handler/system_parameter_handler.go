@@ -10,15 +10,15 @@ type SystemParameterHandler struct {
 	useCase usecase.SystemParameterCase
 }
 
-func New(useCase usecase.SystemParameterCase) *SystemParameterHandler {
+func NewHandler(useCase usecase.SystemParameterCase) *SystemParameterHandler {
 	return &SystemParameterHandler{useCase}
 }
 
-func (handler *SystemParameterHandler) CreateSystemParameter(c echo.Context) error {
+func (handler *SystemParameterHandler) Hello(c echo.Context) error {
 	hello, err := handler.useCase.Hello(c.Request().Context())
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, "Hello, World!"+hello)
+	return c.JSON(http.StatusOK, "Hello, World! "+hello)
 }

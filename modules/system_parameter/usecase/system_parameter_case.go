@@ -20,8 +20,8 @@ type (
 	}
 )
 
-// New constructor for DI
-func New( /*inject repo*/ ) *SystemParameterCaseImpl {
+// NewUseCase New constructor for DI
+func NewUseCase( /*inject repo*/ ) *SystemParameterCaseImpl {
 	return &SystemParameterCaseImpl{}
 }
 

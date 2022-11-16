@@ -8,8 +8,9 @@ import (
 
 func InitSystemParameterRoutes(e *echo.Echo) {
 
-	h := handler.New(usecase.New())
-	e.GET("/system-parameter", h.CreateSystemParameter)
+	//need refactor, should be more elegant
+	h := handler.NewHandler(usecase.NewUseCase())
+	e.GET("/system-parameter", h.Hello)
 
 	/*e.POST("/system-parameter", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Hello, World!")
