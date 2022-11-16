@@ -5,30 +5,46 @@ import (
 	"myapp/domains/system_parameter/entity"
 )
 
-type SystemParameterCase interface {
-	Create(ctx context.Context) (*entity.SystemParameter, error)
-	Update(ctx context.Context) (*entity.SystemParameter, error)
-	Delete(ctx context.Context) error
-	GetById(ctx context.Context) (*entity.SystemParameter, error)
-	GetAll(ctx context.Context) ([]*entity.SystemParameter, error)
+type (
+	SystemParameterCase interface {
+		Hello(ctx context.Context) (string, error)
+		CreateSystemParameter(ctx context.Context) (*entity.SystemParameter, error)
+		UpdateSystemParameter(ctx context.Context) (*entity.SystemParameter, error)
+		DeleteSystemParameter(ctx context.Context) error
+		GetSystemParameterById(ctx context.Context) (*entity.SystemParameter, error)
+		GetSystemParameterAll(ctx context.Context) ([]*entity.SystemParameter, error)
+	}
+
+	SystemParameterCaseImpl struct {
+		//inject repo
+	}
+)
+
+// New constructor for DI
+func New( /*inject repo*/ ) *SystemParameterCaseImpl {
+	return &SystemParameterCaseImpl{}
 }
 
-func Create(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *SystemParameterCaseImpl) Hello(ctx context.Context) (string, error) {
+	return "hello from case impl", nil
+}
+
+func (impl *SystemParameterCaseImpl) CreateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func Update(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *SystemParameterCaseImpl) UpdateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func Delete(ctx context.Context) error {
+func (impl *SystemParameterCaseImpl) DeleteSystemParameter(ctx context.Context) error {
 	return nil
 }
 
-func GetById(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *SystemParameterCaseImpl) GetSystemParameterById(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func GetAll(ctx context.Context) ([]*entity.SystemParameter, error) {
+func (impl *SystemParameterCaseImpl) GetSystemParameterAll(ctx context.Context) ([]*entity.SystemParameter, error) {
 	return nil, nil
 }
