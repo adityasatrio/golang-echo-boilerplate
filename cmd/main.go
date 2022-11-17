@@ -1,9 +1,10 @@
 package main
 
 import (
-	"myapp/A1-me/commons/global_handler"
-	"myapp/A1-me/commons/middlewares"
-	"myapp/A1-me/modules/system_parameter"
+	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo/v4"
+	apihttp "myapp/internal/adapter/api_http/system_parameter"
+	"myapp/internal/commons/middlewares"
 	"net/http"
 )
 
@@ -22,7 +23,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func main() {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
-	e.HTTPErrorHandler = global_handler.InitHttpErrorHandler()
+	//e.HTTPErrorHandler = global_handler.InitHttpErrorHandler()
 
 	e.HTTPErrorHandler = func(err error, context echo.Context) {
 
@@ -32,7 +33,7 @@ func main() {
 	middlewares.InitMiddlewares(e)
 
 	//http_routes
-	system_parameter.InitSystemParameterRoutes(e)
+	apihttp.InitSystemParameterRoutes(e)
 
 	//load config
 	err := e.Start(":1234")

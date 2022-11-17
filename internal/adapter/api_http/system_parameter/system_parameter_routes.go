@@ -1,7 +1,8 @@
-package http
+package system_parameter
 
 import (
-	"myapp/internal/applications/system_parameter/handler"
+	"github.com/labstack/echo/v4"
+	"myapp/internal/adapter/api_http/system_parameter/handler"
 	"myapp/internal/applications/system_parameter/usecase"
 )
 
