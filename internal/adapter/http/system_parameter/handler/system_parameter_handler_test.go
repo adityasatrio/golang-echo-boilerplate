@@ -2,9 +2,8 @@ package handler
 
 import (
 	"context"
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/domains/system_parameter/entity"
+	"myapp/internal/domains/system_parameter/entity"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,11 +53,11 @@ func TestHello(t *testing.T) {
 	useCaseStub := &SystemParameterCaseStub{}
 	h := NewHandler(useCaseStub)
 
-	//test handler
+	//test global_handler
 	expected := "\"Hello, World! hello from stub\"\n"
 	err := h.Hello(ctx)
 
-	//assert handler result
+	//assert global_handler result
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Equal(t, expected, recorder.Body.String())

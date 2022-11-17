@@ -2,10 +2,9 @@ package handler
 
 import (
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"myapp/commons/utils/validator"
-	"myapp/modules/system_parameter/dto"
-	"myapp/modules/system_parameter/usecase"
+	"myapp/internal/applications/system_parameter/dto"
+	"myapp/internal/applications/system_parameter/usecase"
+	"myapp/internal/commons/utils/validator"
 	"net/http"
 )
 

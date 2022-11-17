@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
-	"myapp/commons/middlewares"
-	"myapp/modules/system_parameter"
+	"myapp/A1-me/commons/global_handler"
+	"myapp/A1-me/commons/middlewares"
+	"myapp/A1-me/modules/system_parameter"
 	"net/http"
 )
 
@@ -23,6 +22,11 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func main() {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
+	e.HTTPErrorHandler = global_handler.InitHttpErrorHandler()
+
+	e.HTTPErrorHandler = func(err error, context echo.Context) {
+
+	}
 
 	//add middlewares
 	middlewares.InitMiddlewares(e)
