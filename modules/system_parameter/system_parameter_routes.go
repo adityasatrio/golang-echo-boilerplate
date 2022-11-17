@@ -10,22 +10,11 @@ func InitSystemParameterRoutes(e *echo.Echo) {
 
 	//need refactor, should be more elegant
 	h := handler.NewHandler(usecase.NewUseCase())
-	e.GET("/system-parameter", h.Hello)
+	e.GET("/hello", h.Hello)
 
-	/*e.POST("/system-parameter", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "Hello, World!")
-	})
-
-	e.PUT("/system-parameter/:id", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-
-	e.GET("/system-parameter/:id", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-
-	e.DELETE("/system-parameter/:id", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})*/
+	e.POST("/system-parameter", h.Create)
+	e.PUT("/system-parameter/:id", h.Update)
+	e.GET("/system-parameter/:id", h.GetById)
+	e.DELETE("/system-parameter/:id", h.Delete)
 
 }

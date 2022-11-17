@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"myapp/commons/utils/validator"
+	"myapp/modules/system_parameter/dto"
 	"myapp/modules/system_parameter/usecase"
 	"net/http"
 )
@@ -21,4 +24,42 @@ func (handler *SystemParameterHandler) Hello(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, "Hello, World! "+hello)
+}
+
+func (handler *SystemParameterHandler) Create(c echo.Context) error {
+	request := new(dto.SystemParameterRequest)
+	err := c.Bind(&request)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	err = validator.ReqBody(c, request)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusCreated, request)
+}
+
+func (handler *SystemParameterHandler) Update(c echo.Context) error {
+	id := c.Param("id")
+	var request dto.SystemParameterRequest
+	err := c.Bind(&request)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	fmt.Println(id)
+	return c.JSON(http.StatusCreated, request)
+
+}
+
+func (handler *SystemParameterHandler) GetById(c echo.Context) error {
+	id := c.Param("id")
+	return c.JSON(http.StatusOK, id)
+}
+
+func (handler *SystemParameterHandler) Delete(c echo.Context) error {
+	id := c.Param("id")
+	return c.JSON(http.StatusOK, id)
 }
