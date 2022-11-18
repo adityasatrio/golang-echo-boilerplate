@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"myapp/domains/system_parameter/entity"
+	"myapp/internal/domains/system_parameter/entity"
 )
 
 type (

@@ -2,8 +2,8 @@ package system_parameter
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/modules/system_parameter/handler"
-	"myapp/modules/system_parameter/usecase"
+	"myapp/internal/adapter/api_http/system_parameter/handler"
+	"myapp/internal/applications/system_parameter/usecase"
 )
 
 func InitSystemParameterRoutes(e *echo.Echo) {
