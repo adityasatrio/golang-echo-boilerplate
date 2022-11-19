@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/internal/domains/system_parameter/entity"
+	"myapp/domains/system_parameter/entity"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -43,7 +43,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 }
 
 func TestHello(t *testing.T) {
-	// Setup
+	// SetupRouteHandler
 	e := echo.New()
 	request := httptest.NewRequest(http.MethodGet, "/system-parameter", nil)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)

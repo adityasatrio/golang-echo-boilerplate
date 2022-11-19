@@ -1,24 +1,23 @@
-package validator
+package initialization
 
+/*
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 type CustomValidator struct {
 	validator *validator.Validate
 }
 
-func (cv *CustomValidator) validate(request interface{}) error {
-	if err := cv.validator.Struct(request); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	return nil
+func NewValidator() *validator.Validate {
+	return validator.New()
 }
 
-func ReqBody(c echo.Context, reqBody interface{}) error {
+func (cv *CustomValidator) validate(i interface{}) error {
+	return cv.validator.Struct(i)
+}*/
+
+/*func ReqBody(c echo.Context, reqBody interface{}) error {
 	//TODO need create interface and inject on main
 	//e.Validator = &CustomValidator{validator: validator.New()}
 
@@ -27,7 +26,7 @@ func ReqBody(c echo.Context, reqBody interface{}) error {
 		return err
 	}
 	return nil
-}
+}*/
 
 /*
 
@@ -40,13 +39,13 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 	if err != nil {
 		//error parse then param is string
 		if err := echo.PathParamsBinder(c).String(paramName, &paramStr).BindError(); err != nil {
-			return echo.NewHTTPError(api_http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
 	}
 	//param is int
 	if err := echo.PathParamsBinder(c).Int(paramName, &intVar).BindError(); err != nil {
-		return echo.NewHTTPError(api_http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	fmt.Println("debug parse", intVar)
@@ -54,7 +53,7 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 	if "" != validatorTags {
 		//validatorTags value example "gt=1,lt=10"
 		if err := validate.Var(paramInt, validatorTags); err != nil {
-			return echo.NewHTTPError(api_http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 	}
 
@@ -65,13 +64,13 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 /*
 func ValidateReqParamString(c echo.Context, paramName string, paramString string, validatorTags string) *echo.HTTPError {
 	if err := echo.PathParamsBinder(c).String(paramName, &paramString).BindError(); err != nil {
-		return echo.NewHTTPError(api_http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	if "" != validatorTags {
 		//validatorTags value example "gt=1,lt=10"
 		if err := validate.Var(paramString, validatorTags); err != nil {
-			return echo.NewHTTPError(api_http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 	}
 
