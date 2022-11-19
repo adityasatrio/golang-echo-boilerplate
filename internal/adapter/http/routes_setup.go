@@ -9,6 +9,7 @@ import (
 func SetupRouteHandler(e *echo.Echo) {
 
 	//TODO : use case ini nanti di move ke struct penampung, seperti factory
+	//TODO : possible to use wire as DI
 	usecaseSysParam := usecase.NewUseCase()
 	handler.NewHandler(usecaseSysParam).AddRoutes(e)
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/internal/domains/system_parameter/entity"
+	"myapp/domains/system_parameter/entity"
 	"net/http"
 	"net/http/httptest"
 	"testing"

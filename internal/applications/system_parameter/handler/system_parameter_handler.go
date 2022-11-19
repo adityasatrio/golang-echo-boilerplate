@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"myapp/commons/response"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/usecase"
 	//"myapp/pkg/validator"
@@ -45,7 +46,8 @@ func (handler *SystemParameterHandler) Create(c echo.Context) error {
 	err = c.Validate(request)
 	fmt.Println("validate", err)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &err)
+		return response.Return(c, http.StatusBadRequest, "failed", err, nil)
+		//return c.JSON(http.StatusBadRequest, &err)
 	}
 
 	return c.JSON(http.StatusCreated, request)
