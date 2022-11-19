@@ -1,14 +1,17 @@
 package main
 
 import (
-	"github.com/go-playground/validator/v10"
+	//"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	apihttp "myapp/internal/adapter/api_http/system_parameter"
+	"myapp/internal/adapter/http"
+	"myapp/internal/applications/system_parameter/handler"
+	"myapp/internal/applications/system_parameter/usecase"
 	"myapp/internal/commons/middlewares"
-	"net/http"
+	"myapp/internal/initialization"
+	//"net/http"
 )
 
-type CustomValidator struct {
+/*type CustomValidator struct {
 	validator *validator.Validate
 }
 
@@ -18,22 +21,20 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return nil
-}
+}*/
 
 func main() {
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
-	//e.HTTPErrorHandler = global_handler.InitHttpErrorHandler()
-
-	e.HTTPErrorHandler = func(err error, context echo.Context) {
-
-	}
+	initialization.SetupValidator(e)
 
 	//add middlewares
 	middlewares.InitMiddlewares(e)
 
 	//http_routes
-	apihttp.InitSystemParameterRoutes(e)
+	usecaseSysParam := usecase.NewUseCase()
+	handler.NewHandler(usecaseSysParam).AddRoutes(e)
+
+	http.SetupRouteHandler(e)
 
 	//load config
 	err := e.Start(":1234")
