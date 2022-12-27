@@ -3,9 +3,9 @@ application:
   port: 8080
 
 db.config:
-  username: admin
-  password: admin
+  username: root
+  password:
   host: localhost
-  port: 12345
-  database: test
+  port: 3306
+  database: test_ent
 

@@ -8,43 +8,43 @@ import (
 type (
 	SystemParameterCase interface {
 		Hello(ctx context.Context) (string, error)
-		CreateSystemParameter(ctx context.Context) (*entity.SystemParameter, error)
-		UpdateSystemParameter(ctx context.Context) (*entity.SystemParameter, error)
-		DeleteSystemParameter(ctx context.Context) error
-		GetSystemParameterById(ctx context.Context) (*entity.SystemParameter, error)
-		GetSystemParameterAll(ctx context.Context) ([]*entity.SystemParameter, error)
+		Create(ctx context.Context) (*entity.SystemParameter, error)
+		Update(ctx context.Context) (*entity.SystemParameter, error)
+		Delete(ctx context.Context) error
+		GetById(ctx context.Context) (*entity.SystemParameter, error)
+		GetAll(ctx context.Context) ([]*entity.SystemParameter, error)
 	}
 
-	SystemParameterCaseImpl struct {
+	systemParameterCase struct {
 		//inject repo
 	}
 )
 
 // NewUseCase New constructor for DI
-func NewUseCase( /*inject repo*/ ) *SystemParameterCaseImpl {
-	return &SystemParameterCaseImpl{}
+func NewUseCase( /*inject repo*/ ) *systemParameterCase {
+	return &systemParameterCase{}
 }
 
-func (impl *SystemParameterCaseImpl) Hello(ctx context.Context) (string, error) {
+func (impl *systemParameterCase) Hello(ctx context.Context) (string, error) {
 	return "hello from case impl", nil
 }
 
-func (impl *SystemParameterCaseImpl) CreateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *systemParameterCase) Create(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func (impl *SystemParameterCaseImpl) UpdateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *systemParameterCase) Update(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func (impl *SystemParameterCaseImpl) DeleteSystemParameter(ctx context.Context) error {
+func (impl *systemParameterCase) Delete(ctx context.Context) error {
 	return nil
 }
 
-func (impl *SystemParameterCaseImpl) GetSystemParameterById(ctx context.Context) (*entity.SystemParameter, error) {
+func (impl *systemParameterCase) GetById(ctx context.Context) (*entity.SystemParameter, error) {
 	return nil, nil
 }
 
-func (impl *SystemParameterCaseImpl) GetSystemParameterAll(ctx context.Context) ([]*entity.SystemParameter, error) {
+func (impl *systemParameterCase) GetAll(ctx context.Context) ([]*entity.SystemParameter, error) {
 	return nil, nil
 }

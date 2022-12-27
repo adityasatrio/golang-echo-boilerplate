@@ -52,8 +52,6 @@ func main() {
 	//named GetClient
 	config.SetClient(client)
 
-	//config.GetClient().System_parameter.Create().SetKey("abc").SetValue("abc").Save(e.New)
-
 	//TODO : need to fix validator nya tidak berjalan
 	initialization.SetupValidator(e)
 
@@ -66,6 +64,12 @@ func main() {
 
 	//define handler moved on this file
 	http.SetupRouteHandler(e)
+
+	config.GetClient().System_parameter.
+		Create().
+		SetKey("abc").
+		SetValue("abc").
+		Save(e.AcquireContext().Request().Context())
 
 	//load config
 	port := viper.GetString("application.port")
