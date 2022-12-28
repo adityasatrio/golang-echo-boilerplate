@@ -1,4 +1,4 @@
-package usecase
+package service
 
 import (
 	"github.com/labstack/echo/v4"
@@ -15,7 +15,7 @@ func TestHello(t *testing.T) {
 	ctx := e.NewContext(request, nil)
 
 	//test use case
-	useCase := NewUseCase(nil)
+	useCase := NewSystemParameterService(nil)
 	actualResult, err := useCase.Hello(ctx.Request().Context())
 
 	//assert

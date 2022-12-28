@@ -1,4 +1,4 @@
-package entity
+package system_parameter
 
 import "time"
 

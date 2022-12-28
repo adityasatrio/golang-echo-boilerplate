@@ -39,13 +39,13 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 	if err != nil {
 		//error parse then param is string
 		if err := echo.PathParamsBinder(c).String(paramName, &paramStr).BindError(); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 		}
 
 	}
 	//param is int
 	if err := echo.PathParamsBinder(c).Int(paramName, &intVar).BindError(); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 	}
 
 	fmt.Println("debug parse", intVar)
@@ -53,7 +53,7 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 	if "" != validatorTags {
 		//validatorTags value example "gt=1,lt=10"
 		if err := validate.Var(paramInt, validatorTags); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 		}
 	}
 
@@ -64,13 +64,13 @@ func ValidateReqParamInt(c echo.Context, paramName string, paramInt int, validat
 /*
 func ValidateReqParamString(c echo.Context, paramName string, paramString string, validatorTags string) *echo.HTTPError {
 	if err := echo.PathParamsBinder(c).String(paramName, &paramString).BindError(); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 	}
 
 	if "" != validatorTags {
 		//validatorTags value example "gt=1,lt=10"
 		if err := validate.Var(paramString, validatorTags); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 		}
 	}
 

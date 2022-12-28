@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/domains/system_parameter/entity"
+	"myapp/domains/system_parameter"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,12 +17,12 @@ func (caseStub *SystemParameterCaseStub) Hello(ctx context.Context) (string, err
 	return "hello from stub", nil
 }
 
-func (caseStub *SystemParameterCaseStub) CreateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
+func (caseStub *SystemParameterCaseStub) CreateSystemParameter(ctx context.Context) (*system_parameter.SystemParameter, error) {
 	//TODO implement me
 	return nil, nil
 }
 
-func (caseStub *SystemParameterCaseStub) UpdateSystemParameter(ctx context.Context) (*entity.SystemParameter, error) {
+func (caseStub *SystemParameterCaseStub) UpdateSystemParameter(ctx context.Context) (*system_parameter.SystemParameter, error) {
 	//TODO implement me
 	return nil, nil
 }
@@ -32,12 +32,12 @@ func (caseStub *SystemParameterCaseStub) DeleteSystemParameter(ctx context.Conte
 	return nil
 }
 
-func (caseStub *SystemParameterCaseStub) GetSystemParameterById(ctx context.Context) (*entity.SystemParameter, error) {
+func (caseStub *SystemParameterCaseStub) GetSystemParameterById(ctx context.Context) (*system_parameter.SystemParameter, error) {
 	//TODO implement me
 	return nil, nil
 }
 
-func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Context) ([]*entity.SystemParameter, error) {
+func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Context) ([]*system_parameter.SystemParameter, error) {
 	//TODO implement me
 	return nil, nil
 }

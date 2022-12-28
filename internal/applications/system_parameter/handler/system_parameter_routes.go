@@ -6,13 +6,13 @@ import (
 	//"myapp/internal/applications/system_parameter/handler"
 	//"myapp/internal/applications/system_parameter/handler"
 	//handler2 "myapp/internal/applications/system_parameter/handler"
-	//"myapp/internal/applications/system_parameter/usecase"
+	//"myapp/internal/applications/system_parameter/service"
 )
 
 func (handler *SystemParameterHandler) AddRoutes(e *echo.Echo) {
 
 	//need refactor, should be more elegant
-	//handler := handler2.NewHandler(usecase.NewUseCase())
+	//handler := handler2.NewHandler(service.NewUseCase())
 	e.GET("/hello", handler.Hello)
 
 	e.POST("/system-parameter", handler.Create)

@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/commons/response"
 	"myapp/internal/applications/system_parameter/dto"
-	"myapp/internal/applications/system_parameter/usecase"
+	"myapp/internal/applications/system_parameter/service"
 	//"myapp/pkg/validator"
 	"net/http"
 )
@@ -13,7 +13,7 @@ import (
 //var err error
 
 type SystemParameterHandler struct {
-	useCase usecase.SystemParameterCase //interface
+	useCase service.SystemParameterService //interface
 }
 
 /*func NewHandler(f *factory.Factory) *handler {
@@ -22,8 +22,10 @@ type SystemParameterHandler struct {
 }
 */
 
-func NewHandler(useCase usecase.SystemParameterCase) *SystemParameterHandler {
-	return &SystemParameterHandler{useCase}
+func NewHandler(service service.SystemParameterService) *SystemParameterHandler {
+	return &SystemParameterHandler{
+		useCase: service,
+	}
 }
 
 func (handler *SystemParameterHandler) Hello(c echo.Context) error {
@@ -47,7 +49,7 @@ func (handler *SystemParameterHandler) Create(c echo.Context) error {
 	fmt.Println("validate", err)
 	if err != nil {
 		return response.Return(c, http.StatusBadRequest, "failed", err, nil)
-		//return c.JSON(http.StatusBadRequest, &err)
+		//return c.JSON(rest_api.StatusBadRequest, &err)
 	}
 
 	return c.JSON(http.StatusCreated, request)
