@@ -15,7 +15,7 @@ func TestHello(t *testing.T) {
 	ctx := e.NewContext(request, nil)
 
 	//test use case
-	useCase := NewUseCase()
+	useCase := NewUseCase(nil)
 	actualResult, err := useCase.Hello(ctx.Request().Context())
 
 	//assert

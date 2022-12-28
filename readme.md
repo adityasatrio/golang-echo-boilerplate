@@ -7,6 +7,12 @@ go run cmd/main.go
 ```
 </br>
 
+<H3>Build Apps</H3>
+```go
+go build cmd/main.go
+./main
+```
+
 <H3>ORM</H3>
 ORM using : https://entgo.io/docs </br>
 Create model schema using ent:

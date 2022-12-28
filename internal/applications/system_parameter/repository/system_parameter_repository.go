@@ -2,13 +2,14 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"myapp/config"
 	"myapp/ent"
 )
 
 type (
 	SystemParameterRepository interface {
-		create(ctx context.Context) (*ent.System_parameter, error)
+		Create(ctx context.Context) (*ent.System_parameter, error)
 	}
 
 	repository struct {
@@ -16,13 +17,13 @@ type (
 	}
 )
 
-func NewRepository() *repository {
+func NewRepository( /*should inject DB init*/ ) *repository {
 	return &repository{
 		client: config.GetClient(),
 	}
 }
 
-func (repo *repository) create(ctx context.Context) (*ent.System_parameter, error) {
+func (repo *repository) Create(ctx context.Context) (*ent.System_parameter, error) {
 	saved, err := repo.client.System_parameter.
 		Create().
 		SetKey("abc").
@@ -33,5 +34,6 @@ func (repo *repository) create(ctx context.Context) (*ent.System_parameter, erro
 		return nil, err
 	}
 
+	fmt.Print("repo error", err)
 	return saved, nil
 }

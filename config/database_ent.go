@@ -34,9 +34,12 @@ func NewEntClient() (*ent.Client, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		viper.GetString("db.config.username"),
 		viper.GetString("db.config.password"),
+		viper.GetString("db.config.host"),
 		viper.GetString("db.config.port"),
 		viper.GetString("db.config.database"))
 
+	fmt.Print("DSN ", dsn)
+	//client, err := ent.Open("mysql", "<user>:<pass>@tcp(<host>:<port>)/<database>?parseTime=True")
 	client, err := ent.Open("mysql", dsn, ent.Debug(), ent.Log(func(i ...interface{}) {
 		for _, v := range i {
 			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), v)

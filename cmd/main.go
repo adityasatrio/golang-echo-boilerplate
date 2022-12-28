@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"log"
-	"myapp/config"
+	config "myapp/config"
 	"myapp/internal/adapter/http"
 	"myapp/internal/commons/middlewares"
 	"myapp/internal/initialization"
@@ -64,12 +64,6 @@ func main() {
 
 	//define handler moved on this file
 	http.SetupRouteHandler(e)
-
-	config.GetClient().System_parameter.
-		Create().
-		SetKey("abc").
-		SetValue("abc").
-		Save(e.AcquireContext().Request().Context())
 
 	//load config
 	port := viper.GetString("application.port")

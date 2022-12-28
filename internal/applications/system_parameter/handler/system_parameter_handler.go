@@ -13,7 +13,7 @@ import (
 //var err error
 
 type SystemParameterHandler struct {
-	useCase usecase.SystemParameterCase
+	useCase usecase.SystemParameterCase //interface
 }
 
 /*func NewHandler(f *factory.Factory) *handler {

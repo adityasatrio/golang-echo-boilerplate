@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"myapp/domains/system_parameter/entity"
+	"myapp/internal/applications/system_parameter/repository"
 )
 
 type (
@@ -17,15 +19,24 @@ type (
 
 	systemParameterCase struct {
 		//inject repo
+		repository repository.SystemParameterRepository //interface
 	}
 )
 
 // NewUseCase New constructor for DI
-func NewUseCase( /*inject repo*/ ) *systemParameterCase {
-	return &systemParameterCase{}
+func NewUseCase(repository repository.SystemParameterRepository) *systemParameterCase {
+	return &systemParameterCase{
+		repository: repository,
+	}
 }
 
 func (impl *systemParameterCase) Hello(ctx context.Context) (string, error) {
+	result, err := impl.repository.Create(ctx)
+	if err != nil {
+		fmt.Print("result ", result)
+		fmt.Print("result err ", err)
+	}
+
 	return "hello from case impl", nil
 }
 
