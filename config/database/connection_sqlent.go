@@ -23,11 +23,11 @@ func NewSqlEntClient() *ent.Client {
 		viper.GetString("db.config.port"),
 		viper.GetString("db.config.database"))
 
-	log.Print("DSN ", dsn)
+	log.Println("DSN ", dsn)
 
-	db, err := sql.Open("mysql", "<mysql-dsn>")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil
+		log.Fatalf("failed opening connection to DB: %v", err)
 	}
 
 	db.SetMaxIdleConns(10)
@@ -37,31 +37,21 @@ func NewSqlEntClient() *ent.Client {
 	drv := entsql.OpenDB("mysql", db)
 	client := ent.NewClient(ent.Driver(drv))
 
-	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
-		fmt.Print("failed opening connection to sqlite: %v", err)
+	if drv == nil || client == nil {
+		log.Fatalf("failed opening connection to DB : driver or DB new client is null")
 	}
 
 	// Run the auto migration tool.
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
-		fmt.Print("failed creating schema resources: %v", err)
 	}
 
 	if err != nil {
-		log.Printf("err : %s", err)
+		log.Println("err : %s", err)
 	}
 
-	defer func(client *ent.Client) {
-		err := client.Close()
-		if err != nil {
-			log.Printf("err : %s", err)
-		}
-	}(client)
-
-	if err != nil {
-		log.Println("Fail to initialize client")
-	}
+	//from docs define close on this function, but will impact cant create DB session on repository
+	//defer client.Close()
 
 	return client
 }

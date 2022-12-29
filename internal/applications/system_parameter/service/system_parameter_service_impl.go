@@ -2,14 +2,13 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"myapp/domains/system_parameter"
 	"myapp/internal/applications/system_parameter/repository"
 )
 
 type (
 	SystemParameterServiceImpl struct {
-		//inject repo
+		//inject repository
 		repository repository.SystemParameterRepository //interface
 	}
 )
@@ -22,16 +21,18 @@ func NewSystemParameterService(repository repository.SystemParameterRepository) 
 }
 
 func (service *SystemParameterServiceImpl) Hello(ctx context.Context) (string, error) {
-	result, err := service.repository.Create(ctx)
+	/*result, err := service.repository.Create(ctx)
 	if err != nil {
 		fmt.Print("result ", result)
 		fmt.Print("result err ", err)
 	}
-
+	*/
 	return "hello from case impl", nil
 }
 
 func (service *SystemParameterServiceImpl) Create(ctx context.Context) (*system_parameter.SystemParameter, error) {
+	//result, err := service.repository.Create()
+
 	return nil, nil
 }
 

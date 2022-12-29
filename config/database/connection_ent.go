@@ -19,7 +19,7 @@ func NewEntClient() *ent.Client {
 		viper.GetString("db.config.host"),
 		viper.GetString("db.config.port"),
 		viper.GetString("db.config.database"))
-	fmt.Print("DSN ", dsn)
+	fmt.Println("DSN ", dsn)
 
 	client, err := ent.Open("mysql", dsn, ent.Debug(), ent.Log(func(i ...interface{}) {
 		for _, v := range i {
@@ -29,29 +29,15 @@ func NewEntClient() *ent.Client {
 	}))
 
 	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
-		fmt.Print("failed opening connection to sqlite: %v", err)
+		log.Fatalf("failed opening connection to DB: %v", err)
 	}
+
+	//from docs define close on this function, but will impact cant create DB session on repository
+	//defer client.Close()
 
 	// Run the auto migration tool.
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
-		fmt.Print("failed creating schema resources: %v", err)
-	}
-
-	if err != nil {
-		log.Printf("err : %s", err)
-	}
-
-	defer func(client *ent.Client) {
-		err := client.Close()
-		if err != nil {
-			log.Printf("err : %s", err)
-		}
-	}(client)
-
-	if err != nil {
-		log.Println("Fail to initialize client")
 	}
 
 	return client

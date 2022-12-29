@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	//"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
@@ -42,6 +43,9 @@ func main() {
 	middlewares.InitMiddlewares(e)
 
 	dbConnection := config.NewSqlEntClient()
+	//dbConnection := config.NewEntClient()
+	fmt.Println("dbConnection", dbConnection)
+
 	restApi.SetupRouteHandler(e, dbConnection)
 
 	//load config
