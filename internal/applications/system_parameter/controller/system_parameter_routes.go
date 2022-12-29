@@ -9,14 +9,14 @@ import (
 	//"myapp/internal/applications/system_parameter/service"
 )
 
-func (handler *SystemParameterHandler) AddRoutes(e *echo.Echo) {
+func (controller *SystemParameterController) AddRoutes(e *echo.Echo) {
 
 	//need refactor, should be more elegant
-	//controller := handler2.NewHandler(service.NewUseCase())
+	//controller := handler2.NewSystemParameterController(service.NewUseCase())
 	//e.GET("/hello", handler.Hello)
 
 	//e.POST("/system-parameter", handler.Create)
 	//e.PUT("/system-parameter/:id", handler.Update)
-	e.GET("/system-parameter/:id", handler.GetById)
-	e.DELETE("/system-parameter/:id", handler.Delete)
+	e.GET("/system-parameter/:id", controller.GetById)
+	e.DELETE("/system-parameter/:id", controller.Delete)
 }

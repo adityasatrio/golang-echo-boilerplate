@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/commons/response"
+	"myapp/helper/response"
 	"myapp/internal/applications/hello_worlds/service"
 	"net/http"
 )
@@ -20,8 +20,10 @@ func NewHelloWorldController(response response.Response, service service.HelloWo
 }
 
 func (controller *HelloWorldController) Hello(c echo.Context) error {
+
 	errorFlag := c.QueryParam("error")
 	messageController := "hello from controller -"
+
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
 		//TODO : create builder pattern

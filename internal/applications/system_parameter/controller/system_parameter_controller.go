@@ -1,50 +1,81 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"myapp/helper/response"
+	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/service"
+	"strconv"
+
 	//"myapp/pkg/validator"
 	"net/http"
 )
 
-type SystemParameterHandler struct {
-	useCase service.SystemParameterService
+type SystemParameterController struct {
+	response response.Response
+	service  service.SystemParameterService
 }
 
-func NewHandler(service service.SystemParameterService) *SystemParameterHandler {
-	return &SystemParameterHandler{
-		useCase: service,
+func NewSystemParameterController(response response.Response, service service.SystemParameterService) *SystemParameterController {
+	return &SystemParameterController{
+		response: response,
+		service:  service,
 	}
 }
 
-func (handler *SystemParameterHandler) Hello(c echo.Context) error {
-	hello, err := handler.useCase.Hello(c.Request().Context())
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, "Hello, World! "+hello)
-}
-
-/*func (handler *SystemParameterHandler) Create(c echo.Context) error {
-	request := new(dto.SystemParameterRequest)
+func (controller *SystemParameterController) Create(c echo.Context) error {
+	request := new(dto.SystemParameterCreateRequest)
 	err := c.Bind(&request)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
 	}
 
 	//err = validator.ReqBody(c, request)
 	err = c.Validate(request)
 	fmt.Println("validate", err)
 	if err != nil {
-		return response.Return(c, http.StatusBadRequest, "failed", err, nil)
-		//return c.JSON(rest_api.StatusBadRequest, &err)
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
 	}
 
-	return c.JSON(http.StatusCreated, request)
+	created, err := controller.service.Create(c.Request().Context(), request)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusInternalServerError, response.FAILED, created, err)
+	}
+
+	return controller.response.BaseResponse(c, http.StatusOK, response.SUCCESS, created, err)
 }
 
-func (handler *SystemParameterHandler) Update(c echo.Context) error {
+func (controller *SystemParameterController) Update(c echo.Context) error {
+	request := new(dto.SystemParameterUpdateRequest)
+	err := c.Bind(&request)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
+	}
+
+	//err = validator.ReqBody(c, request)
+	err = c.Validate(request)
+	fmt.Println("validate", err)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
+	}
+
+	idString := c.Param("id")
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
+	}
+
+	created, err := controller.service.Update(c.Request().Context(), id, request)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusInternalServerError, response.FAILED, created, err)
+	}
+
+	return controller.response.BaseResponse(c, http.StatusOK, response.SUCCESS, created, err)
+}
+
+/*func (handler *SystemParameterController) Update(c echo.Context) error {
 	id := c.Param("id")
 	var request dto.SystemParameterRequest
 	err := c.Bind(&request)
@@ -57,12 +88,43 @@ func (handler *SystemParameterHandler) Update(c echo.Context) error {
 
 }*/
 
-func (handler *SystemParameterHandler) GetById(c echo.Context) error {
-	id := c.Param("id")
-	return c.JSON(http.StatusOK, id)
+func (controller *SystemParameterController) Delete(c echo.Context) error {
+	idString := c.Param("id")
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
+	}
+
+	created, err := controller.service.Delete(c.Request().Context(), id)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusInternalServerError, response.FAILED, created, err)
+	}
+
+	return controller.response.BaseResponse(c, http.StatusOK, response.SUCCESS, created, err)
 }
 
-func (handler *SystemParameterHandler) Delete(c echo.Context) error {
-	id := c.Param("id")
-	return c.JSON(http.StatusOK, id)
+func (controller *SystemParameterController) GetById(c echo.Context) error {
+	idString := c.Param("id")
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusBadRequest, response.FAILED, nil, err)
+	}
+
+	created, err := controller.service.GetById(c.Request().Context(), id)
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusInternalServerError, response.FAILED, created, err)
+	}
+
+	return controller.response.BaseResponse(c, http.StatusOK, response.SUCCESS, created, err)
+}
+
+func (controller *SystemParameterController) GetAll(c echo.Context) error {
+	created, err := controller.service.GetAll(c.Request().Context())
+	if err != nil {
+		return controller.response.BaseResponse(c, http.StatusInternalServerError, response.FAILED, created, err)
+	}
+
+	return controller.response.BaseResponse(c, http.StatusOK, response.SUCCESS, created, err)
 }

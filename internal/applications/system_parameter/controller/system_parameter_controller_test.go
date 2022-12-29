@@ -47,7 +47,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 
 	//setup stub
 	useCaseStub := &SystemParameterCaseStub{}
-	h := NewHandler(useCaseStub)
+	h := NewSystemParameterController(useCaseStub)
 
 	//test global_handler
 	expected := "\"Hello, World! hello from stub\"\n"
@@ -60,7 +60,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 	}
 
 	//assert use case stub
-	actualResult, err := h.useCase.Hello(ctx.Request().Context())
+	actualResult, err := h.service.Hello(ctx.Request().Context())
 
 	//assert use case stub
 	if assert.NoError(t, err) {

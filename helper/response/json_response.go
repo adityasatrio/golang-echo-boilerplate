@@ -1,6 +1,9 @@
 package response
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"time"
+)
 
 type (
 	JsonResponse struct {
@@ -8,10 +11,11 @@ type (
 	}
 
 	body struct {
-		Code   int         `json:"code"`
-		Status string      `json:"status"`
-		Data   interface{} `json:"data"`
-		Error  string      `json:"error"`
+		Code       int         `json:"code"`
+		Status     string      `json:"status"`
+		Data       interface{} `json:"data"`
+		Error      string      `json:"error"`
+		ServerTime int64       `json:"serverTime"`
 	}
 )
 
@@ -21,8 +25,9 @@ func NewBaseResponse() Response {
 
 func (responseImpl *JsonResponse) BaseResponse(ctx echo.Context, code int, status string, data interface{}, err error) error {
 	bodyResponse := body{
-		Code:   code,
-		Status: status,
+		Code:       code,
+		Status:     status,
+		ServerTime: time.Now().UnixMilli(),
 	}
 
 	if data != nil {

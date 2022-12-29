@@ -2,17 +2,16 @@ package service
 
 import (
 	"context"
-	"myapp/domains/system_parameter"
+	"myapp/ent"
+	"myapp/internal/applications/system_parameter/dto"
 )
 
 type (
 	SystemParameterService interface {
-		Hello(ctx context.Context) (string, error)
-
-		Create(ctx context.Context) (*system_parameter.SystemParameter, error)
-		Update(ctx context.Context) (*system_parameter.SystemParameter, error)
-		Delete(ctx context.Context) error
-		GetById(ctx context.Context) (*system_parameter.SystemParameter, error)
-		GetAll(ctx context.Context) ([]*system_parameter.SystemParameter, error)
+		Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.System_parameter, error)
+		Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.System_parameter, error)
+		Delete(ctx context.Context, id int) (*ent.System_parameter, error)
+		GetById(ctx context.Context, id int) (*ent.System_parameter, error)
+		GetAll(ctx context.Context) ([]*ent.System_parameter, error)
 	}
 )

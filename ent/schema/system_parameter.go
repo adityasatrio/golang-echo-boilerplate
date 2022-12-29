@@ -17,7 +17,7 @@ func (System_parameter) Fields() []ent.Field {
 		field.String("value").NotEmpty(),
 	}
 
-	return helper.InitBaseSchema(schema)*/
+	return schema.InitBaseSchema(schema)*/
 
 	return []ent.Field{
 		field.String("key").NotEmpty().Unique(),

@@ -3,8 +3,8 @@ package rest_api
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"myapp/commons/response"
 	"myapp/ent"
+	"myapp/helper/response"
 
 	helloController "myapp/internal/applications/hello_worlds/controller"
 	helloRepository "myapp/internal/applications/hello_worlds/repository"
@@ -32,6 +32,8 @@ func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
 	systemParameterUseCase := service.NewSystemParameterService(systemParameterRepository)
 	fmt.Println("systemParameterUseCase", systemParameterUseCase)
 
-	controller.NewHandler(systemParameterUseCase).AddRoutes(e)
+	controller.
+		NewSystemParameterController(response, systemParameterUseCase).
+		AddRoutes(e)
 
 }

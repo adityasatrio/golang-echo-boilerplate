@@ -2,52 +2,74 @@ package service
 
 import (
 	"context"
-	"myapp/domains/system_parameter"
+	"myapp/ent"
+	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository"
 )
 
 type (
 	SystemParameterServiceImpl struct {
-		//inject repository
-		repository repository.SystemParameterRepository //interface
+		repository repository.SystemParameterRepository
 	}
 )
 
-// NewSystemParameterService New constructor for DI
 func NewSystemParameterService(repository repository.SystemParameterRepository) SystemParameterService {
 	return &SystemParameterServiceImpl{
 		repository: repository,
 	}
 }
 
-func (service *SystemParameterServiceImpl) Hello(ctx context.Context) (string, error) {
-	/*result, err := service.repository.Create(ctx)
-	if err != nil {
-		fmt.Print("result ", result)
-		fmt.Print("result err ", err)
+func (service *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.System_parameter, error) {
+	newData := ent.System_parameter{
+		Key:   create.Key,
+		Value: create.Value,
 	}
-	*/
-	return "hello from case impl", nil
+
+	result, err := service.repository.Create(ctx, newData)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
-func (service *SystemParameterServiceImpl) Create(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	//result, err := service.repository.Create()
+func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.System_parameter, error) {
+	newData := ent.System_parameter{
+		Key:   update.Key,
+		Value: update.Value,
+	}
 
-	return nil, nil
+	result, err := service.repository.Update(ctx, id, newData)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
-func (service *SystemParameterServiceImpl) Update(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	return nil, nil
+func (service *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
+	result, err := service.repository.Delete(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
-func (service *SystemParameterServiceImpl) Delete(ctx context.Context) error {
-	return nil
+func (service *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
+	result, err := service.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
-func (service *SystemParameterServiceImpl) GetById(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	return nil, nil
-}
+func (service *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
+	result, err := service.repository.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-func (service *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*system_parameter.SystemParameter, error) {
-	return nil, nil
+	return result, nil
 }
