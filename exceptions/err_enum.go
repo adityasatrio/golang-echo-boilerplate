@@ -1,10 +1,10 @@
 package exceptions
 
 const (
-	DataNotFound        = "data not found"
-	DataCreateFailed    = "create data error"
-	DataUpdateFailed    = "update data error"
-	DataDeleteFailed    = "delete data error"
-	DataGetFailed       = "get data error"
-	BusinessLogicFailed = "business logic error"
+	dataNotFound        = "data not found"
+	dataCreateFailed    = "create data error"
+	dataUpdateFailed    = "update data error"
+	dataDeleteFailed    = "delete data error"
+	dataGetFailed       = "get data error"
+	businessLogicFailed = "business logic error"
 )

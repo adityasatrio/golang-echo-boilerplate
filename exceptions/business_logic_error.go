@@ -7,33 +7,33 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-type BusinessLogicError struct {
+type businessLogicError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`
 }
 
-func (e *BusinessLogicError) Error() string {
+func (e *businessLogicError) Error() string {
 	return e.Message
 }
 
-var TargetBusinessLogicError = errors.New(BusinessLogicFailed)
+var TargetBusinessLogicError = errors.New(businessLogicFailed)
 
 func NewBusinessLogicError(err error) error {
-	return &BusinessLogicError{
-		Message:     BusinessLogicFailed,
+	return &businessLogicError{
+		Message:     businessLogicFailed,
 		OriginalErr: err,
 	}
 }
 
 // Unwrap Implements the errors.Unwrap interface
-func (e BusinessLogicError) Unwrap() error {
+func (e businessLogicError) Unwrap() error {
 	log.Error(TargetBusinessLogicError, e.OriginalErr)
 	return TargetBusinessLogicError
 }
 
 // Dig Returns the inner most CustomErrorWrapper
-func (e BusinessLogicError) Dig() BusinessLogicError {
-	var errStruct BusinessLogicError
+func (e businessLogicError) Dig() businessLogicError {
+	var errStruct businessLogicError
 	if errors.As(e.OriginalErr, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()

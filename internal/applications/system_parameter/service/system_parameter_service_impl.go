@@ -28,7 +28,7 @@ func (service *SystemParameterServiceImpl) Create(ctx context.Context, create *d
 
 	result, err := service.repository.Create(ctx, newData)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewDataCreateError(err)
 	}
 
 	return result, nil
@@ -47,30 +47,30 @@ func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, u
 
 	updated, err := service.repository.Update(ctx, exist.ID, newData)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewDataUpdateError(err)
 	}
 
 	return updated, nil
 }
 
 func (service *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
-	result, err := service.repository.GetById(ctx, id)
+	exist, err := service.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewDataNotFoundError(err)
 	}
 
-	result, err = service.repository.Delete(ctx, result.ID)
+	_, err = service.repository.Delete(ctx, exist.ID)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewDeleteError(err)
 	}
 
-	return result, nil
+	return exist, nil
 }
 
 func (service *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
 	result, err := service.repository.GetById(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewDataGetError(err)
 	}
 
 	return result, nil
@@ -79,7 +79,7 @@ func (service *SystemParameterServiceImpl) GetById(ctx context.Context, id int) 
 func (service *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
 	result, err := service.repository.GetAll(ctx)
 	if err != nil {
-		return nil, err
+		return nil, exceptions.NewDataGetError(err)
 	}
 
 	return result, nil

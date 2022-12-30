@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"myapp/ent"
-	"myapp/helper/response"
-
 	helloController "myapp/internal/applications/hello_worlds/controller"
 	helloRepository "myapp/internal/applications/hello_worlds/repository"
 	helloService "myapp/internal/applications/hello_worlds/service"
@@ -17,13 +15,11 @@ import (
 
 func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
 
-	response := response.NewBaseResponse()
-
 	helloWorldsRepository := helloRepository.NewHelloWorldsRepository(connection)
 	helloWorldsService := helloService.NewHelloWorldsService(helloWorldsRepository)
 
 	helloController.
-		NewHelloWorldController(response, helloWorldsService).
+		NewHelloWorldController(helloWorldsService).
 		AddRoutes(e)
 
 	systemParameterRepository := repository.NewSystemParameterRepository(connection)
@@ -33,7 +29,7 @@ func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
 	fmt.Println("systemParameterUseCase", systemParameterUseCase)
 
 	controller.
-		NewSystemParameterController(response, systemParameterUseCase).
+		NewSystemParameterController(systemParameterUseCase).
 		AddRoutes(e)
 
 }

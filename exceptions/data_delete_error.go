@@ -7,33 +7,33 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-type DataDeleteError struct {
+type dataDeleteError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`
 }
 
-func (e *DataDeleteError) Error() string {
+func (e *dataDeleteError) Error() string {
 	return e.Message
 }
 
-var TargetDataDeleteError = errors.New(DataDeleteFailed)
+var TargetDataDeleteError = errors.New(dataDeleteFailed)
 
 func NewDeleteError(err error) error {
-	return &DataDeleteError{
-		Message:     DataDeleteFailed,
+	return &dataDeleteError{
+		Message:     dataDeleteFailed,
 		OriginalErr: err,
 	}
 }
 
 // Unwrap Implements the errors.Unwrap interface
-func (e DataDeleteError) Unwrap() error {
+func (e dataDeleteError) Unwrap() error {
 	log.Error(TargetDataDeleteError, e.OriginalErr)
 	return TargetDataDeleteError
 }
 
 // Dig Returns the inner most CustomErrorWrapper
-func (e DataDeleteError) Dig() DataDeleteError {
-	var errStruct DataDeleteError
+func (e dataDeleteError) Dig() dataDeleteError {
+	var errStruct dataDeleteError
 	if errors.As(e.OriginalErr, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()

@@ -7,33 +7,33 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-type DataNotFoundError struct {
+type dataNotFoundError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`
 }
 
-func (e *DataNotFoundError) Error() string {
+func (e *dataNotFoundError) Error() string {
 	return e.Message
 }
 
-var TargetDataNotFoundError = errors.New(DataNotFound)
+var TargetDataNotFoundError = errors.New(dataNotFound)
 
 func NewDataNotFoundError(err error) error {
-	return &DataNotFoundError{
-		Message:     DataNotFound,
+	return &dataNotFoundError{
+		Message:     dataNotFound,
 		OriginalErr: err,
 	}
 }
 
 // Unwrap Implements the errors.Unwrap interface
-func (e DataNotFoundError) Unwrap() error {
+func (e dataNotFoundError) Unwrap() error {
 	log.Error(TargetDataNotFoundError, e.OriginalErr)
 	return TargetDataNotFoundError
 }
 
 // Dig Returns the inner most CustomErrorWrapper
-func (e DataNotFoundError) Dig() DataNotFoundError {
-	var errStruct DataNotFoundError
+func (e dataNotFoundError) Dig() dataNotFoundError {
+	var errStruct dataNotFoundError
 	if errors.As(e.OriginalErr, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()

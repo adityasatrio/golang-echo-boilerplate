@@ -7,33 +7,33 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-type DataUpdateError struct {
+type dataUpdateError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`
 }
 
-func (e *DataUpdateError) Error() string {
+func (e *dataUpdateError) Error() string {
 	return e.Message
 }
 
-var TargetDataUpdateError = errors.New(DataUpdateFailed)
+var TargetDataUpdateError = errors.New(dataUpdateFailed)
 
 func NewDataUpdateError(err error) error {
-	return &DataUpdateError{
-		Message:     DataUpdateFailed,
+	return &dataUpdateError{
+		Message:     dataUpdateFailed,
 		OriginalErr: err,
 	}
 }
 
 // Unwrap Implements the errors.Unwrap interface
-func (e DataUpdateError) Unwrap() error {
+func (e dataUpdateError) Unwrap() error {
 	log.Error(TargetDataUpdateError, e.OriginalErr)
 	return TargetDataUpdateError
 }
 
 // Dig Returns the inner most CustomErrorWrapper
-func (e DataUpdateError) Dig() DataUpdateError {
-	var errStruct DataUpdateError
+func (e dataUpdateError) Dig() dataUpdateError {
+	var errStruct dataUpdateError
 	if errors.As(e.OriginalErr, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()

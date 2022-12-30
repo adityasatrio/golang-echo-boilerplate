@@ -8,14 +8,12 @@ import (
 )
 
 type HelloWorldController struct {
-	response response.Response
-	service  service.HelloWorldService
+	service service.HelloWorldService
 }
 
-func NewHelloWorldController(response response.Response, service service.HelloWorldService) *HelloWorldController {
+func NewHelloWorldController(service service.HelloWorldService) *HelloWorldController {
 	return &HelloWorldController{
-		response: response,
-		service:  service,
+		service: service,
 	}
 }
 
@@ -26,13 +24,8 @@ func (controller *HelloWorldController) Hello(c echo.Context) error {
 
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
-		//TODO : create builder pattern
-		return controller.
-			response.
-			Base(c, http.StatusInternalServerError, response.StatusFailed, result, err)
+		return response.Base(c, http.StatusInternalServerError, result, err)
 	}
 
-	return controller.
-		response.
-		Base(c, http.StatusOK, response.StatusSuccess, result, err)
+	return response.Base(c, http.StatusOK, result, err)
 }
