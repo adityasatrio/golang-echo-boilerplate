@@ -42,14 +42,14 @@ func (service *SystemParameterServiceImpl) Create(ctx context.Context, create *d
 
 func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.System_parameter, error) {
 
-	exist, err := service.repository.GetByKey(ctx, update.Key)
-	if exist != nil {
-		return nil, exceptions.NewBusinessLogicError(errcode.EBL10001, err)
-	}
-
-	exist, err = service.repository.GetById(ctx, id)
+	existId, err := service.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewDataNotFoundError(err)
+	}
+
+	existKey, err := service.repository.GetByKey(ctx, update.Key)
+	if existKey != nil {
+		return nil, exceptions.NewBusinessLogicError(errcode.EBL10001, err)
 	}
 
 	newData := ent.System_parameter{
@@ -57,7 +57,7 @@ func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, u
 		Value: update.Value,
 	}
 
-	updated, err := service.repository.Update(ctx, exist.ID, newData)
+	updated, err := service.repository.Update(ctx, existId.ID, newData)
 	if err != nil {
 		return nil, exceptions.NewDataUpdateError(err)
 	}
