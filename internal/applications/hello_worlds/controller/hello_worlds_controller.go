@@ -24,8 +24,8 @@ func (controller *HelloWorldController) Hello(c echo.Context) error {
 
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
-		return response.Base(c, http.StatusInternalServerError, result, err)
+		return response.Error(c, http.StatusInternalServerError, err)
 	}
 
-	return response.Base(c, http.StatusOK, result, err)
+	return response.Success(c, result)
 }

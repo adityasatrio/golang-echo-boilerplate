@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+const (
+	dataGetFailed = "get data error"
+)
+
 type dataGetError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`

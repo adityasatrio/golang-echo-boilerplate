@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+const (
+	dataDeleteFailed = "delete data error"
+)
+
 type dataDeleteError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`

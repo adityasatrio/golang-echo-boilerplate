@@ -94,7 +94,7 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error {
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
-		return response.Base(ctx, http.StatusBadRequest, nil, err)
+		return response.Error(ctx, http.StatusBadRequest, err)
 	}
 
 	result, err := c.service.GetById(ctx.Request().Context(), id)

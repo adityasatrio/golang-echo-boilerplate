@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"myapp/ent"
+	"myapp/ent/system_parameter"
 )
 
 type SystemParameterRepositoryImpl struct {
@@ -72,6 +73,19 @@ func (repo *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.S
 	return data, nil
 }
 
+func (repo *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.System_parameter, error) {
+	data, err := repo.client.System_parameter.Query().
+		Where(system_parameter.KeyEqualFold(key)).
+		Only(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+//TODO : add base schema
 /*func (repository *SystemParameterRepositoryImpl) GetByIdNotDeleted(ctx context.Context, id int) (*ent.System_parameter, error) {
 	data, err := repository.client.System_parameter.Get(ctx, id)
 	if err != nil {

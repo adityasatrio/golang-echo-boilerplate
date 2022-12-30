@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+const (
+	dataNotFound = "data not found"
+)
+
 type dataNotFoundError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`

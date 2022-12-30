@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+const (
+	dataUpdateFailed = "update data error"
+)
+
 type dataUpdateError struct {
 	Message     string `json:"message"`
 	OriginalErr error  `json:"-"`
