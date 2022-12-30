@@ -43,17 +43,15 @@ func (repo *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, u
 	return saved, nil
 }
 func (repo *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
-	/*saved, err := repository.client.System_parameter.
-		UpdateOneID(id).
-		SetKey(updateData.Key).
-		SetValue(updateData.Value).
-		Save(ctx)
+	//TODO : soft delete
+	err := repo.client.System_parameter.
+		DeleteOneID(id).
+		Exec(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return saved, nil*/
 	return nil, nil
 }
 func (repo *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {

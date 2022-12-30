@@ -1,14 +1,24 @@
 package response
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 type (
 	Response interface {
-		BaseResponse(ctx echo.Context, code int, status string, data interface{}, err error) error
+		Base(ctx echo.Context, code int, status string, data interface{}, err error) error
+		Created(ctx echo.Context, data interface{}) error
+		Success(ctx echo.Context, data interface{}) error
+		Error(ctx echo.Context, code int, err error) error
 	}
 )
 
 const (
-	SUCCESS = "success"
-	FAILED  = "failed"
+	// StatusSuccess status for success on response
+	StatusSuccess = "success"
+
+	// StatusFailed status for failed on response
+	StatusFailed = "failed"
+
+	HeaderDate = "Date"
 )

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"myapp/ent"
+	"myapp/exceptions"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository"
 )
@@ -34,21 +35,31 @@ func (service *SystemParameterServiceImpl) Create(ctx context.Context, create *d
 }
 
 func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.System_parameter, error) {
+	exist, err := service.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, exceptions.NewDataNotFoundError(err)
+	}
+
 	newData := ent.System_parameter{
 		Key:   update.Key,
 		Value: update.Value,
 	}
 
-	result, err := service.repository.Update(ctx, id, newData)
+	updated, err := service.repository.Update(ctx, exist.ID, newData)
 	if err != nil {
 		return nil, err
 	}
 
-	return result, nil
+	return updated, nil
 }
 
 func (service *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
-	result, err := service.repository.Delete(ctx, id)
+	result, err := service.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, exceptions.NewDataNotFoundError(err)
+	}
+
+	result, err = service.repository.Delete(ctx, result.ID)
 	if err != nil {
 		return nil, err
 	}

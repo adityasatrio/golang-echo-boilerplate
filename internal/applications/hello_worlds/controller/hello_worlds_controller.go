@@ -29,10 +29,10 @@ func (controller *HelloWorldController) Hello(c echo.Context) error {
 		//TODO : create builder pattern
 		return controller.
 			response.
-			BaseResponse(c, http.StatusInternalServerError, response.FAILED, result, err)
+			Base(c, http.StatusInternalServerError, response.StatusFailed, result, err)
 	}
 
 	return controller.
 		response.
-		BaseResponse(c, http.StatusOK, response.SUCCESS, result, err)
+		Base(c, http.StatusOK, response.StatusSuccess, result, err)
 }
