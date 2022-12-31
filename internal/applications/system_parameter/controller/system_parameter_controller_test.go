@@ -1,12 +1,8 @@
 package controller
 
-import (
-	"context"
-	"myapp/domains/system_parameter"
-)
-
 type SystemParameterCaseStub struct{}
 
+/*
 func (caseStub *SystemParameterCaseStub) Hello(ctx context.Context) (string, error) {
 	//TODO implement me
 	return "hello from stub", nil
@@ -36,7 +32,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 	//TODO implement me
 	return nil, nil
 }
-
+*/
 /*func TestHello(t *testing.T) {
 	// SetupRouteHandler
 	e := echo.New()

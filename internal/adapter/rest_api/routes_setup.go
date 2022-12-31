@@ -7,9 +7,9 @@ import (
 	helloController "myapp/internal/applications/hello_worlds/controller"
 	helloRepository "myapp/internal/applications/hello_worlds/repository"
 	helloService "myapp/internal/applications/hello_worlds/service"
+	"myapp/internal/applications/system_parameter/repository/db"
 
 	"myapp/internal/applications/system_parameter/controller"
-	"myapp/internal/applications/system_parameter/repository"
 	"myapp/internal/applications/system_parameter/service"
 )
 
@@ -22,7 +22,7 @@ func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
 		NewHelloWorldController(helloWorldsService).
 		AddRoutes(e)
 
-	systemParameterRepository := repository.NewSystemParameterRepository(connection)
+	systemParameterRepository := db.NewSystemParameterRepository(connection)
 	fmt.Println("systemParameterRepository", systemParameterRepository)
 
 	systemParameterUseCase := service.NewSystemParameterService(systemParameterRepository)

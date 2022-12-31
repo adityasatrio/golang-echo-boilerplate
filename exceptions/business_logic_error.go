@@ -3,6 +3,7 @@
 package exceptions
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/labstack/gommon/log"
 )
@@ -37,7 +38,14 @@ func NewBusinessLogicError(ErrorCode int, err error) error {
 
 // Unwrap Implements the errors.Unwrap interface
 func (e BusinessLogicError) Unwrap() error {
-	log.Error(TargetBusinessLogicError, e.ErrorCode, e.Err)
+	errorLogic := BusinessLogicReason(e.ErrorCode)
+	jsonByte, err := json.Marshal(errorLogic)
+	if err != nil {
+		log.Error(errorLogic, e.Err)
+	} else {
+		log.Error(string(jsonByte), e.Err)
+	}
+
 	return TargetBusinessLogicError
 }
 

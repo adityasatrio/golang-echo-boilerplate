@@ -20,21 +20,10 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 		if !ok {
 			if errors.Is(err, exceptions.TargetBusinessLogicError) {
 				errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
-				errorMessage := exceptions.BusinessLogicReason(errorCode)
-
-				response.Base(ctx, http.StatusUnprocessableEntity, errorCode, errorMessage, nil, err)
+				errorLogic := exceptions.BusinessLogicReason(errorCode)
+				response.Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
 				return
-
-			} else if errors.Is(err, exceptions.TargetDataNotFoundError) {
-				response.Error(ctx, http.StatusNotFound, err)
-				return
-
-			} else if generalTypeError(err) {
-				response.Error(ctx, http.StatusInternalServerError, err)
-				return
-
 			}
-
 		}
 
 		errorMessage := err.Error()
@@ -57,9 +46,4 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 		response.Base(ctx, http.StatusBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest), nil, errors.New(errorMessage))
 		return
 	}
-}
-
-func generalTypeError(err error) bool {
-	return errors.Is(err, exceptions.TargetDataCreateError) || errors.Is(err, exceptions.TargetDataDeleteError) ||
-		errors.Is(err, exceptions.TargetDataGetError) || errors.Is(err, exceptions.TargetDataUpdateError)
 }

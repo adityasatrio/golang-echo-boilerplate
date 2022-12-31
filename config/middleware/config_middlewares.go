@@ -1,3 +1,7 @@
+//references :
+//	https://dasarpemrogramangolang.novalagung.com/C-advanced-middleware-and-logging.html
+//	https://echo.labstack.com/middleware
+
 package middleware
 
 import (
