@@ -1,11 +1,13 @@
 application:
   version: 0.0.1
   port: 8080
+  cors:
+    allowedHost: localhost, https://labstack.com, https://labstack.net
 
 db.config:
-  username: admin
-  password: admin
+  username: root
+  password:
   host: localhost
-  port: 12345
-  database: test
+  port: 3306
+  database: test_ent
 

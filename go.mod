@@ -6,6 +6,7 @@ require (
 	entgo.io/ent v0.11.4
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/google/wire v0.5.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1

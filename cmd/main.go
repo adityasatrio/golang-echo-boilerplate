@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"myapp/config/middleware"
+	"myapp/config/validator"
 	//"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
-	"log"
-	"myapp/config"
-	"myapp/internal/adapter/http"
-	"myapp/internal/commons/middlewares"
-	"myapp/internal/initialization"
-	//"net/http"
+	config "myapp/config/database"
+	restApi "myapp/internal/adapter/rest_api"
+	//"net/rest_api"
 )
 
 /*type CustomValidator struct {
@@ -19,7 +19,7 @@ import (
 func (cv *CustomValidator) Validate(i interface{}) error {
 	if err := cv.validator.Struct(i); err != nil {
 		// Optionally, you could return the error to give each route more control over the status code
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
 	}
 	return nil
 }*/
@@ -36,36 +36,18 @@ func main() {
 		e.Logger.Fatal(err)
 	}
 
-	//initiate Ent Client
-	client, err := config.NewEntClient()
-	if err != nil {
-		log.Printf("err : %s", err)
-	}
-	defer client.Close()
-
-	if err != nil {
-		log.Println("Fail to initialize client")
-	}
-
-	//set the client to the variable defined in package config
-	//this will enable the client intance to be accessed anywhere through the accessor which is a function
-	//named GetClient
-	config.SetClient(client)
-
-	//config.GetClient().System_parameter.Create().SetKey("abc").SetValue("abc").Save(e.New)
-
 	//TODO : need to fix validator nya tidak berjalan
-	initialization.SetupValidator(e)
+	validator.SetupValidator(e)
+	validator.SetupHttpErrorHandler(e)
 
 	//add middlewares
-	middlewares.InitMiddlewares(e)
+	middleware.InitMiddlewares(e)
 
-	//http_routes
-	//usecaseSysParam := usecase.NewUseCase()
-	//handler.NewHandler(usecaseSysParam).AddRoutes(e)
+	dbConnection := config.NewSqlEntClient()
+	//dbConnection := config.NewEntClient()
+	fmt.Println("dbConnection", dbConnection)
 
-	//define handler moved on this file
-	http.SetupRouteHandler(e)
+	restApi.SetupRouteHandler(e, dbConnection)
 
 	//load config
 	port := viper.GetString("application.port")
@@ -75,5 +57,4 @@ func main() {
 	}
 
 	e.Logger.Fatal(err)
-
 }

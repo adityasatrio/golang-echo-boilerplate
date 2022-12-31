@@ -12,6 +12,13 @@ type System_parameter struct {
 
 // Fields of the System_parameter.
 func (System_parameter) Fields() []ent.Field {
+	/*schema := []ent.Field{
+		field.String("key").NotEmpty().Unique(),
+		field.String("value").NotEmpty(),
+	}
+
+	return schema.InitBaseSchema(schema)*/
+
 	return []ent.Field{
 		field.String("key").NotEmpty().Unique(),
 		field.String("value").NotEmpty(),
