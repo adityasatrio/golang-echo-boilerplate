@@ -37,7 +37,7 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 
 		}
 
-		errorMessage := "undefined errors"
+		errorMessage := err.Error()
 		if castedObject, ok := err.(validator.ValidationErrors); ok {
 			for _, err := range castedObject {
 				switch err.Tag() {
@@ -62,45 +62,4 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 func generalTypeError(err error) bool {
 	return errors.Is(err, exceptions.TargetDataCreateError) || errors.Is(err, exceptions.TargetDataDeleteError) ||
 		errors.Is(err, exceptions.TargetDataGetError) || errors.Is(err, exceptions.TargetDataUpdateError)
-}
-
-/*func serviceErrorHandler(ctx echo.Context, err error) {
-	if err != nil {
-		if errors.Is(err, exceptions.TargetBusinessLogicError) {
-			errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
-			errorMessage := exceptions.BusinessLogicReason(errorCode)
-			response.Base(ctx, http.StatusUnprocessableEntity, errorCode, errorMessage, nil, err)
-
-		} else if errors.Is(err, exceptions.TargetDataNotFoundError) {
-			response.Error(ctx, http.StatusNotFound, err)
-
-		} else if errors.Is(err, exceptions.TargetDataNotFoundError) {
-			response.Error(ctx, http.StatusInternalServerError, err)
-		}
-	}
-
-	//default return handler
-	//response.Success(ctx, nil)
-}*/
-
-func requestErrorHandler(ctx echo.Context, err error) {
-	report, _ := err.(*echo.HTTPError)
-	if castedObject, ok := err.(validator.ValidationErrors); ok {
-		for _, err := range castedObject {
-			switch err.Tag() {
-			case "required":
-				report.Message = fmt.Sprintf("%s is required", err.Field())
-			case "email":
-				report.Message = fmt.Sprintf("%s is not valid email", err.Field())
-			case "gte":
-				report.Message = fmt.Sprintf("%s value must be greater than %s", err.Field(), err.Param())
-			case "lte":
-				report.Message = fmt.Sprintf("%s value must be lower than %s", err.Field(), err.Param())
-			}
-			break
-		}
-	}
-
-	ctx.Logger().Error(report)
-	ctx.JSON(report.Code, report)
 }

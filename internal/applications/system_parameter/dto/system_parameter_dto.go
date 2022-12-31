@@ -7,8 +7,8 @@ type (
 	}
 
 	SystemParameterUpdateRequest struct {
-		Key   string `json:"key"`
-		Value string `json:"value"`
+		Key   string `json:"key" validate:"gte=5,lte=50"`
+		Value string `json:"value" validate:"gte=5,lte=50"`
 	}
 
 	SystemParameterResponse struct {

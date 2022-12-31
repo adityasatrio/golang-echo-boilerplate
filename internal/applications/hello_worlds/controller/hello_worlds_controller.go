@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/helper/response"
 	"myapp/internal/applications/hello_worlds/service"
-	"net/http"
 )
 
 type HelloWorldController struct {
@@ -24,7 +23,7 @@ func (controller *HelloWorldController) Hello(c echo.Context) error {
 
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
-		return response.Error(c, http.StatusInternalServerError, err)
+		return err
 	}
 
 	return response.Success(c, result)
