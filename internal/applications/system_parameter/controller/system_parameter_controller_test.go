@@ -55,7 +55,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 
 	//assert global_handler result
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusOK, recorder.ErrorCode)
 		assert.Equal(t, expected, recorder.Body.String())
 	}
 
@@ -64,7 +64,7 @@ func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Conte
 
 	//assert use case stub
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusOK, recorder.ErrorCode)
 		assert.Equal(t, "hello from stub", actualResult)
 	}
 

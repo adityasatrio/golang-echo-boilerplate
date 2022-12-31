@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetDataNotFoundError = errors.New(dataNotFound)
+
 const (
 	dataNotFound = "data not found"
 )
@@ -19,8 +21,6 @@ type dataNotFoundError struct {
 func (e *dataNotFoundError) Error() string {
 	return e.Message
 }
-
-var TargetDataNotFoundError = errors.New(dataNotFound)
 
 func NewDataNotFoundError(err error) error {
 	return &dataNotFoundError{

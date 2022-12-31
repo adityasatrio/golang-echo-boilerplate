@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetDataGetError = errors.New(dataGetFailed)
+
 const (
 	dataGetFailed = "get data error"
 )
@@ -19,8 +21,6 @@ type dataGetError struct {
 func (e *dataGetError) Error() string {
 	return e.Message
 }
-
-var TargetDataGetError = errors.New(dataGetFailed)
 
 func NewDataGetError(err error) error {
 	return &dataGetError{

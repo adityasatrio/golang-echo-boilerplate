@@ -2,6 +2,7 @@ package system_parameter
 
 import "time"
 
+//TODO delete
 type SystemParameter struct {
 	Key         string
 	Value       string

@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetDataDeleteError = errors.New(dataDeleteFailed)
+
 const (
 	dataDeleteFailed = "delete data error"
 )
@@ -19,8 +21,6 @@ type dataDeleteError struct {
 func (e *dataDeleteError) Error() string {
 	return e.Message
 }
-
-var TargetDataDeleteError = errors.New(dataDeleteFailed)
 
 func NewDeleteError(err error) error {
 	return &dataDeleteError{

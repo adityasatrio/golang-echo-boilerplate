@@ -8,18 +8,18 @@ import (
 )
 
 type body struct {
-	Code       int         `json:"code"`
+	ErrorCode  int         `json:"code"`
 	Message    string      `json:"message"`
 	Data       interface{} `json:"data"`
 	Error      string      `json:"error"`
 	ServerTime string      `json:"serverTime"`
 }
 
-func Base(ctx echo.Context, httpCode int, code int, message string, data interface{}, err error) error {
+func Base(ctx echo.Context, httpCode int, errorCode int, message string, data interface{}, err error) error {
 
 	date := time.Now().Format(time.RFC1123)
 	bodyResponse := body{
-		Code:       code,
+		ErrorCode:  errorCode,
 		Message:    message,
 		ServerTime: date,
 	}
@@ -32,13 +32,9 @@ func Base(ctx echo.Context, httpCode int, code int, message string, data interfa
 		bodyResponse.Error = err.Error()
 	}
 
-	//TODO : using context as injection ?
-	//return responseImpl.ctx.JSON(bodyResponse.Code, bodyResponse)
-
 	//added header for standard
 	//https://developer.mozilla.org/en-US/docs/Glossary/Response_header
 	ctx.Response().Header().Add("date", date)
-	//TODO : should we implement etag header ?
 
 	return ctx.JSON(httpCode, bodyResponse)
 }

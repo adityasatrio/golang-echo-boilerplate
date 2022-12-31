@@ -92,6 +92,7 @@ func (repo *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key str
 		return nil, err
 	}
 
+
 	return data, nil
 }
 
@@ -100,6 +101,7 @@ func (repository *SystemParameterRepositoryImpl) GetAllNotDeleted(ctx context.Co
 	if err != nil {
 		return nil, err
 	}
+
 
 	return data, nil
 }*/

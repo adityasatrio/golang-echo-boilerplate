@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetDataUpdateError = errors.New(dataUpdateFailed)
+
 const (
 	dataUpdateFailed = "update data error"
 )
@@ -19,8 +21,6 @@ type dataUpdateError struct {
 func (e *dataUpdateError) Error() string {
 	return e.Message
 }
-
-var TargetDataUpdateError = errors.New(dataUpdateFailed)
 
 func NewDataUpdateError(err error) error {
 	return &dataUpdateError{

@@ -7,21 +7,25 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetBusinessLogicError = errors.New(businessLogicFailed)
+
 const (
 	businessLogicFailed = "business logic error"
 )
 
-type BusinessLogicError struct {
-	Message   string `json:"message"`
-	ErrorCode int    `json:"errorCode"`
-	Err       error  `json:"-"`
-}
+type (
+	//BusinessLogicError interface{}
+
+	BusinessLogicError struct {
+		Message   string `json:"message"`
+		ErrorCode int    `json:"errorCode"`
+		Err       error  `json:"-"`
+	}
+)
 
 func (e *BusinessLogicError) Error() string {
 	return e.Message
 }
-
-var TargetBusinessLogicError = errors.New(businessLogicFailed)
 
 func NewBusinessLogicError(ErrorCode int, err error) error {
 	return &BusinessLogicError{

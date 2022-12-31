@@ -4,7 +4,6 @@ import (
 	"context"
 	"myapp/ent"
 	"myapp/exceptions"
-	"myapp/exceptions/errcode"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository"
 )
@@ -29,7 +28,7 @@ func (service *SystemParameterServiceImpl) Create(ctx context.Context, create *d
 
 	exist, err := service.repository.GetByKey(ctx, newData.Key)
 	if exist != nil {
-		return nil, exceptions.NewBusinessLogicError(errcode.EBL10001, err)
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
 	result, err := service.repository.Create(ctx, newData)
@@ -49,7 +48,7 @@ func (service *SystemParameterServiceImpl) Update(ctx context.Context, id int, u
 
 	existKey, err := service.repository.GetByKey(ctx, update.Key)
 	if existKey != nil {
-		return nil, exceptions.NewBusinessLogicError(errcode.EBL10001, err)
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
 	newData := ent.System_parameter{

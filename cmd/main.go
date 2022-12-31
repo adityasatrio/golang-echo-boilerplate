@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"myapp/config/middleware"
+	"myapp/config/validator"
 	//"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	config "myapp/config/database"
 	restApi "myapp/internal/adapter/rest_api"
-	"myapp/internal/commons/middlewares"
-	"myapp/internal/initialization"
 	//"net/rest_api"
 )
 
@@ -37,10 +37,11 @@ func main() {
 	}
 
 	//TODO : need to fix validator nya tidak berjalan
-	initialization.SetupValidator(e)
+	validator.SetupValidator(e)
+	validator.SetupHttpErrorHandler(e)
 
 	//add middlewares
-	middlewares.InitMiddlewares(e)
+	middleware.InitMiddlewares(e)
 
 	dbConnection := config.NewSqlEntClient()
 	//dbConnection := config.NewEntClient()

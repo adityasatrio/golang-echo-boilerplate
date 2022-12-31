@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+var TargetDataCreateError = errors.New(dataCreateFailed)
+
 const (
 	dataCreateFailed = "create data error"
 )
@@ -19,8 +21,6 @@ type dataCreateError struct {
 func (e *dataCreateError) Error() string {
 	return e.Message
 }
-
-var TargetDataCreateError = errors.New(dataCreateFailed)
 
 func NewDataCreateError(err error) error {
 	return &dataCreateError{
