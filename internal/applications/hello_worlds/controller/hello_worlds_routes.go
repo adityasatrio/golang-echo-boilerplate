@@ -9,6 +9,6 @@ import (
 	//"myapp/internal/applications/system_parameter/service"
 )
 
-func (controller *HelloWorldController) AddRoutes(e *echo.Echo) {
+func (controller *HelloWorldsController) AddRoutes(e *echo.Echo) {
 	e.GET("/hello", controller.Hello)
 }

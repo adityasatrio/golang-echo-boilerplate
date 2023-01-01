@@ -1,57 +1,36 @@
 package main
 
 import (
-	"fmt"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
+	config "myapp/config"
+	database "myapp/config/database"
 	"myapp/config/middleware"
 	"myapp/config/validator"
-	//"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
-	config "myapp/config/database"
 	restApi "myapp/internal/adapter/rest_api"
-	//"net/rest_api"
 )
-
-/*type CustomValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *CustomValidator) Validate(i interface{}) error {
-	if err := cv.validator.Struct(i); err != nil {
-		// Optionally, you could return the error to give each route more control over the status code
-		return echo.NewHTTPError(rest_api.StatusBadRequest, err.Error())
-	}
-	return nil
-}*/
 
 func main() {
 	e := echo.New()
 
-	viper.SetConfigType("yml")
-	viper.AddConfigPath(".")
-	viper.SetConfigName("app.config")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		e.Logger.Fatal(err)
-	}
-
-	//TODO : need to fix validator nya tidak berjalan
+	config.SetupConfigEnv(e)
+	middleware.SetupMiddlewares(e)
 	validator.SetupValidator(e)
 	validator.SetupHttpErrorHandler(e)
 
-	//add middlewares
-	middleware.InitMiddlewares(e)
+	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
+	//dbConnection := config.NewEntClient() //using ent only
 
-	dbConnection := config.NewSqlEntClient()
-	//dbConnection := config.NewEntClient()
-	fmt.Println("dbConnection", dbConnection)
+	log.Info("initialized database configuration=", dbConnection)
+	//from docs define close on this function, but will impact cant create DB session on repository
+	defer dbConnection.Close()
 
 	restApi.SetupRouteHandler(e, dbConnection)
 
 	//load config
 	port := viper.GetString("application.port")
-	err = e.Start(":" + port)
+	err := e.Start(":" + port)
 	if err != nil {
 		return
 	}

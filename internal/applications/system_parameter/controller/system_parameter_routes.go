@@ -11,10 +11,6 @@ import (
 
 func (c *SystemParameterController) AddRoutes(e *echo.Echo) {
 
-	//need refactor, should be more elegant
-	//c := handler2.NewSystemParameterController(service.NewUseCase())
-	//e.GET("/hello", handler.Hello)
-
 	e.POST("/system-parameter", c.Create)
 	e.PUT("/system-parameter/:id", c.Update)
 	e.DELETE("/system-parameter/:id", c.Delete)

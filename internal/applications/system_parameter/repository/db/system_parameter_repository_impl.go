@@ -10,14 +10,14 @@ type SystemParameterRepositoryImpl struct {
 	client *ent.Client
 }
 
-func NewSystemParameterRepository(dbConn *ent.Client) SystemParameterRepository {
+func NewSystemParameterRepository(dbConn *ent.Client) *SystemParameterRepositoryImpl {
 	return &SystemParameterRepositoryImpl{
 		client: dbConn,
 	}
 }
 
-func (repo *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.System_parameter) (*ent.System_parameter, error) {
-	saved, err := repo.client.System_parameter.
+func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.System_parameter) (*ent.System_parameter, error) {
+	saved, err := r.client.System_parameter.
 		Create().
 		SetKey(newData.Key).
 		SetValue(newData.Value).
@@ -30,8 +30,8 @@ func (repo *SystemParameterRepositoryImpl) Create(ctx context.Context, newData e
 	return saved, nil
 }
 
-func (repo *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData ent.System_parameter) (*ent.System_parameter, error) {
-	saved, err := repo.client.System_parameter.
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData ent.System_parameter) (*ent.System_parameter, error) {
+	saved, err := r.client.System_parameter.
 		UpdateOneID(id).
 		SetKey(updateData.Key).
 		SetValue(updateData.Value).
@@ -43,9 +43,9 @@ func (repo *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, u
 
 	return saved, nil
 }
-func (repo *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
+func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
 	//TODO : soft delete
-	err := repo.client.System_parameter.
+	err := r.client.System_parameter.
 		DeleteOneID(id).
 		Exec(ctx)
 
@@ -55,8 +55,8 @@ func (repo *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (
 
 	return nil, nil
 }
-func (repo *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
-	data, err := repo.client.System_parameter.Get(ctx, id)
+func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
+	data, err := r.client.System_parameter.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +64,8 @@ func (repo *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) 
 	return data, nil
 }
 
-func (repo *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
-	data, err := repo.client.System_parameter.Query().All(ctx)
+func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
+	data, err := r.client.System_parameter.Query().All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,8 @@ func (repo *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.S
 	return data, nil
 }
 
-func (repo *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.System_parameter, error) {
-	data, err := repo.client.System_parameter.Query().
+func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.System_parameter, error) {
+	data, err := r.client.System_parameter.Query().
 		Where(system_parameter.KeyEqualFold(key)).
 		Only(ctx)
 

@@ -12,7 +12,7 @@ type HelloWorldsRepositoryImpl struct {
 	client *ent.Client
 }
 
-func NewHelloWorldsRepository(dbConn *ent.Client) HelloWorldsRepository {
+func NewHelloWorldsRepository(dbConn *ent.Client) *HelloWorldsRepositoryImpl {
 	return &HelloWorldsRepositoryImpl{
 		client: dbConn,
 	}

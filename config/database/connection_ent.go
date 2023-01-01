@@ -40,5 +40,6 @@ func NewEntClient() *ent.Client {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	log.Default().Println("initialized database x orm : success")
 	return client
 }

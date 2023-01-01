@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"log"
 	"myapp/exceptions"
 	"myapp/helper/response"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 func SetupHttpErrorHandler(e *echo.Echo) {
 	e.HTTPErrorHandler = NewHttpErrorHandler()
+	log.Default().Println("initialized NewHttpErrorHandler : success")
 }
 
 func NewHttpErrorHandler() func(err error, ctx echo.Context) {
