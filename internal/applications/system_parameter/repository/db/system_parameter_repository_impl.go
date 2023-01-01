@@ -21,6 +21,7 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.
 		Create().
 		SetKey(newData.Key).
 		SetValue(newData.Value).
+		SetCreatedBy("admin").
 		Save(ctx)
 
 	if err != nil {
