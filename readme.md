@@ -23,9 +23,15 @@
 - [x] create interface
 - [x] create manual DI
 - [x] implement repository + database connection using ent
+- [x] implement error handling
 - [x] implement DI google wire
-- [ ] implement cache
+- [ ] implement cache https://github.com/eko/gocache#a-chained-cache
+- [ ] implement outbound http calls
+- [ ] implement migration files 
 - [ ] implement test
+- [ ] implement pub sub libs intergation
+- [ ] integrate swagger or API docs
+- [ ] dockerize project
 
 <H3>Running apps</H3>
 ```
