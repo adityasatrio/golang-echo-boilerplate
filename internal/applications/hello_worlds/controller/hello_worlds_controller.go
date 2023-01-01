@@ -6,17 +6,17 @@ import (
 	"myapp/internal/applications/hello_worlds/service"
 )
 
-type HelloWorldController struct {
-	service service.HelloWorldService
+type HelloWorldsController struct {
+	service service.HelloWorldsService
 }
 
-func NewHelloWorldController(service service.HelloWorldService) *HelloWorldController {
-	return &HelloWorldController{
+func NewHelloWorldsController(service service.HelloWorldsService) *HelloWorldsController {
+	return &HelloWorldsController{
 		service: service,
 	}
 }
 
-func (controller *HelloWorldController) Hello(c echo.Context) error {
+func (controller *HelloWorldsController) Hello(c echo.Context) error {
 
 	errorFlag := c.QueryParam("error")
 	messageController := "hello from controller -"

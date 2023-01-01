@@ -12,18 +12,18 @@ type HelloWorldsServiceImpl struct {
 	repository repository.HelloWorldsRepository
 }
 
-func NewHelloWorldsService(repository repository.HelloWorldsRepository) HelloWorldService {
+func NewHelloWorldsService(repository repository.HelloWorldsRepository) *HelloWorldsServiceImpl {
 	return &HelloWorldsServiceImpl{
 		repository: repository,
 	}
 }
 
-func (service *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, errorFlag string) (string, error) {
+func (s *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, errorFlag string) (string, error) {
 	log.Info("ctx debug", ctx)
 
-	messageService := message + " hello from service-impl layer -"
-	result, err := service.repository.Hello(ctx, messageService, errorFlag)
-	if strings.EqualFold(errorFlag, "service") {
+	messageService := message + " hello from s-impl layer -"
+	result, err := s.repository.Hello(ctx, messageService, errorFlag)
+	if strings.EqualFold(errorFlag, "s") {
 		return "", exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 

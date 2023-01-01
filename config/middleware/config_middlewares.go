@@ -1,14 +1,19 @@
+//references :
+//	https://dasarpemrogramangolang.novalagung.com/C-advanced-middleware-and-logging.html
+//	https://echo.labstack.com/middleware
+
 package middleware
 
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
+	"log"
 	"net/http"
 	"time"
 )
 
-func InitMiddlewares(e *echo.Echo) {
+func SetupMiddlewares(e *echo.Echo) {
 	e.Use(CorsConfig())
 	e.Use(GlobalRequestTimeout())
 
@@ -19,6 +24,7 @@ func InitMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Secure())
+	log.Default().Println("initialized middleware : success")
 
 }
 
