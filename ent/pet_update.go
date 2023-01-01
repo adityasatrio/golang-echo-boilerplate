@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"myapp/ent/pet"
 	"myapp/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,97 @@ func (pu *PetUpdate) Where(ps ...predicate.Pet) *PetUpdate {
 	return pu
 }
 
+// SetName sets the "name" field.
+func (pu *PetUpdate) SetName(s string) *PetUpdate {
+	pu.mutation.SetName(s)
+	return pu
+}
+
+// SetType sets the "type" field.
+func (pu *PetUpdate) SetType(pe pet.Type) *PetUpdate {
+	pu.mutation.SetType(pe)
+	return pu
+}
+
+// SetCode sets the "code" field.
+func (pu *PetUpdate) SetCode(s string) *PetUpdate {
+	pu.mutation.SetCode(s)
+	return pu
+}
+
+// SetAgeMonth sets the "age_month" field.
+func (pu *PetUpdate) SetAgeMonth(i int) *PetUpdate {
+	pu.mutation.ResetAgeMonth()
+	pu.mutation.SetAgeMonth(i)
+	return pu
+}
+
+// AddAgeMonth adds i to the "age_month" field.
+func (pu *PetUpdate) AddAgeMonth(i int) *PetUpdate {
+	pu.mutation.AddAgeMonth(i)
+	return pu
+}
+
+// SetIsDeleted sets the "is_deleted" field.
+func (pu *PetUpdate) SetIsDeleted(b bool) *PetUpdate {
+	pu.mutation.SetIsDeleted(b)
+	return pu
+}
+
+// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableIsDeleted(b *bool) *PetUpdate {
+	if b != nil {
+		pu.SetIsDeleted(*b)
+	}
+	return pu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (pu *PetUpdate) SetCreatedBy(s string) *PetUpdate {
+	pu.mutation.SetCreatedBy(s)
+	return pu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (pu *PetUpdate) SetUpdatedBy(s string) *PetUpdate {
+	pu.mutation.SetUpdatedBy(s)
+	return pu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableUpdatedBy(s *string) *PetUpdate {
+	if s != nil {
+		pu.SetUpdatedBy(*s)
+	}
+	return pu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (pu *PetUpdate) ClearUpdatedBy() *PetUpdate {
+	pu.mutation.ClearUpdatedBy()
+	return pu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (pu *PetUpdate) SetUpdatedAt(t time.Time) *PetUpdate {
+	pu.mutation.SetUpdatedAt(t)
+	return pu
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableUpdatedAt(t *time.Time) *PetUpdate {
+	if t != nil {
+		pu.SetUpdatedAt(*t)
+	}
+	return pu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (pu *PetUpdate) ClearUpdatedAt() *PetUpdate {
+	pu.mutation.ClearUpdatedAt()
+	return pu
+}
+
 // Mutation returns the PetMutation object of the builder.
 func (pu *PetUpdate) Mutation() *PetMutation {
 	return pu.mutation
@@ -39,12 +131,18 @@ func (pu *PetUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(pu.hooks) == 0 {
+		if err = pu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = pu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pu.check(); err != nil {
+				return 0, err
 			}
 			pu.mutation = mutation
 			affected, err = pu.sqlSave(ctx)
@@ -86,13 +184,43 @@ func (pu *PetUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (pu *PetUpdate) check() error {
+	if v, ok := pu.mutation.Name(); ok {
+		if err := pet.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Pet.name": %w`, err)}
+		}
+	}
+	if v, ok := pu.mutation.GetType(); ok {
+		if err := pet.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Pet.type": %w`, err)}
+		}
+	}
+	if v, ok := pu.mutation.Code(); ok {
+		if err := pet.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Pet.code": %w`, err)}
+		}
+	}
+	if v, ok := pu.mutation.AgeMonth(); ok {
+		if err := pet.AgeMonthValidator(v); err != nil {
+			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
+		}
+	}
+	if v, ok := pu.mutation.CreatedBy(); ok {
+		if err := pet.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   pet.Table,
 			Columns: pet.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pet.FieldID,
 			},
 		},
@@ -103,6 +231,39 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := pu.mutation.Name(); ok {
+		_spec.SetField(pet.FieldName, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.GetType(); ok {
+		_spec.SetField(pet.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := pu.mutation.Code(); ok {
+		_spec.SetField(pet.FieldCode, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.AgeMonth(); ok {
+		_spec.SetField(pet.FieldAgeMonth, field.TypeInt, value)
+	}
+	if value, ok := pu.mutation.AddedAgeMonth(); ok {
+		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
+	}
+	if value, ok := pu.mutation.IsDeleted(); ok {
+		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
+	}
+	if value, ok := pu.mutation.CreatedBy(); ok {
+		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.UpdatedBy(); ok {
+		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
+	}
+	if pu.mutation.UpdatedByCleared() {
+		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := pu.mutation.UpdatedAt(); ok {
+		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if pu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -121,6 +282,97 @@ type PetUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *PetMutation
+}
+
+// SetName sets the "name" field.
+func (puo *PetUpdateOne) SetName(s string) *PetUpdateOne {
+	puo.mutation.SetName(s)
+	return puo
+}
+
+// SetType sets the "type" field.
+func (puo *PetUpdateOne) SetType(pe pet.Type) *PetUpdateOne {
+	puo.mutation.SetType(pe)
+	return puo
+}
+
+// SetCode sets the "code" field.
+func (puo *PetUpdateOne) SetCode(s string) *PetUpdateOne {
+	puo.mutation.SetCode(s)
+	return puo
+}
+
+// SetAgeMonth sets the "age_month" field.
+func (puo *PetUpdateOne) SetAgeMonth(i int) *PetUpdateOne {
+	puo.mutation.ResetAgeMonth()
+	puo.mutation.SetAgeMonth(i)
+	return puo
+}
+
+// AddAgeMonth adds i to the "age_month" field.
+func (puo *PetUpdateOne) AddAgeMonth(i int) *PetUpdateOne {
+	puo.mutation.AddAgeMonth(i)
+	return puo
+}
+
+// SetIsDeleted sets the "is_deleted" field.
+func (puo *PetUpdateOne) SetIsDeleted(b bool) *PetUpdateOne {
+	puo.mutation.SetIsDeleted(b)
+	return puo
+}
+
+// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableIsDeleted(b *bool) *PetUpdateOne {
+	if b != nil {
+		puo.SetIsDeleted(*b)
+	}
+	return puo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (puo *PetUpdateOne) SetCreatedBy(s string) *PetUpdateOne {
+	puo.mutation.SetCreatedBy(s)
+	return puo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (puo *PetUpdateOne) SetUpdatedBy(s string) *PetUpdateOne {
+	puo.mutation.SetUpdatedBy(s)
+	return puo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableUpdatedBy(s *string) *PetUpdateOne {
+	if s != nil {
+		puo.SetUpdatedBy(*s)
+	}
+	return puo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (puo *PetUpdateOne) ClearUpdatedBy() *PetUpdateOne {
+	puo.mutation.ClearUpdatedBy()
+	return puo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (puo *PetUpdateOne) SetUpdatedAt(t time.Time) *PetUpdateOne {
+	puo.mutation.SetUpdatedAt(t)
+	return puo
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableUpdatedAt(t *time.Time) *PetUpdateOne {
+	if t != nil {
+		puo.SetUpdatedAt(*t)
+	}
+	return puo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (puo *PetUpdateOne) ClearUpdatedAt() *PetUpdateOne {
+	puo.mutation.ClearUpdatedAt()
+	return puo
 }
 
 // Mutation returns the PetMutation object of the builder.
@@ -142,12 +394,18 @@ func (puo *PetUpdateOne) Save(ctx context.Context) (*Pet, error) {
 		node *Pet
 	)
 	if len(puo.hooks) == 0 {
+		if err = puo.check(); err != nil {
+			return nil, err
+		}
 		node, err = puo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = puo.check(); err != nil {
+				return nil, err
 			}
 			puo.mutation = mutation
 			node, err = puo.sqlSave(ctx)
@@ -195,13 +453,43 @@ func (puo *PetUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (puo *PetUpdateOne) check() error {
+	if v, ok := puo.mutation.Name(); ok {
+		if err := pet.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Pet.name": %w`, err)}
+		}
+	}
+	if v, ok := puo.mutation.GetType(); ok {
+		if err := pet.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Pet.type": %w`, err)}
+		}
+	}
+	if v, ok := puo.mutation.Code(); ok {
+		if err := pet.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Pet.code": %w`, err)}
+		}
+	}
+	if v, ok := puo.mutation.AgeMonth(); ok {
+		if err := pet.AgeMonthValidator(v); err != nil {
+			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
+		}
+	}
+	if v, ok := puo.mutation.CreatedBy(); ok {
+		if err := pet.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   pet.Table,
 			Columns: pet.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pet.FieldID,
 			},
 		},
@@ -229,6 +517,39 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := puo.mutation.Name(); ok {
+		_spec.SetField(pet.FieldName, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.GetType(); ok {
+		_spec.SetField(pet.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := puo.mutation.Code(); ok {
+		_spec.SetField(pet.FieldCode, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.AgeMonth(); ok {
+		_spec.SetField(pet.FieldAgeMonth, field.TypeInt, value)
+	}
+	if value, ok := puo.mutation.AddedAgeMonth(); ok {
+		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
+	}
+	if value, ok := puo.mutation.IsDeleted(); ok {
+		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
+	}
+	if value, ok := puo.mutation.CreatedBy(); ok {
+		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.UpdatedBy(); ok {
+		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
+	}
+	if puo.mutation.UpdatedByCleared() {
+		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := puo.mutation.UpdatedAt(); ok {
+		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if puo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
 	}
 	_node = &Pet{config: puo.config}
 	_spec.Assign = _node.assignValues

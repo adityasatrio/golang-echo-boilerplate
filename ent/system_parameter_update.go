@@ -60,20 +60,6 @@ func (spu *SystemParameterUpdate) SetCreatedBy(s string) *SystemParameterUpdate 
 	return spu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (spu *SystemParameterUpdate) SetCreatedAt(t time.Time) *SystemParameterUpdate {
-	spu.mutation.SetCreatedAt(t)
-	return spu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (spu *SystemParameterUpdate) SetNillableCreatedAt(t *time.Time) *SystemParameterUpdate {
-	if t != nil {
-		spu.SetCreatedAt(*t)
-	}
-	return spu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (spu *SystemParameterUpdate) SetUpdatedBy(s string) *SystemParameterUpdate {
 	spu.mutation.SetUpdatedBy(s)
@@ -229,9 +215,6 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := spu.mutation.CreatedBy(); ok {
 		_spec.SetField(system_parameter.FieldCreatedBy, field.TypeString, value)
 	}
-	if value, ok := spu.mutation.CreatedAt(); ok {
-		_spec.SetField(system_parameter.FieldCreatedAt, field.TypeTime, value)
-	}
 	if value, ok := spu.mutation.UpdatedBy(); ok {
 		_spec.SetField(system_parameter.FieldUpdatedBy, field.TypeString, value)
 	}
@@ -292,20 +275,6 @@ func (spuo *SystemParameterUpdateOne) SetNillableIsDeleted(b *bool) *SystemParam
 // SetCreatedBy sets the "created_by" field.
 func (spuo *SystemParameterUpdateOne) SetCreatedBy(s string) *SystemParameterUpdateOne {
 	spuo.mutation.SetCreatedBy(s)
-	return spuo
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (spuo *SystemParameterUpdateOne) SetCreatedAt(t time.Time) *SystemParameterUpdateOne {
-	spuo.mutation.SetCreatedAt(t)
-	return spuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (spuo *SystemParameterUpdateOne) SetNillableCreatedAt(t *time.Time) *SystemParameterUpdateOne {
-	if t != nil {
-		spuo.SetCreatedAt(*t)
-	}
 	return spuo
 }
 
@@ -493,9 +462,6 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 	}
 	if value, ok := spuo.mutation.CreatedBy(); ok {
 		_spec.SetField(system_parameter.FieldCreatedBy, field.TypeString, value)
-	}
-	if value, ok := spuo.mutation.CreatedAt(); ok {
-		_spec.SetField(system_parameter.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := spuo.mutation.UpdatedBy(); ok {
 		_spec.SetField(system_parameter.FieldUpdatedBy, field.TypeString, value)

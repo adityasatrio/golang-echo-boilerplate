@@ -4,11 +4,14 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"myapp/ent/pet"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // PetCreate is the builder for creating a Pet entity.
@@ -16,6 +19,106 @@ type PetCreate struct {
 	config
 	mutation *PetMutation
 	hooks    []Hook
+}
+
+// SetName sets the "name" field.
+func (pc *PetCreate) SetName(s string) *PetCreate {
+	pc.mutation.SetName(s)
+	return pc
+}
+
+// SetType sets the "type" field.
+func (pc *PetCreate) SetType(pe pet.Type) *PetCreate {
+	pc.mutation.SetType(pe)
+	return pc
+}
+
+// SetCode sets the "code" field.
+func (pc *PetCreate) SetCode(s string) *PetCreate {
+	pc.mutation.SetCode(s)
+	return pc
+}
+
+// SetAgeMonth sets the "age_month" field.
+func (pc *PetCreate) SetAgeMonth(i int) *PetCreate {
+	pc.mutation.SetAgeMonth(i)
+	return pc
+}
+
+// SetIsDeleted sets the "is_deleted" field.
+func (pc *PetCreate) SetIsDeleted(b bool) *PetCreate {
+	pc.mutation.SetIsDeleted(b)
+	return pc
+}
+
+// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
+func (pc *PetCreate) SetNillableIsDeleted(b *bool) *PetCreate {
+	if b != nil {
+		pc.SetIsDeleted(*b)
+	}
+	return pc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (pc *PetCreate) SetCreatedBy(s string) *PetCreate {
+	pc.mutation.SetCreatedBy(s)
+	return pc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (pc *PetCreate) SetCreatedAt(t time.Time) *PetCreate {
+	pc.mutation.SetCreatedAt(t)
+	return pc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pc *PetCreate) SetNillableCreatedAt(t *time.Time) *PetCreate {
+	if t != nil {
+		pc.SetCreatedAt(*t)
+	}
+	return pc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (pc *PetCreate) SetUpdatedBy(s string) *PetCreate {
+	pc.mutation.SetUpdatedBy(s)
+	return pc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (pc *PetCreate) SetNillableUpdatedBy(s *string) *PetCreate {
+	if s != nil {
+		pc.SetUpdatedBy(*s)
+	}
+	return pc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (pc *PetCreate) SetUpdatedAt(t time.Time) *PetCreate {
+	pc.mutation.SetUpdatedAt(t)
+	return pc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (pc *PetCreate) SetNillableUpdatedAt(t *time.Time) *PetCreate {
+	if t != nil {
+		pc.SetUpdatedAt(*t)
+	}
+	return pc
+}
+
+// SetID sets the "id" field.
+func (pc *PetCreate) SetID(u uuid.UUID) *PetCreate {
+	pc.mutation.SetID(u)
+	return pc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (pc *PetCreate) SetNillableID(u *uuid.UUID) *PetCreate {
+	if u != nil {
+		pc.SetID(*u)
+	}
+	return pc
 }
 
 // Mutation returns the PetMutation object of the builder.
@@ -29,6 +132,7 @@ func (pc *PetCreate) Save(ctx context.Context) (*Pet, error) {
 		err  error
 		node *Pet
 	)
+	pc.defaults()
 	if len(pc.hooks) == 0 {
 		if err = pc.check(); err != nil {
 			return nil, err
@@ -92,8 +196,74 @@ func (pc *PetCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (pc *PetCreate) defaults() {
+	if _, ok := pc.mutation.IsDeleted(); !ok {
+		v := pet.DefaultIsDeleted
+		pc.mutation.SetIsDeleted(v)
+	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		v := pet.DefaultCreatedAt
+		pc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := pc.mutation.UpdatedAt(); !ok {
+		v := pet.DefaultUpdatedAt
+		pc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := pc.mutation.ID(); !ok {
+		v := pet.DefaultID()
+		pc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (pc *PetCreate) check() error {
+	if _, ok := pc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Pet.name"`)}
+	}
+	if v, ok := pc.mutation.Name(); ok {
+		if err := pet.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Pet.name": %w`, err)}
+		}
+	}
+	if _, ok := pc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Pet.type"`)}
+	}
+	if v, ok := pc.mutation.GetType(); ok {
+		if err := pet.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Pet.type": %w`, err)}
+		}
+	}
+	if _, ok := pc.mutation.Code(); !ok {
+		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Pet.code"`)}
+	}
+	if v, ok := pc.mutation.Code(); ok {
+		if err := pet.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Pet.code": %w`, err)}
+		}
+	}
+	if _, ok := pc.mutation.AgeMonth(); !ok {
+		return &ValidationError{Name: "age_month", err: errors.New(`ent: missing required field "Pet.age_month"`)}
+	}
+	if v, ok := pc.mutation.AgeMonth(); ok {
+		if err := pet.AgeMonthValidator(v); err != nil {
+			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
+		}
+	}
+	if _, ok := pc.mutation.IsDeleted(); !ok {
+		return &ValidationError{Name: "is_deleted", err: errors.New(`ent: missing required field "Pet.is_deleted"`)}
+	}
+	if _, ok := pc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Pet.created_by"`)}
+	}
+	if v, ok := pc.mutation.CreatedBy(); ok {
+		if err := pet.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
+		}
+	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Pet.created_at"`)}
+	}
 	return nil
 }
 
@@ -105,8 +275,13 @@ func (pc *PetCreate) sqlSave(ctx context.Context) (*Pet, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	return _node, nil
 }
 
@@ -116,11 +291,51 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: pet.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: pet.FieldID,
 			},
 		}
 	)
+	if id, ok := pc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
+	}
+	if value, ok := pc.mutation.Name(); ok {
+		_spec.SetField(pet.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := pc.mutation.GetType(); ok {
+		_spec.SetField(pet.FieldType, field.TypeEnum, value)
+		_node.Type = value
+	}
+	if value, ok := pc.mutation.Code(); ok {
+		_spec.SetField(pet.FieldCode, field.TypeString, value)
+		_node.Code = value
+	}
+	if value, ok := pc.mutation.AgeMonth(); ok {
+		_spec.SetField(pet.FieldAgeMonth, field.TypeInt, value)
+		_node.AgeMonth = value
+	}
+	if value, ok := pc.mutation.IsDeleted(); ok {
+		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
+		_node.IsDeleted = value
+	}
+	if value, ok := pc.mutation.CreatedBy(); ok {
+		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := pc.mutation.CreatedAt(); ok {
+		_spec.SetField(pet.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := pc.mutation.UpdatedBy(); ok {
+		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
+	}
+	if value, ok := pc.mutation.UpdatedAt(); ok {
+		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
 	return _node, _spec
 }
 
@@ -138,6 +353,7 @@ func (pcb *PetCreateBulk) Save(ctx context.Context) ([]*Pet, error) {
 	for i := range pcb.builders {
 		func(i int, root context.Context) {
 			builder := pcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PetMutation)
 				if !ok {
@@ -164,10 +380,6 @@ func (pcb *PetCreateBulk) Save(ctx context.Context) ([]*Pet, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

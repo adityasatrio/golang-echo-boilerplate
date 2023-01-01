@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"myapp/helper"
 )
 
@@ -19,14 +20,16 @@ func (System_parameter) Fields() []ent.Field {
 	}
 
 	return helper.InitBaseSchema(schema)
-
-	/*return []ent.Field{
-		field.String("key").NotEmpty().Unique(),
-		field.String("value").NotEmpty(),
-	}*/
 }
 
 // Edges of the System_parameter.
 func (System_parameter) Edges() []ent.Edge {
 	return nil
+}
+
+func (System_parameter) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("key"),
+		index.Fields("value"),
+	}
 }
