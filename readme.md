@@ -21,9 +21,9 @@
 
 ### Todo
 - [x] create clean code structure
-- [x] create interface
-- [x] create manual DI
-- [x] implement repository + database connection using ent
+- [x] create interface with example domains system param
+- [x] create manual DI on hello worlds example domains
+- [x] implement repository + database connection using ent in system param example domains t 
 - [x] implement error handling
 - [x] implement DI google wire
 - [ ] implement cache https://github.com/eko/gocache#a-chained-cache
