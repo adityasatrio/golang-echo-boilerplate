@@ -28,6 +28,7 @@
 - [x] implement DI google wire
 - [ ] implement cache https://github.com/eko/gocache#a-chained-cache
 - [ ] implement outbound http calls
+- [ ] transaction examples
 - [ ] implement migration files 
 - [ ] implement test
 - [ ] implement pub sub libs intergation

@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"myapp/helper"
 )
 
 // System_parameter holds the schema definition for the System_parameter entity.
@@ -12,17 +13,17 @@ type System_parameter struct {
 
 // Fields of the System_parameter.
 func (System_parameter) Fields() []ent.Field {
-	/*schema := []ent.Field{
+	schema := []ent.Field{
 		field.String("key").NotEmpty().Unique(),
 		field.String("value").NotEmpty(),
 	}
 
-	return schema.InitBaseSchema(schema)*/
+	return helper.InitBaseSchema(schema)
 
-	return []ent.Field{
+	/*return []ent.Field{
 		field.String("key").NotEmpty().Unique(),
 		field.String("value").NotEmpty(),
-	}
+	}*/
 }
 
 // Edges of the System_parameter.
