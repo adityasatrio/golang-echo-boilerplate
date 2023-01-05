@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/eko/gocache/lib/v4/cache"
 	"myapp/ent"
 	"myapp/exceptions"
 	"myapp/internal/applications/system_parameter/dto"
@@ -10,11 +11,13 @@ import (
 
 type SystemParameterServiceImpl struct {
 	repository db.SystemParameterRepository
+	cache      *cache.ChainCache[any]
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository) *SystemParameterServiceImpl {
+func NewSystemParameterService(repository db.SystemParameterRepository, cache *cache.ChainCache[any]) *SystemParameterServiceImpl {
 	return &SystemParameterServiceImpl{
 		repository: repository,
+		cache:      cache,
 	}
 }
 

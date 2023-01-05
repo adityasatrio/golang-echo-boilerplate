@@ -19,7 +19,7 @@
   - Good tutorial for getting started with example [tutorial google DI with google wire](https://clavinjune.dev/en/blogs/golang-dependency-injection-using-wire/)
   - [Video references from PZN - golang DI with google wire](https://www.youtube.com/watch?v=dZ8Ir4Gc8D0&list=PL-CtdCApEFH-0i9dzMzLw6FKVrFWv3QvQ&index=14)
 
-### Todo
+## Todo
 - [x] create clean code structure
 - [x] create interface with example domains system param
 - [x] create manual DI on hello worlds example domains
@@ -35,21 +35,19 @@
 - [ ] integrate swagger or API docs
 - [ ] dockerize project
 
-### Running apps
+## Running apps
+### Run Apps
 ```
 go mod tidy
 go run cmd/main.go
 ```
-</br>
-
 ### Build Apps
 ```
 go build cmd/main.go
 ./main
 ```
-</br>
 
-### ORM
+## ORM
 Create model schema using ent:
 1. Get dependency for golang ent 
 ```
@@ -66,7 +64,7 @@ go generate ./ent
 ```
 </br>
 
-### Dependency Injection
+## Dependency Injection
 1. Install google wire CLI
 ```
 go install github.com/google/wire/cmd/wire@latest
@@ -74,3 +72,13 @@ go install github.com/google/wire/cmd/wire@latest
 2. Add wire on your $PATH, so we can use wire CLI on every project
 3. Create {domains}_injector.go in your feature directory
 4. Run wire on the same directory of your injector file 
+
+## Others
+
+### Gobrew
+Using go brew for manage your golang version : [link](https://medium.com/web-developer/go-version-manager-gobrew-c8750157dfe6)
+```
+gobrew ls-remote
+gobrew use 1.19
+```
+

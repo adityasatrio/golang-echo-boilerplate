@@ -1,6 +1,7 @@
 package rest_api
 
 import (
+	"github.com/eko/gocache/lib/v4/cache"
 	"github.com/labstack/echo/v4"
 	"myapp/ent"
 	helloController "myapp/internal/applications/hello_worlds/controller"
@@ -10,17 +11,17 @@ import (
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
 )
 
-func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
+func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, cacheManager *cache.ChainCache[any]) {
 
 	//manual injection
-	helloWorldsRepository := repository.NewHelloWorldsRepository(connection)
+	helloWorldsRepository := repository.NewHelloWorldsRepository(connDb)
 	helloWorldsService := service.NewHelloWorldsService(helloWorldsRepository)
 	helloController.
 		NewHelloWorldsController(helloWorldsService).
 		AddRoutes(e)
 
 	//injection using code gen - google wire
-	SystemParameterService := system_parameter.InitializedSystemParameterService(connection)
+	SystemParameterService := system_parameter.InitializedSystemParameterService(connDb, cacheManager)
 	systemParameterController.NewSystemParameterController(SystemParameterService).
 		AddRoutes(e)
 

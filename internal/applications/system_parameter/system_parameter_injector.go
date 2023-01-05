@@ -4,6 +4,7 @@
 package system_parameter
 
 import (
+	"github.com/eko/gocache/lib/v4/cache"
 	"github.com/google/wire"
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/repository/db"
@@ -17,7 +18,7 @@ var providerSetSystemParameter = wire.NewSet(
 	wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)),
 )
 
-func InitializedSystemParameterService(dbClient *ent.Client) *service.SystemParameterServiceImpl {
+func InitializedSystemParameterService(dbClient *ent.Client, cacheManager *cache.ChainCache[any]) *service.SystemParameterServiceImpl {
 	wire.Build(providerSetSystemParameter)
 	return nil
 }

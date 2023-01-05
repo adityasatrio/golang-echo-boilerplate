@@ -7,6 +7,7 @@
 package system_parameter
 
 import (
+	"github.com/eko/gocache/lib/v4/cache"
 	"github.com/google/wire"
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/repository/db"
@@ -15,9 +16,9 @@ import (
 
 // Injectors from system_parameter_injector.go:
 
-func InitializedSystemParameterService(dbClient *ent.Client) *service.SystemParameterServiceImpl {
+func InitializedSystemParameterService(dbClient *ent.Client, cacheManager *cache.ChainCache[any]) *service.SystemParameterServiceImpl {
 	systemParameterRepositoryImpl := db.NewSystemParameterRepository(dbClient)
-	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl)
+	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl, cacheManager)
 	return systemParameterServiceImpl
 }
 
