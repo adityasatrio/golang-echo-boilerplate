@@ -1,19 +1,20 @@
 package schema
 
 import (
+	"encoding/json"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"myapp/helper"
 )
 
-// System_parameter holds the schema definition for the System_parameter entity.
-type System_parameter struct {
+// SystemParameter holds the schema definition for the SystemParameter entity.
+type SystemParameter struct {
 	ent.Schema
 }
 
-// Fields of the System_parameter.
-func (System_parameter) Fields() []ent.Field {
+// Fields of the SystemParameter.
+func (SystemParameter) Fields() []ent.Field {
 	schema := []ent.Field{
 		field.String("key").NotEmpty().Unique(),
 		field.String("value").NotEmpty(),
@@ -22,14 +23,36 @@ func (System_parameter) Fields() []ent.Field {
 	return helper.InitBaseSchema(schema)
 }
 
-// Edges of the System_parameter.
-func (System_parameter) Edges() []ent.Edge {
+// Edges of the SystemParameter.
+func (SystemParameter) Edges() []ent.Edge {
 	return nil
 }
 
-func (System_parameter) Indexes() []ent.Index {
+func (SystemParameter) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("key"),
 		index.Fields("value"),
 	}
 }
+
+func (s *SystemParameter) MarshalBinary() ([]byte, error) {
+	return json.Marshal(s)
+	//return msgpack.Marshal(s)
+	/*r, err := msgpack.Marshal((*[]CacheValue)(s))
+	if err != nil {
+		log.Fatal("MarshalBinary", err)
+	}
+
+	return r, nil*/
+}
+
+//func (s *SystemParameter) UnmarshalBinary(data []byte) error {
+//	return json.Unmarshal(data, &s)
+//	//return msgpack.Unmarshal(data, s)
+//	/*err := msgpack.Unmarshal(data, (*[]CacheValue)(s))
+//	if err != nil {
+//		log.Fatal("UnmarshalBinary", err)
+//	}
+//
+//	return err*/
+//}

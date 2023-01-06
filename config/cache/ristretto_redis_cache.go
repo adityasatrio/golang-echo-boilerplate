@@ -6,12 +6,10 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/eko/gocache/lib/v4/cache"
 	"github.com/eko/gocache/lib/v4/store"
-	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
-	"log"
-
 	redisStore "github.com/eko/gocache/store/redis/v4"
 	"github.com/go-redis/redis/v8"
+	"github.com/spf13/viper"
+	"log"
 	"time"
 
 	ristrettoStore "github.com/eko/gocache/store/ristretto/v4"
@@ -19,7 +17,7 @@ import (
 
 const RistrettoDefaultBufferItems = 64
 
-func NewCacheManager(e *echo.Echo) *cache.ChainCache[any] {
+func NewCacheManager() *cache.ChainCache[any] {
 
 	ristrettoNumCounters := viper.GetInt64("cache.config.ristretto.numCounters")
 	ristrettoMaxCost := viper.GetInt64("cache.config.ristretto.maxCost")

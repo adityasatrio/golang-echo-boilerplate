@@ -57,4 +57,6 @@ func setDefaultKeys() {
 	viper.SetDefault("cache.config.redis.host", "127.0.0.1")
 	viper.SetDefault("cache.config.redis.port", 6379)
 
+	log.Default().Println("initialized default config value : success", viper.AllSettings())
+
 }

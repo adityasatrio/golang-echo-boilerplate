@@ -11,7 +11,7 @@ import (
 	"myapp/ent/migrate"
 
 	"myapp/ent/pet"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
 	"myapp/ent/user"
 
 	"entgo.io/ent/dialect"
@@ -26,8 +26,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
-	// System_parameter is the client for interacting with the System_parameter builders.
-	System_parameter *System_parameterClient
+	// SystemParameter is the client for interacting with the SystemParameter builders.
+	SystemParameter *SystemParameterClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -44,7 +44,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Pet = NewPetClient(c.config)
-	c.System_parameter = NewSystem_parameterClient(c.config)
+	c.SystemParameter = NewSystemParameterClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -77,11 +77,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		Pet:             NewPetClient(cfg),
+		SystemParameter: NewSystemParameterClient(cfg),
+		User:            NewUserClient(cfg),
 	}, nil
 }
 
@@ -99,11 +99,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		Pet:             NewPetClient(cfg),
+		SystemParameter: NewSystemParameterClient(cfg),
+		User:            NewUserClient(cfg),
 	}, nil
 }
 
@@ -113,7 +113,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 //		Pet.
 //		Query().
 //		Count(ctx)
-//
 func (c *Client) Debug() *Client {
 	if c.debug {
 		return c
@@ -134,7 +133,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Pet.Use(hooks...)
-	c.System_parameter.Use(hooks...)
+	c.SystemParameter.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -228,84 +227,84 @@ func (c *PetClient) Hooks() []Hook {
 	return c.hooks.Pet
 }
 
-// System_parameterClient is a client for the System_parameter schema.
-type System_parameterClient struct {
+// SystemParameterClient is a client for the SystemParameter schema.
+type SystemParameterClient struct {
 	config
 }
 
-// NewSystem_parameterClient returns a client for the System_parameter from the given config.
-func NewSystem_parameterClient(c config) *System_parameterClient {
-	return &System_parameterClient{config: c}
+// NewSystemParameterClient returns a client for the SystemParameter from the given config.
+func NewSystemParameterClient(c config) *SystemParameterClient {
+	return &SystemParameterClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `system_parameter.Hooks(f(g(h())))`.
-func (c *System_parameterClient) Use(hooks ...Hook) {
-	c.hooks.System_parameter = append(c.hooks.System_parameter, hooks...)
+// A call to `Use(f, g, h)` equals to `systemparameter.Hooks(f(g(h())))`.
+func (c *SystemParameterClient) Use(hooks ...Hook) {
+	c.hooks.SystemParameter = append(c.hooks.SystemParameter, hooks...)
 }
 
-// Create returns a builder for creating a System_parameter entity.
-func (c *System_parameterClient) Create() *SystemParameterCreate {
+// Create returns a builder for creating a SystemParameter entity.
+func (c *SystemParameterClient) Create() *SystemParameterCreate {
 	mutation := newSystemParameterMutation(c.config, OpCreate)
 	return &SystemParameterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of System_parameter entities.
-func (c *System_parameterClient) CreateBulk(builders ...*SystemParameterCreate) *SystemParameterCreateBulk {
+// CreateBulk returns a builder for creating a bulk of SystemParameter entities.
+func (c *SystemParameterClient) CreateBulk(builders ...*SystemParameterCreate) *SystemParameterCreateBulk {
 	return &SystemParameterCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for System_parameter.
-func (c *System_parameterClient) Update() *SystemParameterUpdate {
+// Update returns an update builder for SystemParameter.
+func (c *SystemParameterClient) Update() *SystemParameterUpdate {
 	mutation := newSystemParameterMutation(c.config, OpUpdate)
 	return &SystemParameterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *System_parameterClient) UpdateOne(sp *System_parameter) *SystemParameterUpdateOne {
-	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystem_parameter(sp))
+func (c *SystemParameterClient) UpdateOne(sp *SystemParameter) *SystemParameterUpdateOne {
+	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystemParameter(sp))
 	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *System_parameterClient) UpdateOneID(id int) *SystemParameterUpdateOne {
-	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystem_parameterID(id))
+func (c *SystemParameterClient) UpdateOneID(id int) *SystemParameterUpdateOne {
+	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystemParameterID(id))
 	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for System_parameter.
-func (c *System_parameterClient) Delete() *SystemParameterDelete {
+// Delete returns a delete builder for SystemParameter.
+func (c *SystemParameterClient) Delete() *SystemParameterDelete {
 	mutation := newSystemParameterMutation(c.config, OpDelete)
 	return &SystemParameterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *System_parameterClient) DeleteOne(sp *System_parameter) *SystemParameterDeleteOne {
+func (c *SystemParameterClient) DeleteOne(sp *SystemParameter) *SystemParameterDeleteOne {
 	return c.DeleteOneID(sp.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *System_parameterClient) DeleteOneID(id int) *SystemParameterDeleteOne {
-	builder := c.Delete().Where(system_parameter.ID(id))
+func (c *SystemParameterClient) DeleteOneID(id int) *SystemParameterDeleteOne {
+	builder := c.Delete().Where(systemparameter.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
 	return &SystemParameterDeleteOne{builder}
 }
 
-// Query returns a query builder for System_parameter.
-func (c *System_parameterClient) Query() *SystemParameterQuery {
+// Query returns a query builder for SystemParameter.
+func (c *SystemParameterClient) Query() *SystemParameterQuery {
 	return &SystemParameterQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a System_parameter entity by its id.
-func (c *System_parameterClient) Get(ctx context.Context, id int) (*System_parameter, error) {
-	return c.Query().Where(system_parameter.ID(id)).Only(ctx)
+// Get returns a SystemParameter entity by its id.
+func (c *SystemParameterClient) Get(ctx context.Context, id int) (*SystemParameter, error) {
+	return c.Query().Where(systemparameter.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *System_parameterClient) GetX(ctx context.Context, id int) *System_parameter {
+func (c *SystemParameterClient) GetX(ctx context.Context, id int) *SystemParameter {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -314,8 +313,8 @@ func (c *System_parameterClient) GetX(ctx context.Context, id int) *System_param
 }
 
 // Hooks returns the client hooks.
-func (c *System_parameterClient) Hooks() []Hook {
-	return c.hooks.System_parameter
+func (c *SystemParameterClient) Hooks() []Hook {
+	return c.hooks.SystemParameter
 }
 
 // UserClient is a client for the User schema.

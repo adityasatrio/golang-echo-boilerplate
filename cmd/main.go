@@ -29,7 +29,7 @@ func main() {
 			log.Fatal("error when closed DB connection")
 		}
 	}(dbConnection)
-	cacheManager := cache.NewCacheManager(e)
+	cacheManager := cache.NewCacheManager()
 
 	restApi.SetupRouteHandler(e, dbConnection, cacheManager)
 
