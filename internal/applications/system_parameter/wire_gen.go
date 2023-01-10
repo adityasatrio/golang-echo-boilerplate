@@ -12,16 +12,18 @@ import (
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/repository/db"
 	"myapp/internal/applications/system_parameter/service"
+	cache2 "myapp/shared/cache"
 )
 
 // Injectors from system_parameter_injector.go:
 
 func InitializedSystemParameterService(dbClient *ent.Client, cacheManager *cache.ChainCache[any]) *service.SystemParameterServiceImpl {
 	systemParameterRepositoryImpl := db.NewSystemParameterRepository(dbClient)
-	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl, cacheManager)
+	cacheManagerImpl := cache2.NewCacheManager(cacheManager)
+	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl, cacheManagerImpl)
 	return systemParameterServiceImpl
 }
 
 // system_parameter_injector.go:
 
-var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)))
+var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, cache2.NewCacheManager, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)), wire.Bind(new(cache2.CacheManager), new(*cache2.CacheManagerImpl)))

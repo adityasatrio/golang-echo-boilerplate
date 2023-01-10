@@ -2,23 +2,21 @@ package service
 
 import (
 	"context"
-	"github.com/eko/gocache/lib/v4/cache"
-	"github.com/eko/gocache/lib/v4/store"
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
 	"myapp/helper"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository/db"
-	"time"
+	"myapp/shared/cache"
 )
 
 type SystemParameterServiceImpl struct {
 	repository db.SystemParameterRepository
-	cache      *cache.ChainCache[any]
+	cache      cache.CacheManager
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository, cache *cache.ChainCache[any]) *SystemParameterServiceImpl {
+func NewSystemParameterService(repository db.SystemParameterRepository, cache cache.CacheManager) *SystemParameterServiceImpl {
 	return &SystemParameterServiceImpl{
 		repository: repository,
 		cache:      cache,
@@ -42,10 +40,14 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 	}
 
 	key := helper.CacheKey(result, nil)
+	s.cache.Set(ctx, key, &cache.CacheValue{SystemParameter: result}, 30000)
 	//err = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
-	//err = s.cache.Set(ctx, key, &caching.CacheValue{SystemParameter: result}, store.WithExpiration(5*time.Minute))
-	err = s.cache.Set(ctx, key, &result, store.WithExpiration(5*time.Minute))
-	log.Info("cache error", err)
+	//err = s.cache.Set(ctx, key, &cache2.CacheValue{Value: result}, store.WithExpiration(5*time.Minute))
+	//err = s.cache.Set(ctx, key, &cache2.CacheValue{SystemParameter: result}, store.WithExpiration(5*time.Minute))
+
+	//err = s.cache.Set(ctx, key, &cache2.CacheValue{SystemParameter: result}, store.WithExpiration(5*time.Minute))
+	//err = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
+	log.Info("cache error ", err)
 	return result, nil
 }
 
@@ -91,10 +93,9 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 
 	key := helper.CacheKey(ent.SystemParameter{ID: id}, nil)
-	existCached, _ := s.cache.Get(ctx, key)
+	existCached, err := s.cache.Get(ctx, key)
 	if existCached != nil {
-		castedResult := existCached.(*ent.SystemParameter)
-		return castedResult, nil
+		return existCached.SystemParameter, nil
 	}
 
 	result, err := s.repository.GetById(ctx, id)
@@ -107,18 +108,18 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
 
-	key := helper.CacheKey(ent.SystemParameter{ID: -1}, nil)
-	existCached, _ := s.cache.Get(ctx, key)
-	if existCached != nil {
+	//key := helper.CacheKey(ent.SystemParameter{ID: -1}, nil)
+	//existCached, _ := s.cache.Get(ctx, key)
+	/*if existCached != nil {
 		castedResult := existCached.([]*ent.SystemParameter)
 		return castedResult, nil
-	}
+	}*/
 
 	result, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
 
-	_ = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
+	//_ = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
 	return result, nil
 }
