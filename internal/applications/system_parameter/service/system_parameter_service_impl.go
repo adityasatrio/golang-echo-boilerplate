@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
 	"myapp/helper"
@@ -40,14 +39,14 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 	}
 
 	key := helper.CacheKey(result, nil)
-	s.cache.Set(ctx, key, &cache.CacheValue{SystemParameter: result}, 30000)
-	//err = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
+	//s.cache.Set(ctx, key, &cache.CacheValue{SystemParameter: result}, 30000)
+	s.cache.Set(ctx, key, result, 1)
 	//err = s.cache.Set(ctx, key, &cache2.CacheValue{Value: result}, store.WithExpiration(5*time.Minute))
 	//err = s.cache.Set(ctx, key, &cache2.CacheValue{SystemParameter: result}, store.WithExpiration(5*time.Minute))
 
 	//err = s.cache.Set(ctx, key, &cache2.CacheValue{SystemParameter: result}, store.WithExpiration(5*time.Minute))
 	//err = s.cache.Set(ctx, key, result, store.WithExpiration(5*time.Minute))
-	log.Info("cache error ", err)
+	//log.Info("cache error ", err)
 	return result, nil
 }
 
@@ -93,17 +92,18 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 
 	key := helper.CacheKey(ent.SystemParameter{ID: id}, nil)
-	existCached, err := s.cache.Get(ctx, key)
+	existCached, _ := s.cache.Get(ctx, key)
 	if existCached != nil {
-		return existCached.SystemParameter, nil
+		//return existCached.SystemParameter, nil
+		return existCached.(*ent.SystemParameter), nil
 	}
 
-	result, err := s.repository.GetById(ctx, id)
+	/*result, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-	}
+	}*/
 
-	return result, nil
+	return nil, nil
 }
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {

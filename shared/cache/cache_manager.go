@@ -5,6 +5,6 @@ import (
 )
 
 type CacheManager interface {
-	Set(ctx context.Context, key string, value *CacheValue, ttlInSecond int)
-	Get(ctx context.Context, key string) (*CacheValue, error)
+	Set(ctx context.Context, key string, value any, ttlInSecond int)
+	Get(ctx context.Context, key string) (any, error)
 }
