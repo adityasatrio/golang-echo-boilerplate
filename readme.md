@@ -29,10 +29,14 @@
 - [ ] implement cache https://github.com/eko/gocache#a-chained-cache
 - [ ] implement outbound http calls
 - [ ] transaction examples
+  - https://entgo.io/docs/transactions
 - [ ] implement migration files 
-- [ ] implement test
+  - https://entgo.io/docs/data-migrations 
+  - https://atlasgo.io/ 
+- [ ] implement test 
 - [ ] implement pub sub libs intergation
-- [ ] integrate swagger or API docs
+- [ ] integrate swagger or API docs 
+  - https://github.com/swaggo/echo-swagger
 - [ ] dockerize project
 
 ### Running apps
