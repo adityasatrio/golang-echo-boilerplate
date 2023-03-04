@@ -36,7 +36,7 @@
 - [ ] implement test 
 - [ ] implement logger
 - [ ] integrate live reload
-- [ ] implement pub sub libs intergation
+- [ ] implement pub sub libs integration
 - [ ] integrate swagger or API docs 
   - https://github.com/swaggo/echo-swagger
 - [ ] dockerize project
