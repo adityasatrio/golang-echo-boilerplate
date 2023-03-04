@@ -39,6 +39,23 @@ var (
 			},
 		},
 	}
+	// PostsColumns holds the columns for the "posts" table.
+	PostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "content", Type: field.TypeString},
+		{Name: "slug", Type: field.TypeString},
+		{Name: "status", Type: field.TypeInt},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+	}
+	// PostsTable holds the schema information for the "posts" table.
+	PostsTable = &schema.Table{
+		Name:       "posts",
+		Columns:    PostsColumns,
+		PrimaryKey: []*schema.Column{PostsColumns[0]},
+	}
 	// SystemParametersColumns holds the columns for the "system_parameters" table.
 	SystemParametersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -106,6 +123,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		PetsTable,
+		PostsTable,
 		SystemParametersTable,
 		UsersTable,
 	}

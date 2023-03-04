@@ -117,7 +117,7 @@ func (sp *System_parameter) assignValues(columns []string, values []any) error {
 // Note that you need to call System_parameter.Unwrap() before calling this method if this System_parameter
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (sp *System_parameter) Update() *SystemParameterUpdateOne {
-	return (&System_parameterClient{config: sp.config}).UpdateOne(sp)
+	return NewSystemParameterClient(sp.config).UpdateOne(sp)
 }
 
 // Unwrap unwraps the System_parameter entity that was returned from a transaction after it was closed,
@@ -125,7 +125,7 @@ func (sp *System_parameter) Update() *SystemParameterUpdateOne {
 func (sp *System_parameter) Unwrap() *System_parameter {
 	_tx, ok := sp.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: System_parameter is not a transactional entity")
+		panic("ent: System_parameter is not a transaction entity")
 	}
 	sp.config.driver = _tx.drv
 	return sp
@@ -162,9 +162,3 @@ func (sp *System_parameter) String() string {
 
 // System_parameters is a parsable slice of System_parameter.
 type System_parameters []*System_parameter
-
-func (sp System_parameters) config(cfg config) {
-	for _i := range sp {
-		sp[_i].config = cfg
-	}
-}

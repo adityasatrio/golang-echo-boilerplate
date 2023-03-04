@@ -17,11 +17,9 @@ import (
 // SystemParameterQuery is the builder for querying System_parameter entities.
 type SystemParameterQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
+	ctx        *QueryContext
 	order      []OrderFunc
-	fields     []string
+	inters     []Interceptor
 	predicates []predicate.System_parameter
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -34,26 +32,26 @@ func (spq *SystemParameterQuery) Where(ps ...predicate.System_parameter) *System
 	return spq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (spq *SystemParameterQuery) Limit(limit int) *SystemParameterQuery {
-	spq.limit = &limit
+	spq.ctx.Limit = &limit
 	return spq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (spq *SystemParameterQuery) Offset(offset int) *SystemParameterQuery {
-	spq.offset = &offset
+	spq.ctx.Offset = &offset
 	return spq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (spq *SystemParameterQuery) Unique(unique bool) *SystemParameterQuery {
-	spq.unique = &unique
+	spq.ctx.Unique = &unique
 	return spq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (spq *SystemParameterQuery) Order(o ...OrderFunc) *SystemParameterQuery {
 	spq.order = append(spq.order, o...)
 	return spq
@@ -62,7 +60,7 @@ func (spq *SystemParameterQuery) Order(o ...OrderFunc) *SystemParameterQuery {
 // First returns the first System_parameter entity from the query.
 // Returns a *NotFoundError when no System_parameter was found.
 func (spq *SystemParameterQuery) First(ctx context.Context) (*System_parameter, error) {
-	nodes, err := spq.Limit(1).All(ctx)
+	nodes, err := spq.Limit(1).All(setContextOp(ctx, spq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +83,7 @@ func (spq *SystemParameterQuery) FirstX(ctx context.Context) *System_parameter {
 // Returns a *NotFoundError when no System_parameter ID was found.
 func (spq *SystemParameterQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = spq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = spq.Limit(1).IDs(setContextOp(ctx, spq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +106,7 @@ func (spq *SystemParameterQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one System_parameter entity is found.
 // Returns a *NotFoundError when no System_parameter entities are found.
 func (spq *SystemParameterQuery) Only(ctx context.Context) (*System_parameter, error) {
-	nodes, err := spq.Limit(2).All(ctx)
+	nodes, err := spq.Limit(2).All(setContextOp(ctx, spq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +134,7 @@ func (spq *SystemParameterQuery) OnlyX(ctx context.Context) *System_parameter {
 // Returns a *NotFoundError when no entities are found.
 func (spq *SystemParameterQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = spq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = spq.Limit(2).IDs(setContextOp(ctx, spq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,10 +159,12 @@ func (spq *SystemParameterQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of System_parameters.
 func (spq *SystemParameterQuery) All(ctx context.Context) ([]*System_parameter, error) {
+	ctx = setContextOp(ctx, spq.ctx, "All")
 	if err := spq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return spq.sqlAll(ctx)
+	qr := querierAll[[]*System_parameter, *SystemParameterQuery]()
+	return withInterceptors[[]*System_parameter](ctx, spq, qr, spq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -177,9 +177,12 @@ func (spq *SystemParameterQuery) AllX(ctx context.Context) []*System_parameter {
 }
 
 // IDs executes the query and returns a list of System_parameter IDs.
-func (spq *SystemParameterQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
-	if err := spq.Select(system_parameter.FieldID).Scan(ctx, &ids); err != nil {
+func (spq *SystemParameterQuery) IDs(ctx context.Context) (ids []int, err error) {
+	if spq.ctx.Unique == nil && spq.path != nil {
+		spq.Unique(true)
+	}
+	ctx = setContextOp(ctx, spq.ctx, "IDs")
+	if err = spq.Select(system_parameter.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -196,10 +199,11 @@ func (spq *SystemParameterQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (spq *SystemParameterQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, spq.ctx, "Count")
 	if err := spq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return spq.sqlCount(ctx)
+	return withInterceptors[int](ctx, spq, querierCount[*SystemParameterQuery](), spq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -213,10 +217,15 @@ func (spq *SystemParameterQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (spq *SystemParameterQuery) Exist(ctx context.Context) (bool, error) {
-	if err := spq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = setContextOp(ctx, spq.ctx, "Exist")
+	switch _, err := spq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return spq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -236,14 +245,13 @@ func (spq *SystemParameterQuery) Clone() *SystemParameterQuery {
 	}
 	return &SystemParameterQuery{
 		config:     spq.config,
-		limit:      spq.limit,
-		offset:     spq.offset,
+		ctx:        spq.ctx.Clone(),
 		order:      append([]OrderFunc{}, spq.order...),
+		inters:     append([]Interceptor{}, spq.inters...),
 		predicates: append([]predicate.System_parameter{}, spq.predicates...),
 		// clone intermediate query.
-		sql:    spq.sql.Clone(),
-		path:   spq.path,
-		unique: spq.unique,
+		sql:  spq.sql.Clone(),
+		path: spq.path,
 	}
 }
 
@@ -261,18 +269,12 @@ func (spq *SystemParameterQuery) Clone() *SystemParameterQuery {
 //		GroupBy(system_parameter.FieldKey).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *SystemParameterGroupBy {
-	grbuild := &SystemParameterGroupBy{config: spq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return spq.sqlQuery(ctx), nil
-	}
+	spq.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &SystemParameterGroupBy{build: spq}
+	grbuild.flds = &spq.ctx.Fields
 	grbuild.label = system_parameter.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -288,13 +290,12 @@ func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *System
 //	client.SystemParameter.Query().
 //		Select(system_parameter.FieldKey).
 //		Scan(ctx, &v)
-//
 func (spq *SystemParameterQuery) Select(fields ...string) *SystemParameterSelect {
-	spq.fields = append(spq.fields, fields...)
-	selbuild := &SystemParameterSelect{SystemParameterQuery: spq}
-	selbuild.label = system_parameter.Label
-	selbuild.flds, selbuild.scan = &spq.fields, selbuild.Scan
-	return selbuild
+	spq.ctx.Fields = append(spq.ctx.Fields, fields...)
+	sbuild := &SystemParameterSelect{SystemParameterQuery: spq}
+	sbuild.label = system_parameter.Label
+	sbuild.flds, sbuild.scan = &spq.ctx.Fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a SystemParameterSelect configured with the given aggregations.
@@ -303,7 +304,17 @@ func (spq *SystemParameterQuery) Aggregate(fns ...AggregateFunc) *SystemParamete
 }
 
 func (spq *SystemParameterQuery) prepareQuery(ctx context.Context) error {
-	for _, f := range spq.fields {
+	for _, inter := range spq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, spq); err != nil {
+				return err
+			}
+		}
+	}
+	for _, f := range spq.ctx.Fields {
 		if !system_parameter.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -345,41 +356,22 @@ func (spq *SystemParameterQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 
 func (spq *SystemParameterQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := spq.querySpec()
-	_spec.Node.Columns = spq.fields
-	if len(spq.fields) > 0 {
-		_spec.Unique = spq.unique != nil && *spq.unique
+	_spec.Node.Columns = spq.ctx.Fields
+	if len(spq.ctx.Fields) > 0 {
+		_spec.Unique = spq.ctx.Unique != nil && *spq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, spq.driver, _spec)
 }
 
-func (spq *SystemParameterQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := spq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (spq *SystemParameterQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   system_parameter.Table,
-			Columns: system_parameter.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		},
-		From:   spq.sql,
-		Unique: true,
-	}
-	if unique := spq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(system_parameter.Table, system_parameter.Columns, sqlgraph.NewFieldSpec(system_parameter.FieldID, field.TypeInt))
+	_spec.From = spq.sql
+	if unique := spq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if spq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := spq.fields; len(fields) > 0 {
+	if fields := spq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, system_parameter.FieldID)
 		for i := range fields {
@@ -395,10 +387,10 @@ func (spq *SystemParameterQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := spq.limit; limit != nil {
+	if limit := spq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := spq.offset; offset != nil {
+	if offset := spq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := spq.order; len(ps) > 0 {
@@ -414,7 +406,7 @@ func (spq *SystemParameterQuery) querySpec() *sqlgraph.QuerySpec {
 func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(spq.driver.Dialect())
 	t1 := builder.Table(system_parameter.Table)
-	columns := spq.fields
+	columns := spq.ctx.Fields
 	if len(columns) == 0 {
 		columns = system_parameter.Columns
 	}
@@ -423,7 +415,7 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = spq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if spq.unique != nil && *spq.unique {
+	if spq.ctx.Unique != nil && *spq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range spq.predicates {
@@ -432,12 +424,12 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range spq.order {
 		p(selector)
 	}
-	if offset := spq.offset; offset != nil {
+	if offset := spq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := spq.limit; limit != nil {
+	if limit := spq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -445,13 +437,8 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 
 // SystemParameterGroupBy is the group-by builder for System_parameter entities.
 type SystemParameterGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *SystemParameterQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -460,58 +447,46 @@ func (spgb *SystemParameterGroupBy) Aggregate(fns ...AggregateFunc) *SystemParam
 	return spgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (spgb *SystemParameterGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := spgb.path(ctx)
-	if err != nil {
+	ctx = setContextOp(ctx, spgb.build.ctx, "GroupBy")
+	if err := spgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	spgb.sql = query
-	return spgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*SystemParameterQuery, *SystemParameterGroupBy](ctx, spgb.build, spgb, spgb.build.inters, v)
 }
 
-func (spgb *SystemParameterGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range spgb.fields {
-		if !system_parameter.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (spgb *SystemParameterGroupBy) sqlScan(ctx context.Context, root *SystemParameterQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(spgb.fns))
+	for _, fn := range spgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := spgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*spgb.flds)+len(spgb.fns))
+		for _, f := range *spgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*spgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := spgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := spgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (spgb *SystemParameterGroupBy) sqlQuery() *sql.Selector {
-	selector := spgb.sql.Select()
-	aggregation := make([]string, 0, len(spgb.fns))
-	for _, fn := range spgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(spgb.fields)+len(spgb.fns))
-		for _, f := range spgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(spgb.fields...)...)
-}
-
 // SystemParameterSelect is the builder for selecting fields of SystemParameter entities.
 type SystemParameterSelect struct {
 	*SystemParameterQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -522,26 +497,27 @@ func (sps *SystemParameterSelect) Aggregate(fns ...AggregateFunc) *SystemParamet
 
 // Scan applies the selector query and scans the result into the given value.
 func (sps *SystemParameterSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, sps.ctx, "Select")
 	if err := sps.prepareQuery(ctx); err != nil {
 		return err
 	}
-	sps.sql = sps.SystemParameterQuery.sqlQuery(ctx)
-	return sps.sqlScan(ctx, v)
+	return scanWithInterceptors[*SystemParameterQuery, *SystemParameterSelect](ctx, sps.SystemParameterQuery, sps, sps.inters, v)
 }
 
-func (sps *SystemParameterSelect) sqlScan(ctx context.Context, v any) error {
+func (sps *SystemParameterSelect) sqlScan(ctx context.Context, root *SystemParameterQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(sps.fns))
 	for _, fn := range sps.fns {
-		aggregation = append(aggregation, fn(sps.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*sps.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		sps.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		sps.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := sps.sql.Query()
+	query, args := selector.Query()
 	if err := sps.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

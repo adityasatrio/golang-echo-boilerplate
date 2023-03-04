@@ -4,6 +4,7 @@ package ent
 
 import (
 	"myapp/ent/pet"
+	"myapp/ent/post"
 	"myapp/ent/schema"
 	"myapp/ent/system_parameter"
 	"myapp/ent/user"
@@ -65,6 +66,28 @@ func init() {
 	petDescID := petFields[0].Descriptor()
 	// pet.DefaultID holds the default value on creation for the id field.
 	pet.DefaultID = petDescID.Default.(func() uuid.UUID)
+	postFields := schema.Post{}.Fields()
+	_ = postFields
+	// postDescTitle is the schema descriptor for title field.
+	postDescTitle := postFields[0].Descriptor()
+	// post.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	post.TitleValidator = postDescTitle.Validators[0].(func(string) error)
+	// postDescContent is the schema descriptor for content field.
+	postDescContent := postFields[1].Descriptor()
+	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	post.ContentValidator = postDescContent.Validators[0].(func(string) error)
+	// postDescSlug is the schema descriptor for slug field.
+	postDescSlug := postFields[2].Descriptor()
+	// post.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	post.SlugValidator = postDescSlug.Validators[0].(func(string) error)
+	// postDescStatus is the schema descriptor for status field.
+	postDescStatus := postFields[3].Descriptor()
+	// post.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	post.StatusValidator = postDescStatus.Validators[0].(func(int) error)
+	// postDescCreatedAt is the schema descriptor for created_at field.
+	postDescCreatedAt := postFields[4].Descriptor()
+	// post.DefaultCreatedAt holds the default value on creation for the created_at field.
+	post.DefaultCreatedAt = postDescCreatedAt.Default.(func() time.Time)
 	system_parameterFields := schema.System_parameter{}.Fields()
 	_ = system_parameterFields
 	// system_parameterDescKey is the schema descriptor for key field.

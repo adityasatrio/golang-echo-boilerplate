@@ -9,13 +9,15 @@ import (
 	"entgo.io/ent/dialect"
 )
 
-// Tx is a transactional client that is created by calling Client.Tx().
+// Tx is a transaction client that is created by calling Client.Tx().
 type Tx struct {
 	config
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
+	// Post is the client for interacting with the Post builders.
+	Post *PostClient
 	// System_parameter is the client for interacting with the System_parameter builders.
-	System_parameter *System_parameterClient
+	System_parameter *SystemParameterClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -150,7 +152,8 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Pet = NewPetClient(tx.config)
-	tx.System_parameter = NewSystem_parameterClient(tx.config)
+	tx.Post = NewPostClient(tx.config)
+	tx.System_parameter = NewSystemParameterClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
@@ -176,7 +179,7 @@ type txDriver struct {
 	onRollback []RollbackHook
 }
 
-// newTx creates a new transactional driver.
+// newTx creates a new transaction driver.
 func newTx(ctx context.Context, drv dialect.Driver) (*txDriver, error) {
 	tx, err := drv.Tx(ctx)
 	if err != nil {

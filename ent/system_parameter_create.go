@@ -101,50 +101,8 @@ func (spc *SystemParameterCreate) Mutation() *SystemParameterMutation {
 
 // Save creates the System_parameter in the database.
 func (spc *SystemParameterCreate) Save(ctx context.Context) (*System_parameter, error) {
-	var (
-		err  error
-		node *System_parameter
-	)
 	spc.defaults()
-	if len(spc.hooks) == 0 {
-		if err = spc.check(); err != nil {
-			return nil, err
-		}
-		node, err = spc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*SystemParameterMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = spc.check(); err != nil {
-				return nil, err
-			}
-			spc.mutation = mutation
-			if node, err = spc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(spc.hooks) - 1; i >= 0; i-- {
-			if spc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = spc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, spc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*System_parameter)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from SystemParameterMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*System_parameter, SystemParameterMutation](ctx, spc.sqlSave, spc.mutation, spc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -221,6 +179,9 @@ func (spc *SystemParameterCreate) check() error {
 }
 
 func (spc *SystemParameterCreate) sqlSave(ctx context.Context) (*System_parameter, error) {
+	if err := spc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := spc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, spc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -230,19 +191,15 @@ func (spc *SystemParameterCreate) sqlSave(ctx context.Context) (*System_paramete
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
+	spc.mutation.id = &_node.ID
+	spc.mutation.done = true
 	return _node, nil
 }
 
 func (spc *SystemParameterCreate) createSpec() (*System_parameter, *sqlgraph.CreateSpec) {
 	var (
 		_node = &System_parameter{config: spc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: system_parameter.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(system_parameter.Table, sqlgraph.NewFieldSpec(system_parameter.FieldID, field.TypeInt))
 	)
 	if value, ok := spc.mutation.Key(); ok {
 		_spec.SetField(system_parameter.FieldKey, field.TypeString, value)

@@ -107,40 +107,7 @@ func (spu *SystemParameterUpdate) Mutation() *SystemParameterMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (spu *SystemParameterUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(spu.hooks) == 0 {
-		if err = spu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = spu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*SystemParameterMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = spu.check(); err != nil {
-				return 0, err
-			}
-			spu.mutation = mutation
-			affected, err = spu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(spu.hooks) - 1; i >= 0; i-- {
-			if spu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = spu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, spu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, SystemParameterMutation](ctx, spu.sqlSave, spu.mutation, spu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -186,16 +153,10 @@ func (spu *SystemParameterUpdate) check() error {
 }
 
 func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   system_parameter.Table,
-			Columns: system_parameter.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		},
+	if err := spu.check(); err != nil {
+		return n, err
 	}
+	_spec := sqlgraph.NewUpdateSpec(system_parameter.Table, system_parameter.Columns, sqlgraph.NewFieldSpec(system_parameter.FieldID, field.TypeInt))
 	if ps := spu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -235,6 +196,7 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		return 0, err
 	}
+	spu.mutation.done = true
 	return n, nil
 }
 
@@ -323,6 +285,12 @@ func (spuo *SystemParameterUpdateOne) Mutation() *SystemParameterMutation {
 	return spuo.mutation
 }
 
+// Where appends a list predicates to the SystemParameterUpdate builder.
+func (spuo *SystemParameterUpdateOne) Where(ps ...predicate.System_parameter) *SystemParameterUpdateOne {
+	spuo.mutation.Where(ps...)
+	return spuo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (spuo *SystemParameterUpdateOne) Select(field string, fields ...string) *SystemParameterUpdateOne {
@@ -332,46 +300,7 @@ func (spuo *SystemParameterUpdateOne) Select(field string, fields ...string) *Sy
 
 // Save executes the query and returns the updated System_parameter entity.
 func (spuo *SystemParameterUpdateOne) Save(ctx context.Context) (*System_parameter, error) {
-	var (
-		err  error
-		node *System_parameter
-	)
-	if len(spuo.hooks) == 0 {
-		if err = spuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = spuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*SystemParameterMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = spuo.check(); err != nil {
-				return nil, err
-			}
-			spuo.mutation = mutation
-			node, err = spuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(spuo.hooks) - 1; i >= 0; i-- {
-			if spuo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = spuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, spuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*System_parameter)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from SystemParameterMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*System_parameter, SystemParameterMutation](ctx, spuo.sqlSave, spuo.mutation, spuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -417,16 +346,10 @@ func (spuo *SystemParameterUpdateOne) check() error {
 }
 
 func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *System_parameter, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   system_parameter.Table,
-			Columns: system_parameter.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		},
+	if err := spuo.check(); err != nil {
+		return _node, err
 	}
+	_spec := sqlgraph.NewUpdateSpec(system_parameter.Table, system_parameter.Columns, sqlgraph.NewFieldSpec(system_parameter.FieldID, field.TypeInt))
 	id, ok := spuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "System_parameter.id" for update`)}
@@ -486,5 +409,6 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 		}
 		return nil, err
 	}
+	spuo.mutation.done = true
 	return _node, nil
 }

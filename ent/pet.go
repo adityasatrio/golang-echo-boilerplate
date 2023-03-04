@@ -136,7 +136,7 @@ func (pe *Pet) assignValues(columns []string, values []any) error {
 // Note that you need to call Pet.Unwrap() before calling this method if this Pet
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (pe *Pet) Update() *PetUpdateOne {
-	return (&PetClient{config: pe.config}).UpdateOne(pe)
+	return NewPetClient(pe.config).UpdateOne(pe)
 }
 
 // Unwrap unwraps the Pet entity that was returned from a transaction after it was closed,
@@ -144,7 +144,7 @@ func (pe *Pet) Update() *PetUpdateOne {
 func (pe *Pet) Unwrap() *Pet {
 	_tx, ok := pe.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Pet is not a transactional entity")
+		panic("ent: Pet is not a transaction entity")
 	}
 	pe.config.driver = _tx.drv
 	return pe
@@ -187,9 +187,3 @@ func (pe *Pet) String() string {
 
 // Pets is a parsable slice of Pet.
 type Pets []*Pet
-
-func (pe Pets) config(cfg config) {
-	for _i := range pe {
-		pe[_i].config = cfg
-	}
-}

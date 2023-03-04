@@ -9,6 +9,9 @@ import (
 // Pet is the predicate function for pet builders.
 type Pet func(*sql.Selector)
 
+// Post is the predicate function for post builders.
+type Post func(*sql.Selector)
+
 // System_parameter is the predicate function for system_parameter builders.
 type System_parameter func(*sql.Selector)
 
