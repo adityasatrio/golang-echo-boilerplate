@@ -78,3 +78,12 @@ go install github.com/google/wire/cmd/wire@latest
 2. Add wire on your $PATH, so we can use wire CLI on every project
 3. Create {domains}_injector.go in your feature directory
 4. Run wire on the same directory of your injector file 
+
+### Migration
+| Description | Command|
+| --- |---|
+| `install golang migrate` | go install -tags "mysql" github.com/golang-migrate/migrate/v4/cmd/migrate@latest|
+| `create migration` | migrate create -ext sql -dir database/migration/ {{nama_migration}}|
+| `run migration` | migrate -path database/migration/ -database "mysql://root:@tcp(localhost:3306)/test_ent" up|
+| `rollback migration` | migrate -path database/migration/ -database "mysql://root:@tcp(localhost:3306)/test_ent" down|
+| `force version - Dirty database` | migrate -path database/migration/ -database "mysql://root:@tcp(localhost:3306)/test_ent"  force {{version_rollback}}|
