@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AtlasSchemaRevision is the predicate function for atlasschemarevision builders.
+type AtlasSchemaRevision func(*sql.Selector)
+
 // Pet is the predicate function for pet builders.
 type Pet func(*sql.Selector)
 

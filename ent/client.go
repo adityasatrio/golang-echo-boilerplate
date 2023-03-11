@@ -10,6 +10,7 @@ import (
 
 	"myapp/ent/migrate"
 
+	"myapp/ent/atlasschemarevision"
 	"myapp/ent/pet"
 	"myapp/ent/system_parameter"
 	"myapp/ent/user"
@@ -24,6 +25,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AtlasSchemaRevision is the client for interacting with the AtlasSchemaRevision builders.
+	AtlasSchemaRevision *AtlasSchemaRevisionClient
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
 	// System_parameter is the client for interacting with the System_parameter builders.
@@ -43,6 +46,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AtlasSchemaRevision = NewAtlasSchemaRevisionClient(c.config)
 	c.Pet = NewPetClient(c.config)
 	c.System_parameter = NewSystem_parameterClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -77,11 +81,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		AtlasSchemaRevision: NewAtlasSchemaRevisionClient(cfg),
+		Pet:                 NewPetClient(cfg),
+		System_parameter:    NewSystem_parameterClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
@@ -99,21 +104,21 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		AtlasSchemaRevision: NewAtlasSchemaRevisionClient(cfg),
+		Pet:                 NewPetClient(cfg),
+		System_parameter:    NewSystem_parameterClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Pet.
+//		AtlasSchemaRevision.
 //		Query().
 //		Count(ctx)
-//
 func (c *Client) Debug() *Client {
 	if c.debug {
 		return c
@@ -133,9 +138,100 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.AtlasSchemaRevision.Use(hooks...)
 	c.Pet.Use(hooks...)
 	c.System_parameter.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// AtlasSchemaRevisionClient is a client for the AtlasSchemaRevision schema.
+type AtlasSchemaRevisionClient struct {
+	config
+}
+
+// NewAtlasSchemaRevisionClient returns a client for the AtlasSchemaRevision from the given config.
+func NewAtlasSchemaRevisionClient(c config) *AtlasSchemaRevisionClient {
+	return &AtlasSchemaRevisionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `atlasschemarevision.Hooks(f(g(h())))`.
+func (c *AtlasSchemaRevisionClient) Use(hooks ...Hook) {
+	c.hooks.AtlasSchemaRevision = append(c.hooks.AtlasSchemaRevision, hooks...)
+}
+
+// Create returns a builder for creating a AtlasSchemaRevision entity.
+func (c *AtlasSchemaRevisionClient) Create() *AtlasSchemaRevisionCreate {
+	mutation := newAtlasSchemaRevisionMutation(c.config, OpCreate)
+	return &AtlasSchemaRevisionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AtlasSchemaRevision entities.
+func (c *AtlasSchemaRevisionClient) CreateBulk(builders ...*AtlasSchemaRevisionCreate) *AtlasSchemaRevisionCreateBulk {
+	return &AtlasSchemaRevisionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AtlasSchemaRevision.
+func (c *AtlasSchemaRevisionClient) Update() *AtlasSchemaRevisionUpdate {
+	mutation := newAtlasSchemaRevisionMutation(c.config, OpUpdate)
+	return &AtlasSchemaRevisionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AtlasSchemaRevisionClient) UpdateOne(asr *AtlasSchemaRevision) *AtlasSchemaRevisionUpdateOne {
+	mutation := newAtlasSchemaRevisionMutation(c.config, OpUpdateOne, withAtlasSchemaRevision(asr))
+	return &AtlasSchemaRevisionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AtlasSchemaRevisionClient) UpdateOneID(id string) *AtlasSchemaRevisionUpdateOne {
+	mutation := newAtlasSchemaRevisionMutation(c.config, OpUpdateOne, withAtlasSchemaRevisionID(id))
+	return &AtlasSchemaRevisionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AtlasSchemaRevision.
+func (c *AtlasSchemaRevisionClient) Delete() *AtlasSchemaRevisionDelete {
+	mutation := newAtlasSchemaRevisionMutation(c.config, OpDelete)
+	return &AtlasSchemaRevisionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AtlasSchemaRevisionClient) DeleteOne(asr *AtlasSchemaRevision) *AtlasSchemaRevisionDeleteOne {
+	return c.DeleteOneID(asr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AtlasSchemaRevisionClient) DeleteOneID(id string) *AtlasSchemaRevisionDeleteOne {
+	builder := c.Delete().Where(atlasschemarevision.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AtlasSchemaRevisionDeleteOne{builder}
+}
+
+// Query returns a query builder for AtlasSchemaRevision.
+func (c *AtlasSchemaRevisionClient) Query() *AtlasSchemaRevisionQuery {
+	return &AtlasSchemaRevisionQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AtlasSchemaRevision entity by its id.
+func (c *AtlasSchemaRevisionClient) Get(ctx context.Context, id string) (*AtlasSchemaRevision, error) {
+	return c.Query().Where(atlasschemarevision.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AtlasSchemaRevisionClient) GetX(ctx context.Context, id string) *AtlasSchemaRevision {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AtlasSchemaRevisionClient) Hooks() []Hook {
+	return c.hooks.AtlasSchemaRevision
 }
 
 // PetClient is a client for the Pet schema.

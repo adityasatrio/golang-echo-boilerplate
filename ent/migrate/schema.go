@@ -8,6 +8,27 @@ import (
 )
 
 var (
+	// AtlasSchemaRevisionsColumns holds the columns for the "atlas_schema_revisions" table.
+	AtlasSchemaRevisionsColumns = []*schema.Column{
+		{Name: "version", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString},
+		{Name: "type", Type: field.TypeUint64},
+		{Name: "applied", Type: field.TypeInt},
+		{Name: "total", Type: field.TypeInt},
+		{Name: "executed_at", Type: field.TypeTime},
+		{Name: "execution_time", Type: field.TypeInt},
+		{Name: "error", Type: field.TypeString, Nullable: true},
+		{Name: "error_stmt", Type: field.TypeString, Nullable: true},
+		{Name: "hash", Type: field.TypeString},
+		{Name: "partial_hashes", Type: field.TypeJSON, Nullable: true},
+		{Name: "operator_version", Type: field.TypeString},
+	}
+	// AtlasSchemaRevisionsTable holds the schema information for the "atlas_schema_revisions" table.
+	AtlasSchemaRevisionsTable = &schema.Table{
+		Name:       "atlas_schema_revisions",
+		Columns:    AtlasSchemaRevisionsColumns,
+		PrimaryKey: []*schema.Column{AtlasSchemaRevisionsColumns[0]},
+	}
 	// PetsColumns holds the columns for the "pets" table.
 	PetsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -105,6 +126,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AtlasSchemaRevisionsTable,
 		PetsTable,
 		SystemParametersTable,
 		UsersTable,

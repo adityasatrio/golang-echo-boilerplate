@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AtlasSchemaRevision is the client for interacting with the AtlasSchemaRevision builders.
+	AtlasSchemaRevision *AtlasSchemaRevisionClient
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
 	// System_parameter is the client for interacting with the System_parameter builders.
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AtlasSchemaRevision = NewAtlasSchemaRevisionClient(tx.config)
 	tx.Pet = NewPetClient(tx.config)
 	tx.System_parameter = NewSystem_parameterClient(tx.config)
 	tx.User = NewUserClient(tx.config)
@@ -161,7 +164,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Pet.QueryXXX(), the query will be executed
+// applies a query, for example: AtlasSchemaRevision.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.
