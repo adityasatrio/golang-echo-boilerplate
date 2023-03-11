@@ -23,6 +23,8 @@ type User struct {
 	Email string `json:"email,omitempty"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
+	// IsPregnancy holds the value of the "is_pregnancy" field.
+	IsPregnancy bool `json:"is_pregnancy,omitempty"`
 	// IsDeleted holds the value of the "is_deleted" field.
 	IsDeleted bool `json:"is_deleted,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
@@ -40,7 +42,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldIsDeleted:
+		case user.FieldIsPregnancy, user.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
 		case user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCreatedBy, user.FieldUpdatedBy:
 			values[i] = new(sql.NullString)
@@ -86,6 +88,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field phone", values[i])
 			} else if value.Valid {
 				u.Phone = value.String
+			}
+		case user.FieldIsPregnancy:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_pregnancy", values[i])
+			} else if value.Valid {
+				u.IsPregnancy = value.Bool
 			}
 		case user.FieldIsDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -153,6 +161,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
 	builder.WriteString(u.Phone)
+	builder.WriteString(", ")
+	builder.WriteString("is_pregnancy=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsPregnancy))
 	builder.WriteString(", ")
 	builder.WriteString("is_deleted=")
 	builder.WriteString(fmt.Sprintf("%v", u.IsDeleted))

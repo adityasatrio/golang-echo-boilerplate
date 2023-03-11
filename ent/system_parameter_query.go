@@ -261,7 +261,6 @@ func (spq *SystemParameterQuery) Clone() *SystemParameterQuery {
 //		GroupBy(system_parameter.FieldKey).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *SystemParameterGroupBy {
 	grbuild := &SystemParameterGroupBy{config: spq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -288,7 +287,6 @@ func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *System
 //	client.SystemParameter.Query().
 //		Select(system_parameter.FieldKey).
 //		Scan(ctx, &v)
-//
 func (spq *SystemParameterQuery) Select(fields ...string) *SystemParameterSelect {
 	spq.fields = append(spq.fields, fields...)
 	selbuild := &SystemParameterSelect{SystemParameterQuery: spq}

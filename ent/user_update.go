@@ -46,6 +46,26 @@ func (uu *UserUpdate) SetPhone(s string) *UserUpdate {
 	return uu
 }
 
+// SetIsPregnancy sets the "is_pregnancy" field.
+func (uu *UserUpdate) SetIsPregnancy(b bool) *UserUpdate {
+	uu.mutation.SetIsPregnancy(b)
+	return uu
+}
+
+// SetNillableIsPregnancy sets the "is_pregnancy" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableIsPregnancy(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetIsPregnancy(*b)
+	}
+	return uu
+}
+
+// ClearIsPregnancy clears the value of the "is_pregnancy" field.
+func (uu *UserUpdate) ClearIsPregnancy() *UserUpdate {
+	uu.mutation.ClearIsPregnancy()
+	return uu
+}
+
 // SetIsDeleted sets the "is_deleted" field.
 func (uu *UserUpdate) SetIsDeleted(b bool) *UserUpdate {
 	uu.mutation.SetIsDeleted(b)
@@ -223,6 +243,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
 	}
+	if value, ok := uu.mutation.IsPregnancy(); ok {
+		_spec.SetField(user.FieldIsPregnancy, field.TypeBool, value)
+	}
+	if uu.mutation.IsPregnancyCleared() {
+		_spec.ClearField(user.FieldIsPregnancy, field.TypeBool)
+	}
 	if value, ok := uu.mutation.IsDeleted(); ok {
 		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)
 	}
@@ -275,6 +301,26 @@ func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
 // SetPhone sets the "phone" field.
 func (uuo *UserUpdateOne) SetPhone(s string) *UserUpdateOne {
 	uuo.mutation.SetPhone(s)
+	return uuo
+}
+
+// SetIsPregnancy sets the "is_pregnancy" field.
+func (uuo *UserUpdateOne) SetIsPregnancy(b bool) *UserUpdateOne {
+	uuo.mutation.SetIsPregnancy(b)
+	return uuo
+}
+
+// SetNillableIsPregnancy sets the "is_pregnancy" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableIsPregnancy(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetIsPregnancy(*b)
+	}
+	return uuo
+}
+
+// ClearIsPregnancy clears the value of the "is_pregnancy" field.
+func (uuo *UserUpdateOne) ClearIsPregnancy() *UserUpdateOne {
+	uuo.mutation.ClearIsPregnancy()
 	return uuo
 }
 
@@ -484,6 +530,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.IsPregnancy(); ok {
+		_spec.SetField(user.FieldIsPregnancy, field.TypeBool, value)
+	}
+	if uuo.mutation.IsPregnancyCleared() {
+		_spec.ClearField(user.FieldIsPregnancy, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.IsDeleted(); ok {
 		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)

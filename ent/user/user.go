@@ -19,6 +19,8 @@ const (
 	FieldEmail = "email"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
+	// FieldIsPregnancy holds the string denoting the is_pregnancy field in the database.
+	FieldIsPregnancy = "is_pregnancy"
 	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
 	FieldIsDeleted = "is_deleted"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
@@ -39,6 +41,7 @@ var Columns = []string{
 	FieldName,
 	FieldEmail,
 	FieldPhone,
+	FieldIsPregnancy,
 	FieldIsDeleted,
 	FieldCreatedBy,
 	FieldCreatedAt,

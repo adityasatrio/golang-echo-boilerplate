@@ -20,6 +20,7 @@ func (User) Fields() []ent.Field {
 		field.String("name").NotEmpty().MinLen(5).MaxLen(10),
 		field.String("email").NotEmpty(),
 		field.String("phone").NotEmpty(),
+		field.Bool("is_pregnancy").Optional(),
 	}
 
 	return helper.InitBaseSchema(schema)

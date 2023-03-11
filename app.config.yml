@@ -11,3 +11,4 @@ db.config:
   port: 3306
   database: test_ent
 
+db.config.dev: mysql://root:@localhost:3306/dev

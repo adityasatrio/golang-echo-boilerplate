@@ -102,6 +102,13 @@ func Phone(v string) predicate.User {
 	})
 }
 
+// IsPregnancy applies equality check predicate on the "is_pregnancy" field. It's identical to IsPregnancyEQ.
+func IsPregnancy(v bool) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsPregnancy), v))
+	})
+}
+
 // IsDeleted applies equality check predicate on the "is_deleted" field. It's identical to IsDeletedEQ.
 func IsDeleted(v bool) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -431,6 +438,34 @@ func PhoneEqualFold(v string) predicate.User {
 func PhoneContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldPhone), v))
+	})
+}
+
+// IsPregnancyEQ applies the EQ predicate on the "is_pregnancy" field.
+func IsPregnancyEQ(v bool) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsPregnancy), v))
+	})
+}
+
+// IsPregnancyNEQ applies the NEQ predicate on the "is_pregnancy" field.
+func IsPregnancyNEQ(v bool) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsPregnancy), v))
+	})
+}
+
+// IsPregnancyIsNil applies the IsNil predicate on the "is_pregnancy" field.
+func IsPregnancyIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsPregnancy)))
+	})
+}
+
+// IsPregnancyNotNil applies the NotNil predicate on the "is_pregnancy" field.
+func IsPregnancyNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsPregnancy)))
 	})
 }
 

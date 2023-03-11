@@ -74,6 +74,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 10},
 		{Name: "email", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
+		{Name: "is_pregnancy", Type: field.TypeBool, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Default: false},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},

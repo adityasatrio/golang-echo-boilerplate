@@ -121,19 +121,19 @@ func init() {
 	// user.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
 	user.PhoneValidator = userDescPhone.Validators[0].(func(string) error)
 	// userDescIsDeleted is the schema descriptor for is_deleted field.
-	userDescIsDeleted := userFields[4].Descriptor()
+	userDescIsDeleted := userFields[5].Descriptor()
 	// user.DefaultIsDeleted holds the default value on creation for the is_deleted field.
 	user.DefaultIsDeleted = userDescIsDeleted.Default.(bool)
 	// userDescCreatedBy is the schema descriptor for created_by field.
-	userDescCreatedBy := userFields[5].Descriptor()
+	userDescCreatedBy := userFields[6].Descriptor()
 	// user.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
 	user.CreatedByValidator = userDescCreatedBy.Validators[0].(func(string) error)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[6].Descriptor()
+	userDescCreatedAt := userFields[7].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[8].Descriptor()
+	userDescUpdatedAt := userFields[9].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(time.Time)
 	// userDescID is the schema descriptor for id field.

@@ -39,6 +39,20 @@ func (uc *UserCreate) SetPhone(s string) *UserCreate {
 	return uc
 }
 
+// SetIsPregnancy sets the "is_pregnancy" field.
+func (uc *UserCreate) SetIsPregnancy(b bool) *UserCreate {
+	uc.mutation.SetIsPregnancy(b)
+	return uc
+}
+
+// SetNillableIsPregnancy sets the "is_pregnancy" field if the given value is not nil.
+func (uc *UserCreate) SetNillableIsPregnancy(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetIsPregnancy(*b)
+	}
+	return uc
+}
+
 // SetIsDeleted sets the "is_deleted" field.
 func (uc *UserCreate) SetIsDeleted(b bool) *UserCreate {
 	uc.mutation.SetIsDeleted(b)
@@ -297,6 +311,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
 		_node.Phone = value
+	}
+	if value, ok := uc.mutation.IsPregnancy(); ok {
+		_spec.SetField(user.FieldIsPregnancy, field.TypeBool, value)
+		_node.IsPregnancy = value
 	}
 	if value, ok := uc.mutation.IsDeleted(); ok {
 		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)

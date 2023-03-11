@@ -1543,6 +1543,7 @@ type UserMutation struct {
 	name          *string
 	email         *string
 	phone         *string
+	is_pregnancy  *bool
 	is_deleted    *bool
 	created_by    *string
 	created_at    *time.Time
@@ -1764,6 +1765,55 @@ func (m *UserMutation) OldPhone(ctx context.Context) (v string, err error) {
 // ResetPhone resets all changes to the "phone" field.
 func (m *UserMutation) ResetPhone() {
 	m.phone = nil
+}
+
+// SetIsPregnancy sets the "is_pregnancy" field.
+func (m *UserMutation) SetIsPregnancy(b bool) {
+	m.is_pregnancy = &b
+}
+
+// IsPregnancy returns the value of the "is_pregnancy" field in the mutation.
+func (m *UserMutation) IsPregnancy() (r bool, exists bool) {
+	v := m.is_pregnancy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsPregnancy returns the old "is_pregnancy" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldIsPregnancy(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsPregnancy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsPregnancy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsPregnancy: %w", err)
+	}
+	return oldValue.IsPregnancy, nil
+}
+
+// ClearIsPregnancy clears the value of the "is_pregnancy" field.
+func (m *UserMutation) ClearIsPregnancy() {
+	m.is_pregnancy = nil
+	m.clearedFields[user.FieldIsPregnancy] = struct{}{}
+}
+
+// IsPregnancyCleared returns if the "is_pregnancy" field was cleared in this mutation.
+func (m *UserMutation) IsPregnancyCleared() bool {
+	_, ok := m.clearedFields[user.FieldIsPregnancy]
+	return ok
+}
+
+// ResetIsPregnancy resets all changes to the "is_pregnancy" field.
+func (m *UserMutation) ResetIsPregnancy() {
+	m.is_pregnancy = nil
+	delete(m.clearedFields, user.FieldIsPregnancy)
 }
 
 // SetIsDeleted sets the "is_deleted" field.
@@ -1991,7 +2041,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -2000,6 +2050,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.phone != nil {
 		fields = append(fields, user.FieldPhone)
+	}
+	if m.is_pregnancy != nil {
+		fields = append(fields, user.FieldIsPregnancy)
 	}
 	if m.is_deleted != nil {
 		fields = append(fields, user.FieldIsDeleted)
@@ -2030,6 +2083,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case user.FieldPhone:
 		return m.Phone()
+	case user.FieldIsPregnancy:
+		return m.IsPregnancy()
 	case user.FieldIsDeleted:
 		return m.IsDeleted()
 	case user.FieldCreatedBy:
@@ -2055,6 +2110,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEmail(ctx)
 	case user.FieldPhone:
 		return m.OldPhone(ctx)
+	case user.FieldIsPregnancy:
+		return m.OldIsPregnancy(ctx)
 	case user.FieldIsDeleted:
 		return m.OldIsDeleted(ctx)
 	case user.FieldCreatedBy:
@@ -2094,6 +2151,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPhone(v)
+		return nil
+	case user.FieldIsPregnancy:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsPregnancy(v)
 		return nil
 	case user.FieldIsDeleted:
 		v, ok := value.(bool)
@@ -2160,6 +2224,9 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldIsPregnancy) {
+		fields = append(fields, user.FieldIsPregnancy)
+	}
 	if m.FieldCleared(user.FieldUpdatedBy) {
 		fields = append(fields, user.FieldUpdatedBy)
 	}
@@ -2180,6 +2247,9 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldIsPregnancy:
+		m.ClearIsPregnancy()
+		return nil
 	case user.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
@@ -2202,6 +2272,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPhone:
 		m.ResetPhone()
+		return nil
+	case user.FieldIsPregnancy:
+		m.ResetIsPregnancy()
 		return nil
 	case user.FieldIsDeleted:
 		m.ResetIsDeleted()
