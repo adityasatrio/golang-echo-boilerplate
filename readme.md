@@ -27,19 +27,15 @@
 - [x] implement error handling
 - [x] implement DI google wire
 - [ ] implement cache https://github.com/eko/gocache#a-chained-cache
-- [ ] implement outbound http calls
-- [ ] transaction examples
-  - https://entgo.io/docs/transactions
-- [ ] implement migration files 
-  - https://entgo.io/docs/data-migrations 
-  - https://atlasgo.io/ 
+- [ ] implement outbound http calls - support config timeout, retry, circuit breaker
+- [ ] transaction examples - https://entgo.io/docs/transactions
+- [ ] implement migration files - https://entgo.io/docs/data-migrations, https://atlasgo.io/ 
 - [ ] implement test 
 - [ ] implement logger
 - [ ] integrate live reload
-- [ ] implement pub sub libs integration
-- [ ] integrate swagger or API docs 
-  - https://github.com/swaggo/echo-swagger
-- [ ] dockerize project
+- [ ] implement message brooker integration - rabbitmq
+- [ ] integrate swagger or API docs - https://github.com/swaggo/echo-swagger
+- [ ] dockerize project 
 
 ### Running apps
 ```
