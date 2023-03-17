@@ -21,7 +21,7 @@ func NewRoleServiceImpl(repository repository.RoleRepository, transaction *trans
 func (s *RoleServiceImpl) Create(ctx context.Context, request dto.RoleRequest) (*ent.Role, error) {
 	role, err := s.repository.Create(ctx, request)
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 	}
 
 	return role, nil
@@ -30,7 +30,7 @@ func (s *RoleServiceImpl) Create(ctx context.Context, request dto.RoleRequest) (
 func (s *RoleServiceImpl) Update(ctx context.Context, request dto.RoleRequest, id uint64) (*ent.Role, error) {
 	role, err := s.repository.Update(ctx, request, id)
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
 
 	return role, nil
@@ -39,7 +39,7 @@ func (s *RoleServiceImpl) Update(ctx context.Context, request dto.RoleRequest, i
 func (s *RoleServiceImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Role, error) {
 	data, err := s.repository.SoftDelete(ctx, id)
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
 	return data, nil
@@ -76,4 +76,3 @@ func (s *RoleServiceImpl) GetAll(ctx context.Context) ([]*ent.Role, error) {
 
 	return result, nil
 }
-

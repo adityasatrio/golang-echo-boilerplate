@@ -31,7 +31,8 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, request dto.RoleRequest
 }
 
 func (r *RoleRepositoryImpl) Update(ctx context.Context, request dto.RoleRequest, id uint64) (*ent.Role, error) {
-	response, err := r.client.Role.Create().
+	response, err := r.client.Role.
+		UpdateOneID(id).
 		SetName(request.Name).
 		SetText(request.Text).
 		Save(ctx)
