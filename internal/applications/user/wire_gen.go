@@ -9,6 +9,8 @@ package user
 import (
 	"github.com/google/wire"
 	"myapp/ent"
+	repository2 "myapp/internal/applications/role/repository"
+	repository3 "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/repository"
 	"myapp/internal/applications/user/service"
@@ -16,13 +18,15 @@ import (
 
 // Injectors from user_injector.go:
 
-func InitializedRoleService(dbClient *ent.Client) *service.UserServiceImpl {
+func InitializedUserService(dbClient *ent.Client) *service.UserServiceImpl {
 	userRepositoryImpl := repository.NewUserRepositoryImpl(dbClient)
+	roleRepositoryImpl := repository2.NewRoleRepositoryImpl(dbClient)
+	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl(dbClient)
 	txService := transaction.NewTxService(dbClient)
-	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, txService)
+	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, txService)
 	return userServiceImpl
 }
 
 // user_injector.go:
 
-var provider = wire.NewSet(repository.NewUserRepositoryImpl, service.NewUserServiceImpl, transaction.NewTxService, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
+var provider = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, service.NewUserServiceImpl, transaction.NewTxService, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
