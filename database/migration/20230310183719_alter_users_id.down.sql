@@ -1,1 +1,0 @@
-ALTER TABLE users MODIFY COLUMN id char(10);

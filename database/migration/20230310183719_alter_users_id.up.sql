@@ -1,1 +1,0 @@
-ALTER TABLE users MODIFY COLUMN id BIGINT auto_increment NOT NULL;
