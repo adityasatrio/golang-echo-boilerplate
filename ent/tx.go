@@ -14,8 +14,8 @@ type Tx struct {
 	config
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
-	// System_parameter is the client for interacting with the System_parameter builders.
-	System_parameter *System_parameterClient
+	// SystemParameter is the client for interacting with the SystemParameter builders.
+	SystemParameter *SystemParameterClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -150,7 +150,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Pet = NewPetClient(tx.config)
-	tx.System_parameter = NewSystem_parameterClient(tx.config)
+	tx.SystemParameter = NewSystemParameterClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
