@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	mock_service "myapp/mocks/hello_worlds/service"
-	"myapp/mocks/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -41,19 +41,29 @@ func TestHello(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	c := e.NewContext(request, recorder)
 
-	mockCtx := mocks.NewMockContext(t)
+	//mockCtx := mocks.NewMockContext(t)
 	mockService := &mock_service.HelloWorldsService{}
-
-	mockService.On("Hello", mockCtx, "hello", "controller").Return("success", nil)
+	mockService.On("Hello", request.Context(), "hello from controller -", "").Return("success", nil)
 
 	controller := &HelloWorldsController{mockService}
-	result := controller.Hello(c)
 
-	assert.Equal(t, nil, result)
+	// Assertions
+	if assert.NoError(t, controller.Hello(c)) {
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	//mockService := &service.MockHeloWorldsService{}
-	//mockService.On("Hello", context.Background(), "hello from controller -", "").Return("Hello World", nil)
+		// Get the response body as a string
+		responseString := recorder.Body.String()
 
-	//controller := &HelloWorldsController{}
+		// Convert the response string to JSON
+		var jsonResponse map[string]interface{}
+		err := json.Unmarshal([]byte(responseString), &jsonResponse)
+		if err != nil {
+			t.Errorf("Error unmarshalling JSON: %v", err)
+		}
 
+		//sample response
+		//"{\"code\":200,\"message\":\"OK\",\"data\":\"success\",\"error\":\"\",\"serverTime\":\"Sun, 19 Mar 2023 19:20:57 WIB\"}\n"
+		assert.Equal(t, "success", jsonResponse["data"])
+
+	}
 }
