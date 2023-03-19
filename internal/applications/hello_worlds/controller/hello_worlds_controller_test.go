@@ -10,27 +10,6 @@ import (
 	"testing"
 )
 
-//type MockHelloWorldService struct {
-//	service.HelloWorldsService
-//
-//	//mockNameFunction - func - return value of service
-//	MockHello func() (string, error)
-//}
-//
-//func (mocks *MockHelloWorldService) Hello() (string, error) {
-//	return mocks.MockHello()
-//}
-
-/* enable when already use logger
-func setUp_author_test() func() {
-	logger.New()
-
-	return func() {
-		logger.Sync()
-		logger.Delete()
-	}
-}*/
-
 func TestHello(t *testing.T) {
 
 	e := echo.New()
@@ -64,6 +43,5 @@ func TestHello(t *testing.T) {
 		//sample response
 		//"{\"code\":200,\"message\":\"OK\",\"data\":\"success\",\"error\":\"\",\"serverTime\":\"Sun, 19 Mar 2023 19:20:57 WIB\"}\n"
 		assert.Equal(t, "success", jsonResponse["data"])
-
 	}
 }
