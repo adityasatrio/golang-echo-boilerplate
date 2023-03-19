@@ -14,17 +14,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-/*type DbConnectionSqlEntImpl struct {
-	Client Client
-}
-
-func NewDbConnectionSqlEntImpl(client Client) DbConnection {
-	return &DbConnectionSqlEntImpl{
-		Client: client,
-	}
-}
-*/
-//func (conn *DbConnectionSqlEntImpl) NewSetupConnection() *Client {
 func NewSqlEntClient() *ent.Client {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
@@ -63,7 +52,6 @@ func NewSqlEntClient() *ent.Client {
 	//from docs define close on this function, but will impact cant create DB session on repository
 	//defer client.Close()
 
-	//result := Client{Connection: *client}
 	log.Default().Println("initialized database x sqldb x orm ent : success")
 	return client
 }

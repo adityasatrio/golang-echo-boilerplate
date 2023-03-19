@@ -8,12 +8,12 @@ import (
 	database "myapp/config/database"
 	"myapp/config/middleware"
 	"myapp/config/validator"
+	"myapp/ent"
 	restApi "myapp/internal/adapter/rest_api"
 )
 
 func main() {
 	e := echo.New()
-
 	config.SetupConfigEnv(e)
 	middleware.SetupMiddlewares(e)
 	validator.SetupValidator(e)
@@ -21,10 +21,13 @@ func main() {
 
 	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
 	//dbConnection := config.NewEntClient() //using ent only
-
 	log.Info("initialized database configuration=", dbConnection)
-	//from docs define close on this function, but will impact cant create DB session on repository
-	defer dbConnection.Close()
+	defer func(dbConnection *ent.Client) {
+		err := dbConnection.Close()
+		if err != nil {
+			log.Fatal("error when closed DB connection")
+		}
+	}(dbConnection)
 
 	restApi.SetupRouteHandler(e, dbConnection)
 

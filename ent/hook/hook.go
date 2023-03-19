@@ -21,12 +21,12 @@ func (f PetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return f(ctx, mv)
 }
 
-// The System_parameterFunc type is an adapter to allow the use of ordinary
-// function as System_parameter mutator.
-type System_parameterFunc func(context.Context, *ent.SystemParameterMutation) (ent.Value, error)
+// The SystemParameterFunc type is an adapter to allow the use of ordinary
+// function as SystemParameter mutator.
+type SystemParameterFunc func(context.Context, *ent.SystemParameterMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f System_parameterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+func (f SystemParameterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 	mv, ok := m.(*ent.SystemParameterMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SystemParameterMutation", m)
