@@ -1,10 +1,7 @@
 package controller
 
 import (
-	"github.com/labstack/echo/v4"
 	"myapp/internal/applications/hello_worlds/service"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
@@ -32,18 +29,18 @@ func setUp_author_test() func() {
 func TestHello(t *testing.T) {
 	//	defer setUp_author_test()()
 
-	mockService := &service.
+	//mockService := &service.
 	//setup
-	e := echo.New()
-	request := httptest.NewRequest(http.MethodGet, "/hello", nil)
-	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	//e := echo.New()
+	//request := httptest.NewRequest(http.MethodGet, "/hello", nil)
+	//request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	record := httptest.NewRecorder()
-	c := e.NewContext(request, record)
+	// := httptest.NewRecorder()
+	//c := e.NewContext(request, record)
 
 	//mockService := &service.MockHelloWorldsService{}
 	//mockService.On("Hello", context.Background(), "hello from controller -", "").Return("Hello World", nil)
 
-	controller := &HelloWorldsController{}
+	//controller := &HelloWorldsController{}
 
 }
