@@ -4,8 +4,8 @@ import (
 	"context"
 	"myapp/ent"
 	"myapp/exceptions"
-	repository2 "myapp/internal/applications/role/repository"
-	repository3 "myapp/internal/applications/role_user/repository"
+	roleRepository "myapp/internal/applications/role/repository"
+	roleUserRepository "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/applications/user/repository"
@@ -14,15 +14,12 @@ import (
 
 type UserServiceImpl struct {
 	repository         repository.UserRepository
-	roleRepository     repository2.RoleRepository
-	roleUserRepository repository3.RoleUserRepository
-
-	transaction *transaction.TxService
+	roleRepository     roleRepository.RoleRepository
+	roleUserRepository roleUserRepository.RoleUserRepository
+	transaction        transaction.TrxService
 }
 
-func NewUserServiceImpl(repository repository.UserRepository, roleRepository repository2.RoleRepository,
-	roleUserRepository repository3.RoleUserRepository,
-	transaction *transaction.TxService) *UserServiceImpl {
+func NewUserServiceImpl(repository repository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
 	return &UserServiceImpl{repository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
 }
 

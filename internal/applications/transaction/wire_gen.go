@@ -7,12 +7,19 @@
 package transaction
 
 import (
+	"github.com/google/wire"
 	"myapp/ent"
 )
 
-// Injectors from tx_service_injector.go:
+// Injectors from trx_service_injector.go:
 
-func InitializedTxService(dbClient *ent.Client) *TxService {
-	txService := NewTxService(dbClient)
-	return txService
+func InitializedTxService(dbClient *ent.Client) *TrxServiceImpl {
+	trxServiceImpl := NewTxServiceImpl(dbClient)
+	return trxServiceImpl
 }
+
+// trx_service_injector.go:
+
+var provider = wire.NewSet(
+	NewTxServiceImpl, wire.Bind(new(TrxService), new(*TrxServiceImpl)),
+)

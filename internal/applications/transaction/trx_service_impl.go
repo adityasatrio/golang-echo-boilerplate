@@ -6,15 +6,15 @@ import (
 	"myapp/ent"
 )
 
-type TxService struct {
+type TrxServiceImpl struct {
 	client *ent.Client
 }
 
-func NewTxService(client *ent.Client) *TxService {
-	return &TxService{client: client}
+func NewTxServiceImpl(client *ent.Client) *TrxServiceImpl {
+	return &TrxServiceImpl{client: client}
 }
 
-func (r *TxService) WithTx(ctx context.Context, fn func(tx *ent.Tx) error) error {
+func (r *TrxServiceImpl) WithTx(ctx context.Context, fn func(tx *ent.Tx) error) error {
 	tx, err := r.client.Tx(ctx)
 	if err != nil {
 		return err

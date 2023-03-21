@@ -11,10 +11,10 @@ import (
 
 type RoleServiceImpl struct {
 	repository  repository.RoleRepository
-	transaction *transaction.TxService
+	transaction *transaction.TrxService
 }
 
-func NewRoleServiceImpl(repository repository.RoleRepository, transaction *transaction.TxService) *RoleServiceImpl {
+func NewRoleServiceImpl(repository repository.RoleRepository, transaction *transaction.TrxService) *RoleServiceImpl {
 	return &RoleServiceImpl{repository: repository, transaction: transaction}
 }
 
