@@ -15,15 +15,15 @@ type UserRepository struct {
 }
 
 // Create provides a mock function with given fields: ctx, client, request
-func (_m *UserRepository) Create(ctx context.Context, client *ent.Client, request ent.User) (*ent.User, error) {
+func (_m *UserRepository) Create(ctx context.Context, client *ent.Tx, request ent.User) (*ent.User, error) {
 	ret := _m.Called(ctx, client, request)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User) (*ent.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, ent.User) (*ent.User, error)); ok {
 		return rf(ctx, client, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User) *ent.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, ent.User) *ent.User); ok {
 		r0 = rf(ctx, client, request)
 	} else {
 		if ret.Get(0) != nil {
@@ -31,7 +31,7 @@ func (_m *UserRepository) Create(ctx context.Context, client *ent.Client, reques
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, ent.User) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Tx, ent.User) error); ok {
 		r1 = rf(ctx, client, request)
 	} else {
 		r1 = ret.Error(1)
@@ -41,15 +41,15 @@ func (_m *UserRepository) Create(ctx context.Context, client *ent.Client, reques
 }
 
 // Delete provides a mock function with given fields: ctx, client, id
-func (_m *UserRepository) Delete(ctx context.Context, client *ent.Client, id uint64) (*ent.User, error) {
+func (_m *UserRepository) Delete(ctx context.Context, client *ent.Tx, id uint64) (*ent.User, error) {
 	ret := _m.Called(ctx, client, id)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, uint64) (*ent.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, uint64) (*ent.User, error)); ok {
 		return rf(ctx, client, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, uint64) *ent.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, uint64) *ent.User); ok {
 		r0 = rf(ctx, client, id)
 	} else {
 		if ret.Get(0) != nil {
@@ -57,7 +57,7 @@ func (_m *UserRepository) Delete(ctx context.Context, client *ent.Client, id uin
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, uint64) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Tx, uint64) error); ok {
 		r1 = rf(ctx, client, id)
 	} else {
 		r1 = ret.Error(1)
@@ -145,15 +145,15 @@ func (_m *UserRepository) SoftDelete(ctx context.Context, id uint64) (*ent.User,
 }
 
 // Update provides a mock function with given fields: ctx, client, request, id
-func (_m *UserRepository) Update(ctx context.Context, client *ent.Client, request ent.User, id uint64) (*ent.User, error) {
+func (_m *UserRepository) Update(ctx context.Context, client *ent.Tx, request ent.User, id uint64) (*ent.User, error) {
 	ret := _m.Called(ctx, client, request, id)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) (*ent.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, ent.User, uint64) (*ent.User, error)); ok {
 		return rf(ctx, client, request, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) *ent.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, ent.User, uint64) *ent.User); ok {
 		r0 = rf(ctx, client, request, id)
 	} else {
 		if ret.Get(0) != nil {
@@ -161,7 +161,7 @@ func (_m *UserRepository) Update(ctx context.Context, client *ent.Client, reques
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, ent.User, uint64) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Tx, ent.User, uint64) error); ok {
 		r1 = rf(ctx, client, request, id)
 	} else {
 		r1 = ret.Error(1)

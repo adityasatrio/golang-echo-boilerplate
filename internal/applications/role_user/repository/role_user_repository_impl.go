@@ -15,7 +15,7 @@ func NewRoleUserRepositoryImpl(client *ent.Client) *RoleUserRepositoryImpl {
 	return &RoleUserRepositoryImpl{client: client}
 }
 
-func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
+func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, request ent.RoleUser) (*ent.RoleUser, error) {
 	response, err := client.RoleUser.Create().
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).
@@ -29,7 +29,7 @@ func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Client,
 	return response, nil
 }
 
-func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Client, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
+func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
 
 	//delete existing role user:
 	_, errDeleted := r.DeleteByUserId(ctx, client, id)
@@ -53,7 +53,7 @@ func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Client,
 	return response, nil
 }
 
-func (r *RoleUserRepositoryImpl) DeleteByUserId(ctx context.Context, client *ent.Client, id uint64) (int, error) {
+func (r *RoleUserRepositoryImpl) DeleteByUserId(ctx context.Context, client *ent.Tx, id uint64) (int, error) {
 	dataDeleted, err := client.RoleUser.Delete().Where(roleuser.UserID(id)).Exec(ctx)
 
 	if err != nil {

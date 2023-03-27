@@ -8,19 +8,19 @@ import (
 	roleUserRepository "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
-	"myapp/internal/applications/user/repository"
+	userRepository "myapp/internal/applications/user/repository"
 	"time"
 )
 
 type UserServiceImpl struct {
-	repository         repository.UserRepository
+	userRepository     userRepository.UserRepository
 	roleRepository     roleRepository.RoleRepository
 	roleUserRepository roleUserRepository.RoleUserRepository
 	transaction        transaction.TrxService
 }
 
-func NewUserServiceImpl(repository repository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
-	return &UserServiceImpl{repository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
+func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
+	return &UserServiceImpl{userRepository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
 }
 
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
@@ -37,12 +37,12 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			Password:      request.Password,
 			IsVerified:    true,
 			Avatar:        "",
-			LastAccessAt:  time.Now(),
 			PregnancyMode: false,
 		}
 
 		//save user:
-		userResult, err := s.repository.Create(ctx, tx.Client(), userRequest)
+
+		userResult, err := s.userRepository.Create(ctx, tx, userRequest)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -55,7 +55,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//save role_user:
-		_, errRoleUser := s.roleUserRepository.Create(ctx, tx.Client(), roleUserRequest)
+		_, errRoleUser := s.roleUserRepository.Create(ctx, tx, roleUserRequest)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -88,7 +88,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		}
 
 		//update user:
-		userResult, err := s.repository.Update(ctx, tx.Client(), userRequest, id)
+		userResult, err := s.userRepository.Update(ctx, tx, userRequest, id)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -101,7 +101,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		}
 
 		//update role_user:
-		_, errRoleUser := s.roleUserRepository.Update(ctx, tx.Client(), roleUserRequest, id)
+		_, errRoleUser := s.roleUserRepository.Update(ctx, tx, roleUserRequest, id)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -116,7 +116,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 }
 
 func (s *UserServiceImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User, error) {
-	data, err := s.repository.SoftDelete(ctx, id)
+	data, err := s.userRepository.SoftDelete(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
@@ -125,7 +125,7 @@ func (s *UserServiceImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User,
 }
 
 func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) {
-	data, err := s.repository.SoftDelete(ctx, id)
+	data, err := s.userRepository.SoftDelete(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
@@ -134,7 +134,7 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 }
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
-	result, err := s.repository.GetById(ctx, id)
+	result, err := s.userRepository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
@@ -143,7 +143,7 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 }
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
-	result, err := s.repository.GetAll(ctx)
+	result, err := s.userRepository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}

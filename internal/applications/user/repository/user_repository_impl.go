@@ -15,7 +15,7 @@ func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 
-func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Client, request ent.User) (*ent.User, error) {
+func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, request ent.User) (*ent.User, error) {
 	response, err := client.User.Create().
 		SetRoleID(request.RoleID).
 		SetName(request.Name).
@@ -23,7 +23,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Client, req
 		SetPassword(request.Password).
 		SetIsVerified(request.IsVerified).
 		SetAvatar(request.Avatar).
-		SetLastAccessAt(request.LastAccessAt).
+		SetLastAccessAt(time.Now()).
 		SetPregnancyMode(request.PregnancyMode).
 		SetCreatedAt(time.Now()).
 		Save(ctx)
@@ -35,7 +35,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Client, req
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Client, request ent.User, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, request ent.User, id uint64) (*ent.User, error) {
 	saved, err := client.User.
 		UpdateOneID(id).
 		SetRoleID(request.RoleID).
@@ -56,7 +56,7 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Client, req
 	return saved, nil
 }
 
-func (r *UserRepositoryImpl) Delete(ctx context.Context, client *ent.Client, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) Delete(ctx context.Context, client *ent.Tx, id uint64) (*ent.User, error) {
 	err := client.Role.DeleteOneID(id).Exec(ctx)
 
 	if err != nil {
