@@ -9,7 +9,6 @@ import (
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
 	userRepository "myapp/internal/applications/user/repository"
-	"time"
 )
 
 type UserServiceImpl struct {
@@ -83,7 +82,6 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			Password:      request.Password,
 			IsVerified:    true,
 			Avatar:        "",
-			LastAccessAt:  time.Now(),
 			PregnancyMode: false,
 		}
 
@@ -113,15 +111,6 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 	}
 
 	return userUpdated, nil
-}
-
-func (s *UserServiceImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User, error) {
-	data, err := s.userRepository.SoftDelete(ctx, id)
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
-	}
-
-	return data, nil
 }
 
 func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) {

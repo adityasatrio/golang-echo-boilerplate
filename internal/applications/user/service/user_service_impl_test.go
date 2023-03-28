@@ -73,15 +73,15 @@ func TestUserServiceImpl_Create(t *testing.T) {
 		{
 			request:      request,
 			name:         "Create_User_Success-2",
-			userRequest:  getUserMock(uint64(0), "Admin", "user@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "user@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
 			scenario:     true,
 		},
 		{
 			request:      request,
-			name:         "Create_User_Failed-3",
-			userRequest:  getUserMock(uint64(0), "Admin", "user@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "user@tentanganak.id", "12345"),
+			name:         "Create_User_Failed-1",
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
 			scenario:     false,
 		},
 	}
@@ -123,9 +123,82 @@ func TestUserServiceImpl_Create(t *testing.T) {
 }
 
 func TestUserServiceImpl_Update(t *testing.T) {
+	ctx := context.Background()
+	request := dto.UserRequest{
+		RoleId:   0,
+		Name:     "User",
+		Email:    "user@tentanganak.id",
+		Password: "12345",
+	}
+
+	id := uint64(123000)
+	userRequest := getUserMock(uint64(0), "User", "user@tentanganak.id", "12345")
+	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
+
+	t.Run("Update_User_Success", func(t *testing.T) {
+
+		mockUserRepository.On("Update", mock.Anything, mock.Anything, userRequest, id).Return(&userResponse, nil)
+		mockRoleUserRepository.On("Update", mock.Anything, mock.Anything, mock.Anything, id).Return(&ent.RoleUser{}, nil)
+		mockTransaction.On("WithTx", mock.Anything, mock.Anything).
+			Run(func(args mock.Arguments) {
+				f := args.Get(1).(func(tx *ent.Tx) error)
+				f(ent.TxFromContext(ctx))
+			}).Return(nil).Once()
+
+		result, err := service.Update(context.Background(), id, &request)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Equal(t, &userResponse, result)
+	})
+
+	t.Run("Update_User_Failed_User", func(t *testing.T) {
+		err := errors.New("failed saved user")
+		mockUserRepository.On("Update", mock.Anything, mock.Anything, userRequest, id).Return(nil, err)
+		mockTransaction.On("WithTx", mock.Anything, mock.Anything).
+			Run(func(args mock.Arguments) {
+				f := args.Get(1).(func(tx *ent.Tx) error)
+				f(ent.TxFromContext(ctx))
+			}).Return(err).Once()
+
+		result, err := service.Update(context.Background(), id, &request)
+		assert.NotNil(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("Update_User_Failed_Role_User", func(t *testing.T) {
+		err := errors.New("failed saved role")
+		mockUserRepository.On("Update", mock.Anything, mock.Anything, userRequest, id).Return(&userResponse, nil)
+		mockRoleUserRepository.On("Update", mock.Anything, mock.Anything, mock.Anything, id).Return(nil, err)
+		mockTransaction.On("WithTx", mock.Anything, mock.Anything).
+			Run(func(args mock.Arguments) {
+				f := args.Get(1).(func(tx *ent.Tx) error)
+				f(ent.TxFromContext(ctx))
+			}).Return(err).Once()
+
+		result, err := service.Update(context.Background(), id, &request)
+		assert.NotNil(t, err)
+		assert.Nil(t, result)
+	})
+
 }
 
 func TestUserServiceImpl_Delete(t *testing.T) {
+
+	userMock := getUserMock(uint64(123000), "User-1", "user1@email.com", "12345")
+	t.Run("Delete_success", func(t *testing.T) {
+		mockUserRepository.On("SoftDelete", mock.Anything, uint64(123000)).Return(&userMock, nil).Once()
+		result, err := service.Delete(context.Background(), userMock.ID)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("Delete_failed", func(t *testing.T) {
+		errorMessage := errors.New("failed got user")
+		mockUserRepository.On("SoftDelete", mock.Anything, uint64(123000)).Return(nil, errorMessage).Once()
+		result, err := service.Delete(context.Background(), userMock.ID)
+		assert.NotNil(t, err)
+		assert.Nil(t, result)
+	})
 
 }
 
