@@ -13,6 +13,7 @@ type CustomValidator struct {
 var (
 	validate    *validator.Validate
 	passwordTag = "password"
+	emailTag    = "email"
 )
 
 func NewValidator() *validator.Validate {
@@ -21,6 +22,12 @@ func NewValidator() *validator.Validate {
 
 	//register password:
 	err := validate.RegisterValidation(passwordTag, IsValidPassword)
+	if err != nil {
+		return nil
+	}
+
+	//register email:
+	err = validate.RegisterValidation(emailTag, IsValidEmail)
 	if err != nil {
 		return nil
 	}
