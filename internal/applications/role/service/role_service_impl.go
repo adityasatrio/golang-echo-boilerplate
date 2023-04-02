@@ -11,29 +11,41 @@ import (
 
 type RoleServiceImpl struct {
 	repository  repository.RoleRepository
-	transaction *transaction.TrxService
+	transaction transaction.TrxService
 }
 
-func NewRoleServiceImpl(repository repository.RoleRepository, transaction *transaction.TrxService) *RoleServiceImpl {
+func NewRoleServiceImpl(repository repository.RoleRepository, transaction transaction.TrxService) *RoleServiceImpl {
 	return &RoleServiceImpl{repository: repository, transaction: transaction}
 }
 
 func (s *RoleServiceImpl) Create(ctx context.Context, request dto.RoleRequest) (*ent.Role, error) {
-	role, err := s.repository.Create(ctx, request)
+
+	roleReq := ent.Role{
+		Name: request.Name,
+		Text: request.Text,
+	}
+
+	roleSaved, err := s.repository.Create(ctx, roleReq)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 	}
 
-	return role, nil
+	return roleSaved, nil
 }
 
 func (s *RoleServiceImpl) Update(ctx context.Context, request dto.RoleRequest, id uint64) (*ent.Role, error) {
-	role, err := s.repository.Update(ctx, request, id)
+
+	roleReq := ent.Role{
+		Name: request.Name,
+		Text: request.Text,
+	}
+
+	roleUpdated, err := s.repository.Update(ctx, roleReq, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
 
-	return role, nil
+	return roleUpdated, nil
 }
 
 func (s *RoleServiceImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Role, error) {

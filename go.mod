@@ -10,6 +10,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/labstack/gommon v0.4.0
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.2
 )

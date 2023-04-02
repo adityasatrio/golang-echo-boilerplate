@@ -14,12 +14,12 @@ import (
 // Injectors from trx_service_injector.go:
 
 func InitializedTxService(dbClient *ent.Client) *TrxServiceImpl {
-	trxServiceImpl := NewTxServiceImpl(dbClient)
+	trxServiceImpl := NewTrxServiceImpl(dbClient)
 	return trxServiceImpl
 }
 
 // trx_service_injector.go:
 
 var provider = wire.NewSet(
-	NewTxServiceImpl, wire.Bind(new(TrxService), new(*TrxServiceImpl)),
+	NewTrxServiceImpl, wire.Bind(new(TrxService), new(*TrxServiceImpl)),
 )

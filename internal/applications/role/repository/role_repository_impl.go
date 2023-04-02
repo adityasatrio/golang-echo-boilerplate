@@ -4,7 +4,6 @@ import (
 	"context"
 	"myapp/ent"
 	"myapp/ent/role"
-	"myapp/internal/applications/role/dto"
 	"time"
 )
 
@@ -16,11 +15,11 @@ func NewRoleRepositoryImpl(client *ent.Client) *RoleRepositoryImpl {
 	return &RoleRepositoryImpl{client: client}
 }
 
-func (r *RoleRepositoryImpl) Create(ctx context.Context, request dto.RoleRequest) (*ent.Role, error) {
+func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Role, error) {
 
 	response, err := r.client.Role.Create().
-		SetName(request.Name).
-		SetText(request.Text).
+		SetName(role.Name).
+		SetText(role.Text).
 		Save(ctx)
 
 	if err != nil {
@@ -30,11 +29,11 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, request dto.RoleRequest
 	return response, nil
 }
 
-func (r *RoleRepositoryImpl) Update(ctx context.Context, request dto.RoleRequest, id uint64) (*ent.Role, error) {
+func (r *RoleRepositoryImpl) Update(ctx context.Context, role ent.Role, id uint64) (*ent.Role, error) {
 	response, err := r.client.Role.
 		UpdateOneID(id).
-		SetName(request.Name).
-		SetText(request.Text).
+		SetName(role.Name).
+		SetText(role.Text).
 		Save(ctx)
 
 	if err != nil {

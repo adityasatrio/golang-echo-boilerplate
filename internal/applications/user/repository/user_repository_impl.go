@@ -15,16 +15,16 @@ func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 
-func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, request ent.User) (*ent.User, error) {
+func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, user ent.User) (*ent.User, error) {
 	response, err := client.User.Create().
-		SetRoleID(request.RoleID).
-		SetName(request.Name).
-		SetEmail(request.Email).
-		SetPassword(request.Password).
-		SetIsVerified(request.IsVerified).
-		SetAvatar(request.Avatar).
+		SetRoleID(user.RoleID).
+		SetName(user.Name).
+		SetEmail(user.Email).
+		SetPassword(user.Password).
+		SetIsVerified(user.IsVerified).
+		SetAvatar(user.Avatar).
 		SetLastAccessAt(time.Now()).
-		SetPregnancyMode(request.PregnancyMode).
+		SetPregnancyMode(user.PregnancyMode).
 		SetCreatedAt(time.Now()).
 		Save(ctx)
 
@@ -35,17 +35,17 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, request
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, request ent.User, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, user ent.User, id uint64) (*ent.User, error) {
 	saved, err := client.User.
 		UpdateOneID(id).
-		SetRoleID(request.RoleID).
-		SetName(request.Name).
-		SetEmail(request.Email).
-		SetPassword(request.Password).
-		SetIsVerified(request.IsVerified).
-		SetAvatar(request.Avatar).
-		SetLastAccessAt(request.LastAccessAt).
-		SetPregnancyMode(request.PregnancyMode).
+		SetRoleID(user.RoleID).
+		SetName(user.Name).
+		SetEmail(user.Email).
+		SetPassword(user.Password).
+		SetIsVerified(user.IsVerified).
+		SetAvatar(user.Avatar).
+		SetLastAccessAt(user.LastAccessAt).
+		SetPregnancyMode(user.PregnancyMode).
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 

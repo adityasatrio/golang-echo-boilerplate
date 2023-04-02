@@ -7,15 +7,18 @@ import (
 	"github.com/stretchr/testify/mock"
 	"myapp/ent"
 	"myapp/internal/applications/user/dto"
-	"myapp/mocks"
+	mockRoleRepo "myapp/mocks/role/repository"
+	mockRoleUserRepo "myapp/mocks/role_user/repository"
+	mockTrx "myapp/mocks/transaction"
+	"myapp/mocks/user/repository"
 	"testing"
 	"time"
 )
 
-var mockUserRepository = new(mocks.UserRepository)
-var mockRoleRepository = new(mocks.RoleRepository)
-var mockRoleUserRepository = new(mocks.RoleUserRepository)
-var mockTransaction = new(mocks.TrxService)
+var mockUserRepository = new(mock_repository.UserRepository)
+var mockRoleRepository = new(mockRoleRepo.RoleRepository)
+var mockRoleUserRepository = new(mockRoleUserRepo.RoleUserRepository)
+var mockTransaction = new(mockTrx.TrxService)
 var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {

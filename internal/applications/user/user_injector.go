@@ -17,7 +17,7 @@ var providerUser = wire.NewSet(
 	repository.NewUserRepositoryImpl,
 	roleRepository.NewRoleRepositoryImpl,
 	roleUserRepository.NewRoleUserRepositoryImpl,
-	transaction.NewTxServiceImpl,
+	transaction.NewTrxServiceImpl,
 	service.NewUserServiceImpl,
 
 	wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)),

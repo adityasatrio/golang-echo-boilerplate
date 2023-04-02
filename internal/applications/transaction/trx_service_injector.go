@@ -9,7 +9,7 @@ import (
 )
 
 var provider = wire.NewSet(
-	NewTxServiceImpl,
+	NewTrxServiceImpl,
 	wire.Bind(new(TrxService), new(*TrxServiceImpl)),
 )
 

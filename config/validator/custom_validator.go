@@ -10,8 +10,22 @@ type CustomValidator struct {
 	Validator *validator.Validate
 }
 
+var (
+	validate    *validator.Validate
+	passwordTag = "password"
+)
+
 func NewValidator() *validator.Validate {
-	return validator.New()
+
+	validate = validator.New()
+
+	//register password:
+	err := validate.RegisterValidation(passwordTag, IsValidPassword)
+	if err != nil {
+		return nil
+	}
+
+	return validate
 }
 
 func (cv *CustomValidator) Validate(i interface{}) error {
