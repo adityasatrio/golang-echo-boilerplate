@@ -32,10 +32,10 @@ func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, req
 func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
 
 	//delete existing role user:
-	_, errDeleted := r.DeleteByUserId(ctx, client, id)
+	_, err := client.RoleUser.Delete().Where(roleuser.UserID(id)).Exec(ctx)
 
-	if errDeleted != nil {
-		return nil, errDeleted
+	if err != nil {
+		return nil, err
 	}
 
 	//create new role user:
@@ -51,14 +51,4 @@ func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, req
 	}
 
 	return response, nil
-}
-
-func (r *RoleUserRepositoryImpl) DeleteByUserId(ctx context.Context, client *ent.Tx, id uint64) (int, error) {
-	dataDeleted, err := client.RoleUser.Delete().Where(roleuser.UserID(id)).Exec(ctx)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return dataDeleted, nil
 }

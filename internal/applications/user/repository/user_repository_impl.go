@@ -44,7 +44,7 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, user en
 		SetPassword(user.Password).
 		SetIsVerified(user.IsVerified).
 		SetAvatar(user.Avatar).
-		SetLastAccessAt(user.LastAccessAt).
+		SetLastAccessAt(time.Now()).
 		SetPregnancyMode(user.PregnancyMode).
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
