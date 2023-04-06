@@ -62,12 +62,14 @@ func TestUserServiceImpl_Create(t *testing.T) {
 	userMocks := []struct {
 		name         string
 		request      dto.UserRequest
+		roleRequest  ent.RoleUser
 		userRequest  ent.User
 		userResponse ent.User
 		scenario     bool
 	}{
 		{
 			request:      request,
+			roleRequest:  ent.RoleUser{UserID: 123000},
 			name:         "Create_User_Success-1",
 			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
 			userResponse: getUserMock(uint64(123000), "Admin", "admin@tentanganak.id", "12345"),
@@ -75,6 +77,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 		},
 		{
 			request:      request,
+			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Success-2",
 			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
 			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
@@ -82,6 +85,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 		},
 		{
 			request:      request,
+			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Failed-1",
 			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
 			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
@@ -95,7 +99,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 
 			if userMock.scenario {
 				mockUserRepository.On("Create", ctx, mock.Anything, userMock.userRequest).Return(&userMock.userResponse, nil)
-				mockRoleUserRepository.On("Create", ctx, mock.Anything, mock.Anything).Return(&ent.RoleUser{}, nil)
+				mockRoleUserRepository.On("Create", ctx, mock.Anything, userMock.roleRequest).Return(&ent.RoleUser{}, nil)
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
 						f := args.Get(1).(func(tx *ent.Tx) error)
@@ -108,7 +112,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 				assert.Equal(t, &userMock.userResponse, result)
 			} else {
 				mockUserRepository.On("Create", ctx, mock.Anything, userMock.userRequest).Return(&userMock.userResponse, nil)
-				mockRoleUserRepository.On("Create", ctx, mock.Anything, mock.Anything).Panic("failed saved")
+				mockRoleUserRepository.On("Create", ctx, mock.Anything, userMock.roleRequest).Panic("failed saved")
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
 						f := args.Get(1).(func(tx *ent.Tx) error)
@@ -137,11 +141,12 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	id := uint64(123000)
 	userRequest := getUserMock(uint64(0), "User", "user@tentanganak.id", "12345")
 	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
+	roleRequest := ent.RoleUser{UserID: 123000}
 
 	t.Run("Update_User_Success", func(t *testing.T) {
 
 		mockUserRepository.On("Update", ctx, mock.Anything, userRequest, id).Return(&userResponse, nil)
-		mockRoleUserRepository.On("Update", ctx, mock.Anything, mock.Anything, id).Return(&ent.RoleUser{}, nil)
+		mockRoleUserRepository.On("Update", ctx, mock.Anything, roleRequest, id).Return(&ent.RoleUser{}, nil)
 		mockTransaction.On("WithTx", ctx, mock.Anything).
 			Run(func(args mock.Arguments) {
 				f := args.Get(1).(func(tx *ent.Tx) error)
@@ -171,7 +176,7 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	t.Run("Update_User_Failed_Role_User", func(t *testing.T) {
 		err := errors.New("failed saved role")
 		mockUserRepository.On("Update", ctx, mock.Anything, userRequest, id).Return(&userResponse, nil)
-		mockRoleUserRepository.On("Update", ctx, mock.Anything, mock.Anything, id).Return(nil, err)
+		mockRoleUserRepository.On("Update", ctx, mock.Anything, roleRequest, id).Return(nil, err)
 		mockTransaction.On("WithTx", ctx, mock.Anything).
 			Run(func(args mock.Arguments) {
 				f := args.Get(1).(func(tx *ent.Tx) error)
