@@ -6,8 +6,8 @@ import (
 )
 
 type SystemParameterRepository interface {
-	Create(ctx context.Context, newData ent.SystemParameter) (*ent.SystemParameter, error)
-	Update(ctx context.Context, id int, updateData ent.SystemParameter) (*ent.SystemParameter, error)
+	Create(ctx context.Context, newData *ent.SystemParameter) (*ent.SystemParameter, error)
+	Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error)
 	Delete(ctx context.Context, id int) (*ent.SystemParameter, error)
 	GetById(ctx context.Context, id int) (*ent.SystemParameter, error)
 	GetAll(ctx context.Context) ([]*ent.SystemParameter, error)

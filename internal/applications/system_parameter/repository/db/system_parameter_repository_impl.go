@@ -16,7 +16,7 @@ func NewSystemParameterRepository(dbConn *ent.Client) *SystemParameterRepository
 	}
 }
 
-func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.SystemParameter) (*ent.SystemParameter, error) {
+func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent.SystemParameter) (*ent.SystemParameter, error) {
 	saved, err := r.client.SystemParameter.
 		Create().
 		SetKey(newData.Key).
@@ -31,7 +31,7 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.
 	return saved, nil
 }
 
-func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData ent.SystemParameter) (*ent.SystemParameter, error) {
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
 	saved, err := r.client.SystemParameter.
 		UpdateOneID(id).
 		SetKey(updateData.Key).

@@ -29,7 +29,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
-	result, err := s.repository.Create(ctx, newData)
+	result, err := s.repository.Create(ctx, &newData)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 	}
@@ -54,7 +54,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		Value: update.Value,
 	}
 
-	updated, err := s.repository.Update(ctx, existId.ID, newData)
+	updated, err := s.repository.Update(ctx, existId.ID, &newData)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
