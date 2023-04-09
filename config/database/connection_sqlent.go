@@ -46,7 +46,7 @@ func NewSqlEntClient() *ent.Client {
 	}
 
 	if err != nil {
-		log.Println("err : %s", err)
+		log.Printf("err : %s\n", err)
 	}
 
 	//from docs define close on this function, but will impact cant create DB session on repository

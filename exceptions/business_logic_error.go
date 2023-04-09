@@ -51,7 +51,7 @@ func (e BusinessLogicError) Unwrap() error {
 
 // Dig Returns the inner most CustomErrorWrapper
 func (e BusinessLogicError) Dig() BusinessLogicError {
-	var errStruct BusinessLogicError
+	var errStruct *BusinessLogicError
 	if errors.As(e.Err, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()
