@@ -1,3 +1,5 @@
+[![Go](https://github.com/adityasatrio/golang-echo-boilerplate/actions/workflows/go.yml/badge.svg)](https://github.com/adityasatrio/golang-echo-boilerplate/actions/workflows/go.yml)
+
 # Golang CRUD boilerplate
   
 - Golang 1.18
