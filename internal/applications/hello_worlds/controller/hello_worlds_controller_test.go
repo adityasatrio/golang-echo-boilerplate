@@ -36,7 +36,8 @@ func TestHello(t *testing.T) {
 	c := e.NewContext(request, recorder)
 
 	mockService := &mock_service.HelloWorldsService{}
-	mockService.On("Hello", request.Context(), "hello from controller -", "").Return("success", nil)
+	mockService.On("Hello", request.Context(), "hello from controller ->", "").
+		Return("success", nil)
 
 	controller := &HelloWorldsController{mockService}
 
@@ -65,8 +66,8 @@ func TestHelloErr(t *testing.T) {
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	mockService := &mock_service.HelloWorldsService{}
-	serviceErr := exceptions.NewBusinessLogicError(exceptions.EBL10007, errors.New("hello from controller - hello from s-impl layer -"))
-	mockService.On("Hello", request.Context(), "hello from controller -", "service").Return("", serviceErr)
+	serviceErr := exceptions.NewBusinessLogicError(exceptions.EBL10007, errors.New("hello from controller -> hello from s-impl layer ->"))
+	mockService.On("Hello", request.Context(), "hello from controller ->", "service").Return("", serviceErr)
 
 	controller := &HelloWorldsController{mockService}
 

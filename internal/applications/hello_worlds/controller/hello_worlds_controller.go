@@ -19,7 +19,7 @@ func NewHelloWorldsController(service service.HelloWorldsService) *HelloWorldsCo
 func (controller *HelloWorldsController) Hello(c echo.Context) error {
 
 	errorFlag := c.QueryParam("error")
-	messageController := "hello from controller -"
+	messageController := "hello from controller ->"
 
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
