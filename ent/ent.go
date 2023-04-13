@@ -7,8 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"myapp/ent/pet"
+	"myapp/ent/role"
+	"myapp/ent/roleuser"
 	"myapp/ent/system_parameter"
 	"myapp/ent/user"
+	"myapp/ent/userdevice"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -34,8 +37,11 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		pet.Table:              pet.ValidColumn,
+		role.Table:             role.ValidColumn,
+		roleuser.Table:         roleuser.ValidColumn,
 		system_parameter.Table: system_parameter.ValidColumn,
 		user.Table:             user.ValidColumn,
+		userdevice.Table:       userdevice.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {
@@ -85,7 +91,6 @@ type AggregateFunc func(*sql.Selector) string
 //	GroupBy(field1, field2).
 //	Aggregate(ent.As(ent.Sum(field1), "sum_field1"), (ent.As(ent.Sum(field2), "sum_field2")).
 //	Scan(ctx, &v)
-//
 func As(fn AggregateFunc, end string) AggregateFunc {
 	return func(s *sql.Selector) string {
 		return sql.As(fn(s), end)

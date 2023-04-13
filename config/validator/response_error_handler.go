@@ -40,6 +40,8 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 					errorMessage = fmt.Sprintf("%s value must be greater than %s", err.Field(), err.Param())
 				case "lte":
 					errorMessage = fmt.Sprintf("%s value must be lower than %s", err.Field(), err.Param())
+				case "password":
+					errorMessage = fmt.Sprintf("%s %s", err.Field(), err.Value())
 				}
 				break
 			}

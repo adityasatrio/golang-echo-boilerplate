@@ -8,6 +8,8 @@ import (
 	"myapp/internal/applications/hello_worlds/service"
 	"myapp/internal/applications/system_parameter"
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
+	"myapp/internal/applications/user"
+	userController "myapp/internal/applications/user/controller"
 )
 
 func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
@@ -23,5 +25,8 @@ func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
 	SystemParameterService := system_parameter.InitializedSystemParameterService(connection)
 	systemParameterController.NewSystemParameterController(SystemParameterService).
 		AddRoutes(e)
+
+	UserService := user.InitializedUserService(connection)
+	userController.NewUserController(UserService).AddRoutes(e)
 
 }

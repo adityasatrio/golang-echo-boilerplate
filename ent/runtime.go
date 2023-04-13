@@ -6,7 +6,6 @@ import (
 	"myapp/ent/pet"
 	"myapp/ent/schema"
 	"myapp/ent/system_parameter"
-	"myapp/ent/user"
 	"time"
 
 	"github.com/google/uuid"
@@ -91,53 +90,4 @@ func init() {
 	system_parameterDescUpdatedAt := system_parameterFields[6].Descriptor()
 	// system_parameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	system_parameter.DefaultUpdatedAt = system_parameterDescUpdatedAt.Default.(time.Time)
-	userFields := schema.User{}.Fields()
-	_ = userFields
-	// userDescName is the schema descriptor for name field.
-	userDescName := userFields[1].Descriptor()
-	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	user.NameValidator = func() func(string) error {
-		validators := userDescName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-			validators[2].(func(string) error),
-		}
-		return func(name string) error {
-			for _, fn := range fns {
-				if err := fn(name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[2].Descriptor()
-	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
-	// userDescPhone is the schema descriptor for phone field.
-	userDescPhone := userFields[3].Descriptor()
-	// user.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
-	user.PhoneValidator = userDescPhone.Validators[0].(func(string) error)
-	// userDescIsDeleted is the schema descriptor for is_deleted field.
-	userDescIsDeleted := userFields[4].Descriptor()
-	// user.DefaultIsDeleted holds the default value on creation for the is_deleted field.
-	user.DefaultIsDeleted = userDescIsDeleted.Default.(bool)
-	// userDescCreatedBy is the schema descriptor for created_by field.
-	userDescCreatedBy := userFields[5].Descriptor()
-	// user.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	user.CreatedByValidator = userDescCreatedBy.Validators[0].(func(string) error)
-	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[6].Descriptor()
-	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
-	user.DefaultCreatedAt = userDescCreatedAt.Default.(time.Time)
-	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[8].Descriptor()
-	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(time.Time)
-	// userDescID is the schema descriptor for id field.
-	userDescID := userFields[0].Descriptor()
-	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(func() uuid.UUID)
 }

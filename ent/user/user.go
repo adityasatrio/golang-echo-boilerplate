@@ -2,12 +2,6 @@
 
 package user
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
 const (
 	// Label holds the string label denoting the user type in the database.
 	Label = "user"
@@ -17,18 +11,48 @@ const (
 	FieldName = "name"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
-	// FieldPhone holds the string denoting the phone field in the database.
-	FieldPhone = "phone"
-	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
-	FieldIsDeleted = "is_deleted"
-	// FieldCreatedBy holds the string denoting the created_by field in the database.
-	FieldCreatedBy = "created_by"
+	// FieldIsVerified holds the string denoting the is_verified field in the database.
+	FieldIsVerified = "is_verified"
+	// FieldEmailVerifiedAt holds the string denoting the email_verified_at field in the database.
+	FieldEmailVerifiedAt = "email_verified_at"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
+	// FieldRememberToken holds the string denoting the remember_token field in the database.
+	FieldRememberToken = "remember_token"
+	// FieldSocialMediaID holds the string denoting the social_media_id field in the database.
+	FieldSocialMediaID = "social_media_id"
+	// FieldAvatar holds the string denoting the avatar field in the database.
+	FieldAvatar = "avatar"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
-	FieldUpdatedBy = "updated_by"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldRoleID holds the string denoting the role_id field in the database.
+	FieldRoleID = "role_id"
+	// FieldLoginType holds the string denoting the login_type field in the database.
+	FieldLoginType = "login_type"
+	// FieldSubSpecialist holds the string denoting the sub_specialist field in the database.
+	FieldSubSpecialist = "sub_specialist"
+	// FieldFirebaseToken holds the string denoting the firebase_token field in the database.
+	FieldFirebaseToken = "firebase_token"
+	// FieldInfo holds the string denoting the info field in the database.
+	FieldInfo = "info"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
+	// FieldSpecialist holds the string denoting the specialist field in the database.
+	FieldSpecialist = "specialist"
+	// FieldPhone holds the string denoting the phone field in the database.
+	FieldPhone = "phone"
+	// FieldLastAccessAt holds the string denoting the last_access_at field in the database.
+	FieldLastAccessAt = "last_access_at"
+	// FieldPregnancyMode holds the string denoting the pregnancy_mode field in the database.
+	FieldPregnancyMode = "pregnancy_mode"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldLatestSkipUpdate holds the string denoting the latest_skip_update field in the database.
+	FieldLatestSkipUpdate = "latest_skip_update"
+	// FieldLatestDeletedAt holds the string denoting the latest_deleted_at field in the database.
+	FieldLatestDeletedAt = "latest_deleted_at"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -38,12 +62,27 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldEmail,
-	FieldPhone,
-	FieldIsDeleted,
-	FieldCreatedBy,
+	FieldIsVerified,
+	FieldEmailVerifiedAt,
+	FieldPassword,
+	FieldRememberToken,
+	FieldSocialMediaID,
+	FieldAvatar,
 	FieldCreatedAt,
-	FieldUpdatedBy,
 	FieldUpdatedAt,
+	FieldRoleID,
+	FieldLoginType,
+	FieldSubSpecialist,
+	FieldFirebaseToken,
+	FieldInfo,
+	FieldDescription,
+	FieldSpecialist,
+	FieldPhone,
+	FieldLastAccessAt,
+	FieldPregnancyMode,
+	FieldDeletedAt,
+	FieldLatestSkipUpdate,
+	FieldLatestDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -55,22 +94,3 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
-
-var (
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
-	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	EmailValidator func(string) error
-	// PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
-	PhoneValidator func(string) error
-	// DefaultIsDeleted holds the default value on creation for the "is_deleted" field.
-	DefaultIsDeleted bool
-	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	CreatedByValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt time.Time
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
-)

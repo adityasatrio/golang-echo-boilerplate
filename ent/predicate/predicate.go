@@ -9,8 +9,17 @@ import (
 // Pet is the predicate function for pet builders.
 type Pet func(*sql.Selector)
 
+// Role is the predicate function for role builders.
+type Role func(*sql.Selector)
+
+// RoleUser is the predicate function for roleuser builders.
+type RoleUser func(*sql.Selector)
+
 // System_parameter is the predicate function for system_parameter builders.
 type System_parameter func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserDevice is the predicate function for userdevice builders.
+type UserDevice func(*sql.Selector)
