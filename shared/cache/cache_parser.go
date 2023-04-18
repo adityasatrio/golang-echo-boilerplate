@@ -1,10 +1,6 @@
 package cache
 
-import (
-	"encoding/json"
-	"myapp/ent"
-)
-
+/*
 type CacheValue struct {
 	//register model / entity here for parsing in cache
 	SystemParameter *ent.SystemParameter
@@ -18,4 +14,4 @@ func (m *CacheValue) MarshalBinary() ([]byte, error) {
 
 func (m *CacheValue) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, m)
-}
+}*/

@@ -3,34 +3,36 @@ package cache
 import (
 	"context"
 	"fmt"
-	//"github.com/dgraph-io/ristretto"
+	"github.com/dgraph-io/ristretto"
 	"github.com/eko/gocache/lib/v4/cache"
 	"github.com/eko/gocache/lib/v4/store"
 	redisStore "github.com/eko/gocache/store/redis/v4"
+	ristrettoStore "github.com/eko/gocache/store/ristretto/v4"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"log"
 	"time"
-	//ristrettoStore "github.com/eko/gocache/store/ristretto/v4"
 )
 
 const RistrettoDefaultBufferItems = 64
 
 func NewCacheManager() *cache.ChainCache[any] {
 
-	/*ristrettoNumCounters := viper.GetInt64("cache.config.ristretto.numCounters")
+	// configure ristretto ( guavalike ) - in memory cache
+	ristrettoNumCounters := viper.GetInt64("cache.config.ristretto.numCounters")
 	ristrettoMaxCost := viper.GetInt64("cache.config.ristretto.maxCost")
 	ristrettoCache, err := ristretto.NewCache(&ristretto.Config{
 		NumCounters: ristrettoNumCounters,
 		MaxCost:     ristrettoMaxCost,
 		BufferItems: RistrettoDefaultBufferItems,
-	})*/
+	})
 
-	/*if err != nil {
+	if err != nil {
 		panic(err)
-	}*/
+	}
 	log.Default().Println("initialized ristrettoCache connection: success")
 
+	//configure redis
 	redisUsername := viper.GetString("cache.config.redis.username")
 	redisPassword := viper.GetString("cache.config.redis.password")
 	redisDb := viper.GetInt("cache.config.redis.DB")
@@ -55,12 +57,12 @@ func NewCacheManager() *cache.ChainCache[any] {
 	//pong := redisClient.Ping(e.AcquireContext().Request().Context())
 	//log.Default().Println("initialized cache redis connection: success ", pong)
 
-	//ristrettoStoreConn := ristrettoStore.NewRistretto(ristrettoCache)
+	ristrettoStoreConn := ristrettoStore.NewRistretto(ristrettoCache)
 	redisStoreConn := redisStore.NewRedis(redisClient, store.WithExpiration(5*time.Second))
 
 	cacheManager := cache.NewChain[any](
-		//cache.New[any](ristrettoStoreConn),
-		cache.New[any](redisStoreConn),
+		cache.New[any](ristrettoStoreConn), //L1 ->  L1 utk handle peak request
+		cache.New[any](redisStoreConn),     //L2
 	)
 
 	log.Default().Println("initialized cache redis  connection: success")

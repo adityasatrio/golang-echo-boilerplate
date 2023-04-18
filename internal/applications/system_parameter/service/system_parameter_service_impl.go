@@ -95,15 +95,15 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 	existCached, _ := s.cache.Get(ctx, key)
 	if existCached != nil {
 		//return existCached.SystemParameter, nil
-		return existCached.(*ent.SystemParameter), nil
+		return existCached.(*ent.SystemParameter), nil //gagal casting ke sysparam
 	}
 
-	/*result, err := s.repository.GetById(ctx, id)
+	result, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-	}*/
+	}
 
-	return nil, nil
+	return result, err
 }
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {

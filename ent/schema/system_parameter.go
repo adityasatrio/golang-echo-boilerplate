@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"encoding/json"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -34,7 +35,7 @@ func (SystemParameter) Indexes() []ent.Index {
 	}
 }
 
-/*type CacheBaseSystemParameter struct {
+type CacheBaseSystemParameter struct {
 	value *SystemParameter
 }
 type NewCacheSystemParameter []CacheBaseSystemParameter
@@ -43,12 +44,12 @@ func (s *SystemParameter) MarshalBinary() ([]byte, error) {
 	newValue := CacheBaseSystemParameter{value: s}
 	byteValue, err := json.Marshal(newValue)
 	return byteValue, err
-}*/
+}
 
-/*func (s *CacheBaseSystemParameter) UnmarshalBinary(data []byte) error {
+func (s *CacheBaseSystemParameter) UnmarshalBinary(data []byte) error {
 	_ = json.Unmarshal(data, s)
 	return data.(*CacheBaseSystemParameter).value
-}*/
+}
 
 //func (s *SystemParameter) MarshalBinary() ([]byte, error) {
 //	jsonOut, err := json.Marshal(s)
