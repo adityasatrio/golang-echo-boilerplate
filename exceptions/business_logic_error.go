@@ -15,8 +15,6 @@ const (
 )
 
 type (
-	//BusinessLogicError interface{}
-
 	BusinessLogicError struct {
 		Message   string `json:"message"`
 		ErrorCode int    `json:"errorCode"`

@@ -14,17 +14,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-/*type DbConnectionSqlEntImpl struct {
-	Client Client
-}
-
-func NewDbConnectionSqlEntImpl(client Client) DbConnection {
-	return &DbConnectionSqlEntImpl{
-		Client: client,
-	}
-}
-*/
-//func (conn *DbConnectionSqlEntImpl) NewSetupConnection() *Client {
 func NewSqlEntClient() *ent.Client {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
