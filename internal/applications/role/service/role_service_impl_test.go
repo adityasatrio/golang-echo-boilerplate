@@ -7,13 +7,11 @@ import (
 	"myapp/ent"
 	"myapp/internal/applications/role/dto"
 	mockRoleRepo "myapp/mocks/role/repository"
-	mockTrx "myapp/mocks/transaction"
 	"testing"
 )
 
 var mockRoleRepository = new(mockRoleRepo.RoleRepository)
-var mockTransaction = new(mockTrx.TrxService)
-var service = NewRoleServiceImpl(mockRoleRepository, mockTransaction)
+var service = NewRoleServiceImpl(mockRoleRepository)
 
 func getRole(id uint64, name string, text string) ent.Role {
 	return ent.Role{

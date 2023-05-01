@@ -18,8 +18,7 @@ import (
 
 func InitializedRoleService(dbClient *ent.Client) *service.RoleServiceImpl {
 	roleRepositoryImpl := repository.NewRoleRepositoryImpl(dbClient)
-	trxServiceImpl := transaction.NewTrxServiceImpl(dbClient)
-	roleServiceImpl := service.NewRoleServiceImpl(roleRepositoryImpl, trxServiceImpl)
+	roleServiceImpl := service.NewRoleServiceImpl(roleRepositoryImpl)
 	return roleServiceImpl
 }
 

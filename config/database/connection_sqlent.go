@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	entsql "entgo.io/ent/dialect/sql"
+	entSql "entgo.io/ent/dialect/sql"
 
 	"context"
 	"fmt"
@@ -33,7 +33,7 @@ func NewSqlEntClient() *ent.Client {
 	db.SetMaxOpenConns(100)
 	db.SetConnMaxLifetime(time.Hour)
 
-	drv := entsql.OpenDB("mysql", db)
+	drv := entSql.OpenDB("mysql", db)
 	client := ent.NewClient(ent.Driver(drv))
 
 	if drv == nil || client == nil {
@@ -46,13 +46,13 @@ func NewSqlEntClient() *ent.Client {
 	}
 
 	if err != nil {
-		log.Println("err : %s", err)
+		log.Printf("err : %s\n", err)
 	}
 
 	//from docs define close on this function, but will impact cant create DB session on repository
 	//defer client.Close()
 
 	//result := Client{Connection: *client}
-	log.Default().Println("initialized database x sqldb x orm ent : success")
+	log.Default().Println("initialized database x sqlDb x orm ent : success")
 	return client
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
 	roleRepository "myapp/internal/applications/role/repository"
@@ -40,8 +41,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//save user:
-
-		userResult, err := s.userRepository.Create(ctx, tx, userRequest)
+		userResult, err := s.userRepository.Create(ctx, tx.Client(), userRequest)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -54,7 +54,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//save role_user:
-		_, errRoleUser := s.roleUserRepository.Create(ctx, tx, roleUserRequest)
+		_, errRoleUser := s.roleUserRepository.Create(ctx, tx.Client(), roleUserRequest)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -62,6 +62,8 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		return nil
 
 	}); err != nil {
+		//add rollback logic here
+		log.Error("do rollback from transactional database operation")
 		return nil, err
 	}
 
@@ -86,7 +88,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		}
 
 		//update user:
-		userResult, err := s.userRepository.Update(ctx, tx, userRequest, id)
+		userResult, err := s.userRepository.Update(ctx, tx.Client(), userRequest, id)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -98,8 +100,8 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			RoleID: uint64(request.RoleId),
 		}
 
-		//update role_user:
-		_, errRoleUser := s.roleUserRepository.Update(ctx, tx, roleUserRequest, id)
+		//update role_user: delete role user and re-create row for role user
+		_, errRoleUser := s.roleUserRepository.Update(ctx, tx.Client(), roleUserRequest, id)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -107,6 +109,8 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		return nil
 
 	}); err != nil {
+		//add rollback logic here
+		log.Error("do rollback from transactional database operation")
 		return nil, err
 	}
 

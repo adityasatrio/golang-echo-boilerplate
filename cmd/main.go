@@ -4,10 +4,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	config "myapp/config"
-	database "myapp/config/database"
+	"myapp/config"
+	"myapp/config/database"
 	"myapp/config/middleware"
 	"myapp/config/validator"
+	"myapp/ent"
 	restApi "myapp/internal/adapter/rest_api"
 )
 
@@ -20,11 +21,16 @@ func main() {
 	validator.SetupHttpErrorHandler(e)
 
 	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
-	//dbConnection := config.NewEntClient() //using ent only
+	//dbConnection := database.NewEntClient() //using ent only
 
 	log.Info("initialized database configuration=", dbConnection)
 	//from docs define close on this function, but will impact cant create DB session on repository
-	defer dbConnection.Close()
+	defer func(dbConnection *ent.Client) {
+		err := dbConnection.Close()
+		if err != nil {
+			log.Fatalf("error initialized database configuration=", err)
+		}
+	}(dbConnection)
 
 	restApi.SetupRouteHandler(e, dbConnection)
 

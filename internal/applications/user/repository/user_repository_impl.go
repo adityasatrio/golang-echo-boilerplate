@@ -8,23 +8,24 @@ import (
 )
 
 type UserRepositoryImpl struct {
-	client *ent.Client
+	client *ent.Client //non transactional client
 }
 
 func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 
-func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, user ent.User) (*ent.User, error) {
-	response, err := client.User.Create().
-		SetRoleID(user.RoleID).
-		SetName(user.Name).
-		SetEmail(user.Email).
-		SetPassword(user.Password).
-		SetIsVerified(user.IsVerified).
-		SetAvatar(user.Avatar).
+func (r *UserRepositoryImpl) Create(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
+	//txClient is transactional client that handled in service layer for post rollback logic
+	response, err := txClient.User.Create().
+		SetRoleID(newUser.RoleID).
+		SetName(newUser.Name).
+		SetEmail(newUser.Email).
+		SetPassword(newUser.Password).
+		SetIsVerified(newUser.IsVerified).
+		SetAvatar(newUser.Avatar).
 		SetLastAccessAt(time.Now()).
-		SetPregnancyMode(user.PregnancyMode).
+		SetPregnancyMode(newUser.PregnancyMode).
 		SetCreatedAt(time.Now()).
 		Save(ctx)
 
@@ -35,17 +36,16 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, user en
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, user ent.User, id uint64) (*ent.User, error) {
-	saved, err := client.User.
-		UpdateOneID(id).
-		SetRoleID(user.RoleID).
-		SetName(user.Name).
-		SetEmail(user.Email).
-		SetPassword(user.Password).
-		SetIsVerified(user.IsVerified).
-		SetAvatar(user.Avatar).
+func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
+	saved, err := txClient.User.UpdateOneID(id).
+		SetRoleID(updateUser.RoleID).
+		SetName(updateUser.Name).
+		SetEmail(updateUser.Email).
+		SetPassword(updateUser.Password).
+		SetIsVerified(updateUser.IsVerified).
+		SetAvatar(updateUser.Avatar).
 		SetLastAccessAt(time.Now()).
-		SetPregnancyMode(user.PregnancyMode).
+		SetPregnancyMode(updateUser.PregnancyMode).
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 
@@ -56,8 +56,8 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, user en
 	return saved, nil
 }
 
-func (r *UserRepositoryImpl) Delete(ctx context.Context, client *ent.Tx, id uint64) (*ent.User, error) {
-	err := client.Role.DeleteOneID(id).Exec(ctx)
+func (r *UserRepositoryImpl) Delete(ctx context.Context, tx *ent.Tx, id uint64) (*ent.User, error) {
+	err := tx.Client().Role.DeleteOneID(id).Exec(ctx)
 
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (r *UserRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Us
 	return deleted, nil
 }
 
-func (r UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
 	data, err := r.client.User.Query().
 		Where(user.And(
 			user.ID(id),
@@ -93,10 +93,11 @@ func (r UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User, 
 	return data, err
 }
 
-func (r UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
+func (r *UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 	data, err := r.client.User.Query().
 		Where(user.DeletedAtIsNil()).
 		All(ctx)
+
 	if err != nil {
 		return nil, err
 	}

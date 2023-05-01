@@ -8,15 +8,14 @@ import (
 )
 
 type RoleUserRepositoryImpl struct {
-	client *ent.Client
 }
 
-func NewRoleUserRepositoryImpl(client *ent.Client) *RoleUserRepositoryImpl {
-	return &RoleUserRepositoryImpl{client: client}
+func NewRoleUserRepositoryImpl() *RoleUserRepositoryImpl {
+	return &RoleUserRepositoryImpl{}
 }
 
-func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, request ent.RoleUser) (*ent.RoleUser, error) {
-	response, err := client.RoleUser.Create().
+func (r *RoleUserRepositoryImpl) Create(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
+	response, err := clientTrx.RoleUser.Create().
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).
 		SetCreatedAt(time.Now()).
@@ -29,17 +28,17 @@ func (r *RoleUserRepositoryImpl) Create(ctx context.Context, client *ent.Tx, req
 	return response, nil
 }
 
-func (r *RoleUserRepositoryImpl) Update(ctx context.Context, client *ent.Tx, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
+func (r *RoleUserRepositoryImpl) Update(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
 
 	//delete existing role user:
-	_, err := client.RoleUser.Delete().Where(roleuser.UserID(id)).Exec(ctx)
+	_, err := clientTrx.RoleUser.Delete().Where(roleuser.UserID(id)).Exec(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
 	//create new role user:
-	response, err := client.RoleUser.Create().
+	response, err := clientTrx.RoleUser.Create().
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).
 		SetCreatedAt(time.Now()).

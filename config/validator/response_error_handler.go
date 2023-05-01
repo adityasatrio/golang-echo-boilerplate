@@ -23,7 +23,7 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 			if errors.Is(err, exceptions.TargetBusinessLogicError) {
 				errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
 				errorLogic := exceptions.BusinessLogicReason(errorCode)
-				response.Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
+				_ = response.Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
 				return
 			}
 		}
@@ -47,7 +47,7 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 			}
 		}
 
-		response.Base(ctx, http.StatusBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest), nil, errors.New(errorMessage))
+		_ = response.Base(ctx, http.StatusBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest), nil, errors.New(errorMessage))
 		return
 	}
 }
