@@ -26,12 +26,12 @@ func TestUserController_Create(t *testing.T) {
 	}{
 		{
 			name:        "Create_success",
-			reqBodyJson: `{"name": "testing name", "email": "testing@email.id", "password": "password123!", "role_id" : 1}`,
+			reqBodyJson: `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`,
 			scenario:    true,
 			errors:      nil,
 		}, {
 			name:        "Create_failed_whenCallService",
-			reqBodyJson: `{"name": "testing name", "email": "testing@email.id", "password": "password123!", "role_id" : 1}`,
+			reqBodyJson: `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`,
 			scenario:    false,
 			errors:      errors.New("got failed when create user"),
 		},
@@ -99,7 +99,7 @@ func TestUserController_Create(t *testing.T) {
 		validator.SetupValidator(e)
 
 		// Create a request.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
@@ -135,7 +135,7 @@ func TestUserController_Update(t *testing.T) {
 		validator.SetupValidator(e)
 
 		// Create a request.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password123!", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
@@ -174,7 +174,7 @@ func TestUserController_Update(t *testing.T) {
 		validator.SetupValidator(e)
 
 		// Create a request.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password123!", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
@@ -214,7 +214,7 @@ func TestUserController_Update(t *testing.T) {
 		validator.SetupValidator(e)
 
 		// Create a request.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
@@ -255,7 +255,7 @@ func TestUserController_Delete(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		userService.On("Delete", req.Context(), uint64(1)).Return(mockRes, nil)
@@ -292,7 +292,7 @@ func TestUserController_Delete(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed delete user")
@@ -334,7 +334,7 @@ func TestUserController_GetById(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		userService.On("GetById", req.Context(), uint64(1)).Return(mockRes, nil)
@@ -371,7 +371,7 @@ func TestUserController_GetById(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed get user")
@@ -412,7 +412,7 @@ func TestUserController_GetAll(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		mockListUser := make([]*ent.User, 0)
@@ -450,7 +450,7 @@ func TestUserController_GetAll(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		// Create a mock response.
-		reqBody := `{"name": "testing name", "email": "testing@tentanganak.id", "password": "password", "role_id" : 1}`
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed get user")
