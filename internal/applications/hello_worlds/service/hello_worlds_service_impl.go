@@ -22,7 +22,7 @@ func NewHelloWorldsService(repository repository.HelloWorldsRepository) *HelloWo
 func (s *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, errorFlag string) (string, error) {
 	log.Info("ctx debug", ctx)
 
-	messageService := message + " hello from s-impl layer -"
+	messageService := message + " hello from s-impl layer ->"
 	if strings.EqualFold(errorFlag, "service") {
 		return "", exceptions.NewBusinessLogicError(exceptions.EBL10007, errors.New(messageService))
 	}
