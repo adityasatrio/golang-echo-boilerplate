@@ -107,49 +107,7 @@ func (udc *UserDeviceCreate) Mutation() *UserDeviceMutation {
 
 // Save creates the UserDevice in the database.
 func (udc *UserDeviceCreate) Save(ctx context.Context) (*UserDevice, error) {
-	var (
-		err  error
-		node *UserDevice
-	)
-	if len(udc.hooks) == 0 {
-		if err = udc.check(); err != nil {
-			return nil, err
-		}
-		node, err = udc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserDeviceMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = udc.check(); err != nil {
-				return nil, err
-			}
-			udc.mutation = mutation
-			if node, err = udc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(udc.hooks) - 1; i >= 0; i-- {
-			if udc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = udc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, udc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*UserDevice)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from UserDeviceMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks(ctx, udc.sqlSave, udc.mutation, udc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -189,6 +147,9 @@ func (udc *UserDeviceCreate) check() error {
 }
 
 func (udc *UserDeviceCreate) sqlSave(ctx context.Context) (*UserDevice, error) {
+	if err := udc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := udc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, udc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -200,19 +161,15 @@ func (udc *UserDeviceCreate) sqlSave(ctx context.Context) (*UserDevice, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = uint64(id)
 	}
+	udc.mutation.id = &_node.ID
+	udc.mutation.done = true
 	return _node, nil
 }
 
 func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserDevice{config: udc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: userdevice.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: userdevice.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(userdevice.Table, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeUint64))
 	)
 	if id, ok := udc.mutation.ID(); ok {
 		_node.ID = id
@@ -272,8 +229,8 @@ func (udcb *UserDeviceCreateBulk) Save(ctx context.Context) ([]*UserDevice, erro
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, udcb.builders[i+1].mutation)
 				} else {

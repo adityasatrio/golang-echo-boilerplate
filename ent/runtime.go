@@ -5,7 +5,7 @@ package ent
 import (
 	"myapp/ent/pet"
 	"myapp/ent/schema"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
 	"time"
 
 	"github.com/google/uuid"
@@ -64,30 +64,30 @@ func init() {
 	petDescID := petFields[0].Descriptor()
 	// pet.DefaultID holds the default value on creation for the id field.
 	pet.DefaultID = petDescID.Default.(func() uuid.UUID)
-	system_parameterFields := schema.System_parameter{}.Fields()
-	_ = system_parameterFields
-	// system_parameterDescKey is the schema descriptor for key field.
-	system_parameterDescKey := system_parameterFields[0].Descriptor()
-	// system_parameter.KeyValidator is a validator for the "key" field. It is called by the builders before save.
-	system_parameter.KeyValidator = system_parameterDescKey.Validators[0].(func(string) error)
-	// system_parameterDescValue is the schema descriptor for value field.
-	system_parameterDescValue := system_parameterFields[1].Descriptor()
-	// system_parameter.ValueValidator is a validator for the "value" field. It is called by the builders before save.
-	system_parameter.ValueValidator = system_parameterDescValue.Validators[0].(func(string) error)
-	// system_parameterDescIsDeleted is the schema descriptor for is_deleted field.
-	system_parameterDescIsDeleted := system_parameterFields[2].Descriptor()
-	// system_parameter.DefaultIsDeleted holds the default value on creation for the is_deleted field.
-	system_parameter.DefaultIsDeleted = system_parameterDescIsDeleted.Default.(bool)
-	// system_parameterDescCreatedBy is the schema descriptor for created_by field.
-	system_parameterDescCreatedBy := system_parameterFields[3].Descriptor()
-	// system_parameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	system_parameter.CreatedByValidator = system_parameterDescCreatedBy.Validators[0].(func(string) error)
-	// system_parameterDescCreatedAt is the schema descriptor for created_at field.
-	system_parameterDescCreatedAt := system_parameterFields[4].Descriptor()
-	// system_parameter.DefaultCreatedAt holds the default value on creation for the created_at field.
-	system_parameter.DefaultCreatedAt = system_parameterDescCreatedAt.Default.(time.Time)
-	// system_parameterDescUpdatedAt is the schema descriptor for updated_at field.
-	system_parameterDescUpdatedAt := system_parameterFields[6].Descriptor()
-	// system_parameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	system_parameter.DefaultUpdatedAt = system_parameterDescUpdatedAt.Default.(time.Time)
+	systemparameterFields := schema.SystemParameter{}.Fields()
+	_ = systemparameterFields
+	// systemparameterDescKey is the schema descriptor for key field.
+	systemparameterDescKey := systemparameterFields[0].Descriptor()
+	// systemparameter.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	systemparameter.KeyValidator = systemparameterDescKey.Validators[0].(func(string) error)
+	// systemparameterDescValue is the schema descriptor for value field.
+	systemparameterDescValue := systemparameterFields[1].Descriptor()
+	// systemparameter.ValueValidator is a validator for the "value" field. It is called by the builders before save.
+	systemparameter.ValueValidator = systemparameterDescValue.Validators[0].(func(string) error)
+	// systemparameterDescIsDeleted is the schema descriptor for is_deleted field.
+	systemparameterDescIsDeleted := systemparameterFields[2].Descriptor()
+	// systemparameter.DefaultIsDeleted holds the default value on creation for the is_deleted field.
+	systemparameter.DefaultIsDeleted = systemparameterDescIsDeleted.Default.(bool)
+	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
+	systemparameterDescCreatedBy := systemparameterFields[3].Descriptor()
+	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	systemparameter.CreatedByValidator = systemparameterDescCreatedBy.Validators[0].(func(string) error)
+	// systemparameterDescCreatedAt is the schema descriptor for created_at field.
+	systemparameterDescCreatedAt := systemparameterFields[4].Descriptor()
+	// systemparameter.DefaultCreatedAt holds the default value on creation for the created_at field.
+	systemparameter.DefaultCreatedAt = systemparameterDescCreatedAt.Default.(time.Time)
+	// systemparameterDescUpdatedAt is the schema descriptor for updated_at field.
+	systemparameterDescUpdatedAt := systemparameterFields[6].Descriptor()
+	// systemparameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	systemparameter.DefaultUpdatedAt = systemparameterDescUpdatedAt.Default.(time.Time)
 }

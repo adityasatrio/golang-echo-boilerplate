@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -29,7 +30,8 @@ type UserDevice struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeviceID holds the value of the "device_id" field.
-	DeviceID string `json:"device_id,omitempty"`
+	DeviceID     string `json:"device_id,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -44,7 +46,7 @@ func (*UserDevice) scanValues(columns []string) ([]any, error) {
 		case userdevice.FieldLatestSkipUpdate, userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type UserDevice", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -106,16 +108,24 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ud.DeviceID = value.String
 			}
+		default:
+			ud.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the UserDevice.
+// This includes values selected through modifiers, order, etc.
+func (ud *UserDevice) Value(name string) (ent.Value, error) {
+	return ud.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this UserDevice.
 // Note that you need to call UserDevice.Unwrap() before calling this method if this UserDevice
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ud *UserDevice) Update() *UserDeviceUpdateOne {
-	return (&UserDeviceClient{config: ud.config}).UpdateOne(ud)
+	return NewUserDeviceClient(ud.config).UpdateOne(ud)
 }
 
 // Unwrap unwraps the UserDevice entity that was returned from a transaction after it was closed,
@@ -160,9 +170,3 @@ func (ud *UserDevice) String() string {
 
 // UserDevices is a parsable slice of UserDevice.
 type UserDevices []*UserDevice
-
-func (ud UserDevices) config(cfg config) {
-	for _i := range ud {
-		ud[_i].config = cfg
-	}
-}

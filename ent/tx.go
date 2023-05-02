@@ -18,8 +18,8 @@ type Tx struct {
 	Role *RoleClient
 	// RoleUser is the client for interacting with the RoleUser builders.
 	RoleUser *RoleUserClient
-	// System_parameter is the client for interacting with the System_parameter builders.
-	System_parameter *System_parameterClient
+	// SystemParameter is the client for interacting with the SystemParameter builders.
+	SystemParameter *SystemParameterClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
@@ -158,7 +158,7 @@ func (tx *Tx) init() {
 	tx.Pet = NewPetClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleUser = NewRoleUserClient(tx.config)
-	tx.System_parameter = NewSystem_parameterClient(tx.config)
+	tx.SystemParameter = NewSystemParameterClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
 }

@@ -15,8 +15,8 @@ type Role func(*sql.Selector)
 // RoleUser is the predicate function for roleuser builders.
 type RoleUser func(*sql.Selector)
 
-// System_parameter is the predicate function for system_parameter builders.
-type System_parameter func(*sql.Selector)
+// SystemParameter is the predicate function for systemparameter builders.
+type SystemParameter func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

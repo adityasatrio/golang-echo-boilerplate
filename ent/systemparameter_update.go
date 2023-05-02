@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"myapp/ent/predicate"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -15,7 +15,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// SystemParameterUpdate is the builder for updating System_parameter entities.
+// SystemParameterUpdate is the builder for updating SystemParameter entities.
 type SystemParameterUpdate struct {
 	config
 	hooks    []Hook
@@ -23,7 +23,7 @@ type SystemParameterUpdate struct {
 }
 
 // Where appends a list predicates to the SystemParameterUpdate builder.
-func (spu *SystemParameterUpdate) Where(ps ...predicate.System_parameter) *SystemParameterUpdate {
+func (spu *SystemParameterUpdate) Where(ps ...predicate.SystemParameter) *SystemParameterUpdate {
 	spu.mutation.Where(ps...)
 	return spu
 }
@@ -107,40 +107,7 @@ func (spu *SystemParameterUpdate) Mutation() *SystemParameterMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (spu *SystemParameterUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(spu.hooks) == 0 {
-		if err = spu.check(); err != nil {
-			return 0, err
-		}
-		affected, err = spu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*SystemParameterMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = spu.check(); err != nil {
-				return 0, err
-			}
-			spu.mutation = mutation
-			affected, err = spu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(spu.hooks) - 1; i >= 0; i-- {
-			if spu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = spu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, spu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks(ctx, spu.sqlSave, spu.mutation, spu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -168,34 +135,28 @@ func (spu *SystemParameterUpdate) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (spu *SystemParameterUpdate) check() error {
 	if v, ok := spu.mutation.Key(); ok {
-		if err := system_parameter.KeyValidator(v); err != nil {
-			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "System_parameter.key": %w`, err)}
+		if err := systemparameter.KeyValidator(v); err != nil {
+			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.key": %w`, err)}
 		}
 	}
 	if v, ok := spu.mutation.Value(); ok {
-		if err := system_parameter.ValueValidator(v); err != nil {
-			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "System_parameter.value": %w`, err)}
+		if err := systemparameter.ValueValidator(v); err != nil {
+			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.value": %w`, err)}
 		}
 	}
 	if v, ok := spu.mutation.CreatedBy(); ok {
-		if err := system_parameter.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "System_parameter.created_by": %w`, err)}
+		if err := systemparameter.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
 		}
 	}
 	return nil
 }
 
 func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   system_parameter.Table,
-			Columns: system_parameter.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		},
+	if err := spu.check(); err != nil {
+		return n, err
 	}
+	_spec := sqlgraph.NewUpdateSpec(systemparameter.Table, systemparameter.Columns, sqlgraph.NewFieldSpec(systemparameter.FieldID, field.TypeInt))
 	if ps := spu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -204,41 +165,42 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 	}
 	if value, ok := spu.mutation.Key(); ok {
-		_spec.SetField(system_parameter.FieldKey, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
 	}
 	if value, ok := spu.mutation.Value(); ok {
-		_spec.SetField(system_parameter.FieldValue, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
 	if value, ok := spu.mutation.IsDeleted(); ok {
-		_spec.SetField(system_parameter.FieldIsDeleted, field.TypeBool, value)
+		_spec.SetField(systemparameter.FieldIsDeleted, field.TypeBool, value)
 	}
 	if value, ok := spu.mutation.CreatedBy(); ok {
-		_spec.SetField(system_parameter.FieldCreatedBy, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)
 	}
 	if value, ok := spu.mutation.UpdatedBy(); ok {
-		_spec.SetField(system_parameter.FieldUpdatedBy, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldUpdatedBy, field.TypeString, value)
 	}
 	if spu.mutation.UpdatedByCleared() {
-		_spec.ClearField(system_parameter.FieldUpdatedBy, field.TypeString)
+		_spec.ClearField(systemparameter.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := spu.mutation.UpdatedAt(); ok {
-		_spec.SetField(system_parameter.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(systemparameter.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if spu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(system_parameter.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(systemparameter.FieldUpdatedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, spu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{system_parameter.Label}
+			err = &NotFoundError{systemparameter.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
 		return 0, err
 	}
+	spu.mutation.done = true
 	return n, nil
 }
 
-// SystemParameterUpdateOne is the builder for updating a single System_parameter entity.
+// SystemParameterUpdateOne is the builder for updating a single SystemParameter entity.
 type SystemParameterUpdateOne struct {
 	config
 	fields   []string
@@ -323,6 +285,12 @@ func (spuo *SystemParameterUpdateOne) Mutation() *SystemParameterMutation {
 	return spuo.mutation
 }
 
+// Where appends a list predicates to the SystemParameterUpdate builder.
+func (spuo *SystemParameterUpdateOne) Where(ps ...predicate.SystemParameter) *SystemParameterUpdateOne {
+	spuo.mutation.Where(ps...)
+	return spuo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (spuo *SystemParameterUpdateOne) Select(field string, fields ...string) *SystemParameterUpdateOne {
@@ -330,52 +298,13 @@ func (spuo *SystemParameterUpdateOne) Select(field string, fields ...string) *Sy
 	return spuo
 }
 
-// Save executes the query and returns the updated System_parameter entity.
-func (spuo *SystemParameterUpdateOne) Save(ctx context.Context) (*System_parameter, error) {
-	var (
-		err  error
-		node *System_parameter
-	)
-	if len(spuo.hooks) == 0 {
-		if err = spuo.check(); err != nil {
-			return nil, err
-		}
-		node, err = spuo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*SystemParameterMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = spuo.check(); err != nil {
-				return nil, err
-			}
-			spuo.mutation = mutation
-			node, err = spuo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(spuo.hooks) - 1; i >= 0; i-- {
-			if spuo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = spuo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, spuo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*System_parameter)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from SystemParameterMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+// Save executes the query and returns the updated SystemParameter entity.
+func (spuo *SystemParameterUpdateOne) Save(ctx context.Context) (*SystemParameter, error) {
+	return withHooks(ctx, spuo.sqlSave, spuo.mutation, spuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (spuo *SystemParameterUpdateOne) SaveX(ctx context.Context) *System_parameter {
+func (spuo *SystemParameterUpdateOne) SaveX(ctx context.Context) *SystemParameter {
 	node, err := spuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -399,47 +328,41 @@ func (spuo *SystemParameterUpdateOne) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (spuo *SystemParameterUpdateOne) check() error {
 	if v, ok := spuo.mutation.Key(); ok {
-		if err := system_parameter.KeyValidator(v); err != nil {
-			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "System_parameter.key": %w`, err)}
+		if err := systemparameter.KeyValidator(v); err != nil {
+			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.key": %w`, err)}
 		}
 	}
 	if v, ok := spuo.mutation.Value(); ok {
-		if err := system_parameter.ValueValidator(v); err != nil {
-			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "System_parameter.value": %w`, err)}
+		if err := systemparameter.ValueValidator(v); err != nil {
+			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.value": %w`, err)}
 		}
 	}
 	if v, ok := spuo.mutation.CreatedBy(); ok {
-		if err := system_parameter.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "System_parameter.created_by": %w`, err)}
+		if err := systemparameter.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
 		}
 	}
 	return nil
 }
 
-func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *System_parameter, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   system_parameter.Table,
-			Columns: system_parameter.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: system_parameter.FieldID,
-			},
-		},
+func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *SystemParameter, err error) {
+	if err := spuo.check(); err != nil {
+		return _node, err
 	}
+	_spec := sqlgraph.NewUpdateSpec(systemparameter.Table, systemparameter.Columns, sqlgraph.NewFieldSpec(systemparameter.FieldID, field.TypeInt))
 	id, ok := spuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "System_parameter.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SystemParameter.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := spuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, system_parameter.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, systemparameter.FieldID)
 		for _, f := range fields {
-			if !system_parameter.ValidColumn(f) {
+			if !systemparameter.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != system_parameter.FieldID {
+			if f != systemparameter.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -452,39 +375,40 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 		}
 	}
 	if value, ok := spuo.mutation.Key(); ok {
-		_spec.SetField(system_parameter.FieldKey, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
 	}
 	if value, ok := spuo.mutation.Value(); ok {
-		_spec.SetField(system_parameter.FieldValue, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
 	if value, ok := spuo.mutation.IsDeleted(); ok {
-		_spec.SetField(system_parameter.FieldIsDeleted, field.TypeBool, value)
+		_spec.SetField(systemparameter.FieldIsDeleted, field.TypeBool, value)
 	}
 	if value, ok := spuo.mutation.CreatedBy(); ok {
-		_spec.SetField(system_parameter.FieldCreatedBy, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)
 	}
 	if value, ok := spuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(system_parameter.FieldUpdatedBy, field.TypeString, value)
+		_spec.SetField(systemparameter.FieldUpdatedBy, field.TypeString, value)
 	}
 	if spuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(system_parameter.FieldUpdatedBy, field.TypeString)
+		_spec.ClearField(systemparameter.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := spuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(system_parameter.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(systemparameter.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if spuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(system_parameter.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(systemparameter.FieldUpdatedAt, field.TypeTime)
 	}
-	_node = &System_parameter{config: spuo.config}
+	_node = &SystemParameter{config: spuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, spuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{system_parameter.Label}
+			err = &NotFoundError{systemparameter.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
 		return nil, err
 	}
+	spuo.mutation.done = true
 	return _node, nil
 }

@@ -55,6 +55,7 @@ func Success(ctx echo.Context, data interface{}) error {
 	return Base(ctx, http.StatusOK, http.StatusOK, http.StatusText(http.StatusOK), data, nil)
 }
 
+//goland:noinspection GoUnusedExportedFunction
 func Error(ctx echo.Context, httpCode int, err error) error {
 	return Base(ctx, httpCode, httpCode, http.StatusText(httpCode), nil, err)
 }

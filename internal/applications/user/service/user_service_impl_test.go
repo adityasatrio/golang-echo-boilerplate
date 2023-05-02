@@ -3,9 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"myapp/ent"
+	"myapp/ent/enttest"
+	"myapp/ent/migrate"
 	"myapp/internal/applications/user/dto"
 	mockRoleRepo "myapp/mocks/role/repository"
 	mockRoleUserRepo "myapp/mocks/role_user/repository"
@@ -19,6 +23,7 @@ var mockUserRepository = new(mock_repository.UserRepository)
 var mockRoleRepository = new(mockRoleRepo.RoleRepository)
 var mockRoleUserRepository = new(mockRoleUserRepo.RoleUserRepository)
 var mockTransaction = new(mockTrx.TrxService)
+
 var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
@@ -51,7 +56,6 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 }
 
 func TestUserServiceImpl_Create(t *testing.T) {
-	ctx := context.Background()
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "Admin",
@@ -93,45 +97,81 @@ func TestUserServiceImpl_Create(t *testing.T) {
 		},
 	}
 
-	//table test:
-	//TODO don't use mock.Anything
+	opts := []enttest.Option{
+		enttest.WithOptions(ent.Log(t.Log)),
+		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
+	}
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
+
+	ctx := context.Background()
+	txClient, err := client.Tx(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, txClient.Client()) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
+
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
 
 			if userMock.scenario {
-				mockUserRepository.On("Create", ctx, mock.Anything, userMock.userRequest).Return(&userMock.userResponse, nil)
-				mockRoleUserRepository.On("Create", ctx, mock.Anything, userMock.roleRequest).Return(&ent.RoleUser{}, nil)
+				// Set up mock behavior
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
-						f := args.Get(1).(func(tx *ent.Tx) error)
-						f(ent.TxFromContext(ctx))
-					}).Return(nil).Once()
+
+						fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+						errTx := fnTx(txClient)
+						require.NoError(t, errTx)
+						require.NotNil(t, txClient.Client())
+
+						if errTx != nil {
+							return
+						}
+
+					}).
+					Return(nil).
+					Once()
+
+				//the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
+				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
+					Return(&userMock.userResponse, nil)
+
+				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+					Return(&userMock.roleRequest, nil)
 
 				result, err := service.Create(ctx, &userMock.request)
+
 				assert.NoError(t, err)
 				assert.NotNil(t, result)
 				assert.Equal(t, &userMock.userResponse, result)
+
 			} else {
-				mockUserRepository.On("Create", ctx, mock.Anything, userMock.userRequest).Return(&userMock.userResponse, nil)
-				mockRoleUserRepository.On("Create", ctx, mock.Anything, userMock.roleRequest).Panic("failed saved")
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
-						f := args.Get(1).(func(tx *ent.Tx) error)
-						f(ent.TxFromContext(ctx))
-					}).Return(errors.New("failed saved")).Once()
+						fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+						errTx := fnTx(txClient)
+						require.NotNil(t, txClient.Client())
+						if errTx != nil {
+							return
+						}
+					}).
+					Return(errors.New("fake failed saved")). //this return is the key for `withTx` do rollback process
+					Once()
+
+				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
+					Return(&userMock.userResponse, nil)
+
+				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+					Panic("failed saved")
 
 				result, err := service.Create(ctx, &request)
 				assert.NotNil(t, err)
 				assert.Nil(t, result)
 			}
-
 		})
 	}
-
 }
 
 func TestUserServiceImpl_Update(t *testing.T) {
-	ctx := context.Background()
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User",
@@ -144,16 +184,38 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
 	roleRequest := ent.RoleUser{UserID: 123000}
 
-	//TODO don't use mock.Anything
+	opts := []enttest.Option{
+		enttest.WithOptions(ent.Log(t.Log)),
+		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
+	}
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
+
+	ctx := context.Background()
+	txClient, err := client.Tx(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, txClient.Client())
+
 	t.Run("Update_User_Success", func(t *testing.T) {
 
-		mockUserRepository.On("Update", ctx, mock.Anything, userRequest, id).Return(&userResponse, nil)
-		mockRoleUserRepository.On("Update", ctx, mock.Anything, roleRequest, id).Return(&ent.RoleUser{}, nil)
 		mockTransaction.On("WithTx", ctx, mock.Anything).
 			Run(func(args mock.Arguments) {
-				f := args.Get(1).(func(tx *ent.Tx) error)
-				f(ent.TxFromContext(ctx))
-			}).Return(nil).Once()
+				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+				errTx := fnTx(txClient)
+				require.NoError(t, errTx)
+				require.NotNil(t, txClient.Client())
+				if errTx != nil {
+					return
+				}
+
+			}).Return(nil).
+			Once()
+
+		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+			Return(&userResponse, nil)
+
+		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
+			Return(&roleRequest, nil)
 
 		result, err := service.Update(ctx, id, &request)
 		assert.NoError(t, err)
@@ -163,12 +225,22 @@ func TestUserServiceImpl_Update(t *testing.T) {
 
 	t.Run("Update_User_Failed_User", func(t *testing.T) {
 		err := errors.New("failed saved user")
-		mockUserRepository.On("Update", ctx, mock.Anything, userRequest, id).Return(nil, err)
+
 		mockTransaction.On("WithTx", ctx, mock.Anything).
 			Run(func(args mock.Arguments) {
-				f := args.Get(1).(func(tx *ent.Tx) error)
-				f(ent.TxFromContext(ctx))
-			}).Return(err).Once()
+				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+				errTx := fnTx(txClient)
+				require.NoError(t, errTx)
+				require.NotNil(t, txClient.Client())
+				if errTx != nil {
+					return
+				}
+			}).Return(err).
+			Once()
+
+		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+			Return(nil, err)
 
 		result, err := service.Update(ctx, id, &request)
 		assert.NotNil(t, err)
@@ -177,19 +249,30 @@ func TestUserServiceImpl_Update(t *testing.T) {
 
 	t.Run("Update_User_Failed_Role_User", func(t *testing.T) {
 		err := errors.New("failed saved role")
-		mockUserRepository.On("Update", ctx, mock.Anything, userRequest, id).Return(&userResponse, nil)
-		mockRoleUserRepository.On("Update", ctx, mock.Anything, roleRequest, id).Return(nil, err)
+
 		mockTransaction.On("WithTx", ctx, mock.Anything).
 			Run(func(args mock.Arguments) {
-				f := args.Get(1).(func(tx *ent.Tx) error)
-				f(ent.TxFromContext(ctx))
-			}).Return(err).Once()
+				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+				errTx := fnTx(txClient)
+				require.NoError(t, errTx)
+				require.NotNil(t, txClient.Client())
+				if errTx != nil {
+					return
+				}
+			}).Return(err).
+			Once()
+
+		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+			Return(&userResponse, nil)
+
+		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
+			Return(nil, err)
 
 		result, err := service.Update(ctx, id, &request)
 		assert.NotNil(t, err)
 		assert.Nil(t, result)
 	})
-
 }
 
 func TestUserServiceImpl_Delete(t *testing.T) {

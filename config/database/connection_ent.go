@@ -11,6 +11,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// NewEntClient use if not wrap sql db
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewEntClient() *ent.Client {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",

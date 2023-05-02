@@ -6,16 +6,14 @@ import (
 	"myapp/exceptions"
 	"myapp/internal/applications/role/dto"
 	"myapp/internal/applications/role/repository"
-	"myapp/internal/applications/transaction"
 )
 
 type RoleServiceImpl struct {
-	repository  repository.RoleRepository
-	transaction transaction.TrxService
+	repository repository.RoleRepository
 }
 
-func NewRoleServiceImpl(repository repository.RoleRepository, transaction transaction.TrxService) *RoleServiceImpl {
-	return &RoleServiceImpl{repository: repository, transaction: transaction}
+func NewRoleServiceImpl(repository repository.RoleRepository) *RoleServiceImpl {
+	return &RoleServiceImpl{repository: repository}
 }
 
 func (s *RoleServiceImpl) Create(ctx context.Context, request dto.RoleRequest) (*ent.Role, error) {

@@ -15,8 +15,6 @@ const (
 )
 
 type (
-	//BusinessLogicError interface{}
-
 	BusinessLogicError struct {
 		Message   string `json:"message"`
 		ErrorCode int    `json:"errorCode"`
@@ -37,7 +35,7 @@ func NewBusinessLogicError(ErrorCode int, err error) error {
 }
 
 // Unwrap Implements the errors.Unwrap interface
-func (e BusinessLogicError) Unwrap() error {
+func (e *BusinessLogicError) Unwrap() error {
 	errorLogic := BusinessLogicReason(e.ErrorCode)
 	jsonByte, err := json.Marshal(errorLogic)
 	if err != nil {
@@ -49,9 +47,9 @@ func (e BusinessLogicError) Unwrap() error {
 	return TargetBusinessLogicError
 }
 
-// Dig Returns the inner most CustomErrorWrapper
-func (e BusinessLogicError) Dig() BusinessLogicError {
-	var errStruct BusinessLogicError
+// Dig Returns the innermost CustomErrorWrapper
+func (e *BusinessLogicError) Dig() *BusinessLogicError {
+	var errStruct *BusinessLogicError
 	if errors.As(e.Err, &errStruct) {
 		// Recursively digs until wrapper error is not CustomErrorWrapper
 		return errStruct.Dig()

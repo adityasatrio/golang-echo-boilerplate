@@ -3,6 +3,7 @@
   <component name="Go" enabled="true">
     <buildTags>
       <option name="arch" value="arm64" />
+      <option name="goVersion" value="1.19" />
     </buildTags>
   </component>
   <component name="NewModuleRootManager">

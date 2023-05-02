@@ -2,6 +2,10 @@
 
 package userdevice
 
+import (
+	"entgo.io/ent/dialect/sql"
+)
+
 const (
 	// Label holds the string label denoting the userdevice type in the database.
 	Label = "user_device"
@@ -45,4 +49,47 @@ func ValidColumn(column string) bool {
 		}
 	}
 	return false
+}
+
+// OrderOption defines the ordering options for the UserDevice queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByVersion orders the results by the version field.
+func ByVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByPlatform orders the results by the platform field.
+func ByPlatform(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlatform, opts...).ToFunc()
+}
+
+// ByLatestSkipUpdate orders the results by the latest_skip_update field.
+func ByLatestSkipUpdate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatestSkipUpdate, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeviceID orders the results by the device_id field.
+func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
 }

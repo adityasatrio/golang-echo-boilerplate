@@ -4,15 +4,16 @@ package ent
 
 import (
 	"fmt"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// System_parameter is the model entity for the System_parameter schema.
-type System_parameter struct {
+// SystemParameter is the model entity for the SystemParameter schema.
+type SystemParameter struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -29,112 +30,121 @@ type System_parameter struct {
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*System_parameter) scanValues(columns []string) ([]any, error) {
+func (*SystemParameter) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case system_parameter.FieldIsDeleted:
+		case systemparameter.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
-		case system_parameter.FieldID:
+		case systemparameter.FieldID:
 			values[i] = new(sql.NullInt64)
-		case system_parameter.FieldKey, system_parameter.FieldValue, system_parameter.FieldCreatedBy, system_parameter.FieldUpdatedBy:
+		case systemparameter.FieldKey, systemparameter.FieldValue, systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy:
 			values[i] = new(sql.NullString)
-		case system_parameter.FieldCreatedAt, system_parameter.FieldUpdatedAt:
+		case systemparameter.FieldCreatedAt, systemparameter.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type System_parameter", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the System_parameter fields.
-func (sp *System_parameter) assignValues(columns []string, values []any) error {
+// to the SystemParameter fields.
+func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case system_parameter.FieldID:
+		case systemparameter.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sp.ID = int(value.Int64)
-		case system_parameter.FieldKey:
+		case systemparameter.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
 				sp.Key = value.String
 			}
-		case system_parameter.FieldValue:
+		case systemparameter.FieldValue:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value.Valid {
 				sp.Value = value.String
 			}
-		case system_parameter.FieldIsDeleted:
+		case systemparameter.FieldIsDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
 			} else if value.Valid {
 				sp.IsDeleted = value.Bool
 			}
-		case system_parameter.FieldCreatedBy:
+		case systemparameter.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				sp.CreatedBy = value.String
 			}
-		case system_parameter.FieldCreatedAt:
+		case systemparameter.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				sp.CreatedAt = value.Time
 			}
-		case system_parameter.FieldUpdatedBy:
+		case systemparameter.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				sp.UpdatedBy = value.String
 			}
-		case system_parameter.FieldUpdatedAt:
+		case systemparameter.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				sp.UpdatedAt = value.Time
 			}
+		default:
+			sp.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Update returns a builder for updating this System_parameter.
-// Note that you need to call System_parameter.Unwrap() before calling this method if this System_parameter
-// was returned from a transaction, and the transaction was committed or rolled back.
-func (sp *System_parameter) Update() *SystemParameterUpdateOne {
-	return (&System_parameterClient{config: sp.config}).UpdateOne(sp)
+// GetValue returns the ent.Value that was dynamically selected and assigned to the SystemParameter.
+// This includes values selected through modifiers, order, etc.
+func (sp *SystemParameter) GetValue(name string) (ent.Value, error) {
+	return sp.selectValues.Get(name)
 }
 
-// Unwrap unwraps the System_parameter entity that was returned from a transaction after it was closed,
+// Update returns a builder for updating this SystemParameter.
+// Note that you need to call SystemParameter.Unwrap() before calling this method if this SystemParameter
+// was returned from a transaction, and the transaction was committed or rolled back.
+func (sp *SystemParameter) Update() *SystemParameterUpdateOne {
+	return NewSystemParameterClient(sp.config).UpdateOne(sp)
+}
+
+// Unwrap unwraps the SystemParameter entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (sp *System_parameter) Unwrap() *System_parameter {
+func (sp *SystemParameter) Unwrap() *SystemParameter {
 	_tx, ok := sp.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: System_parameter is not a transactional entity")
+		panic("ent: SystemParameter is not a transactional entity")
 	}
 	sp.config.driver = _tx.drv
 	return sp
 }
 
 // String implements the fmt.Stringer.
-func (sp *System_parameter) String() string {
+func (sp *SystemParameter) String() string {
 	var builder strings.Builder
-	builder.WriteString("System_parameter(")
+	builder.WriteString("SystemParameter(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sp.ID))
 	builder.WriteString("key=")
 	builder.WriteString(sp.Key)
@@ -160,11 +170,5 @@ func (sp *System_parameter) String() string {
 	return builder.String()
 }
 
-// System_parameters is a parsable slice of System_parameter.
-type System_parameters []*System_parameter
-
-func (sp System_parameters) config(cfg config) {
-	for _i := range sp {
-		sp[_i].config = cfg
-	}
-}
+// SystemParameters is a parsable slice of SystemParameter.
+type SystemParameters []*SystemParameter

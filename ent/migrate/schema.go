@@ -86,12 +86,12 @@ var (
 		PrimaryKey: []*schema.Column{SystemParametersColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "system_parameter_key",
+				Name:    "systemparameter_key",
 				Unique:  false,
 				Columns: []*schema.Column{SystemParametersColumns[1]},
 			},
 			{
-				Name:    "system_parameter_value",
+				Name:    "systemparameter_value",
 				Unique:  false,
 				Columns: []*schema.Column{SystemParametersColumns[2]},
 			},

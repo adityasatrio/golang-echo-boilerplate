@@ -18,8 +18,8 @@ func NewSystemParameterService(repository db.SystemParameterRepository) *SystemP
 	}
 }
 
-func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.System_parameter, error) {
-	newData := ent.System_parameter{
+func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.SystemParameter, error) {
+	newData := ent.SystemParameter{
 		Key:   create.Key,
 		Value: create.Value,
 	}
@@ -29,7 +29,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
-	result, err := s.repository.Create(ctx, newData)
+	result, err := s.repository.Create(ctx, &newData)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 	}
@@ -37,7 +37,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 	return result, nil
 }
 
-func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.System_parameter, error) {
+func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) {
 
 	existId, err := s.repository.GetById(ctx, id)
 	if err != nil {
@@ -49,12 +49,12 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
-	newData := ent.System_parameter{
+	newData := ent.SystemParameter{
 		Key:   update.Key,
 		Value: update.Value,
 	}
 
-	updated, err := s.repository.Update(ctx, existId.ID, newData)
+	updated, err := s.repository.Update(ctx, existId.ID, &newData)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
@@ -62,7 +62,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 	return updated, nil
 }
 
-func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
+func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) {
 	exist, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
@@ -76,7 +76,7 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 	return exist, nil
 }
 
-func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
+func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 	result, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
@@ -85,7 +85,7 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 	return result, nil
 }
 
-func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
+func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
 	result, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)

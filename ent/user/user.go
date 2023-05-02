@@ -2,6 +2,10 @@
 
 package user
 
+import (
+	"entgo.io/ent/dialect/sql"
+)
+
 const (
 	// Label holds the string label denoting the user type in the database.
 	Label = "user"
@@ -93,4 +97,127 @@ func ValidColumn(column string) bool {
 		}
 	}
 	return false
+}
+
+// OrderOption defines the ordering options for the User queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByEmail orders the results by the email field.
+func ByEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByIsVerified orders the results by the is_verified field.
+func ByIsVerified(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsVerified, opts...).ToFunc()
+}
+
+// ByEmailVerifiedAt orders the results by the email_verified_at field.
+func ByEmailVerifiedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmailVerifiedAt, opts...).ToFunc()
+}
+
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByRememberToken orders the results by the remember_token field.
+func ByRememberToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRememberToken, opts...).ToFunc()
+}
+
+// BySocialMediaID orders the results by the social_media_id field.
+func BySocialMediaID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSocialMediaID, opts...).ToFunc()
+}
+
+// ByAvatar orders the results by the avatar field.
+func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatar, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByRoleID orders the results by the role_id field.
+func ByRoleID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRoleID, opts...).ToFunc()
+}
+
+// ByLoginType orders the results by the login_type field.
+func ByLoginType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLoginType, opts...).ToFunc()
+}
+
+// BySubSpecialist orders the results by the sub_specialist field.
+func BySubSpecialist(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSubSpecialist, opts...).ToFunc()
+}
+
+// ByFirebaseToken orders the results by the firebase_token field.
+func ByFirebaseToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirebaseToken, opts...).ToFunc()
+}
+
+// ByInfo orders the results by the info field.
+func ByInfo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInfo, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// BySpecialist orders the results by the specialist field.
+func BySpecialist(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSpecialist, opts...).ToFunc()
+}
+
+// ByPhone orders the results by the phone field.
+func ByPhone(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPhone, opts...).ToFunc()
+}
+
+// ByLastAccessAt orders the results by the last_access_at field.
+func ByLastAccessAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastAccessAt, opts...).ToFunc()
+}
+
+// ByPregnancyMode orders the results by the pregnancy_mode field.
+func ByPregnancyMode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPregnancyMode, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByLatestSkipUpdate orders the results by the latest_skip_update field.
+func ByLatestSkipUpdate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatestSkipUpdate, opts...).ToFunc()
+}
+
+// ByLatestDeletedAt orders the results by the latest_deleted_at field.
+func ByLatestDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatestDeletedAt, opts...).ToFunc()
 }

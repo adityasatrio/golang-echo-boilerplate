@@ -107,34 +107,7 @@ func (ru *RoleUpdate) Mutation() *RoleMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ru *RoleUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(ru.hooks) == 0 {
-		affected, err = ru.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*RoleMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			ru.mutation = mutation
-			affected, err = ru.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(ru.hooks) - 1; i >= 0; i-- {
-			if ru.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ru.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, ru.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks(ctx, ru.sqlSave, ru.mutation, ru.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -160,16 +133,7 @@ func (ru *RoleUpdate) ExecX(ctx context.Context) {
 }
 
 func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   role.Table,
-			Columns: role.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: role.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeUint64))
 	if ps := ru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -209,6 +173,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	ru.mutation.done = true
 	return n, nil
 }
 
@@ -297,6 +262,12 @@ func (ruo *RoleUpdateOne) Mutation() *RoleMutation {
 	return ruo.mutation
 }
 
+// Where appends a list predicates to the RoleUpdate builder.
+func (ruo *RoleUpdateOne) Where(ps ...predicate.Role) *RoleUpdateOne {
+	ruo.mutation.Where(ps...)
+	return ruo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (ruo *RoleUpdateOne) Select(field string, fields ...string) *RoleUpdateOne {
@@ -306,40 +277,7 @@ func (ruo *RoleUpdateOne) Select(field string, fields ...string) *RoleUpdateOne 
 
 // Save executes the query and returns the updated Role entity.
 func (ruo *RoleUpdateOne) Save(ctx context.Context) (*Role, error) {
-	var (
-		err  error
-		node *Role
-	)
-	if len(ruo.hooks) == 0 {
-		node, err = ruo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*RoleMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			ruo.mutation = mutation
-			node, err = ruo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ruo.hooks) - 1; i >= 0; i-- {
-			if ruo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ruo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ruo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Role)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from RoleMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks(ctx, ruo.sqlSave, ruo.mutation, ruo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -365,16 +303,7 @@ func (ruo *RoleUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   role.Table,
-			Columns: role.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: role.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(role.Table, role.Columns, sqlgraph.NewFieldSpec(role.FieldID, field.TypeUint64))
 	id, ok := ruo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Role.id" for update`)}
@@ -434,5 +363,6 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 		}
 		return nil, err
 	}
+	ruo.mutation.done = true
 	return _node, nil
 }

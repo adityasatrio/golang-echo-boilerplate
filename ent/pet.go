@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 )
@@ -34,7 +35,8 @@ type Pet struct {
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -53,7 +55,7 @@ func (*Pet) scanValues(columns []string) ([]any, error) {
 		case pet.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type Pet", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -127,16 +129,24 @@ func (pe *Pet) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pe.UpdatedAt = value.Time
 			}
+		default:
+			pe.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the Pet.
+// This includes values selected through modifiers, order, etc.
+func (pe *Pet) Value(name string) (ent.Value, error) {
+	return pe.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this Pet.
 // Note that you need to call Pet.Unwrap() before calling this method if this Pet
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (pe *Pet) Update() *PetUpdateOne {
-	return (&PetClient{config: pe.config}).UpdateOne(pe)
+	return NewPetClient(pe.config).UpdateOne(pe)
 }
 
 // Unwrap unwraps the Pet entity that was returned from a transaction after it was closed,
@@ -187,9 +197,3 @@ func (pe *Pet) String() string {
 
 // Pets is a parsable slice of Pet.
 type Pets []*Pet
-
-func (pe Pets) config(cfg config) {
-	for _i := range pe {
-		pe[_i].config = cfg
-	}
-}
