@@ -17,11 +17,9 @@ import (
 // UserDeviceQuery is the builder for querying UserDevice entities.
 type UserDeviceQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
-	order      []OrderFunc
-	fields     []string
+	ctx        *QueryContext
+	order      []userdevice.OrderOption
+	inters     []Interceptor
 	predicates []predicate.UserDevice
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -34,27 +32,27 @@ func (udq *UserDeviceQuery) Where(ps ...predicate.UserDevice) *UserDeviceQuery {
 	return udq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (udq *UserDeviceQuery) Limit(limit int) *UserDeviceQuery {
-	udq.limit = &limit
+	udq.ctx.Limit = &limit
 	return udq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (udq *UserDeviceQuery) Offset(offset int) *UserDeviceQuery {
-	udq.offset = &offset
+	udq.ctx.Offset = &offset
 	return udq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (udq *UserDeviceQuery) Unique(unique bool) *UserDeviceQuery {
-	udq.unique = &unique
+	udq.ctx.Unique = &unique
 	return udq
 }
 
-// Order adds an order step to the query.
-func (udq *UserDeviceQuery) Order(o ...OrderFunc) *UserDeviceQuery {
+// Order specifies how the records should be ordered.
+func (udq *UserDeviceQuery) Order(o ...userdevice.OrderOption) *UserDeviceQuery {
 	udq.order = append(udq.order, o...)
 	return udq
 }
@@ -62,7 +60,7 @@ func (udq *UserDeviceQuery) Order(o ...OrderFunc) *UserDeviceQuery {
 // First returns the first UserDevice entity from the query.
 // Returns a *NotFoundError when no UserDevice was found.
 func (udq *UserDeviceQuery) First(ctx context.Context) (*UserDevice, error) {
-	nodes, err := udq.Limit(1).All(ctx)
+	nodes, err := udq.Limit(1).All(setContextOp(ctx, udq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +83,7 @@ func (udq *UserDeviceQuery) FirstX(ctx context.Context) *UserDevice {
 // Returns a *NotFoundError when no UserDevice ID was found.
 func (udq *UserDeviceQuery) FirstID(ctx context.Context) (id uint64, err error) {
 	var ids []uint64
-	if ids, err = udq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = udq.Limit(1).IDs(setContextOp(ctx, udq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +106,7 @@ func (udq *UserDeviceQuery) FirstIDX(ctx context.Context) uint64 {
 // Returns a *NotSingularError when more than one UserDevice entity is found.
 // Returns a *NotFoundError when no UserDevice entities are found.
 func (udq *UserDeviceQuery) Only(ctx context.Context) (*UserDevice, error) {
-	nodes, err := udq.Limit(2).All(ctx)
+	nodes, err := udq.Limit(2).All(setContextOp(ctx, udq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +134,7 @@ func (udq *UserDeviceQuery) OnlyX(ctx context.Context) *UserDevice {
 // Returns a *NotFoundError when no entities are found.
 func (udq *UserDeviceQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 	var ids []uint64
-	if ids, err = udq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = udq.Limit(2).IDs(setContextOp(ctx, udq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,10 +159,12 @@ func (udq *UserDeviceQuery) OnlyIDX(ctx context.Context) uint64 {
 
 // All executes the query and returns a list of UserDevices.
 func (udq *UserDeviceQuery) All(ctx context.Context) ([]*UserDevice, error) {
+	ctx = setContextOp(ctx, udq.ctx, "All")
 	if err := udq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return udq.sqlAll(ctx)
+	qr := querierAll[[]*UserDevice, *UserDeviceQuery]()
+	return withInterceptors[[]*UserDevice](ctx, udq, qr, udq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -177,9 +177,12 @@ func (udq *UserDeviceQuery) AllX(ctx context.Context) []*UserDevice {
 }
 
 // IDs executes the query and returns a list of UserDevice IDs.
-func (udq *UserDeviceQuery) IDs(ctx context.Context) ([]uint64, error) {
-	var ids []uint64
-	if err := udq.Select(userdevice.FieldID).Scan(ctx, &ids); err != nil {
+func (udq *UserDeviceQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+	if udq.ctx.Unique == nil && udq.path != nil {
+		udq.Unique(true)
+	}
+	ctx = setContextOp(ctx, udq.ctx, "IDs")
+	if err = udq.Select(userdevice.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -196,10 +199,11 @@ func (udq *UserDeviceQuery) IDsX(ctx context.Context) []uint64 {
 
 // Count returns the count of the given query.
 func (udq *UserDeviceQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, udq.ctx, "Count")
 	if err := udq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return udq.sqlCount(ctx)
+	return withInterceptors[int](ctx, udq, querierCount[*UserDeviceQuery](), udq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -213,10 +217,15 @@ func (udq *UserDeviceQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (udq *UserDeviceQuery) Exist(ctx context.Context) (bool, error) {
-	if err := udq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = setContextOp(ctx, udq.ctx, "Exist")
+	switch _, err := udq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return udq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -236,14 +245,13 @@ func (udq *UserDeviceQuery) Clone() *UserDeviceQuery {
 	}
 	return &UserDeviceQuery{
 		config:     udq.config,
-		limit:      udq.limit,
-		offset:     udq.offset,
-		order:      append([]OrderFunc{}, udq.order...),
+		ctx:        udq.ctx.Clone(),
+		order:      append([]userdevice.OrderOption{}, udq.order...),
+		inters:     append([]Interceptor{}, udq.inters...),
 		predicates: append([]predicate.UserDevice{}, udq.predicates...),
 		// clone intermediate query.
-		sql:    udq.sql.Clone(),
-		path:   udq.path,
-		unique: udq.unique,
+		sql:  udq.sql.Clone(),
+		path: udq.path,
 	}
 }
 
@@ -262,16 +270,11 @@ func (udq *UserDeviceQuery) Clone() *UserDeviceQuery {
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (udq *UserDeviceQuery) GroupBy(field string, fields ...string) *UserDeviceGroupBy {
-	grbuild := &UserDeviceGroupBy{config: udq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := udq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return udq.sqlQuery(ctx), nil
-	}
+	udq.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &UserDeviceGroupBy{build: udq}
+	grbuild.flds = &udq.ctx.Fields
 	grbuild.label = userdevice.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -288,11 +291,11 @@ func (udq *UserDeviceQuery) GroupBy(field string, fields ...string) *UserDeviceG
 //		Select(userdevice.FieldUserID).
 //		Scan(ctx, &v)
 func (udq *UserDeviceQuery) Select(fields ...string) *UserDeviceSelect {
-	udq.fields = append(udq.fields, fields...)
-	selbuild := &UserDeviceSelect{UserDeviceQuery: udq}
-	selbuild.label = userdevice.Label
-	selbuild.flds, selbuild.scan = &udq.fields, selbuild.Scan
-	return selbuild
+	udq.ctx.Fields = append(udq.ctx.Fields, fields...)
+	sbuild := &UserDeviceSelect{UserDeviceQuery: udq}
+	sbuild.label = userdevice.Label
+	sbuild.flds, sbuild.scan = &udq.ctx.Fields, sbuild.Scan
+	return sbuild
 }
 
 // Aggregate returns a UserDeviceSelect configured with the given aggregations.
@@ -301,7 +304,17 @@ func (udq *UserDeviceQuery) Aggregate(fns ...AggregateFunc) *UserDeviceSelect {
 }
 
 func (udq *UserDeviceQuery) prepareQuery(ctx context.Context) error {
-	for _, f := range udq.fields {
+	for _, inter := range udq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, udq); err != nil {
+				return err
+			}
+		}
+	}
+	for _, f := range udq.ctx.Fields {
 		if !userdevice.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -343,41 +356,22 @@ func (udq *UserDeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 
 func (udq *UserDeviceQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := udq.querySpec()
-	_spec.Node.Columns = udq.fields
-	if len(udq.fields) > 0 {
-		_spec.Unique = udq.unique != nil && *udq.unique
+	_spec.Node.Columns = udq.ctx.Fields
+	if len(udq.ctx.Fields) > 0 {
+		_spec.Unique = udq.ctx.Unique != nil && *udq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, udq.driver, _spec)
 }
 
-func (udq *UserDeviceQuery) sqlExist(ctx context.Context) (bool, error) {
-	switch _, err := udq.FirstID(ctx); {
-	case IsNotFound(err):
-		return false, nil
-	case err != nil:
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	default:
-		return true, nil
-	}
-}
-
 func (udq *UserDeviceQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   userdevice.Table,
-			Columns: userdevice.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: userdevice.FieldID,
-			},
-		},
-		From:   udq.sql,
-		Unique: true,
-	}
-	if unique := udq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(userdevice.Table, userdevice.Columns, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeUint64))
+	_spec.From = udq.sql
+	if unique := udq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if udq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := udq.fields; len(fields) > 0 {
+	if fields := udq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, userdevice.FieldID)
 		for i := range fields {
@@ -393,10 +387,10 @@ func (udq *UserDeviceQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := udq.limit; limit != nil {
+	if limit := udq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := udq.offset; offset != nil {
+	if offset := udq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := udq.order; len(ps) > 0 {
@@ -412,7 +406,7 @@ func (udq *UserDeviceQuery) querySpec() *sqlgraph.QuerySpec {
 func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(udq.driver.Dialect())
 	t1 := builder.Table(userdevice.Table)
-	columns := udq.fields
+	columns := udq.ctx.Fields
 	if len(columns) == 0 {
 		columns = userdevice.Columns
 	}
@@ -421,7 +415,7 @@ func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = udq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if udq.unique != nil && *udq.unique {
+	if udq.ctx.Unique != nil && *udq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range udq.predicates {
@@ -430,12 +424,12 @@ func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range udq.order {
 		p(selector)
 	}
-	if offset := udq.offset; offset != nil {
+	if offset := udq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := udq.limit; limit != nil {
+	if limit := udq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -443,13 +437,8 @@ func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 
 // UserDeviceGroupBy is the group-by builder for UserDevice entities.
 type UserDeviceGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *UserDeviceQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -458,58 +447,46 @@ func (udgb *UserDeviceGroupBy) Aggregate(fns ...AggregateFunc) *UserDeviceGroupB
 	return udgb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
+// Scan applies the selector query and scans the result into the given value.
 func (udgb *UserDeviceGroupBy) Scan(ctx context.Context, v any) error {
-	query, err := udgb.path(ctx)
-	if err != nil {
+	ctx = setContextOp(ctx, udgb.build.ctx, "GroupBy")
+	if err := udgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	udgb.sql = query
-	return udgb.sqlScan(ctx, v)
+	return scanWithInterceptors[*UserDeviceQuery, *UserDeviceGroupBy](ctx, udgb.build, udgb, udgb.build.inters, v)
 }
 
-func (udgb *UserDeviceGroupBy) sqlScan(ctx context.Context, v any) error {
-	for _, f := range udgb.fields {
-		if !userdevice.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (udgb *UserDeviceGroupBy) sqlScan(ctx context.Context, root *UserDeviceQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(udgb.fns))
+	for _, fn := range udgb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := udgb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*udgb.flds)+len(udgb.fns))
+		for _, f := range *udgb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*udgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := udgb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := udgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (udgb *UserDeviceGroupBy) sqlQuery() *sql.Selector {
-	selector := udgb.sql.Select()
-	aggregation := make([]string, 0, len(udgb.fns))
-	for _, fn := range udgb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(udgb.fields)+len(udgb.fns))
-		for _, f := range udgb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(udgb.fields...)...)
-}
-
 // UserDeviceSelect is the builder for selecting fields of UserDevice entities.
 type UserDeviceSelect struct {
 	*UserDeviceQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
@@ -520,26 +497,27 @@ func (uds *UserDeviceSelect) Aggregate(fns ...AggregateFunc) *UserDeviceSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (uds *UserDeviceSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, uds.ctx, "Select")
 	if err := uds.prepareQuery(ctx); err != nil {
 		return err
 	}
-	uds.sql = uds.UserDeviceQuery.sqlQuery(ctx)
-	return uds.sqlScan(ctx, v)
+	return scanWithInterceptors[*UserDeviceQuery, *UserDeviceSelect](ctx, uds.UserDeviceQuery, uds, uds.inters, v)
 }
 
-func (uds *UserDeviceSelect) sqlScan(ctx context.Context, v any) error {
+func (uds *UserDeviceSelect) sqlScan(ctx context.Context, root *UserDeviceQuery, v any) error {
+	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(uds.fns))
 	for _, fn := range uds.fns {
-		aggregation = append(aggregation, fn(uds.sql))
+		aggregation = append(aggregation, fn(selector))
 	}
 	switch n := len(*uds.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
-		uds.sql.Select(aggregation...)
+		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
-		uds.sql.AppendSelect(aggregation...)
+		selector.AppendSelect(aggregation...)
 	}
 	rows := &sql.Rows{}
-	query, args := uds.sql.Query()
+	query, args := selector.Query()
 	if err := uds.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

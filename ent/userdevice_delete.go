@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"fmt"
 	"myapp/ent/predicate"
 	"myapp/ent/userdevice"
 
@@ -28,34 +27,7 @@ func (udd *UserDeviceDelete) Where(ps ...predicate.UserDevice) *UserDeviceDelete
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (udd *UserDeviceDelete) Exec(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
-	if len(udd.hooks) == 0 {
-		affected, err = udd.sqlExec(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*UserDeviceMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			udd.mutation = mutation
-			affected, err = udd.sqlExec(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(udd.hooks) - 1; i >= 0; i-- {
-			if udd.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = udd.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, udd.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks(ctx, udd.sqlExec, udd.mutation, udd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
@@ -68,15 +40,7 @@ func (udd *UserDeviceDelete) ExecX(ctx context.Context) int {
 }
 
 func (udd *UserDeviceDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := &sqlgraph.DeleteSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table: userdevice.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: userdevice.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewDeleteSpec(userdevice.Table, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeUint64))
 	if ps := udd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -88,12 +52,19 @@ func (udd *UserDeviceDelete) sqlExec(ctx context.Context) (int, error) {
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
+	udd.mutation.done = true
 	return affected, err
 }
 
 // UserDeviceDeleteOne is the builder for deleting a single UserDevice entity.
 type UserDeviceDeleteOne struct {
 	udd *UserDeviceDelete
+}
+
+// Where appends a list predicates to the UserDeviceDelete builder.
+func (uddo *UserDeviceDeleteOne) Where(ps ...predicate.UserDevice) *UserDeviceDeleteOne {
+	uddo.udd.mutation.Where(ps...)
+	return uddo
 }
 
 // Exec executes the deletion query.
@@ -111,5 +82,7 @@ func (uddo *UserDeviceDeleteOne) Exec(ctx context.Context) error {
 
 // ExecX is like Exec, but panics if an error occurs.
 func (uddo *UserDeviceDeleteOne) ExecX(ctx context.Context) {
-	uddo.udd.ExecX(ctx)
+	if err := uddo.Exec(ctx); err != nil {
+		panic(err)
+	}
 }

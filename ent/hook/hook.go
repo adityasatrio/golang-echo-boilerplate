@@ -14,11 +14,10 @@ type PetFunc func(context.Context, *ent.PetMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
 func (f PetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.PetMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PetMutation", m)
+	if mv, ok := m.(*ent.PetMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PetMutation", m)
 }
 
 // The RoleFunc type is an adapter to allow the use of ordinary
@@ -27,11 +26,10 @@ type RoleFunc func(context.Context, *ent.RoleMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
 func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.RoleMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
+	if mv, ok := m.(*ent.RoleMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
 }
 
 // The RoleUserFunc type is an adapter to allow the use of ordinary
@@ -40,24 +38,22 @@ type RoleUserFunc func(context.Context, *ent.RoleUserMutation) (ent.Value, error
 
 // Mutate calls f(ctx, m).
 func (f RoleUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.RoleUserMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleUserMutation", m)
+	if mv, ok := m.(*ent.RoleUserMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleUserMutation", m)
 }
 
-// The System_parameterFunc type is an adapter to allow the use of ordinary
-// function as System_parameter mutator.
-type System_parameterFunc func(context.Context, *ent.SystemParameterMutation) (ent.Value, error)
+// The SystemParameterFunc type is an adapter to allow the use of ordinary
+// function as SystemParameter mutator.
+type SystemParameterFunc func(context.Context, *ent.SystemParameterMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f System_parameterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.SystemParameterMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SystemParameterMutation", m)
+func (f SystemParameterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SystemParameterMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SystemParameterMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary
@@ -66,11 +62,10 @@ type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
 func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.UserMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+	if mv, ok := m.(*ent.UserMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
 }
 
 // The UserDeviceFunc type is an adapter to allow the use of ordinary
@@ -79,11 +74,10 @@ type UserDeviceFunc func(context.Context, *ent.UserDeviceMutation) (ent.Value, e
 
 // Mutate calls f(ctx, m).
 func (f UserDeviceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.UserDeviceMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserDeviceMutation", m)
+	if mv, ok := m.(*ent.UserDeviceMutation); ok {
+		return f(ctx, mv)
 	}
-	return f(ctx, mv)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserDeviceMutation", m)
 }
 
 // Condition is a hook condition function.

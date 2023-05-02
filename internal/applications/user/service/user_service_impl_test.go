@@ -106,7 +106,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 	ctx := context.Background()
 	txClient, err := client.Tx(ctx)
 	require.NoError(t, err)
-	require.NotNil(t, txClient.Client())
+	require.NotNil(t, txClient.Client()) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {

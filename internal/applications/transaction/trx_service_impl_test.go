@@ -23,7 +23,7 @@ func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
 	// Test a successful transaction.
 	err := trxService.WithTx(context.Background(), func(tx *ent.Tx) error {
 		// Insert some data into the database.
-		_, err := tx.System_parameter.Create().
+		_, err := tx.SystemParameter.Create().
 			SetKey("John").
 			SetValue("john@doe.com").
 			SetCreatedBy("john doe").
@@ -57,8 +57,7 @@ func TestTrxServiceImpl_WithFailedTx(t *testing.T) {
 	// Test a failed transaction.
 	expectedErr := errors.New("an error occurred during the transaction")
 	err := trxService.WithTx(context.Background(), func(tx *ent.Tx) error {
-		// Insert some data into the database.
-		_, err := tx.System_parameter.Create().
+		_, err := tx.SystemParameter.Create().
 			SetKey("John cena").
 			SetValue("john@cena.com").
 			SetCreatedBy("john cena").

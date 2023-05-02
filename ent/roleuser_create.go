@@ -88,49 +88,7 @@ func (ruc *RoleUserCreate) Mutation() *RoleUserMutation {
 
 // Save creates the RoleUser in the database.
 func (ruc *RoleUserCreate) Save(ctx context.Context) (*RoleUser, error) {
-	var (
-		err  error
-		node *RoleUser
-	)
-	if len(ruc.hooks) == 0 {
-		if err = ruc.check(); err != nil {
-			return nil, err
-		}
-		node, err = ruc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*RoleUserMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ruc.check(); err != nil {
-				return nil, err
-			}
-			ruc.mutation = mutation
-			if node, err = ruc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ruc.hooks) - 1; i >= 0; i-- {
-			if ruc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ruc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ruc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*RoleUser)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from RoleUserMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks(ctx, ruc.sqlSave, ruc.mutation, ruc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -161,6 +119,9 @@ func (ruc *RoleUserCreate) check() error {
 }
 
 func (ruc *RoleUserCreate) sqlSave(ctx context.Context) (*RoleUser, error) {
+	if err := ruc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := ruc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ruc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -172,19 +133,15 @@ func (ruc *RoleUserCreate) sqlSave(ctx context.Context) (*RoleUser, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = uint64(id)
 	}
+	ruc.mutation.id = &_node.ID
+	ruc.mutation.done = true
 	return _node, nil
 }
 
 func (ruc *RoleUserCreate) createSpec() (*RoleUser, *sqlgraph.CreateSpec) {
 	var (
 		_node = &RoleUser{config: ruc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: roleuser.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint64,
-				Column: roleuser.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(roleuser.Table, sqlgraph.NewFieldSpec(roleuser.FieldID, field.TypeUint64))
 	)
 	if id, ok := ruc.mutation.ID(); ok {
 		_node.ID = id
@@ -232,8 +189,8 @@ func (rucb *RoleUserCreateBulk) Save(ctx context.Context) ([]*RoleUser, error) {
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, rucb.builders[i+1].mutation)
 				} else {

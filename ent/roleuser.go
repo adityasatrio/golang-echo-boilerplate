@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -23,7 +24,8 @@ type RoleUser struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -36,7 +38,7 @@ func (*RoleUser) scanValues(columns []string) ([]any, error) {
 		case roleuser.FieldCreatedAt, roleuser.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type RoleUser", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -80,16 +82,24 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ru.UpdatedAt = value.Time
 			}
+		default:
+			ru.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the RoleUser.
+// This includes values selected through modifiers, order, etc.
+func (ru *RoleUser) Value(name string) (ent.Value, error) {
+	return ru.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this RoleUser.
 // Note that you need to call RoleUser.Unwrap() before calling this method if this RoleUser
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (ru *RoleUser) Update() *RoleUserUpdateOne {
-	return (&RoleUserClient{config: ru.config}).UpdateOne(ru)
+	return NewRoleUserClient(ru.config).UpdateOne(ru)
 }
 
 // Unwrap unwraps the RoleUser entity that was returned from a transaction after it was closed,
@@ -125,9 +135,3 @@ func (ru *RoleUser) String() string {
 
 // RoleUsers is a parsable slice of RoleUser.
 type RoleUsers []*RoleUser
-
-func (ru RoleUsers) config(cfg config) {
-	for _i := range ru {
-		ru[_i].config = cfg
-	}
-}

@@ -10,15 +10,15 @@ import (
 	"myapp/ent/predicate"
 	"myapp/ent/role"
 	"myapp/ent/roleuser"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
 	"myapp/ent/user"
 	"myapp/ent/userdevice"
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
-
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 const (
@@ -30,12 +30,12 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypePet              = "Pet"
-	TypeRole             = "Role"
-	TypeRoleUser         = "RoleUser"
-	TypeSystem_parameter = "System_parameter"
-	TypeUser             = "User"
-	TypeUserDevice       = "UserDevice"
+	TypePet             = "Pet"
+	TypeRole            = "Role"
+	TypeRoleUser        = "RoleUser"
+	TypeSystemParameter = "SystemParameter"
+	TypeUser            = "User"
+	TypeUserDevice      = "UserDevice"
 )
 
 // PetMutation represents an operation that mutates the Pet nodes in the graph.
@@ -539,9 +539,24 @@ func (m *PetMutation) Where(ps ...predicate.Pet) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the PetMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PetMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Pet, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *PetMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PetMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Pet).
@@ -1209,9 +1224,24 @@ func (m *RoleMutation) Where(ps ...predicate.Role) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the RoleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RoleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Role, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *RoleMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RoleMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (Role).
@@ -1822,9 +1852,24 @@ func (m *RoleUserMutation) Where(ps ...predicate.RoleUser) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the RoleUserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RoleUserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RoleUser, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *RoleUserMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RoleUserMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (RoleUser).
@@ -2086,7 +2131,7 @@ func (m *RoleUserMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RoleUser edge %s", name)
 }
 
-// SystemParameterMutation represents an operation that mutates the System_parameter nodes in the graph.
+// SystemParameterMutation represents an operation that mutates the SystemParameter nodes in the graph.
 type SystemParameterMutation struct {
 	config
 	op            Op
@@ -2101,21 +2146,21 @@ type SystemParameterMutation struct {
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
-	oldValue      func(context.Context) (*System_parameter, error)
-	predicates    []predicate.System_parameter
+	oldValue      func(context.Context) (*SystemParameter, error)
+	predicates    []predicate.SystemParameter
 }
 
 var _ ent.Mutation = (*SystemParameterMutation)(nil)
 
-// systemParameterOption allows management of the mutation configuration using functional options.
-type systemParameterOption func(*SystemParameterMutation)
+// systemparameterOption allows management of the mutation configuration using functional options.
+type systemparameterOption func(*SystemParameterMutation)
 
-// newSystemParameterMutation creates new mutation for the System_parameter entity.
-func newSystemParameterMutation(c config, op Op, opts ...systemParameterOption) *SystemParameterMutation {
+// newSystemParameterMutation creates new mutation for the SystemParameter entity.
+func newSystemParameterMutation(c config, op Op, opts ...systemparameterOption) *SystemParameterMutation {
 	m := &SystemParameterMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeSystem_parameter,
+		typ:           TypeSystemParameter,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -2124,20 +2169,20 @@ func newSystemParameterMutation(c config, op Op, opts ...systemParameterOption) 
 	return m
 }
 
-// withSystem_parameterID sets the ID field of the mutation.
-func withSystem_parameterID(id int) systemParameterOption {
+// withSystemParameterID sets the ID field of the mutation.
+func withSystemParameterID(id int) systemparameterOption {
 	return func(m *SystemParameterMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *System_parameter
+			value *SystemParameter
 		)
-		m.oldValue = func(ctx context.Context) (*System_parameter, error) {
+		m.oldValue = func(ctx context.Context) (*SystemParameter, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().System_parameter.Get(ctx, id)
+					value, err = m.Client().SystemParameter.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -2146,10 +2191,10 @@ func withSystem_parameterID(id int) systemParameterOption {
 	}
 }
 
-// withSystem_parameter sets the old System_parameter of the mutation.
-func withSystem_parameter(node *System_parameter) systemParameterOption {
+// withSystemParameter sets the old SystemParameter of the mutation.
+func withSystemParameter(node *SystemParameter) systemparameterOption {
 	return func(m *SystemParameterMutation) {
-		m.oldValue = func(context.Context) (*System_parameter, error) {
+		m.oldValue = func(context.Context) (*SystemParameter, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -2197,7 +2242,7 @@ func (m *SystemParameterMutation) IDs(ctx context.Context) ([]int, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().System_parameter.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().SystemParameter.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
@@ -2217,8 +2262,8 @@ func (m *SystemParameterMutation) Key() (r string, exists bool) {
 	return *v, true
 }
 
-// OldKey returns the old "key" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldKey returns the old "key" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldKey(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2253,8 +2298,8 @@ func (m *SystemParameterMutation) Value() (r string, exists bool) {
 	return *v, true
 }
 
-// OldValue returns the old "value" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldValue returns the old "value" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldValue(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2289,8 +2334,8 @@ func (m *SystemParameterMutation) IsDeleted() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldIsDeleted returns the old "is_deleted" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldIsDeleted returns the old "is_deleted" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldIsDeleted(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2325,8 +2370,8 @@ func (m *SystemParameterMutation) CreatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2361,8 +2406,8 @@ func (m *SystemParameterMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2397,8 +2442,8 @@ func (m *SystemParameterMutation) UpdatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedBy returns the old "updated_by" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedBy returns the old "updated_by" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2417,19 +2462,19 @@ func (m *SystemParameterMutation) OldUpdatedBy(ctx context.Context) (v string, e
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (m *SystemParameterMutation) ClearUpdatedBy() {
 	m.updated_by = nil
-	m.clearedFields[system_parameter.FieldUpdatedBy] = struct{}{}
+	m.clearedFields[systemparameter.FieldUpdatedBy] = struct{}{}
 }
 
 // UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
 func (m *SystemParameterMutation) UpdatedByCleared() bool {
-	_, ok := m.clearedFields[system_parameter.FieldUpdatedBy]
+	_, ok := m.clearedFields[systemparameter.FieldUpdatedBy]
 	return ok
 }
 
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *SystemParameterMutation) ResetUpdatedBy() {
 	m.updated_by = nil
-	delete(m.clearedFields, system_parameter.FieldUpdatedBy)
+	delete(m.clearedFields, systemparameter.FieldUpdatedBy)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -2446,8 +2491,8 @@ func (m *SystemParameterMutation) UpdatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the System_parameter entity.
-// If the System_parameter object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SystemParameterMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -2466,24 +2511,34 @@ func (m *SystemParameterMutation) OldUpdatedAt(ctx context.Context) (v time.Time
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (m *SystemParameterMutation) ClearUpdatedAt() {
 	m.updated_at = nil
-	m.clearedFields[system_parameter.FieldUpdatedAt] = struct{}{}
+	m.clearedFields[systemparameter.FieldUpdatedAt] = struct{}{}
 }
 
 // UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
 func (m *SystemParameterMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[system_parameter.FieldUpdatedAt]
+	_, ok := m.clearedFields[systemparameter.FieldUpdatedAt]
 	return ok
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *SystemParameterMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, system_parameter.FieldUpdatedAt)
+	delete(m.clearedFields, systemparameter.FieldUpdatedAt)
 }
 
 // Where appends a list predicates to the SystemParameterMutation builder.
-func (m *SystemParameterMutation) Where(ps ...predicate.System_parameter) {
+func (m *SystemParameterMutation) Where(ps ...predicate.SystemParameter) {
 	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SystemParameterMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SystemParameterMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SystemParameter, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
 }
 
 // Op returns the operation name.
@@ -2491,7 +2546,12 @@ func (m *SystemParameterMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (System_parameter).
+// SetOp allows setting the mutation operation.
+func (m *SystemParameterMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SystemParameter).
 func (m *SystemParameterMutation) Type() string {
 	return m.typ
 }
@@ -2502,25 +2562,25 @@ func (m *SystemParameterMutation) Type() string {
 func (m *SystemParameterMutation) Fields() []string {
 	fields := make([]string, 0, 7)
 	if m.key != nil {
-		fields = append(fields, system_parameter.FieldKey)
+		fields = append(fields, systemparameter.FieldKey)
 	}
 	if m.value != nil {
-		fields = append(fields, system_parameter.FieldValue)
+		fields = append(fields, systemparameter.FieldValue)
 	}
 	if m.is_deleted != nil {
-		fields = append(fields, system_parameter.FieldIsDeleted)
+		fields = append(fields, systemparameter.FieldIsDeleted)
 	}
 	if m.created_by != nil {
-		fields = append(fields, system_parameter.FieldCreatedBy)
+		fields = append(fields, systemparameter.FieldCreatedBy)
 	}
 	if m.created_at != nil {
-		fields = append(fields, system_parameter.FieldCreatedAt)
+		fields = append(fields, systemparameter.FieldCreatedAt)
 	}
 	if m.updated_by != nil {
-		fields = append(fields, system_parameter.FieldUpdatedBy)
+		fields = append(fields, systemparameter.FieldUpdatedBy)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, system_parameter.FieldUpdatedAt)
+		fields = append(fields, systemparameter.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -2530,19 +2590,19 @@ func (m *SystemParameterMutation) Fields() []string {
 // schema.
 func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case system_parameter.FieldKey:
+	case systemparameter.FieldKey:
 		return m.Key()
-	case system_parameter.FieldValue:
+	case systemparameter.FieldValue:
 		return m.Value()
-	case system_parameter.FieldIsDeleted:
+	case systemparameter.FieldIsDeleted:
 		return m.IsDeleted()
-	case system_parameter.FieldCreatedBy:
+	case systemparameter.FieldCreatedBy:
 		return m.CreatedBy()
-	case system_parameter.FieldCreatedAt:
+	case systemparameter.FieldCreatedAt:
 		return m.CreatedAt()
-	case system_parameter.FieldUpdatedBy:
+	case systemparameter.FieldUpdatedBy:
 		return m.UpdatedBy()
-	case system_parameter.FieldUpdatedAt:
+	case systemparameter.FieldUpdatedAt:
 		return m.UpdatedAt()
 	}
 	return nil, false
@@ -2553,22 +2613,22 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case system_parameter.FieldKey:
+	case systemparameter.FieldKey:
 		return m.OldKey(ctx)
-	case system_parameter.FieldValue:
+	case systemparameter.FieldValue:
 		return m.OldValue(ctx)
-	case system_parameter.FieldIsDeleted:
+	case systemparameter.FieldIsDeleted:
 		return m.OldIsDeleted(ctx)
-	case system_parameter.FieldCreatedBy:
+	case systemparameter.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
-	case system_parameter.FieldCreatedAt:
+	case systemparameter.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case system_parameter.FieldUpdatedBy:
+	case systemparameter.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
-	case system_parameter.FieldUpdatedAt:
+	case systemparameter.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
 	}
-	return nil, fmt.Errorf("unknown System_parameter field %s", name)
+	return nil, fmt.Errorf("unknown SystemParameter field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
@@ -2576,49 +2636,49 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case system_parameter.FieldKey:
+	case systemparameter.FieldKey:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetKey(v)
 		return nil
-	case system_parameter.FieldValue:
+	case systemparameter.FieldValue:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetValue(v)
 		return nil
-	case system_parameter.FieldIsDeleted:
+	case systemparameter.FieldIsDeleted:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsDeleted(v)
 		return nil
-	case system_parameter.FieldCreatedBy:
+	case systemparameter.FieldCreatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
-	case system_parameter.FieldCreatedAt:
+	case systemparameter.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case system_parameter.FieldUpdatedBy:
+	case systemparameter.FieldUpdatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
 		return nil
-	case system_parameter.FieldUpdatedAt:
+	case systemparameter.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2626,7 +2686,7 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	}
-	return fmt.Errorf("unknown System_parameter field %s", name)
+	return fmt.Errorf("unknown SystemParameter field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
@@ -2648,18 +2708,18 @@ func (m *SystemParameterMutation) AddedField(name string) (ent.Value, bool) {
 func (m *SystemParameterMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown System_parameter numeric field %s", name)
+	return fmt.Errorf("unknown SystemParameter numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *SystemParameterMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(system_parameter.FieldUpdatedBy) {
-		fields = append(fields, system_parameter.FieldUpdatedBy)
+	if m.FieldCleared(systemparameter.FieldUpdatedBy) {
+		fields = append(fields, systemparameter.FieldUpdatedBy)
 	}
-	if m.FieldCleared(system_parameter.FieldUpdatedAt) {
-		fields = append(fields, system_parameter.FieldUpdatedAt)
+	if m.FieldCleared(systemparameter.FieldUpdatedAt) {
+		fields = append(fields, systemparameter.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -2675,43 +2735,43 @@ func (m *SystemParameterMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *SystemParameterMutation) ClearField(name string) error {
 	switch name {
-	case system_parameter.FieldUpdatedBy:
+	case systemparameter.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
-	case system_parameter.FieldUpdatedAt:
+	case systemparameter.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
 	}
-	return fmt.Errorf("unknown System_parameter nullable field %s", name)
+	return fmt.Errorf("unknown SystemParameter nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *SystemParameterMutation) ResetField(name string) error {
 	switch name {
-	case system_parameter.FieldKey:
+	case systemparameter.FieldKey:
 		m.ResetKey()
 		return nil
-	case system_parameter.FieldValue:
+	case systemparameter.FieldValue:
 		m.ResetValue()
 		return nil
-	case system_parameter.FieldIsDeleted:
+	case systemparameter.FieldIsDeleted:
 		m.ResetIsDeleted()
 		return nil
-	case system_parameter.FieldCreatedBy:
+	case systemparameter.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
-	case system_parameter.FieldCreatedAt:
+	case systemparameter.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case system_parameter.FieldUpdatedBy:
+	case systemparameter.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
-	case system_parameter.FieldUpdatedAt:
+	case systemparameter.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
 	}
-	return fmt.Errorf("unknown System_parameter field %s", name)
+	return fmt.Errorf("unknown SystemParameter field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
@@ -2753,13 +2813,13 @@ func (m *SystemParameterMutation) EdgeCleared(name string) bool {
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *SystemParameterMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown System_parameter unique edge %s", name)
+	return fmt.Errorf("unknown SystemParameter unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *SystemParameterMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown System_parameter edge %s", name)
+	return fmt.Errorf("unknown SystemParameter edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.
@@ -3976,9 +4036,24 @@ func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.User, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (User).
@@ -5082,9 +5157,24 @@ func (m *UserDeviceMutation) Where(ps ...predicate.UserDevice) {
 	m.predicates = append(m.predicates, ps...)
 }
 
+// WhereP appends storage-level predicates to the UserDeviceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserDeviceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserDevice, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
 // Op returns the operation name.
 func (m *UserDeviceMutation) Op() Op {
 	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserDeviceMutation) SetOp(op Op) {
+	m.op = op
 }
 
 // Type returns the node type of this mutation (UserDevice).

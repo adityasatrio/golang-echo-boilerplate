@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -62,6 +63,7 @@ type User struct {
 	LatestSkipUpdate time.Time `json:"latest_skip_update,omitempty"`
 	// LatestDeletedAt holds the value of the "latest_deleted_at" field.
 	LatestDeletedAt time.Time `json:"latest_deleted_at,omitempty"`
+	selectValues    sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -78,7 +80,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		case user.FieldEmailVerifiedAt, user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldLastAccessAt, user.FieldDeletedAt, user.FieldLatestSkipUpdate, user.FieldLatestDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -236,16 +238,24 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.LatestDeletedAt = value.Time
 			}
+		default:
+			u.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the User.
+// This includes values selected through modifiers, order, etc.
+func (u *User) Value(name string) (ent.Value, error) {
+	return u.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (u *User) Update() *UserUpdateOne {
-	return (&UserClient{config: u.config}).UpdateOne(u)
+	return NewUserClient(u.config).UpdateOne(u)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
@@ -338,9 +348,3 @@ func (u *User) String() string {
 
 // Users is a parsable slice of User.
 type Users []*User
-
-func (u Users) config(cfg config) {
-	for _i := range u {
-		u[_i].config = cfg
-	}
-}
