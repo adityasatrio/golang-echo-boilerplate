@@ -57,7 +57,7 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, u
 }
 
 func (r *UserRepositoryImpl) Delete(ctx context.Context, tx *ent.Tx, id uint64) (*ent.User, error) {
-	err := tx.Client().Role.DeleteOneID(id).Exec(ctx)
+	err := tx.Client().User.DeleteOneID(id).Exec(ctx)
 
 	if err != nil {
 		return nil, err

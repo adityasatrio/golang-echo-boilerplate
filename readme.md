@@ -69,6 +69,11 @@ go build cmd/main.go
 ./main
 ```
 
+### Test Apps with coverage report 
+```
+go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out -o coverage.html
+```
+
 ### ORM
 Create model schema using ent:
 1. Get dependency for golang ent `go get entgo.io/ent/cmd/ent`

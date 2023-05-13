@@ -1,6 +1,90 @@
 package controller
 
-type SystemParameterCaseStub struct{}
+import (
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"myapp/internal/applications/system_parameter/dto"
+	mock_service "myapp/mocks/system_parameter/service"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+func TestSystemParameterController_Create(t *testing.T) {
+	// Initialize a new echo router
+	e := echo.New()
+
+	// Create a new request with sample data
+	data := `{"name":"test_param","value":"1234"}`
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(data))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	// Create a new mock service
+	mockService := &mock_service.SystemParameterService{}
+
+	// Initialize a new controller
+	controller := NewSystemParameterController(mockService)
+
+	// Test Create function
+	mockService.On("Create", mock.Anything, mock.Anything).Return(&dto.SystemParameterResponse{}, nil)
+	if assert.NoError(t, controller.Create(c)) {
+		assert.Equal(t, http.StatusCreated, rec.Code)
+	}
+}
+
+func TestSystemParameterController_Update(t *testing.T) {
+	// Initialize a new echo router
+	e := echo.New()
+
+	// Create a new request with sample data
+	data := `{"name":"test_param","value":"1234"}`
+	req := httptest.NewRequest(http.MethodPut, "/1", strings.NewReader(data))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
+
+	// Create a new mock service
+	mockService := &mock_service.SystemParameterService{}
+
+	// Initialize a new controller
+	controller := NewSystemParameterController(mockService)
+
+	// Test Update function
+	mockService.On("Update", mock.Anything, mock.Anything, mock.Anything).Return(&dto.SystemParameterResponse{}, nil)
+	if assert.NoError(t, controller.Update(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+	}
+}
+
+func TestSystemParameterController_Delete(t *testing.T) {
+	// Initialize a new echo router
+	e := echo.New()
+
+	// Create a new request
+	req := httptest.NewRequest(http.MethodDelete, "/1", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
+
+	// Create a new mock service
+	mockService := &mock_service.SystemParameterService{}
+
+	// Initialize a new controller
+	controller := NewSystemParameterController(mockService)
+
+	// Test Delete function
+	mockService.On("Delete", mock.Anything, mock.Anything).Return(&dto.SystemParameterResponse{}, nil)
+	if assert.NoError(t, controller.Delete(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+	}
+}
 
 /*
 func (caseStub *SystemParameterCaseStub) Hello(ctx context.Context) (string, error) {
