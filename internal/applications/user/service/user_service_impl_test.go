@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
 	"myapp/internal/applications/user/dto"
-	"myapp/mocks"
 	mockRoleRepo "myapp/mocks/role/repository"
 	mockRoleUserRepo "myapp/mocks/role_user/repository"
+	"myapp/mocks/test_helper"
 	mockTrx "myapp/mocks/transaction"
 	"myapp/mocks/user/repository"
 	"testing"
@@ -96,7 +96,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 		},
 	}
 
-	_, txClient, ctx := mocks.TestConnectionTx(t)
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
@@ -174,7 +174,7 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
 	roleRequest := ent.RoleUser{UserID: 123000}
 
-	_, txClient, ctx := mocks.TestConnectionTx(t)
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	t.Run("Update_User_Success", func(t *testing.T) {
 

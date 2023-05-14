@@ -1,4 +1,4 @@
-package mocks
+package test_helper
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestConnection(t *testing.T) (*ent.Client, context.Context) {
+func TestDbConnection(t *testing.T) (*ent.Client, context.Context) {
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),
 	}
@@ -22,9 +22,9 @@ func TestConnection(t *testing.T) (*ent.Client, context.Context) {
 	return client, ctx
 }
 
-func TestConnectionTx(t *testing.T) (*ent.Client, *ent.Tx, context.Context) {
+func TestDbConnectionTx(t *testing.T) (*ent.Client, *ent.Tx, context.Context) {
 
-	client, ctx := TestConnection(t)
+	client, ctx := TestDbConnection(t)
 	txClient, err := client.Tx(ctx)
 
 	require.NoError(t, err)
@@ -33,7 +33,7 @@ func TestConnectionTx(t *testing.T) (*ent.Client, *ent.Tx, context.Context) {
 	return client, txClient, ctx
 }
 
-func TestConnectionClose(client *ent.Client) {
+func TestDbConnectionClose(client *ent.Client) {
 	defer func(client *ent.Client) {
 		err := client.Close()
 		if err != nil {

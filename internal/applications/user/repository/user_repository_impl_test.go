@@ -4,7 +4,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/mocks"
+	"myapp/mocks/test_helper"
 	"testing"
 	"time"
 )
@@ -39,7 +39,7 @@ func TestUserRepositoryImpl_Create(t *testing.T) {
 		//},
 	}
 
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,12 +54,12 @@ func TestUserRepositoryImpl_Create(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 }
 
 func TestUserRepositoryImpl_Update(t *testing.T) {
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	// CreateTx a new UserRepositoryImpl instance
 	userRepo := NewUserRepositoryImpl(client)
@@ -104,13 +104,13 @@ func TestUserRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, result.ID, updated.ID)
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 }
 
 func TestUserRepositoryImpl_Delete(t *testing.T) {
 
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	// CreateTx a new UserRepositoryImpl instance
 	userRepo := NewUserRepositoryImpl(client)
@@ -138,13 +138,13 @@ func TestUserRepositoryImpl_Delete(t *testing.T) {
 	assert.Nil(t, deleted)
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 }
 
 func TestUserRepositoryImpl_SoftDelete(t *testing.T) {
 
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	// CreateTx a new UserRepositoryImpl instance
 	userRepo := NewUserRepositoryImpl(client)
@@ -173,13 +173,13 @@ func TestUserRepositoryImpl_SoftDelete(t *testing.T) {
 	assert.NotNil(t, deleted.DeletedAt)
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 }
 
 func TestUserRepositoryImpl_GetId(t *testing.T) {
 
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	// CreateTx a new UserRepositoryImpl instance
 	userRepo := NewUserRepositoryImpl(client)
@@ -208,13 +208,13 @@ func TestUserRepositoryImpl_GetId(t *testing.T) {
 	assert.Equal(t, result.ID, resultId.ID)
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 }
 
 func TestUserRepositoryImpl_GetAll(t *testing.T) {
 
-	client, ctx := mocks.TestConnection(t)
+	client, ctx := test_helper.TestDbConnection(t)
 
 	// CreateTx a new UserRepositoryImpl instance
 	userRepo := NewUserRepositoryImpl(client)
@@ -266,7 +266,7 @@ func TestUserRepositoryImpl_GetAll(t *testing.T) {
 	assert.NotNil(t, result2.ID)
 
 	t.Cleanup(func() {
-		mocks.TestConnectionClose(client)
+		test_helper.TestDbConnectionClose(client)
 	})
 
 }

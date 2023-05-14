@@ -1,8 +1,16 @@
 .PHONY: all build test generate-ent generate-mocks clean
 
+
 # Build the project
 build:
 	go build -o cmd/main cmd/main.go
+
+# Run tests and generate coverage report
+run:
+	rm -f ./cmd/main
+	#go test -coverprofile=coverage.out ./...
+	go build -o cmd/main cmd/main.go
+	./cmd/main
 
 # Run tests and generate coverage report
 test:
