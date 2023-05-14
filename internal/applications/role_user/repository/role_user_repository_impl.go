@@ -14,7 +14,7 @@ func NewRoleUserRepositoryImpl() *RoleUserRepositoryImpl {
 	return &RoleUserRepositoryImpl{}
 }
 
-func (r *RoleUserRepositoryImpl) Create(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
+func (r *RoleUserRepositoryImpl) CreateTx(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
 	response, err := clientTrx.RoleUser.Create().
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).

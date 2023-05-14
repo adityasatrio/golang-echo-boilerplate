@@ -14,8 +14,8 @@ type RoleUserRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, client, request
-func (_m *RoleUserRepository) Create(ctx context.Context, client *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
+// CreateTx provides a mock function with given fields: ctx, client, request
+func (_m *RoleUserRepository) CreateTx(ctx context.Context, client *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) {
 	ret := _m.Called(ctx, client, request)
 
 	var r0 *ent.RoleUser

@@ -26,6 +26,7 @@ func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
 
 	//start transaction:
+	
 	var userNew = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
@@ -41,7 +42,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//save user:
-		userResult, err := s.userRepository.Create(ctx, tx.Client(), userRequest)
+		userResult, err := s.userRepository.CreateTx(ctx, tx.Client(), userRequest)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -54,7 +55,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//save role_user:
-		_, errRoleUser := s.roleUserRepository.Create(ctx, tx.Client(), roleUserRequest)
+		_, errRoleUser := s.roleUserRepository.CreateTx(ctx, tx.Client(), roleUserRequest)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
@@ -88,7 +89,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		}
 
 		//update user:
-		userResult, err := s.userRepository.Update(ctx, tx.Client(), userRequest, id)
+		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userRequest, id)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}

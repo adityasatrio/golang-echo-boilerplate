@@ -15,7 +15,7 @@ func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 
-func (r *UserRepositoryImpl) Create(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
+func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
 	//txClient is transactional client that handled in service layer for post rollback logic
 	response, err := txClient.User.Create().
 		SetRoleID(newUser.RoleID).
@@ -36,7 +36,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, txClient *ent.Client, n
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
 	saved, err := txClient.User.UpdateOneID(id).
 		SetRoleID(updateUser.RoleID).
 		SetName(updateUser.Name).
@@ -56,8 +56,8 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, u
 	return saved, nil
 }
 
-func (r *UserRepositoryImpl) Delete(ctx context.Context, tx *ent.Tx, id uint64) (*ent.User, error) {
-	err := tx.Client().User.DeleteOneID(id).Exec(ctx)
+func (r *UserRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) {
+	err := r.client.User.DeleteOneID(id).Exec(ctx)
 
 	if err != nil {
 		return nil, err

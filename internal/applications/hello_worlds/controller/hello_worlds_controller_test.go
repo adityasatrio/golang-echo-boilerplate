@@ -13,7 +13,7 @@ import (
 )
 
 func TestNewHelloWorldsController(t *testing.T) {
-	// Create a mock service object.
+	// CreateTx a mock service object.
 	mockService := &mock_service.HelloWorldsService{}
 
 	// Call the function being tested.

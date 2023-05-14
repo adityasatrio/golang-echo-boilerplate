@@ -45,20 +45,20 @@ func TestUserController_Create(t *testing.T) {
 			e := echo.New()
 			validator.SetupValidator(e)
 
-			// Create a request.
+			// CreateTx a request.
 			reqBody := userMock.reqBodyJson
 			req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
 			req.Header.Set("Content-Type", "application/json")
 
-			// Create a mock response.
+			// CreateTx a mock response.
 			mockReq := buildUserRequest(reqBody)
 
-			// Create a mock response.
+			// CreateTx a mock response.
 			mockRes := buildUserResponse(reqBody)
 
 			userService.On("Create", req.Context(), &mockReq).Return(mockRes, userMock.errors)
 
-			// Call the Create method of the UserController.
+			// Call the CreateTx method of the UserController.
 			res := httptest.NewRecorder()
 			c := e.NewContext(req, res)
 			err := controller.Create(c)
@@ -98,15 +98,15 @@ func TestUserController_Create(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockRes := buildUserResponse(reqBody)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		err := controller.Create(c)
@@ -134,20 +134,20 @@ func TestUserController_Update(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockReq := buildUserRequest(reqBody)
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockRes := buildUserResponse(reqBody)
 
 		userService.On("Update", req.Context(), uint64(1), &mockReq).Return(mockRes, nil)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -173,21 +173,21 @@ func TestUserController_Update(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockReq := buildUserRequest(reqBody)
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed got user")
 		userService.On("Update", req.Context(), uint64(1), &mockReq).Return(nil, errorMessage)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -213,15 +213,15 @@ func TestUserController_Update(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		mockRes := buildUserResponse(reqBody)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -250,17 +250,17 @@ func TestUserController_Delete(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		userService.On("Delete", req.Context(), uint64(1)).Return(mockRes, nil)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -287,18 +287,18 @@ func TestUserController_Delete(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed delete user")
 		userService.On("Delete", req.Context(), uint64(1)).Return(mockRes, errorMessage)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -329,17 +329,17 @@ func TestUserController_GetById(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		userService.On("GetById", req.Context(), uint64(1)).Return(mockRes, nil)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -366,18 +366,18 @@ func TestUserController_GetById(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed get user")
 		userService.On("GetById", req.Context(), uint64(1)).Return(mockRes, errorMessage)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		c.SetParamNames("id")
@@ -407,11 +407,11 @@ func TestUserController_GetAll(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
@@ -420,7 +420,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 		userService.On("GetAll", req.Context()).Return(mockListUser, nil)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		err := controller.GetAll(c)
@@ -445,18 +445,18 @@ func TestUserController_GetAll(t *testing.T) {
 		e := echo.New()
 		validator.SetupValidator(e)
 
-		// Create a request.
+		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
 
-		// Create a mock response.
+		// CreateTx a mock response.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
 		mockRes := buildUserResponse(reqBody)
 
 		errorMessage := errors.New("failed get user")
 		userService.On("GetAll", req.Context()).Return(nil, errorMessage)
 
-		// Call the Create method of the UserController.
+		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
 		c := e.NewContext(req, res)
 		err := controller.GetAll(c)

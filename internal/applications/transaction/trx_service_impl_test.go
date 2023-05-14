@@ -16,7 +16,7 @@ func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
 	}
 	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
 
-	// Create a TrxServiceImpl instance with the mock client.
+	// CreateTx a TrxServiceImpl instance with the mock client.
 	trxService := NewTrxServiceImpl(client)
 	ctx := context.Background()
 
@@ -50,7 +50,7 @@ func TestTrxServiceImpl_WithFailedTx(t *testing.T) {
 	}
 	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
 
-	// Create a TrxServiceImpl instance with the mock client.
+	// CreateTx a TrxServiceImpl instance with the mock client.
 	trxService := NewTrxServiceImpl(client)
 	ctx := context.Background()
 
