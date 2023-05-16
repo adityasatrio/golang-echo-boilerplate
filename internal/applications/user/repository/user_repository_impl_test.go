@@ -6,7 +6,6 @@ import (
 	"myapp/ent"
 	"myapp/mocks/test_helper"
 	"testing"
-	"time"
 )
 
 func TestUserRepositoryImpl_Create(t *testing.T) {
@@ -20,13 +19,13 @@ func TestUserRepositoryImpl_Create(t *testing.T) {
 		{
 			name: "successful creation",
 			newUser: ent.User{
-				RoleID:        1,
-				Name:          "John",
-				Email:         "john@example.com",
-				Password:      "password",
-				IsVerified:    true,
-				Avatar:        "avatar",
-				PregnancyMode: false,
+				RoleID:     1,
+				Name:       "John",
+				Email:      "john@example.com",
+				Password:   "password",
+				Avatar:     "avatar",
+				CreatedBy:  "user",
+				IsVerified: false,
 			},
 			expectedResult: &ent.User{ID: 1},
 			expectedError:  nil,
@@ -66,15 +65,12 @@ func TestUserRepositoryImpl_Update(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUser := ent.User{
-		Name:          "John Doe",
-		Email:         "john.doe@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe",
+		Email:     "john.doe@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result, err := userRepo.CreateTx(ctx, client, createNewUser)
@@ -84,13 +80,12 @@ func TestUserRepositoryImpl_Update(t *testing.T) {
 
 	// CreateTx an updated user with modified fields
 	updatedUser := ent.User{
-		RoleID:        2,
-		Name:          "Jane Smith",
-		Email:         "jane.smith@example.com",
-		Password:      "newpassword",
-		IsVerified:    false,
-		Avatar:        "new_avatar.jpg",
-		PregnancyMode: true,
+		RoleID:    2,
+		Name:      "Jane Smith",
+		Email:     "jane.smith@example.com",
+		Password:  "newpassword",
+		Avatar:    "new_avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	// UpdateTx the user using the repository method
@@ -117,15 +112,12 @@ func TestUserRepositoryImpl_Delete(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUser := ent.User{
-		Name:          "John Doe delete",
-		Email:         "john.doe.delete@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe delete",
+		Email:     "john.doe.delete@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result, err := userRepo.CreateTx(ctx, client, createNewUser)
@@ -151,15 +143,12 @@ func TestUserRepositoryImpl_SoftDelete(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUserSoft := ent.User{
-		Name:          "John Doe soft",
-		Email:         "john.doe.soft@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe soft",
+		Email:     "john.doe.soft@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result, err := userRepo.CreateTx(ctx, client, createNewUserSoft)
@@ -186,15 +175,12 @@ func TestUserRepositoryImpl_GetId(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUser := ent.User{
-		Name:          "John Doe",
-		Email:         "john.doe@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe",
+		Email:     "john.doe@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result, err := userRepo.CreateTx(ctx, client, createNewUser)
@@ -202,10 +188,10 @@ func TestUserRepositoryImpl_GetId(t *testing.T) {
 	assert.Equal(t, createNewUser.Name, result.Name)
 	assert.NotNil(t, result.ID)
 
-	resultId, err := userRepo.GetById(ctx, result.ID)
+	resultGetId, err := userRepo.GetById(ctx, result.ID)
 	assert.NoError(t, err)
-	assert.NotNil(t, resultId)
-	assert.Equal(t, result.ID, resultId.ID)
+	assert.NotNil(t, resultGetId)
+	assert.Equal(t, resultGetId.ID, result.ID)
 
 	t.Cleanup(func() {
 		test_helper.TestDbConnectionClose(client)
@@ -221,15 +207,12 @@ func TestUserRepositoryImpl_GetAll(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUser := ent.User{
-		Name:          "John Doe",
-		Email:         "john.doe@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe",
+		Email:     "john.doe@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result, err := userRepo.CreateTx(ctx, client, createNewUser)
@@ -244,15 +227,12 @@ func TestUserRepositoryImpl_GetAll(t *testing.T) {
 
 	// CreateTx a test user
 	createNewUser2 := ent.User{
-		Name:          "John Doe2",
-		Email:         "john.doe2@example.com",
-		RoleID:        1,
-		Password:      "password123",
-		IsVerified:    true,
-		Avatar:        "avatar.jpg",
-		PregnancyMode: false,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		Name:      "John Doe2",
+		Email:     "john.doe2@example.com",
+		RoleID:    1,
+		Password:  "password123",
+		Avatar:    "avatar.jpg",
+		CreatedBy: "user",
 	}
 
 	result2, err := userRepo.CreateTx(ctx, client, createNewUser2)

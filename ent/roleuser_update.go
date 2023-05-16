@@ -82,23 +82,29 @@ func (ruu *RoleUserUpdate) ClearRoleID() *RoleUserUpdate {
 	return ruu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (ruu *RoleUserUpdate) SetCreatedAt(t time.Time) *RoleUserUpdate {
-	ruu.mutation.SetCreatedAt(t)
+// SetCreatedBy sets the "created_by" field.
+func (ruu *RoleUserUpdate) SetCreatedBy(s string) *RoleUserUpdate {
+	ruu.mutation.SetCreatedBy(s)
 	return ruu
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ruu *RoleUserUpdate) SetNillableCreatedAt(t *time.Time) *RoleUserUpdate {
-	if t != nil {
-		ruu.SetCreatedAt(*t)
+// SetUpdatedBy sets the "updated_by" field.
+func (ruu *RoleUserUpdate) SetUpdatedBy(s string) *RoleUserUpdate {
+	ruu.mutation.SetUpdatedBy(s)
+	return ruu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ruu *RoleUserUpdate) SetNillableUpdatedBy(s *string) *RoleUserUpdate {
+	if s != nil {
+		ruu.SetUpdatedBy(*s)
 	}
 	return ruu
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (ruu *RoleUserUpdate) ClearCreatedAt() *RoleUserUpdate {
-	ruu.mutation.ClearCreatedAt()
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (ruu *RoleUserUpdate) ClearUpdatedBy() *RoleUserUpdate {
+	ruu.mutation.ClearUpdatedBy()
 	return ruu
 }
 
@@ -119,6 +125,46 @@ func (ruu *RoleUserUpdate) SetNillableUpdatedAt(t *time.Time) *RoleUserUpdate {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ruu *RoleUserUpdate) ClearUpdatedAt() *RoleUserUpdate {
 	ruu.mutation.ClearUpdatedAt()
+	return ruu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (ruu *RoleUserUpdate) SetDeletedBy(s string) *RoleUserUpdate {
+	ruu.mutation.SetDeletedBy(s)
+	return ruu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (ruu *RoleUserUpdate) SetNillableDeletedBy(s *string) *RoleUserUpdate {
+	if s != nil {
+		ruu.SetDeletedBy(*s)
+	}
+	return ruu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (ruu *RoleUserUpdate) ClearDeletedBy() *RoleUserUpdate {
+	ruu.mutation.ClearDeletedBy()
+	return ruu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (ruu *RoleUserUpdate) SetDeletedAt(t time.Time) *RoleUserUpdate {
+	ruu.mutation.SetDeletedAt(t)
+	return ruu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (ruu *RoleUserUpdate) SetNillableDeletedAt(t *time.Time) *RoleUserUpdate {
+	if t != nil {
+		ruu.SetDeletedAt(*t)
+	}
+	return ruu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (ruu *RoleUserUpdate) ClearDeletedAt() *RoleUserUpdate {
+	ruu.mutation.ClearDeletedAt()
 	return ruu
 }
 
@@ -154,7 +200,20 @@ func (ruu *RoleUserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ruu *RoleUserUpdate) check() error {
+	if v, ok := ruu.mutation.CreatedBy(); ok {
+		if err := roleuser.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "RoleUser.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := ruu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(roleuser.Table, roleuser.Columns, sqlgraph.NewFieldSpec(roleuser.FieldID, field.TypeUint64))
 	if ps := ruu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -181,17 +240,32 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ruu.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
-	if value, ok := ruu.mutation.CreatedAt(); ok {
-		_spec.SetField(roleuser.FieldCreatedAt, field.TypeTime, value)
+	if value, ok := ruu.mutation.CreatedBy(); ok {
+		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)
 	}
-	if ruu.mutation.CreatedAtCleared() {
-		_spec.ClearField(roleuser.FieldCreatedAt, field.TypeTime)
+	if value, ok := ruu.mutation.UpdatedBy(); ok {
+		_spec.SetField(roleuser.FieldUpdatedBy, field.TypeString, value)
+	}
+	if ruu.mutation.UpdatedByCleared() {
+		_spec.ClearField(roleuser.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := ruu.mutation.UpdatedAt(); ok {
 		_spec.SetField(roleuser.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ruu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(roleuser.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ruu.mutation.DeletedBy(); ok {
+		_spec.SetField(roleuser.FieldDeletedBy, field.TypeString, value)
+	}
+	if ruu.mutation.DeletedByCleared() {
+		_spec.ClearField(roleuser.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := ruu.mutation.DeletedAt(); ok {
+		_spec.SetField(roleuser.FieldDeletedAt, field.TypeTime, value)
+	}
+	if ruu.mutation.DeletedAtCleared() {
+		_spec.ClearField(roleuser.FieldDeletedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ruu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -267,23 +341,29 @@ func (ruuo *RoleUserUpdateOne) ClearRoleID() *RoleUserUpdateOne {
 	return ruuo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (ruuo *RoleUserUpdateOne) SetCreatedAt(t time.Time) *RoleUserUpdateOne {
-	ruuo.mutation.SetCreatedAt(t)
+// SetCreatedBy sets the "created_by" field.
+func (ruuo *RoleUserUpdateOne) SetCreatedBy(s string) *RoleUserUpdateOne {
+	ruuo.mutation.SetCreatedBy(s)
 	return ruuo
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ruuo *RoleUserUpdateOne) SetNillableCreatedAt(t *time.Time) *RoleUserUpdateOne {
-	if t != nil {
-		ruuo.SetCreatedAt(*t)
+// SetUpdatedBy sets the "updated_by" field.
+func (ruuo *RoleUserUpdateOne) SetUpdatedBy(s string) *RoleUserUpdateOne {
+	ruuo.mutation.SetUpdatedBy(s)
+	return ruuo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ruuo *RoleUserUpdateOne) SetNillableUpdatedBy(s *string) *RoleUserUpdateOne {
+	if s != nil {
+		ruuo.SetUpdatedBy(*s)
 	}
 	return ruuo
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (ruuo *RoleUserUpdateOne) ClearCreatedAt() *RoleUserUpdateOne {
-	ruuo.mutation.ClearCreatedAt()
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (ruuo *RoleUserUpdateOne) ClearUpdatedBy() *RoleUserUpdateOne {
+	ruuo.mutation.ClearUpdatedBy()
 	return ruuo
 }
 
@@ -304,6 +384,46 @@ func (ruuo *RoleUserUpdateOne) SetNillableUpdatedAt(t *time.Time) *RoleUserUpdat
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ruuo *RoleUserUpdateOne) ClearUpdatedAt() *RoleUserUpdateOne {
 	ruuo.mutation.ClearUpdatedAt()
+	return ruuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (ruuo *RoleUserUpdateOne) SetDeletedBy(s string) *RoleUserUpdateOne {
+	ruuo.mutation.SetDeletedBy(s)
+	return ruuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (ruuo *RoleUserUpdateOne) SetNillableDeletedBy(s *string) *RoleUserUpdateOne {
+	if s != nil {
+		ruuo.SetDeletedBy(*s)
+	}
+	return ruuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (ruuo *RoleUserUpdateOne) ClearDeletedBy() *RoleUserUpdateOne {
+	ruuo.mutation.ClearDeletedBy()
+	return ruuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (ruuo *RoleUserUpdateOne) SetDeletedAt(t time.Time) *RoleUserUpdateOne {
+	ruuo.mutation.SetDeletedAt(t)
+	return ruuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (ruuo *RoleUserUpdateOne) SetNillableDeletedAt(t *time.Time) *RoleUserUpdateOne {
+	if t != nil {
+		ruuo.SetDeletedAt(*t)
+	}
+	return ruuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (ruuo *RoleUserUpdateOne) ClearDeletedAt() *RoleUserUpdateOne {
+	ruuo.mutation.ClearDeletedAt()
 	return ruuo
 }
 
@@ -352,7 +472,20 @@ func (ruuo *RoleUserUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ruuo *RoleUserUpdateOne) check() error {
+	if v, ok := ruuo.mutation.CreatedBy(); ok {
+		if err := roleuser.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "RoleUser.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, err error) {
+	if err := ruuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(roleuser.Table, roleuser.Columns, sqlgraph.NewFieldSpec(roleuser.FieldID, field.TypeUint64))
 	id, ok := ruuo.mutation.ID()
 	if !ok {
@@ -396,17 +529,32 @@ func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, er
 	if ruuo.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
-	if value, ok := ruuo.mutation.CreatedAt(); ok {
-		_spec.SetField(roleuser.FieldCreatedAt, field.TypeTime, value)
+	if value, ok := ruuo.mutation.CreatedBy(); ok {
+		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)
 	}
-	if ruuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(roleuser.FieldCreatedAt, field.TypeTime)
+	if value, ok := ruuo.mutation.UpdatedBy(); ok {
+		_spec.SetField(roleuser.FieldUpdatedBy, field.TypeString, value)
+	}
+	if ruuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(roleuser.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := ruuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(roleuser.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ruuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(roleuser.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ruuo.mutation.DeletedBy(); ok {
+		_spec.SetField(roleuser.FieldDeletedBy, field.TypeString, value)
+	}
+	if ruuo.mutation.DeletedByCleared() {
+		_spec.ClearField(roleuser.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := ruuo.mutation.DeletedAt(); ok {
+		_spec.SetField(roleuser.FieldDeletedAt, field.TypeTime, value)
+	}
+	if ruuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(roleuser.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &RoleUser{config: ruuo.config}
 	_spec.Assign = _node.assignValues

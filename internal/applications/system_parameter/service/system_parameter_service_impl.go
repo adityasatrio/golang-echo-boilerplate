@@ -76,6 +76,20 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 	return exist, nil
 }
 
+func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) {
+	exist, err := s.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+	}
+
+	_, err = s.repository.SoftDelete(ctx, id)
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
+	}
+
+	return exist, nil
+}
+
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 	result, err := s.repository.GetById(ctx, id)
 	if err != nil {

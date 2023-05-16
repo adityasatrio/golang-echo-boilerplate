@@ -49,11 +49,12 @@ type PetMutation struct {
 	code          *string
 	age_month     *int
 	addage_month  *int
-	is_deleted    *bool
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
 	updated_at    *time.Time
+	deleted_by    *string
+	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Pet, error)
@@ -328,42 +329,6 @@ func (m *PetMutation) ResetAgeMonth() {
 	m.addage_month = nil
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (m *PetMutation) SetIsDeleted(b bool) {
-	m.is_deleted = &b
-}
-
-// IsDeleted returns the value of the "is_deleted" field in the mutation.
-func (m *PetMutation) IsDeleted() (r bool, exists bool) {
-	v := m.is_deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsDeleted returns the old "is_deleted" field's value of the Pet entity.
-// If the Pet object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PetMutation) OldIsDeleted(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsDeleted: %w", err)
-	}
-	return oldValue.IsDeleted, nil
-}
-
-// ResetIsDeleted resets all changes to the "is_deleted" field.
-func (m *PetMutation) ResetIsDeleted() {
-	m.is_deleted = nil
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (m *PetMutation) SetCreatedBy(s string) {
 	m.created_by = &s
@@ -534,6 +499,104 @@ func (m *PetMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, pet.FieldUpdatedAt)
 }
 
+// SetDeletedBy sets the "deleted_by" field.
+func (m *PetMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *PetMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Pet entity.
+// If the Pet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PetMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *PetMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[pet.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *PetMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[pet.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *PetMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, pet.FieldDeletedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PetMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PetMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Pet entity.
+// If the Pet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PetMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PetMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[pet.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PetMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[pet.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PetMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, pet.FieldDeletedAt)
+}
+
 // Where appends a list predicates to the PetMutation builder.
 func (m *PetMutation) Where(ps ...predicate.Pet) {
 	m.predicates = append(m.predicates, ps...)
@@ -568,7 +631,7 @@ func (m *PetMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PetMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.name != nil {
 		fields = append(fields, pet.FieldName)
 	}
@@ -581,9 +644,6 @@ func (m *PetMutation) Fields() []string {
 	if m.age_month != nil {
 		fields = append(fields, pet.FieldAgeMonth)
 	}
-	if m.is_deleted != nil {
-		fields = append(fields, pet.FieldIsDeleted)
-	}
 	if m.created_by != nil {
 		fields = append(fields, pet.FieldCreatedBy)
 	}
@@ -595,6 +655,12 @@ func (m *PetMutation) Fields() []string {
 	}
 	if m.updated_at != nil {
 		fields = append(fields, pet.FieldUpdatedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, pet.FieldDeletedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, pet.FieldDeletedAt)
 	}
 	return fields
 }
@@ -612,8 +678,6 @@ func (m *PetMutation) Field(name string) (ent.Value, bool) {
 		return m.Code()
 	case pet.FieldAgeMonth:
 		return m.AgeMonth()
-	case pet.FieldIsDeleted:
-		return m.IsDeleted()
 	case pet.FieldCreatedBy:
 		return m.CreatedBy()
 	case pet.FieldCreatedAt:
@@ -622,6 +686,10 @@ func (m *PetMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case pet.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case pet.FieldDeletedBy:
+		return m.DeletedBy()
+	case pet.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -639,8 +707,6 @@ func (m *PetMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldCode(ctx)
 	case pet.FieldAgeMonth:
 		return m.OldAgeMonth(ctx)
-	case pet.FieldIsDeleted:
-		return m.OldIsDeleted(ctx)
 	case pet.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case pet.FieldCreatedAt:
@@ -649,6 +715,10 @@ func (m *PetMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldUpdatedBy(ctx)
 	case pet.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case pet.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case pet.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Pet field %s", name)
 }
@@ -686,13 +756,6 @@ func (m *PetMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAgeMonth(v)
 		return nil
-	case pet.FieldIsDeleted:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsDeleted(v)
-		return nil
 	case pet.FieldCreatedBy:
 		v, ok := value.(string)
 		if !ok {
@@ -720,6 +783,20 @@ func (m *PetMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case pet.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case pet.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Pet field %s", name)
@@ -772,6 +849,12 @@ func (m *PetMutation) ClearedFields() []string {
 	if m.FieldCleared(pet.FieldUpdatedAt) {
 		fields = append(fields, pet.FieldUpdatedAt)
 	}
+	if m.FieldCleared(pet.FieldDeletedBy) {
+		fields = append(fields, pet.FieldDeletedBy)
+	}
+	if m.FieldCleared(pet.FieldDeletedAt) {
+		fields = append(fields, pet.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -791,6 +874,12 @@ func (m *PetMutation) ClearField(name string) error {
 		return nil
 	case pet.FieldUpdatedAt:
 		m.ClearUpdatedAt()
+		return nil
+	case pet.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case pet.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Pet nullable field %s", name)
@@ -812,9 +901,6 @@ func (m *PetMutation) ResetField(name string) error {
 	case pet.FieldAgeMonth:
 		m.ResetAgeMonth()
 		return nil
-	case pet.FieldIsDeleted:
-		m.ResetIsDeleted()
-		return nil
 	case pet.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
@@ -826,6 +912,12 @@ func (m *PetMutation) ResetField(name string) error {
 		return nil
 	case pet.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case pet.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case pet.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Pet field %s", name)
@@ -886,9 +978,12 @@ type RoleMutation struct {
 	typ           string
 	id            *uint64
 	name          *string
-	created_at    *time.Time
-	updated_at    *time.Time
 	text          *string
+	created_by    *string
+	created_at    *time.Time
+	updated_by    *string
+	updated_at    *time.Time
+	deleted_by    *string
 	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
@@ -1036,6 +1131,78 @@ func (m *RoleMutation) ResetName() {
 	m.name = nil
 }
 
+// SetText sets the "text" field.
+func (m *RoleMutation) SetText(s string) {
+	m.text = &s
+}
+
+// Text returns the value of the "text" field in the mutation.
+func (m *RoleMutation) Text() (r string, exists bool) {
+	v := m.text
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldText returns the old "text" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldText(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldText is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldText requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldText: %w", err)
+	}
+	return oldValue.Text, nil
+}
+
+// ResetText resets all changes to the "text" field.
+func (m *RoleMutation) ResetText() {
+	m.text = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *RoleMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *RoleMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *RoleMutation) ResetCreatedBy() {
+	m.created_by = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *RoleMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -1067,22 +1234,58 @@ func (m *RoleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *RoleMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[role.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *RoleMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[role.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *RoleMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, role.FieldCreatedAt)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *RoleMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *RoleMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *RoleMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[role.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *RoleMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[role.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *RoleMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, role.FieldUpdatedBy)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1134,40 +1337,53 @@ func (m *RoleMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, role.FieldUpdatedAt)
 }
 
-// SetText sets the "text" field.
-func (m *RoleMutation) SetText(s string) {
-	m.text = &s
+// SetDeletedBy sets the "deleted_by" field.
+func (m *RoleMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
 }
 
-// Text returns the value of the "text" field in the mutation.
-func (m *RoleMutation) Text() (r string, exists bool) {
-	v := m.text
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *RoleMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldText returns the old "text" field's value of the Role entity.
+// OldDeletedBy returns the old "deleted_by" field's value of the Role entity.
 // If the Role object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RoleMutation) OldText(ctx context.Context) (v string, err error) {
+func (m *RoleMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldText is only allowed on UpdateOne operations")
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldText requires an ID field in the mutation")
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldText: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
 	}
-	return oldValue.Text, nil
+	return oldValue.DeletedBy, nil
 }
 
-// ResetText resets all changes to the "text" field.
-func (m *RoleMutation) ResetText() {
-	m.text = nil
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *RoleMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[role.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *RoleMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[role.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *RoleMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, role.FieldDeletedBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -1253,18 +1469,27 @@ func (m *RoleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, role.FieldName)
+	}
+	if m.text != nil {
+		fields = append(fields, role.FieldText)
+	}
+	if m.created_by != nil {
+		fields = append(fields, role.FieldCreatedBy)
 	}
 	if m.created_at != nil {
 		fields = append(fields, role.FieldCreatedAt)
 	}
+	if m.updated_by != nil {
+		fields = append(fields, role.FieldUpdatedBy)
+	}
 	if m.updated_at != nil {
 		fields = append(fields, role.FieldUpdatedAt)
 	}
-	if m.text != nil {
-		fields = append(fields, role.FieldText)
+	if m.deleted_by != nil {
+		fields = append(fields, role.FieldDeletedBy)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, role.FieldDeletedAt)
@@ -1279,12 +1504,18 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case role.FieldName:
 		return m.Name()
-	case role.FieldCreatedAt:
-		return m.CreatedAt()
-	case role.FieldUpdatedAt:
-		return m.UpdatedAt()
 	case role.FieldText:
 		return m.Text()
+	case role.FieldCreatedBy:
+		return m.CreatedBy()
+	case role.FieldCreatedAt:
+		return m.CreatedAt()
+	case role.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case role.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case role.FieldDeletedBy:
+		return m.DeletedBy()
 	case role.FieldDeletedAt:
 		return m.DeletedAt()
 	}
@@ -1298,12 +1529,18 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case role.FieldName:
 		return m.OldName(ctx)
-	case role.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case role.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
 	case role.FieldText:
 		return m.OldText(ctx)
+	case role.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case role.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case role.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case role.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case role.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
 	case role.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	}
@@ -1322,12 +1559,33 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
+	case role.FieldText:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetText(v)
+		return nil
+	case role.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
 	case role.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case role.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
 		return nil
 	case role.FieldUpdatedAt:
 		v, ok := value.(time.Time)
@@ -1336,12 +1594,12 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case role.FieldText:
+	case role.FieldDeletedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetText(v)
+		m.SetDeletedBy(v)
 		return nil
 	case role.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -1380,11 +1638,14 @@ func (m *RoleMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *RoleMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(role.FieldCreatedAt) {
-		fields = append(fields, role.FieldCreatedAt)
+	if m.FieldCleared(role.FieldUpdatedBy) {
+		fields = append(fields, role.FieldUpdatedBy)
 	}
 	if m.FieldCleared(role.FieldUpdatedAt) {
 		fields = append(fields, role.FieldUpdatedAt)
+	}
+	if m.FieldCleared(role.FieldDeletedBy) {
+		fields = append(fields, role.FieldDeletedBy)
 	}
 	if m.FieldCleared(role.FieldDeletedAt) {
 		fields = append(fields, role.FieldDeletedAt)
@@ -1403,11 +1664,14 @@ func (m *RoleMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *RoleMutation) ClearField(name string) error {
 	switch name {
-	case role.FieldCreatedAt:
-		m.ClearCreatedAt()
+	case role.FieldUpdatedBy:
+		m.ClearUpdatedBy()
 		return nil
 	case role.FieldUpdatedAt:
 		m.ClearUpdatedAt()
+		return nil
+	case role.FieldDeletedBy:
+		m.ClearDeletedBy()
 		return nil
 	case role.FieldDeletedAt:
 		m.ClearDeletedAt()
@@ -1423,14 +1687,23 @@ func (m *RoleMutation) ResetField(name string) error {
 	case role.FieldName:
 		m.ResetName()
 		return nil
+	case role.FieldText:
+		m.ResetText()
+		return nil
+	case role.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
 	case role.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case role.FieldUpdatedBy:
+		m.ResetUpdatedBy()
 		return nil
 	case role.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case role.FieldText:
-		m.ResetText()
+	case role.FieldDeletedBy:
+		m.ResetDeletedBy()
 		return nil
 	case role.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -1497,8 +1770,12 @@ type RoleUserMutation struct {
 	adduser_id    *int64
 	role_id       *uint64
 	addrole_id    *int64
+	created_by    *string
 	created_at    *time.Time
+	updated_by    *string
 	updated_at    *time.Time
+	deleted_by    *string
+	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*RoleUser, error)
@@ -1749,6 +2026,42 @@ func (m *RoleUserMutation) ResetRoleID() {
 	delete(m.clearedFields, roleuser.FieldRoleID)
 }
 
+// SetCreatedBy sets the "created_by" field.
+func (m *RoleUserMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *RoleUserMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the RoleUser entity.
+// If the RoleUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleUserMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *RoleUserMutation) ResetCreatedBy() {
+	m.created_by = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *RoleUserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -1780,22 +2093,58 @@ func (m *RoleUserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err e
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *RoleUserMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[roleuser.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *RoleUserMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[roleuser.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *RoleUserMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, roleuser.FieldCreatedAt)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *RoleUserMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *RoleUserMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the RoleUser entity.
+// If the RoleUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleUserMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *RoleUserMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[roleuser.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *RoleUserMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[roleuser.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *RoleUserMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, roleuser.FieldUpdatedBy)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1847,6 +2196,104 @@ func (m *RoleUserMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, roleuser.FieldUpdatedAt)
 }
 
+// SetDeletedBy sets the "deleted_by" field.
+func (m *RoleUserMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *RoleUserMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the RoleUser entity.
+// If the RoleUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleUserMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *RoleUserMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[roleuser.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *RoleUserMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[roleuser.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *RoleUserMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, roleuser.FieldDeletedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *RoleUserMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *RoleUserMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the RoleUser entity.
+// If the RoleUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleUserMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *RoleUserMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[roleuser.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *RoleUserMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[roleuser.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *RoleUserMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, roleuser.FieldDeletedAt)
+}
+
 // Where appends a list predicates to the RoleUserMutation builder.
 func (m *RoleUserMutation) Where(ps ...predicate.RoleUser) {
 	m.predicates = append(m.predicates, ps...)
@@ -1881,18 +2328,30 @@ func (m *RoleUserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleUserMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 8)
 	if m.user_id != nil {
 		fields = append(fields, roleuser.FieldUserID)
 	}
 	if m.role_id != nil {
 		fields = append(fields, roleuser.FieldRoleID)
 	}
+	if m.created_by != nil {
+		fields = append(fields, roleuser.FieldCreatedBy)
+	}
 	if m.created_at != nil {
 		fields = append(fields, roleuser.FieldCreatedAt)
 	}
+	if m.updated_by != nil {
+		fields = append(fields, roleuser.FieldUpdatedBy)
+	}
 	if m.updated_at != nil {
 		fields = append(fields, roleuser.FieldUpdatedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, roleuser.FieldDeletedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, roleuser.FieldDeletedAt)
 	}
 	return fields
 }
@@ -1906,10 +2365,18 @@ func (m *RoleUserMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case roleuser.FieldRoleID:
 		return m.RoleID()
+	case roleuser.FieldCreatedBy:
+		return m.CreatedBy()
 	case roleuser.FieldCreatedAt:
 		return m.CreatedAt()
+	case roleuser.FieldUpdatedBy:
+		return m.UpdatedBy()
 	case roleuser.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case roleuser.FieldDeletedBy:
+		return m.DeletedBy()
+	case roleuser.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -1923,10 +2390,18 @@ func (m *RoleUserMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldUserID(ctx)
 	case roleuser.FieldRoleID:
 		return m.OldRoleID(ctx)
+	case roleuser.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
 	case roleuser.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case roleuser.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
 	case roleuser.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case roleuser.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case roleuser.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown RoleUser field %s", name)
 }
@@ -1950,6 +2425,13 @@ func (m *RoleUserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRoleID(v)
 		return nil
+	case roleuser.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
 	case roleuser.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -1957,12 +2439,33 @@ func (m *RoleUserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case roleuser.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
 	case roleuser.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case roleuser.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case roleuser.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown RoleUser field %s", name)
@@ -2027,11 +2530,17 @@ func (m *RoleUserMutation) ClearedFields() []string {
 	if m.FieldCleared(roleuser.FieldRoleID) {
 		fields = append(fields, roleuser.FieldRoleID)
 	}
-	if m.FieldCleared(roleuser.FieldCreatedAt) {
-		fields = append(fields, roleuser.FieldCreatedAt)
+	if m.FieldCleared(roleuser.FieldUpdatedBy) {
+		fields = append(fields, roleuser.FieldUpdatedBy)
 	}
 	if m.FieldCleared(roleuser.FieldUpdatedAt) {
 		fields = append(fields, roleuser.FieldUpdatedAt)
+	}
+	if m.FieldCleared(roleuser.FieldDeletedBy) {
+		fields = append(fields, roleuser.FieldDeletedBy)
+	}
+	if m.FieldCleared(roleuser.FieldDeletedAt) {
+		fields = append(fields, roleuser.FieldDeletedAt)
 	}
 	return fields
 }
@@ -2053,11 +2562,17 @@ func (m *RoleUserMutation) ClearField(name string) error {
 	case roleuser.FieldRoleID:
 		m.ClearRoleID()
 		return nil
-	case roleuser.FieldCreatedAt:
-		m.ClearCreatedAt()
+	case roleuser.FieldUpdatedBy:
+		m.ClearUpdatedBy()
 		return nil
 	case roleuser.FieldUpdatedAt:
 		m.ClearUpdatedAt()
+		return nil
+	case roleuser.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case roleuser.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown RoleUser nullable field %s", name)
@@ -2073,11 +2588,23 @@ func (m *RoleUserMutation) ResetField(name string) error {
 	case roleuser.FieldRoleID:
 		m.ResetRoleID()
 		return nil
+	case roleuser.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
 	case roleuser.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
+	case roleuser.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
 	case roleuser.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case roleuser.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case roleuser.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown RoleUser field %s", name)
@@ -2139,11 +2666,12 @@ type SystemParameterMutation struct {
 	id            *int
 	key           *string
 	value         *string
-	is_deleted    *bool
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
 	updated_at    *time.Time
+	deleted_by    *string
+	deleted_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*SystemParameter, error)
@@ -2320,42 +2848,6 @@ func (m *SystemParameterMutation) ResetValue() {
 	m.value = nil
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (m *SystemParameterMutation) SetIsDeleted(b bool) {
-	m.is_deleted = &b
-}
-
-// IsDeleted returns the value of the "is_deleted" field in the mutation.
-func (m *SystemParameterMutation) IsDeleted() (r bool, exists bool) {
-	v := m.is_deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsDeleted returns the old "is_deleted" field's value of the SystemParameter entity.
-// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SystemParameterMutation) OldIsDeleted(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsDeleted: %w", err)
-	}
-	return oldValue.IsDeleted, nil
-}
-
-// ResetIsDeleted resets all changes to the "is_deleted" field.
-func (m *SystemParameterMutation) ResetIsDeleted() {
-	m.is_deleted = nil
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (m *SystemParameterMutation) SetCreatedBy(s string) {
 	m.created_by = &s
@@ -2526,6 +3018,104 @@ func (m *SystemParameterMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, systemparameter.FieldUpdatedAt)
 }
 
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SystemParameterMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SystemParameterMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SystemParameterMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SystemParameterMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[systemparameter.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SystemParameterMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[systemparameter.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SystemParameterMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, systemparameter.FieldDeletedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SystemParameterMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SystemParameterMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SystemParameterMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SystemParameterMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[systemparameter.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SystemParameterMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[systemparameter.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SystemParameterMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, systemparameter.FieldDeletedAt)
+}
+
 // Where appends a list predicates to the SystemParameterMutation builder.
 func (m *SystemParameterMutation) Where(ps ...predicate.SystemParameter) {
 	m.predicates = append(m.predicates, ps...)
@@ -2560,15 +3150,12 @@ func (m *SystemParameterMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SystemParameterMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.key != nil {
 		fields = append(fields, systemparameter.FieldKey)
 	}
 	if m.value != nil {
 		fields = append(fields, systemparameter.FieldValue)
-	}
-	if m.is_deleted != nil {
-		fields = append(fields, systemparameter.FieldIsDeleted)
 	}
 	if m.created_by != nil {
 		fields = append(fields, systemparameter.FieldCreatedBy)
@@ -2582,6 +3169,12 @@ func (m *SystemParameterMutation) Fields() []string {
 	if m.updated_at != nil {
 		fields = append(fields, systemparameter.FieldUpdatedAt)
 	}
+	if m.deleted_by != nil {
+		fields = append(fields, systemparameter.FieldDeletedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, systemparameter.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -2594,8 +3187,6 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 		return m.Key()
 	case systemparameter.FieldValue:
 		return m.Value()
-	case systemparameter.FieldIsDeleted:
-		return m.IsDeleted()
 	case systemparameter.FieldCreatedBy:
 		return m.CreatedBy()
 	case systemparameter.FieldCreatedAt:
@@ -2604,6 +3195,10 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case systemparameter.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case systemparameter.FieldDeletedBy:
+		return m.DeletedBy()
+	case systemparameter.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -2617,8 +3212,6 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 		return m.OldKey(ctx)
 	case systemparameter.FieldValue:
 		return m.OldValue(ctx)
-	case systemparameter.FieldIsDeleted:
-		return m.OldIsDeleted(ctx)
 	case systemparameter.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case systemparameter.FieldCreatedAt:
@@ -2627,6 +3220,10 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUpdatedBy(ctx)
 	case systemparameter.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case systemparameter.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case systemparameter.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown SystemParameter field %s", name)
 }
@@ -2649,13 +3246,6 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetValue(v)
-		return nil
-	case systemparameter.FieldIsDeleted:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsDeleted(v)
 		return nil
 	case systemparameter.FieldCreatedBy:
 		v, ok := value.(string)
@@ -2684,6 +3274,20 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case systemparameter.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case systemparameter.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter field %s", name)
@@ -2721,6 +3325,12 @@ func (m *SystemParameterMutation) ClearedFields() []string {
 	if m.FieldCleared(systemparameter.FieldUpdatedAt) {
 		fields = append(fields, systemparameter.FieldUpdatedAt)
 	}
+	if m.FieldCleared(systemparameter.FieldDeletedBy) {
+		fields = append(fields, systemparameter.FieldDeletedBy)
+	}
+	if m.FieldCleared(systemparameter.FieldDeletedAt) {
+		fields = append(fields, systemparameter.FieldDeletedAt)
+	}
 	return fields
 }
 
@@ -2741,6 +3351,12 @@ func (m *SystemParameterMutation) ClearField(name string) error {
 	case systemparameter.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case systemparameter.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case systemparameter.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter nullable field %s", name)
 }
@@ -2755,9 +3371,6 @@ func (m *SystemParameterMutation) ResetField(name string) error {
 	case systemparameter.FieldValue:
 		m.ResetValue()
 		return nil
-	case systemparameter.FieldIsDeleted:
-		m.ResetIsDeleted()
-		return nil
 	case systemparameter.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
@@ -2769,6 +3382,12 @@ func (m *SystemParameterMutation) ResetField(name string) error {
 		return nil
 	case systemparameter.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case systemparameter.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case systemparameter.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter field %s", name)
@@ -2829,17 +3448,15 @@ type UserMutation struct {
 	typ                string
 	id                 *uint64
 	name               *string
-	email              *string
-	is_verified        *bool
-	email_verified_at  *time.Time
 	password           *string
-	remember_token     *string
-	social_media_id    *string
 	avatar             *string
-	created_at         *time.Time
-	updated_at         *time.Time
 	role_id            *int32
 	addrole_id         *int32
+	is_verified        *bool
+	email              *string
+	email_verified_at  *time.Time
+	remember_token     *string
+	social_media_id    *string
 	login_type         *string
 	sub_specialist     *string
 	firebase_token     *string
@@ -2849,9 +3466,14 @@ type UserMutation struct {
 	phone              *string
 	last_access_at     *time.Time
 	pregnancy_mode     *bool
-	deleted_at         *time.Time
 	latest_skip_update *time.Time
 	latest_deleted_at  *time.Time
+	created_by         *string
+	created_at         *time.Time
+	updated_by         *string
+	updated_at         *time.Time
+	deleted_by         *string
+	deleted_at         *time.Time
 	clearedFields      map[string]struct{}
 	done               bool
 	oldValue           func(context.Context) (*User, error)
@@ -2998,6 +3620,170 @@ func (m *UserMutation) ResetName() {
 	m.name = nil
 }
 
+// SetPassword sets the "password" field.
+func (m *UserMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the value of the "password" field in the mutation.
+func (m *UserMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old "password" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ResetPassword resets all changes to the "password" field.
+func (m *UserMutation) ResetPassword() {
+	m.password = nil
+}
+
+// SetAvatar sets the "avatar" field.
+func (m *UserMutation) SetAvatar(s string) {
+	m.avatar = &s
+}
+
+// Avatar returns the value of the "avatar" field in the mutation.
+func (m *UserMutation) Avatar() (r string, exists bool) {
+	v := m.avatar
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatar returns the old "avatar" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAvatar(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatar requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
+	}
+	return oldValue.Avatar, nil
+}
+
+// ResetAvatar resets all changes to the "avatar" field.
+func (m *UserMutation) ResetAvatar() {
+	m.avatar = nil
+}
+
+// SetRoleID sets the "role_id" field.
+func (m *UserMutation) SetRoleID(i int32) {
+	m.role_id = &i
+	m.addrole_id = nil
+}
+
+// RoleID returns the value of the "role_id" field in the mutation.
+func (m *UserMutation) RoleID() (r int32, exists bool) {
+	v := m.role_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRoleID returns the old "role_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldRoleID(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRoleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRoleID: %w", err)
+	}
+	return oldValue.RoleID, nil
+}
+
+// AddRoleID adds i to the "role_id" field.
+func (m *UserMutation) AddRoleID(i int32) {
+	if m.addrole_id != nil {
+		*m.addrole_id += i
+	} else {
+		m.addrole_id = &i
+	}
+}
+
+// AddedRoleID returns the value that was added to the "role_id" field in this mutation.
+func (m *UserMutation) AddedRoleID() (r int32, exists bool) {
+	v := m.addrole_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRoleID resets all changes to the "role_id" field.
+func (m *UserMutation) ResetRoleID() {
+	m.role_id = nil
+	m.addrole_id = nil
+}
+
+// SetIsVerified sets the "is_verified" field.
+func (m *UserMutation) SetIsVerified(b bool) {
+	m.is_verified = &b
+}
+
+// IsVerified returns the value of the "is_verified" field in the mutation.
+func (m *UserMutation) IsVerified() (r bool, exists bool) {
+	v := m.is_verified
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsVerified returns the old "is_verified" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldIsVerified(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsVerified is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsVerified requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsVerified: %w", err)
+	}
+	return oldValue.IsVerified, nil
+}
+
+// ResetIsVerified resets all changes to the "is_verified" field.
+func (m *UserMutation) ResetIsVerified() {
+	m.is_verified = nil
+}
+
 // SetEmail sets the "email" field.
 func (m *UserMutation) SetEmail(s string) {
 	m.email = &s
@@ -3047,42 +3833,6 @@ func (m *UserMutation) ResetEmail() {
 	delete(m.clearedFields, user.FieldEmail)
 }
 
-// SetIsVerified sets the "is_verified" field.
-func (m *UserMutation) SetIsVerified(b bool) {
-	m.is_verified = &b
-}
-
-// IsVerified returns the value of the "is_verified" field in the mutation.
-func (m *UserMutation) IsVerified() (r bool, exists bool) {
-	v := m.is_verified
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsVerified returns the old "is_verified" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsVerified(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsVerified is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsVerified requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsVerified: %w", err)
-	}
-	return oldValue.IsVerified, nil
-}
-
-// ResetIsVerified resets all changes to the "is_verified" field.
-func (m *UserMutation) ResetIsVerified() {
-	m.is_verified = nil
-}
-
 // SetEmailVerifiedAt sets the "email_verified_at" field.
 func (m *UserMutation) SetEmailVerifiedAt(t time.Time) {
 	m.email_verified_at = &t
@@ -3130,55 +3880,6 @@ func (m *UserMutation) EmailVerifiedAtCleared() bool {
 func (m *UserMutation) ResetEmailVerifiedAt() {
 	m.email_verified_at = nil
 	delete(m.clearedFields, user.FieldEmailVerifiedAt)
-}
-
-// SetPassword sets the "password" field.
-func (m *UserMutation) SetPassword(s string) {
-	m.password = &s
-}
-
-// Password returns the value of the "password" field in the mutation.
-func (m *UserMutation) Password() (r string, exists bool) {
-	v := m.password
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPassword returns the old "password" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldPassword(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPassword requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
-	}
-	return oldValue.Password, nil
-}
-
-// ClearPassword clears the value of the "password" field.
-func (m *UserMutation) ClearPassword() {
-	m.password = nil
-	m.clearedFields[user.FieldPassword] = struct{}{}
-}
-
-// PasswordCleared returns if the "password" field was cleared in this mutation.
-func (m *UserMutation) PasswordCleared() bool {
-	_, ok := m.clearedFields[user.FieldPassword]
-	return ok
-}
-
-// ResetPassword resets all changes to the "password" field.
-func (m *UserMutation) ResetPassword() {
-	m.password = nil
-	delete(m.clearedFields, user.FieldPassword)
 }
 
 // SetRememberToken sets the "remember_token" field.
@@ -3277,196 +3978,6 @@ func (m *UserMutation) SocialMediaIDCleared() bool {
 func (m *UserMutation) ResetSocialMediaID() {
 	m.social_media_id = nil
 	delete(m.clearedFields, user.FieldSocialMediaID)
-}
-
-// SetAvatar sets the "avatar" field.
-func (m *UserMutation) SetAvatar(s string) {
-	m.avatar = &s
-}
-
-// Avatar returns the value of the "avatar" field in the mutation.
-func (m *UserMutation) Avatar() (r string, exists bool) {
-	v := m.avatar
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAvatar returns the old "avatar" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldAvatar(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAvatar requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
-	}
-	return oldValue.Avatar, nil
-}
-
-// ResetAvatar resets all changes to the "avatar" field.
-func (m *UserMutation) ResetAvatar() {
-	m.avatar = nil
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *UserMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *UserMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *UserMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[user.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *UserMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldCreatedAt]
-	return ok
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *UserMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, user.FieldCreatedAt)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *UserMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *UserMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[user.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *UserMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldUpdatedAt]
-	return ok
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *UserMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	delete(m.clearedFields, user.FieldUpdatedAt)
-}
-
-// SetRoleID sets the "role_id" field.
-func (m *UserMutation) SetRoleID(i int32) {
-	m.role_id = &i
-	m.addrole_id = nil
-}
-
-// RoleID returns the value of the "role_id" field in the mutation.
-func (m *UserMutation) RoleID() (r int32, exists bool) {
-	v := m.role_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRoleID returns the old "role_id" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldRoleID(ctx context.Context) (v int32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRoleID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRoleID: %w", err)
-	}
-	return oldValue.RoleID, nil
-}
-
-// AddRoleID adds i to the "role_id" field.
-func (m *UserMutation) AddRoleID(i int32) {
-	if m.addrole_id != nil {
-		*m.addrole_id += i
-	} else {
-		m.addrole_id = &i
-	}
-}
-
-// AddedRoleID returns the value that was added to the "role_id" field in this mutation.
-func (m *UserMutation) AddedRoleID() (r int32, exists bool) {
-	v := m.addrole_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetRoleID resets all changes to the "role_id" field.
-func (m *UserMutation) ResetRoleID() {
-	m.role_id = nil
-	m.addrole_id = nil
 }
 
 // SetLoginType sets the "login_type" field.
@@ -3843,9 +4354,22 @@ func (m *UserMutation) OldLastAccessAt(ctx context.Context) (v time.Time, err er
 	return oldValue.LastAccessAt, nil
 }
 
+// ClearLastAccessAt clears the value of the "last_access_at" field.
+func (m *UserMutation) ClearLastAccessAt() {
+	m.last_access_at = nil
+	m.clearedFields[user.FieldLastAccessAt] = struct{}{}
+}
+
+// LastAccessAtCleared returns if the "last_access_at" field was cleared in this mutation.
+func (m *UserMutation) LastAccessAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldLastAccessAt]
+	return ok
+}
+
 // ResetLastAccessAt resets all changes to the "last_access_at" field.
 func (m *UserMutation) ResetLastAccessAt() {
 	m.last_access_at = nil
+	delete(m.clearedFields, user.FieldLastAccessAt)
 }
 
 // SetPregnancyMode sets the "pregnancy_mode" field.
@@ -3879,58 +4403,22 @@ func (m *UserMutation) OldPregnancyMode(ctx context.Context) (v bool, err error)
 	return oldValue.PregnancyMode, nil
 }
 
-// ResetPregnancyMode resets all changes to the "pregnancy_mode" field.
-func (m *UserMutation) ResetPregnancyMode() {
+// ClearPregnancyMode clears the value of the "pregnancy_mode" field.
+func (m *UserMutation) ClearPregnancyMode() {
 	m.pregnancy_mode = nil
+	m.clearedFields[user.FieldPregnancyMode] = struct{}{}
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (m *UserMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *UserMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *UserMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[user.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *UserMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldDeletedAt]
+// PregnancyModeCleared returns if the "pregnancy_mode" field was cleared in this mutation.
+func (m *UserMutation) PregnancyModeCleared() bool {
+	_, ok := m.clearedFields[user.FieldPregnancyMode]
 	return ok
 }
 
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *UserMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, user.FieldDeletedAt)
+// ResetPregnancyMode resets all changes to the "pregnancy_mode" field.
+func (m *UserMutation) ResetPregnancyMode() {
+	m.pregnancy_mode = nil
+	delete(m.clearedFields, user.FieldPregnancyMode)
 }
 
 // SetLatestSkipUpdate sets the "latest_skip_update" field.
@@ -4031,6 +4519,274 @@ func (m *UserMutation) ResetLatestDeletedAt() {
 	delete(m.clearedFields, user.FieldLatestDeletedAt)
 }
 
+// SetCreatedBy sets the "created_by" field.
+func (m *UserMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *UserMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *UserMutation) ResetCreatedBy() {
+	m.created_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *UserMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *UserMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *UserMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *UserMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *UserMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *UserMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[user.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *UserMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[user.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *UserMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, user.FieldUpdatedBy)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *UserMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[user.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *UserMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, user.FieldUpdatedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *UserMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *UserMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *UserMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[user.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *UserMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[user.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *UserMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, user.FieldDeletedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *UserMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[user.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *UserMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, user.FieldDeletedAt)
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -4065,39 +4821,33 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 26)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
-	if m.email != nil {
-		fields = append(fields, user.FieldEmail)
+	if m.password != nil {
+		fields = append(fields, user.FieldPassword)
+	}
+	if m.avatar != nil {
+		fields = append(fields, user.FieldAvatar)
+	}
+	if m.role_id != nil {
+		fields = append(fields, user.FieldRoleID)
 	}
 	if m.is_verified != nil {
 		fields = append(fields, user.FieldIsVerified)
 	}
+	if m.email != nil {
+		fields = append(fields, user.FieldEmail)
+	}
 	if m.email_verified_at != nil {
 		fields = append(fields, user.FieldEmailVerifiedAt)
-	}
-	if m.password != nil {
-		fields = append(fields, user.FieldPassword)
 	}
 	if m.remember_token != nil {
 		fields = append(fields, user.FieldRememberToken)
 	}
 	if m.social_media_id != nil {
 		fields = append(fields, user.FieldSocialMediaID)
-	}
-	if m.avatar != nil {
-		fields = append(fields, user.FieldAvatar)
-	}
-	if m.created_at != nil {
-		fields = append(fields, user.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, user.FieldUpdatedAt)
-	}
-	if m.role_id != nil {
-		fields = append(fields, user.FieldRoleID)
 	}
 	if m.login_type != nil {
 		fields = append(fields, user.FieldLoginType)
@@ -4126,14 +4876,29 @@ func (m *UserMutation) Fields() []string {
 	if m.pregnancy_mode != nil {
 		fields = append(fields, user.FieldPregnancyMode)
 	}
-	if m.deleted_at != nil {
-		fields = append(fields, user.FieldDeletedAt)
-	}
 	if m.latest_skip_update != nil {
 		fields = append(fields, user.FieldLatestSkipUpdate)
 	}
 	if m.latest_deleted_at != nil {
 		fields = append(fields, user.FieldLatestDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, user.FieldCreatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, user.FieldUpdatedBy)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, user.FieldUpdatedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, user.FieldDeletedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, user.FieldDeletedAt)
 	}
 	return fields
 }
@@ -4145,26 +4910,22 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldName:
 		return m.Name()
-	case user.FieldEmail:
-		return m.Email()
-	case user.FieldIsVerified:
-		return m.IsVerified()
-	case user.FieldEmailVerifiedAt:
-		return m.EmailVerifiedAt()
 	case user.FieldPassword:
 		return m.Password()
+	case user.FieldAvatar:
+		return m.Avatar()
+	case user.FieldRoleID:
+		return m.RoleID()
+	case user.FieldIsVerified:
+		return m.IsVerified()
+	case user.FieldEmail:
+		return m.Email()
+	case user.FieldEmailVerifiedAt:
+		return m.EmailVerifiedAt()
 	case user.FieldRememberToken:
 		return m.RememberToken()
 	case user.FieldSocialMediaID:
 		return m.SocialMediaID()
-	case user.FieldAvatar:
-		return m.Avatar()
-	case user.FieldCreatedAt:
-		return m.CreatedAt()
-	case user.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case user.FieldRoleID:
-		return m.RoleID()
 	case user.FieldLoginType:
 		return m.LoginType()
 	case user.FieldSubSpecialist:
@@ -4183,12 +4944,22 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.LastAccessAt()
 	case user.FieldPregnancyMode:
 		return m.PregnancyMode()
-	case user.FieldDeletedAt:
-		return m.DeletedAt()
 	case user.FieldLatestSkipUpdate:
 		return m.LatestSkipUpdate()
 	case user.FieldLatestDeletedAt:
 		return m.LatestDeletedAt()
+	case user.FieldCreatedBy:
+		return m.CreatedBy()
+	case user.FieldCreatedAt:
+		return m.CreatedAt()
+	case user.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case user.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case user.FieldDeletedBy:
+		return m.DeletedBy()
+	case user.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -4200,26 +4971,22 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldName:
 		return m.OldName(ctx)
-	case user.FieldEmail:
-		return m.OldEmail(ctx)
-	case user.FieldIsVerified:
-		return m.OldIsVerified(ctx)
-	case user.FieldEmailVerifiedAt:
-		return m.OldEmailVerifiedAt(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
+	case user.FieldAvatar:
+		return m.OldAvatar(ctx)
+	case user.FieldRoleID:
+		return m.OldRoleID(ctx)
+	case user.FieldIsVerified:
+		return m.OldIsVerified(ctx)
+	case user.FieldEmail:
+		return m.OldEmail(ctx)
+	case user.FieldEmailVerifiedAt:
+		return m.OldEmailVerifiedAt(ctx)
 	case user.FieldRememberToken:
 		return m.OldRememberToken(ctx)
 	case user.FieldSocialMediaID:
 		return m.OldSocialMediaID(ctx)
-	case user.FieldAvatar:
-		return m.OldAvatar(ctx)
-	case user.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case user.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case user.FieldRoleID:
-		return m.OldRoleID(ctx)
 	case user.FieldLoginType:
 		return m.OldLoginType(ctx)
 	case user.FieldSubSpecialist:
@@ -4238,12 +5005,22 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLastAccessAt(ctx)
 	case user.FieldPregnancyMode:
 		return m.OldPregnancyMode(ctx)
-	case user.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
 	case user.FieldLatestSkipUpdate:
 		return m.OldLatestSkipUpdate(ctx)
 	case user.FieldLatestDeletedAt:
 		return m.OldLatestDeletedAt(ctx)
+	case user.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case user.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case user.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case user.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case user.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case user.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -4260,12 +5037,26 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case user.FieldEmail:
+	case user.FieldPassword:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetEmail(v)
+		m.SetPassword(v)
+		return nil
+	case user.FieldAvatar:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatar(v)
+		return nil
+	case user.FieldRoleID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRoleID(v)
 		return nil
 	case user.FieldIsVerified:
 		v, ok := value.(bool)
@@ -4274,19 +5065,19 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsVerified(v)
 		return nil
+	case user.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
 	case user.FieldEmailVerifiedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmailVerifiedAt(v)
-		return nil
-	case user.FieldPassword:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPassword(v)
 		return nil
 	case user.FieldRememberToken:
 		v, ok := value.(string)
@@ -4301,34 +5092,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSocialMediaID(v)
-		return nil
-	case user.FieldAvatar:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAvatar(v)
-		return nil
-	case user.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case user.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case user.FieldRoleID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRoleID(v)
 		return nil
 	case user.FieldLoginType:
 		v, ok := value.(string)
@@ -4393,13 +5156,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPregnancyMode(v)
 		return nil
-	case user.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
 	case user.FieldLatestSkipUpdate:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -4413,6 +5169,48 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLatestDeletedAt(v)
+		return nil
+	case user.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case user.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case user.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case user.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case user.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case user.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -4465,20 +5263,11 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldEmailVerifiedAt) {
 		fields = append(fields, user.FieldEmailVerifiedAt)
 	}
-	if m.FieldCleared(user.FieldPassword) {
-		fields = append(fields, user.FieldPassword)
-	}
 	if m.FieldCleared(user.FieldRememberToken) {
 		fields = append(fields, user.FieldRememberToken)
 	}
 	if m.FieldCleared(user.FieldSocialMediaID) {
 		fields = append(fields, user.FieldSocialMediaID)
-	}
-	if m.FieldCleared(user.FieldCreatedAt) {
-		fields = append(fields, user.FieldCreatedAt)
-	}
-	if m.FieldCleared(user.FieldUpdatedAt) {
-		fields = append(fields, user.FieldUpdatedAt)
 	}
 	if m.FieldCleared(user.FieldLoginType) {
 		fields = append(fields, user.FieldLoginType)
@@ -4501,14 +5290,29 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPhone) {
 		fields = append(fields, user.FieldPhone)
 	}
-	if m.FieldCleared(user.FieldDeletedAt) {
-		fields = append(fields, user.FieldDeletedAt)
+	if m.FieldCleared(user.FieldLastAccessAt) {
+		fields = append(fields, user.FieldLastAccessAt)
+	}
+	if m.FieldCleared(user.FieldPregnancyMode) {
+		fields = append(fields, user.FieldPregnancyMode)
 	}
 	if m.FieldCleared(user.FieldLatestSkipUpdate) {
 		fields = append(fields, user.FieldLatestSkipUpdate)
 	}
 	if m.FieldCleared(user.FieldLatestDeletedAt) {
 		fields = append(fields, user.FieldLatestDeletedAt)
+	}
+	if m.FieldCleared(user.FieldUpdatedBy) {
+		fields = append(fields, user.FieldUpdatedBy)
+	}
+	if m.FieldCleared(user.FieldUpdatedAt) {
+		fields = append(fields, user.FieldUpdatedAt)
+	}
+	if m.FieldCleared(user.FieldDeletedBy) {
+		fields = append(fields, user.FieldDeletedBy)
+	}
+	if m.FieldCleared(user.FieldDeletedAt) {
+		fields = append(fields, user.FieldDeletedAt)
 	}
 	return fields
 }
@@ -4530,20 +5334,11 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldEmailVerifiedAt:
 		m.ClearEmailVerifiedAt()
 		return nil
-	case user.FieldPassword:
-		m.ClearPassword()
-		return nil
 	case user.FieldRememberToken:
 		m.ClearRememberToken()
 		return nil
 	case user.FieldSocialMediaID:
 		m.ClearSocialMediaID()
-		return nil
-	case user.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case user.FieldUpdatedAt:
-		m.ClearUpdatedAt()
 		return nil
 	case user.FieldLoginType:
 		m.ClearLoginType()
@@ -4566,14 +5361,29 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldPhone:
 		m.ClearPhone()
 		return nil
-	case user.FieldDeletedAt:
-		m.ClearDeletedAt()
+	case user.FieldLastAccessAt:
+		m.ClearLastAccessAt()
+		return nil
+	case user.FieldPregnancyMode:
+		m.ClearPregnancyMode()
 		return nil
 	case user.FieldLatestSkipUpdate:
 		m.ClearLatestSkipUpdate()
 		return nil
 	case user.FieldLatestDeletedAt:
 		m.ClearLatestDeletedAt()
+		return nil
+	case user.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case user.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case user.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case user.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -4586,35 +5396,29 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldName:
 		m.ResetName()
 		return nil
-	case user.FieldEmail:
-		m.ResetEmail()
+	case user.FieldPassword:
+		m.ResetPassword()
+		return nil
+	case user.FieldAvatar:
+		m.ResetAvatar()
+		return nil
+	case user.FieldRoleID:
+		m.ResetRoleID()
 		return nil
 	case user.FieldIsVerified:
 		m.ResetIsVerified()
 		return nil
+	case user.FieldEmail:
+		m.ResetEmail()
+		return nil
 	case user.FieldEmailVerifiedAt:
 		m.ResetEmailVerifiedAt()
-		return nil
-	case user.FieldPassword:
-		m.ResetPassword()
 		return nil
 	case user.FieldRememberToken:
 		m.ResetRememberToken()
 		return nil
 	case user.FieldSocialMediaID:
 		m.ResetSocialMediaID()
-		return nil
-	case user.FieldAvatar:
-		m.ResetAvatar()
-		return nil
-	case user.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case user.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case user.FieldRoleID:
-		m.ResetRoleID()
 		return nil
 	case user.FieldLoginType:
 		m.ResetLoginType()
@@ -4643,14 +5447,29 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldPregnancyMode:
 		m.ResetPregnancyMode()
 		return nil
-	case user.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
 	case user.FieldLatestSkipUpdate:
 		m.ResetLatestSkipUpdate()
 		return nil
 	case user.FieldLatestDeletedAt:
 		m.ResetLatestDeletedAt()
+		return nil
+	case user.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case user.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case user.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case user.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case user.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case user.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -4707,21 +5526,24 @@ func (m *UserMutation) ResetEdge(name string) error {
 // UserDeviceMutation represents an operation that mutates the UserDevice nodes in the graph.
 type UserDeviceMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *uint64
-	user_id            *uint64
-	adduser_id         *int64
-	version            *string
-	platform           *string
-	latest_skip_update *time.Time
-	created_at         *time.Time
-	updated_at         *time.Time
-	device_id          *string
-	clearedFields      map[string]struct{}
-	done               bool
-	oldValue           func(context.Context) (*UserDevice, error)
-	predicates         []predicate.UserDevice
+	op            Op
+	typ           string
+	id            *uint64
+	user_id       *uint64
+	adduser_id    *int64
+	version       *string
+	platform      *string
+	device_id     *string
+	created_by    *string
+	created_at    *time.Time
+	updated_by    *string
+	updated_at    *time.Time
+	deleted_by    *string
+	deleted_at    *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*UserDevice, error)
+	predicates    []predicate.UserDevice
 }
 
 var _ ent.Mutation = (*UserDeviceMutation)(nil)
@@ -4956,53 +5778,89 @@ func (m *UserDeviceMutation) ResetPlatform() {
 	m.platform = nil
 }
 
-// SetLatestSkipUpdate sets the "latest_skip_update" field.
-func (m *UserDeviceMutation) SetLatestSkipUpdate(t time.Time) {
-	m.latest_skip_update = &t
+// SetDeviceID sets the "device_id" field.
+func (m *UserDeviceMutation) SetDeviceID(s string) {
+	m.device_id = &s
 }
 
-// LatestSkipUpdate returns the value of the "latest_skip_update" field in the mutation.
-func (m *UserDeviceMutation) LatestSkipUpdate() (r time.Time, exists bool) {
-	v := m.latest_skip_update
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *UserDeviceMutation) DeviceID() (r string, exists bool) {
+	v := m.device_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLatestSkipUpdate returns the old "latest_skip_update" field's value of the UserDevice entity.
+// OldDeviceID returns the old "device_id" field's value of the UserDevice entity.
 // If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserDeviceMutation) OldLatestSkipUpdate(ctx context.Context) (v time.Time, err error) {
+func (m *UserDeviceMutation) OldDeviceID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLatestSkipUpdate is only allowed on UpdateOne operations")
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLatestSkipUpdate requires an ID field in the mutation")
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLatestSkipUpdate: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
 	}
-	return oldValue.LatestSkipUpdate, nil
+	return oldValue.DeviceID, nil
 }
 
-// ClearLatestSkipUpdate clears the value of the "latest_skip_update" field.
-func (m *UserDeviceMutation) ClearLatestSkipUpdate() {
-	m.latest_skip_update = nil
-	m.clearedFields[userdevice.FieldLatestSkipUpdate] = struct{}{}
+// ClearDeviceID clears the value of the "device_id" field.
+func (m *UserDeviceMutation) ClearDeviceID() {
+	m.device_id = nil
+	m.clearedFields[userdevice.FieldDeviceID] = struct{}{}
 }
 
-// LatestSkipUpdateCleared returns if the "latest_skip_update" field was cleared in this mutation.
-func (m *UserDeviceMutation) LatestSkipUpdateCleared() bool {
-	_, ok := m.clearedFields[userdevice.FieldLatestSkipUpdate]
+// DeviceIDCleared returns if the "device_id" field was cleared in this mutation.
+func (m *UserDeviceMutation) DeviceIDCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldDeviceID]
 	return ok
 }
 
-// ResetLatestSkipUpdate resets all changes to the "latest_skip_update" field.
-func (m *UserDeviceMutation) ResetLatestSkipUpdate() {
-	m.latest_skip_update = nil
-	delete(m.clearedFields, userdevice.FieldLatestSkipUpdate)
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *UserDeviceMutation) ResetDeviceID() {
+	m.device_id = nil
+	delete(m.clearedFields, userdevice.FieldDeviceID)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *UserDeviceMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *UserDeviceMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the UserDevice entity.
+// If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserDeviceMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *UserDeviceMutation) ResetCreatedBy() {
+	m.created_by = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -5036,22 +5894,58 @@ func (m *UserDeviceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *UserDeviceMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[userdevice.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *UserDeviceMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[userdevice.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *UserDeviceMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, userdevice.FieldCreatedAt)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *UserDeviceMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *UserDeviceMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the UserDevice entity.
+// If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserDeviceMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *UserDeviceMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[userdevice.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *UserDeviceMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *UserDeviceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, userdevice.FieldUpdatedBy)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -5103,53 +5997,102 @@ func (m *UserDeviceMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, userdevice.FieldUpdatedAt)
 }
 
-// SetDeviceID sets the "device_id" field.
-func (m *UserDeviceMutation) SetDeviceID(s string) {
-	m.device_id = &s
+// SetDeletedBy sets the "deleted_by" field.
+func (m *UserDeviceMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
 }
 
-// DeviceID returns the value of the "device_id" field in the mutation.
-func (m *UserDeviceMutation) DeviceID() (r string, exists bool) {
-	v := m.device_id
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *UserDeviceMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDeviceID returns the old "device_id" field's value of the UserDevice entity.
+// OldDeletedBy returns the old "deleted_by" field's value of the UserDevice entity.
 // If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserDeviceMutation) OldDeviceID(ctx context.Context) (v string, err error) {
+func (m *UserDeviceMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
 	}
-	return oldValue.DeviceID, nil
+	return oldValue.DeletedBy, nil
 }
 
-// ClearDeviceID clears the value of the "device_id" field.
-func (m *UserDeviceMutation) ClearDeviceID() {
-	m.device_id = nil
-	m.clearedFields[userdevice.FieldDeviceID] = struct{}{}
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *UserDeviceMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[userdevice.FieldDeletedBy] = struct{}{}
 }
 
-// DeviceIDCleared returns if the "device_id" field was cleared in this mutation.
-func (m *UserDeviceMutation) DeviceIDCleared() bool {
-	_, ok := m.clearedFields[userdevice.FieldDeviceID]
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *UserDeviceMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldDeletedBy]
 	return ok
 }
 
-// ResetDeviceID resets all changes to the "device_id" field.
-func (m *UserDeviceMutation) ResetDeviceID() {
-	m.device_id = nil
-	delete(m.clearedFields, userdevice.FieldDeviceID)
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *UserDeviceMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, userdevice.FieldDeletedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserDeviceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserDeviceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the UserDevice entity.
+// If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserDeviceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *UserDeviceMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[userdevice.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *UserDeviceMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserDeviceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, userdevice.FieldDeletedAt)
 }
 
 // Where appends a list predicates to the UserDeviceMutation builder.
@@ -5186,7 +6129,7 @@ func (m *UserDeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserDeviceMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 10)
 	if m.user_id != nil {
 		fields = append(fields, userdevice.FieldUserID)
 	}
@@ -5196,17 +6139,26 @@ func (m *UserDeviceMutation) Fields() []string {
 	if m.platform != nil {
 		fields = append(fields, userdevice.FieldPlatform)
 	}
-	if m.latest_skip_update != nil {
-		fields = append(fields, userdevice.FieldLatestSkipUpdate)
+	if m.device_id != nil {
+		fields = append(fields, userdevice.FieldDeviceID)
+	}
+	if m.created_by != nil {
+		fields = append(fields, userdevice.FieldCreatedBy)
 	}
 	if m.created_at != nil {
 		fields = append(fields, userdevice.FieldCreatedAt)
 	}
+	if m.updated_by != nil {
+		fields = append(fields, userdevice.FieldUpdatedBy)
+	}
 	if m.updated_at != nil {
 		fields = append(fields, userdevice.FieldUpdatedAt)
 	}
-	if m.device_id != nil {
-		fields = append(fields, userdevice.FieldDeviceID)
+	if m.deleted_by != nil {
+		fields = append(fields, userdevice.FieldDeletedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, userdevice.FieldDeletedAt)
 	}
 	return fields
 }
@@ -5222,14 +6174,20 @@ func (m *UserDeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Version()
 	case userdevice.FieldPlatform:
 		return m.Platform()
-	case userdevice.FieldLatestSkipUpdate:
-		return m.LatestSkipUpdate()
-	case userdevice.FieldCreatedAt:
-		return m.CreatedAt()
-	case userdevice.FieldUpdatedAt:
-		return m.UpdatedAt()
 	case userdevice.FieldDeviceID:
 		return m.DeviceID()
+	case userdevice.FieldCreatedBy:
+		return m.CreatedBy()
+	case userdevice.FieldCreatedAt:
+		return m.CreatedAt()
+	case userdevice.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case userdevice.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case userdevice.FieldDeletedBy:
+		return m.DeletedBy()
+	case userdevice.FieldDeletedAt:
+		return m.DeletedAt()
 	}
 	return nil, false
 }
@@ -5245,14 +6203,20 @@ func (m *UserDeviceMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldVersion(ctx)
 	case userdevice.FieldPlatform:
 		return m.OldPlatform(ctx)
-	case userdevice.FieldLatestSkipUpdate:
-		return m.OldLatestSkipUpdate(ctx)
-	case userdevice.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case userdevice.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
 	case userdevice.FieldDeviceID:
 		return m.OldDeviceID(ctx)
+	case userdevice.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case userdevice.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case userdevice.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case userdevice.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case userdevice.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case userdevice.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserDevice field %s", name)
 }
@@ -5283,12 +6247,19 @@ func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPlatform(v)
 		return nil
-	case userdevice.FieldLatestSkipUpdate:
-		v, ok := value.(time.Time)
+	case userdevice.FieldDeviceID:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLatestSkipUpdate(v)
+		m.SetDeviceID(v)
+		return nil
+	case userdevice.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
 		return nil
 	case userdevice.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -5297,6 +6268,13 @@ func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case userdevice.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
 	case userdevice.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -5304,12 +6282,19 @@ func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case userdevice.FieldDeviceID:
+	case userdevice.FieldDeletedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDeviceID(v)
+		m.SetDeletedBy(v)
+		return nil
+	case userdevice.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown UserDevice field %s", name)
@@ -5356,17 +6341,20 @@ func (m *UserDeviceMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserDeviceMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(userdevice.FieldLatestSkipUpdate) {
-		fields = append(fields, userdevice.FieldLatestSkipUpdate)
+	if m.FieldCleared(userdevice.FieldDeviceID) {
+		fields = append(fields, userdevice.FieldDeviceID)
 	}
-	if m.FieldCleared(userdevice.FieldCreatedAt) {
-		fields = append(fields, userdevice.FieldCreatedAt)
+	if m.FieldCleared(userdevice.FieldUpdatedBy) {
+		fields = append(fields, userdevice.FieldUpdatedBy)
 	}
 	if m.FieldCleared(userdevice.FieldUpdatedAt) {
 		fields = append(fields, userdevice.FieldUpdatedAt)
 	}
-	if m.FieldCleared(userdevice.FieldDeviceID) {
-		fields = append(fields, userdevice.FieldDeviceID)
+	if m.FieldCleared(userdevice.FieldDeletedBy) {
+		fields = append(fields, userdevice.FieldDeletedBy)
+	}
+	if m.FieldCleared(userdevice.FieldDeletedAt) {
+		fields = append(fields, userdevice.FieldDeletedAt)
 	}
 	return fields
 }
@@ -5382,17 +6370,20 @@ func (m *UserDeviceMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserDeviceMutation) ClearField(name string) error {
 	switch name {
-	case userdevice.FieldLatestSkipUpdate:
-		m.ClearLatestSkipUpdate()
+	case userdevice.FieldDeviceID:
+		m.ClearDeviceID()
 		return nil
-	case userdevice.FieldCreatedAt:
-		m.ClearCreatedAt()
+	case userdevice.FieldUpdatedBy:
+		m.ClearUpdatedBy()
 		return nil
 	case userdevice.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
-	case userdevice.FieldDeviceID:
-		m.ClearDeviceID()
+	case userdevice.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case userdevice.FieldDeletedAt:
+		m.ClearDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown UserDevice nullable field %s", name)
@@ -5411,17 +6402,26 @@ func (m *UserDeviceMutation) ResetField(name string) error {
 	case userdevice.FieldPlatform:
 		m.ResetPlatform()
 		return nil
-	case userdevice.FieldLatestSkipUpdate:
-		m.ResetLatestSkipUpdate()
+	case userdevice.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case userdevice.FieldCreatedBy:
+		m.ResetCreatedBy()
 		return nil
 	case userdevice.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
+	case userdevice.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
 	case userdevice.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case userdevice.FieldDeviceID:
-		m.ResetDeviceID()
+	case userdevice.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case userdevice.FieldDeletedAt:
+		m.ResetDeletedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown UserDevice field %s", name)

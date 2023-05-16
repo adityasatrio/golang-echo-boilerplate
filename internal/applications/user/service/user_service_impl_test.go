@@ -27,17 +27,21 @@ var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRol
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
-		ID:               id,
-		Name:             name,
-		Email:            email,
-		IsVerified:       true,
+		ID:    id,
+		Name:  name,
+		Email: email,
+		//WARNING : becarefull with bool value, it always have default value as FALSE,
+		//make sure when do testing DTO / request and actual mock or return value have same value
+
+		// uncomment IsVerified will impact on failed test, because expected value false from default value,
+		//if must true then need to adjust logic on service to alway set as true or get from method parameter / request
+		//IsVerified: true,
+
 		EmailVerifiedAt:  time.Time{},
 		Password:         password,
 		RememberToken:    "",
 		SocialMediaID:    "",
 		Avatar:           "",
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
 		RoleID:           0,
 		LoginType:        "",
 		SubSpecialist:    "",
@@ -48,7 +52,6 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 		Phone:            "",
 		LastAccessAt:     time.Time{},
 		PregnancyMode:    false,
-		DeletedAt:        time.Time{},
 		LatestSkipUpdate: time.Time{},
 		LatestDeletedAt:  time.Time{},
 	}
@@ -58,7 +61,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "Admin",
-		Email:    "admin@tentanganak.id",
+		Email:    "admin@email.com",
 		Password: "12345",
 	}
 
@@ -74,24 +77,24 @@ func TestUserServiceImpl_Create(t *testing.T) {
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123000},
 			name:         "Create_User_Success-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123000), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123000), "Admin", "admin@email.com", "12345"),
 			scenario:     true,
 		},
 		{
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Success-2",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
 			scenario:     true,
 		},
 		{
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Failed-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
 			scenario:     false,
 		},
 	}
@@ -165,13 +168,13 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User",
-		Email:    "user@tentanganak.id",
+		Email:    "user@email.com",
 		Password: "12345",
 	}
 
 	id := uint64(123000)
-	userRequest := getUserMock(uint64(0), "User", "user@tentanganak.id", "12345")
-	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
+	userRequest := getUserMock(uint64(0), "User", "user@email.com", "12345")
+	userResponse := getUserMock(uint64(123000), "User", "user@email.com", "12345")
 	roleRequest := ent.RoleUser{UserID: 123000}
 
 	_, txClient, ctx := test_helper.TestDbConnectionTx(t)

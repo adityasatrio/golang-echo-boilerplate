@@ -21,8 +21,6 @@ type SystemParameter struct {
 	Key string `json:"key,omitempty"`
 	// Value holds the value of the "value" field.
 	Value string `json:"value,omitempty"`
-	// IsDeleted holds the value of the "is_deleted" field.
-	IsDeleted bool `json:"is_deleted,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -30,7 +28,11 @@ type SystemParameter struct {
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -39,13 +41,11 @@ func (*SystemParameter) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case systemparameter.FieldIsDeleted:
-			values[i] = new(sql.NullBool)
 		case systemparameter.FieldID:
 			values[i] = new(sql.NullInt64)
-		case systemparameter.FieldKey, systemparameter.FieldValue, systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy:
+		case systemparameter.FieldKey, systemparameter.FieldValue, systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy, systemparameter.FieldDeletedBy:
 			values[i] = new(sql.NullString)
-		case systemparameter.FieldCreatedAt, systemparameter.FieldUpdatedAt:
+		case systemparameter.FieldCreatedAt, systemparameter.FieldUpdatedAt, systemparameter.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -80,12 +80,6 @@ func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sp.Value = value.String
 			}
-		case systemparameter.FieldIsDeleted:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
-			} else if value.Valid {
-				sp.IsDeleted = value.Bool
-			}
 		case systemparameter.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
@@ -109,6 +103,18 @@ func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				sp.UpdatedAt = value.Time
+			}
+		case systemparameter.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				sp.DeletedBy = value.String
+			}
+		case systemparameter.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				sp.DeletedAt = value.Time
 			}
 		default:
 			sp.selectValues.Set(columns[i], values[i])
@@ -152,9 +158,6 @@ func (sp *SystemParameter) String() string {
 	builder.WriteString("value=")
 	builder.WriteString(sp.Value)
 	builder.WriteString(", ")
-	builder.WriteString("is_deleted=")
-	builder.WriteString(fmt.Sprintf("%v", sp.IsDeleted))
-	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(sp.CreatedBy)
 	builder.WriteString(", ")
@@ -166,6 +169,12 @@ func (sp *SystemParameter) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(sp.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(sp.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(sp.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

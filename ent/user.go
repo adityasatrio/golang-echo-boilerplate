@@ -19,26 +19,22 @@ type User struct {
 	ID uint64 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
-	// IsVerified holds the value of the "is_verified" field.
-	IsVerified bool `json:"is_verified,omitempty"`
-	// EmailVerifiedAt holds the value of the "email_verified_at" field.
-	EmailVerifiedAt time.Time `json:"email_verified_at,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
+	// RoleID holds the value of the "role_id" field.
+	RoleID int32 `json:"role_id,omitempty"`
+	// IsVerified holds the value of the "is_verified" field.
+	IsVerified bool `json:"is_verified,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
+	// EmailVerifiedAt holds the value of the "email_verified_at" field.
+	EmailVerifiedAt time.Time `json:"email_verified_at,omitempty"`
 	// RememberToken holds the value of the "remember_token" field.
 	RememberToken string `json:"remember_token,omitempty"`
 	// SocialMediaID holds the value of the "social_media_id" field.
 	SocialMediaID string `json:"social_media_id,omitempty"`
-	// Avatar holds the value of the "avatar" field.
-	Avatar string `json:"avatar,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// RoleID holds the value of the "role_id" field.
-	RoleID int32 `json:"role_id,omitempty"`
 	// LoginType holds the value of the "login_type" field.
 	LoginType string `json:"login_type,omitempty"`
 	// SubSpecialist holds the value of the "sub_specialist" field.
@@ -57,13 +53,23 @@ type User struct {
 	LastAccessAt time.Time `json:"last_access_at,omitempty"`
 	// PregnancyMode holds the value of the "pregnancy_mode" field.
 	PregnancyMode bool `json:"pregnancy_mode,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// LatestSkipUpdate holds the value of the "latest_skip_update" field.
 	LatestSkipUpdate time.Time `json:"latest_skip_update,omitempty"`
 	// LatestDeletedAt holds the value of the "latest_deleted_at" field.
 	LatestDeletedAt time.Time `json:"latest_deleted_at,omitempty"`
-	selectValues    sql.SelectValues
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy string `json:"created_by,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy string `json:"updated_by,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -75,9 +81,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldRoleID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRememberToken, user.FieldSocialMediaID, user.FieldAvatar, user.FieldLoginType, user.FieldSubSpecialist, user.FieldFirebaseToken, user.FieldInfo, user.FieldDescription, user.FieldSpecialist, user.FieldPhone:
+		case user.FieldName, user.FieldPassword, user.FieldAvatar, user.FieldEmail, user.FieldRememberToken, user.FieldSocialMediaID, user.FieldLoginType, user.FieldSubSpecialist, user.FieldFirebaseToken, user.FieldInfo, user.FieldDescription, user.FieldSpecialist, user.FieldPhone, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy:
 			values[i] = new(sql.NullString)
-		case user.FieldEmailVerifiedAt, user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldLastAccessAt, user.FieldDeletedAt, user.FieldLatestSkipUpdate, user.FieldLatestDeletedAt:
+		case user.FieldEmailVerifiedAt, user.FieldLastAccessAt, user.FieldLatestSkipUpdate, user.FieldLatestDeletedAt, user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -106,11 +112,23 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Name = value.String
 			}
-		case user.FieldEmail:
+		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field email", values[i])
+				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
-				u.Email = value.String
+				u.Password = value.String
+			}
+		case user.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				u.Avatar = value.String
+			}
+		case user.FieldRoleID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				u.RoleID = int32(value.Int64)
 			}
 		case user.FieldIsVerified:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -118,17 +136,17 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.IsVerified = value.Bool
 			}
+		case user.FieldEmail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field email", values[i])
+			} else if value.Valid {
+				u.Email = value.String
+			}
 		case user.FieldEmailVerifiedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field email_verified_at", values[i])
 			} else if value.Valid {
 				u.EmailVerifiedAt = value.Time
-			}
-		case user.FieldPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field password", values[i])
-			} else if value.Valid {
-				u.Password = value.String
 			}
 		case user.FieldRememberToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -141,30 +159,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field social_media_id", values[i])
 			} else if value.Valid {
 				u.SocialMediaID = value.String
-			}
-		case user.FieldAvatar:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar", values[i])
-			} else if value.Valid {
-				u.Avatar = value.String
-			}
-		case user.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				u.CreatedAt = value.Time
-			}
-		case user.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				u.UpdatedAt = value.Time
-			}
-		case user.FieldRoleID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role_id", values[i])
-			} else if value.Valid {
-				u.RoleID = int32(value.Int64)
 			}
 		case user.FieldLoginType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -220,12 +214,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.PregnancyMode = value.Bool
 			}
-		case user.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				u.DeletedAt = value.Time
-			}
 		case user.FieldLatestSkipUpdate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field latest_skip_update", values[i])
@@ -237,6 +225,42 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field latest_deleted_at", values[i])
 			} else if value.Valid {
 				u.LatestDeletedAt = value.Time
+			}
+		case user.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				u.CreatedBy = value.String
+			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				u.UpdatedBy = value.String
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
+		case user.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				u.DeletedBy = value.String
+			}
+		case user.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				u.DeletedAt = value.Time
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -277,35 +301,29 @@ func (u *User) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(u.Name)
 	builder.WriteString(", ")
-	builder.WriteString("email=")
-	builder.WriteString(u.Email)
+	builder.WriteString("password=")
+	builder.WriteString(u.Password)
+	builder.WriteString(", ")
+	builder.WriteString("avatar=")
+	builder.WriteString(u.Avatar)
+	builder.WriteString(", ")
+	builder.WriteString("role_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
 	builder.WriteString(", ")
 	builder.WriteString("is_verified=")
 	builder.WriteString(fmt.Sprintf("%v", u.IsVerified))
 	builder.WriteString(", ")
+	builder.WriteString("email=")
+	builder.WriteString(u.Email)
+	builder.WriteString(", ")
 	builder.WriteString("email_verified_at=")
 	builder.WriteString(u.EmailVerifiedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("password=")
-	builder.WriteString(u.Password)
 	builder.WriteString(", ")
 	builder.WriteString("remember_token=")
 	builder.WriteString(u.RememberToken)
 	builder.WriteString(", ")
 	builder.WriteString("social_media_id=")
 	builder.WriteString(u.SocialMediaID)
-	builder.WriteString(", ")
-	builder.WriteString("avatar=")
-	builder.WriteString(u.Avatar)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("role_id=")
-	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
 	builder.WriteString(", ")
 	builder.WriteString("login_type=")
 	builder.WriteString(u.LoginType)
@@ -334,14 +352,29 @@ func (u *User) String() string {
 	builder.WriteString("pregnancy_mode=")
 	builder.WriteString(fmt.Sprintf("%v", u.PregnancyMode))
 	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(u.DeletedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("latest_skip_update=")
 	builder.WriteString(u.LatestSkipUpdate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("latest_deleted_at=")
 	builder.WriteString(u.LatestDeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(u.CreatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(u.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(u.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(u.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

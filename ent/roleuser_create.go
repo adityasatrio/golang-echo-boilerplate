@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"myapp/ent/roleuser"
 	"time"
@@ -47,6 +48,12 @@ func (ruc *RoleUserCreate) SetNillableRoleID(u *uint64) *RoleUserCreate {
 	return ruc
 }
 
+// SetCreatedBy sets the "created_by" field.
+func (ruc *RoleUserCreate) SetCreatedBy(s string) *RoleUserCreate {
+	ruc.mutation.SetCreatedBy(s)
+	return ruc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ruc *RoleUserCreate) SetCreatedAt(t time.Time) *RoleUserCreate {
 	ruc.mutation.SetCreatedAt(t)
@@ -57,6 +64,20 @@ func (ruc *RoleUserCreate) SetCreatedAt(t time.Time) *RoleUserCreate {
 func (ruc *RoleUserCreate) SetNillableCreatedAt(t *time.Time) *RoleUserCreate {
 	if t != nil {
 		ruc.SetCreatedAt(*t)
+	}
+	return ruc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (ruc *RoleUserCreate) SetUpdatedBy(s string) *RoleUserCreate {
+	ruc.mutation.SetUpdatedBy(s)
+	return ruc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ruc *RoleUserCreate) SetNillableUpdatedBy(s *string) *RoleUserCreate {
+	if s != nil {
+		ruc.SetUpdatedBy(*s)
 	}
 	return ruc
 }
@@ -75,6 +96,34 @@ func (ruc *RoleUserCreate) SetNillableUpdatedAt(t *time.Time) *RoleUserCreate {
 	return ruc
 }
 
+// SetDeletedBy sets the "deleted_by" field.
+func (ruc *RoleUserCreate) SetDeletedBy(s string) *RoleUserCreate {
+	ruc.mutation.SetDeletedBy(s)
+	return ruc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (ruc *RoleUserCreate) SetNillableDeletedBy(s *string) *RoleUserCreate {
+	if s != nil {
+		ruc.SetDeletedBy(*s)
+	}
+	return ruc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (ruc *RoleUserCreate) SetDeletedAt(t time.Time) *RoleUserCreate {
+	ruc.mutation.SetDeletedAt(t)
+	return ruc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (ruc *RoleUserCreate) SetNillableDeletedAt(t *time.Time) *RoleUserCreate {
+	if t != nil {
+		ruc.SetDeletedAt(*t)
+	}
+	return ruc
+}
+
 // SetID sets the "id" field.
 func (ruc *RoleUserCreate) SetID(u uint64) *RoleUserCreate {
 	ruc.mutation.SetID(u)
@@ -88,6 +137,7 @@ func (ruc *RoleUserCreate) Mutation() *RoleUserMutation {
 
 // Save creates the RoleUser in the database.
 func (ruc *RoleUserCreate) Save(ctx context.Context) (*RoleUser, error) {
+	ruc.defaults()
 	return withHooks(ctx, ruc.sqlSave, ruc.mutation, ruc.hooks)
 }
 
@@ -113,8 +163,31 @@ func (ruc *RoleUserCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ruc *RoleUserCreate) defaults() {
+	if _, ok := ruc.mutation.CreatedAt(); !ok {
+		v := roleuser.DefaultCreatedAt
+		ruc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ruc.mutation.UpdatedAt(); !ok {
+		v := roleuser.DefaultUpdatedAt
+		ruc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ruc *RoleUserCreate) check() error {
+	if _, ok := ruc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "RoleUser.created_by"`)}
+	}
+	if v, ok := ruc.mutation.CreatedBy(); ok {
+		if err := roleuser.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "RoleUser.created_by": %w`, err)}
+		}
+	}
+	if _, ok := ruc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "RoleUser.created_at"`)}
+	}
 	return nil
 }
 
@@ -155,13 +228,29 @@ func (ruc *RoleUserCreate) createSpec() (*RoleUser, *sqlgraph.CreateSpec) {
 		_spec.SetField(roleuser.FieldRoleID, field.TypeUint64, value)
 		_node.RoleID = value
 	}
+	if value, ok := ruc.mutation.CreatedBy(); ok {
+		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
 	if value, ok := ruc.mutation.CreatedAt(); ok {
 		_spec.SetField(roleuser.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
+	if value, ok := ruc.mutation.UpdatedBy(); ok {
+		_spec.SetField(roleuser.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
+	}
 	if value, ok := ruc.mutation.UpdatedAt(); ok {
 		_spec.SetField(roleuser.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := ruc.mutation.DeletedBy(); ok {
+		_spec.SetField(roleuser.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := ruc.mutation.DeletedAt(); ok {
+		_spec.SetField(roleuser.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }
@@ -180,6 +269,7 @@ func (rucb *RoleUserCreateBulk) Save(ctx context.Context) ([]*RoleUser, error) {
 	for i := range rucb.builders {
 		func(i int, root context.Context) {
 			builder := rucb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*RoleUserMutation)
 				if !ok {

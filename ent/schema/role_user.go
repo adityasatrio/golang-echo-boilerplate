@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"myapp/helper"
 )
 
 type RoleUser struct {
@@ -13,7 +14,12 @@ type RoleUser struct {
 }
 
 func (RoleUser) Fields() []ent.Field {
-	return []ent.Field{field.Uint64("id"), field.Uint64("user_id").Optional(), field.Uint64("role_id").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional()}
+	schema := []ent.Field{field.Uint64("id"),
+		field.Uint64("user_id").Optional(),
+		field.Uint64("role_id").Optional(),
+	}
+
+	return helper.InitBaseSchema(schema)
 }
 func (RoleUser) Edges() []ent.Edge {
 	return nil

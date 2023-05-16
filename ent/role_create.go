@@ -26,6 +26,18 @@ func (rc *RoleCreate) SetName(s string) *RoleCreate {
 	return rc
 }
 
+// SetText sets the "text" field.
+func (rc *RoleCreate) SetText(s string) *RoleCreate {
+	rc.mutation.SetText(s)
+	return rc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (rc *RoleCreate) SetCreatedBy(s string) *RoleCreate {
+	rc.mutation.SetCreatedBy(s)
+	return rc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (rc *RoleCreate) SetCreatedAt(t time.Time) *RoleCreate {
 	rc.mutation.SetCreatedAt(t)
@@ -36,6 +48,20 @@ func (rc *RoleCreate) SetCreatedAt(t time.Time) *RoleCreate {
 func (rc *RoleCreate) SetNillableCreatedAt(t *time.Time) *RoleCreate {
 	if t != nil {
 		rc.SetCreatedAt(*t)
+	}
+	return rc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (rc *RoleCreate) SetUpdatedBy(s string) *RoleCreate {
+	rc.mutation.SetUpdatedBy(s)
+	return rc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (rc *RoleCreate) SetNillableUpdatedBy(s *string) *RoleCreate {
+	if s != nil {
+		rc.SetUpdatedBy(*s)
 	}
 	return rc
 }
@@ -54,9 +80,17 @@ func (rc *RoleCreate) SetNillableUpdatedAt(t *time.Time) *RoleCreate {
 	return rc
 }
 
-// SetText sets the "text" field.
-func (rc *RoleCreate) SetText(s string) *RoleCreate {
-	rc.mutation.SetText(s)
+// SetDeletedBy sets the "deleted_by" field.
+func (rc *RoleCreate) SetDeletedBy(s string) *RoleCreate {
+	rc.mutation.SetDeletedBy(s)
+	return rc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (rc *RoleCreate) SetNillableDeletedBy(s *string) *RoleCreate {
+	if s != nil {
+		rc.SetDeletedBy(*s)
+	}
 	return rc
 }
 
@@ -87,6 +121,7 @@ func (rc *RoleCreate) Mutation() *RoleMutation {
 
 // Save creates the Role in the database.
 func (rc *RoleCreate) Save(ctx context.Context) (*Role, error) {
+	rc.defaults()
 	return withHooks(ctx, rc.sqlSave, rc.mutation, rc.hooks)
 }
 
@@ -112,6 +147,18 @@ func (rc *RoleCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rc *RoleCreate) defaults() {
+	if _, ok := rc.mutation.CreatedAt(); !ok {
+		v := role.DefaultCreatedAt
+		rc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := rc.mutation.UpdatedAt(); !ok {
+		v := role.DefaultUpdatedAt
+		rc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (rc *RoleCreate) check() error {
 	if _, ok := rc.mutation.Name(); !ok {
@@ -119,6 +166,17 @@ func (rc *RoleCreate) check() error {
 	}
 	if _, ok := rc.mutation.Text(); !ok {
 		return &ValidationError{Name: "text", err: errors.New(`ent: missing required field "Role.text"`)}
+	}
+	if _, ok := rc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Role.created_by"`)}
+	}
+	if v, ok := rc.mutation.CreatedBy(); ok {
+		if err := role.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Role.created_by": %w`, err)}
+		}
+	}
+	if _, ok := rc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Role.created_at"`)}
 	}
 	return nil
 }
@@ -156,17 +214,29 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		_spec.SetField(role.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
+	if value, ok := rc.mutation.Text(); ok {
+		_spec.SetField(role.FieldText, field.TypeString, value)
+		_node.Text = value
+	}
+	if value, ok := rc.mutation.CreatedBy(); ok {
+		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.SetField(role.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := rc.mutation.UpdatedBy(); ok {
+		_spec.SetField(role.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := rc.mutation.UpdatedAt(); ok {
 		_spec.SetField(role.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := rc.mutation.Text(); ok {
-		_spec.SetField(role.FieldText, field.TypeString, value)
-		_node.Text = value
+	if value, ok := rc.mutation.DeletedBy(); ok {
+		_spec.SetField(role.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := rc.mutation.DeletedAt(); ok {
 		_spec.SetField(role.FieldDeletedAt, field.TypeTime, value)
@@ -189,6 +259,7 @@ func (rcb *RoleCreateBulk) Save(ctx context.Context) ([]*Role, error) {
 	for i := range rcb.builders {
 		func(i int, root context.Context) {
 			builder := rcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*RoleMutation)
 				if !ok {

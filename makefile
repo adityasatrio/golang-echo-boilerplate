@@ -3,12 +3,12 @@
 
 # Build the project
 build:
+	rm -f ./cmd/main
 	go build -o cmd/main cmd/main.go
 
 # Run tests and generate coverage report
 run:
 	rm -f ./cmd/main
-	#go test -coverprofile=coverage.out ./...
 	go build -o cmd/main cmd/main.go
 	./cmd/main
 
@@ -18,7 +18,7 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-gen-ent:
+gen-model:
 	go generate ./ent
 
 # Generate mockery mocks
@@ -31,4 +31,4 @@ clean:
 	rm -rf ./ent/*
 	rm -rf ./mocks/*
 
-all: build test generate-ent generate-mocks
+all: gen-model gen-mocks test build

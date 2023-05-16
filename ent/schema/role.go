@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"myapp/helper"
 )
 
 type Role struct {
@@ -13,7 +14,12 @@ type Role struct {
 }
 
 func (Role) Fields() []ent.Field {
-	return []ent.Field{field.Uint64("id"), field.String("name"), field.Time("created_at").Optional(), field.Time("updated_at").Optional(), field.String("text"), field.Time("deleted_at").Optional()}
+	schema := []ent.Field{field.Uint64("id"),
+		field.String("name"),
+		field.String("text"),
+	}
+
+	return helper.InitBaseSchema(schema)
 }
 func (Role) Edges() []ent.Edge {
 	return nil

@@ -26,19 +26,16 @@ func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
 
 	//start transaction:
-	
+
 	var userNew = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
 		//create user object:
 		userRequest := ent.User{
-			RoleID:        request.RoleId,
-			Name:          request.Name,
-			Email:         request.Email,
-			Password:      request.Password,
-			IsVerified:    true,
-			Avatar:        "",
-			PregnancyMode: false,
+			Name:     request.Name,
+			Email:    request.Email,
+			Password: request.Password,
+			Avatar:   "",
 		}
 
 		//save user:
@@ -79,13 +76,10 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 
 		//create user object:
 		userRequest := ent.User{
-			RoleID:        request.RoleId,
-			Name:          request.Name,
-			Email:         request.Email,
-			Password:      request.Password,
-			IsVerified:    true,
-			Avatar:        "",
-			PregnancyMode: false,
+			Name:     request.Name,
+			Email:    request.Email,
+			Password: request.Password,
+			Avatar:   "",
 		}
 
 		//update user:

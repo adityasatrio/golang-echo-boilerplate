@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/dto"
 	mock_service "myapp/mocks/system_parameter/service"
@@ -18,14 +16,14 @@ func TestSystemParameterController_Create(t *testing.T) {
 
 	e := test_helper.InitEchoTest(t)
 
-	// CreateTx a new request with sample data
+	// Create a new request with sample data
 	data := `{"Key":"test_param","Value":"1234"}`
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// CreateTx a new mock service
+	// Create a new mock service
 	mockService := &mock_service.SystemParameterService{}
 
 	// Initialize a new controller
@@ -75,8 +73,7 @@ func TestSystemParameterController_Update(t *testing.T) {
 }
 
 func TestSystemParameterController_Delete(t *testing.T) {
-	// Initialize a new echo router
-	e := echo.New()
+	e := test_helper.InitEchoTest(t)
 
 	// CreateTx a new request
 	req := httptest.NewRequest(http.MethodDelete, "/1", nil)
@@ -92,7 +89,7 @@ func TestSystemParameterController_Delete(t *testing.T) {
 	controller := NewSystemParameterController(mockService)
 
 	// Test Delete function
-	mockService.On("Delete", mock.Anything, mock.Anything).Return(&dto.SystemParameterResponse{}, nil)
+	mockService.On("Delete", req.Context(), 1).Return(&dto.SystemParameterResponse{}, nil)
 	if assert.NoError(t, controller.Delete(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 	}

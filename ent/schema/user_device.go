@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"myapp/helper"
 )
 
 type UserDevice struct {
@@ -13,7 +14,15 @@ type UserDevice struct {
 }
 
 func (UserDevice) Fields() []ent.Field {
-	return []ent.Field{field.Uint64("id"), field.Uint64("user_id"), field.String("version"), field.String("platform"), field.Time("latest_skip_update").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional(), field.String("device_id").Optional()}
+	schema := []ent.Field{field.Uint64("id"),
+		field.Uint64("user_id"),
+		field.String("version"),
+		field.String("platform"),
+		field.String("device_id").Optional(),
+	}
+
+	return helper.InitBaseSchema(schema)
+
 }
 func (UserDevice) Edges() []ent.Edge {
 	return nil
