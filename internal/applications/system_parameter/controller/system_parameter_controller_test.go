@@ -2,7 +2,9 @@ package controller
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 	"myapp/ent"
+	"myapp/helper/json"
 	"myapp/internal/applications/system_parameter/dto"
 	mock_service "myapp/mocks/system_parameter/service"
 	"myapp/mocks/test_helper"
@@ -17,7 +19,7 @@ func TestSystemParameterController_Create(t *testing.T) {
 	e := test_helper.InitEchoTest(t)
 
 	// Create a new request with sample data
-	data := `{"Key":"test_param","Value":"1234"}`
+	data := `{"Key":"key1","Value":"value1"}`
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
@@ -30,14 +32,20 @@ func TestSystemParameterController_Create(t *testing.T) {
 	controller := NewSystemParameterController(mockService)
 
 	dtoCreate := &dto.SystemParameterCreateRequest{
-		Key:   "test_param",
-		Value: "1234",
+		Key:   "key1",
+		Value: "value1",
 	}
 
 	// Test Create function
-	mockService.On("Create", req.Context(), dtoCreate).Return(&ent.SystemParameter{}, nil)
+	mockService.On("Create", req.Context(), dtoCreate).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.Create(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
+
+		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		assert.Equal(t, "key1", dataKey)
+
+		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		assert.Equal(t, "value1", dataValue)
 	}
 }
 
@@ -46,7 +54,7 @@ func TestSystemParameterController_Update(t *testing.T) {
 	e := test_helper.InitEchoTest(t)
 
 	// CreateTx a new request with sample data
-	data := `{"Key":"test_param","Value":"1234"}`
+	data := `{"Key":"key1","Value":"value1"}`
 	req := httptest.NewRequest(http.MethodPut, "/1", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
@@ -61,14 +69,20 @@ func TestSystemParameterController_Update(t *testing.T) {
 	controller := NewSystemParameterController(mockService)
 
 	dtoUpdate := &dto.SystemParameterUpdateRequest{
-		Key:   "test_param",
-		Value: "1234",
+		Key:   "key1",
+		Value: "value1",
 	}
 
 	// Test UpdateTx function
-	mockService.On("Update", req.Context(), 1, dtoUpdate).Return(&ent.SystemParameter{}, nil)
+	mockService.On("Update", req.Context(), 1, dtoUpdate).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.Update(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
+
+		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		assert.Equal(t, "key1", dataKey)
+
+		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		assert.Equal(t, "value1", dataValue)
 	}
 }
 
@@ -89,72 +103,86 @@ func TestSystemParameterController_Delete(t *testing.T) {
 	controller := NewSystemParameterController(mockService)
 
 	// Test Delete function
-	mockService.On("Delete", req.Context(), 1).Return(&dto.SystemParameterResponse{}, nil)
+	mockService.On("Delete", req.Context(), 1).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.Delete(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
+
+		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		assert.Equal(t, "key1", dataKey)
+
+		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		assert.Equal(t, "value1", dataValue)
 	}
 }
 
-/*
-func (caseStub *SystemParameterCaseStub) Hello(ctx context.Context) (string, error) {
-	//TODO implement me
-	return "hello from stub", nil
-}
+func TestSystemParameterController_GetByID(t *testing.T) {
+	e := test_helper.InitEchoTest(t)
 
-func (caseStub *SystemParameterCaseStub) CreateSystemParameter(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	//TODO implement me
-	return nil, nil
-}
+	// CreateTx a new request
+	req := httptest.NewRequest(http.MethodGet, "/1", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
 
-func (caseStub *SystemParameterCaseStub) UpdateSystemParameter(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	//TODO implement me
-	return nil, nil
-}
+	// CreateTx a new mock service
+	mockService := &mock_service.SystemParameterService{}
 
-func (caseStub *SystemParameterCaseStub) DeleteSystemParameter(ctx context.Context) error {
-	//TODO implement me
-	return nil
-}
+	// Initialize a new controller
+	controller := NewSystemParameterController(mockService)
 
-func (caseStub *SystemParameterCaseStub) GetSystemParameterById(ctx context.Context) (*system_parameter.SystemParameter, error) {
-	//TODO implement me
-	return nil, nil
-}
+	// Test Delete function
+	mockService.On("GetById", req.Context(), 1).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
+	if assert.NoError(t, controller.GetById(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
 
-func (caseStub *SystemParameterCaseStub) GetSystemParameterAll(ctx context.Context) ([]*system_parameter.SystemParameter, error) {
-	//TODO implement me
-	return nil, nil
-}
-*/
-/*func TestHello(t *testing.T) {
-	// SetupRouteHandler
-	e := echo.New()
-	request := httptest.NewRequest(http.MethodGet, "/system-parameter", nil)
-	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	recorder := httptest.NewRecorder()
-	ctx := e.NewContext(request, recorder)
+		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		assert.Equal(t, "key1", dataKey)
 
-	//setup stub
-	useCaseStub := &SystemParameterCaseStub{}
-	h := NewSystemParameterController(useCaseStub)
-
-	//test global_handler
-	expected := "\"Hello, World! hello from stub\"\n"
-	err := h.Hello(ctx)
-
-	//assert global_handler result
-	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, recorder.ErrorCode)
-		assert.Equal(t, expected, recorder.Body.String())
+		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		assert.Equal(t, "value1", dataValue)
 	}
+}
 
-	//assert use case stub
-	actualResult, err := h.service.Hello(ctx.Request().Context())
+func TestSystemParameterController_GetAll(t *testing.T) {
+	e := test_helper.InitEchoTest(t)
 
-	//assert use case stub
-	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, recorder.ErrorCode)
-		assert.Equal(t, "hello from stub", actualResult)
+	// CreateTx a new request
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	//c.SetParamNames("id")
+	//c.SetParamValues("1")
+
+	// CreateTx a new mock service
+	mockService := &mock_service.SystemParameterService{}
+
+	// Initialize a new controller
+	controller := NewSystemParameterController(mockService)
+
+	// Test Delete function
+	mockService.On("GetAll", req.Context()).Return([]*ent.SystemParameter{
+		{Key: "key1", Value: "value1"},
+		{Key: "key2", Value: "value2"},
+		{Key: "key3", Value: "value3"},
+	}, nil)
+
+	if assert.NoError(t, controller.GetAll(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		// Assert the "data" field is an empty array
+		data, _ := json.GetResultBytes(rec.Body.Bytes(), "data")
+		assert.True(t, data.IsArray())
+		assert.Equal(t, 3, len(data.Array()))
+
+		data.ForEach(func(_, value gjson.Result) bool {
+			key := value.Get("Key").String()
+			val := value.Get("Value").String()
+			// Perform assertions on each element
+			assert.NotNil(t, key)
+			assert.NotNil(t, val)
+			// Continue iterating
+			return true
+		})
 	}
-
-}*/
+}

@@ -28,7 +28,6 @@ func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
 			SetValue("john@doe.com").
 			SetCreatedBy("john doe").
 			SetUpdatedBy("john doe").
-			SetIsDeleted(false).
 			Save(ctx)
 
 		if err != nil {
@@ -62,7 +61,6 @@ func TestTrxServiceImpl_WithFailedTx(t *testing.T) {
 			SetValue("john@cena.com").
 			SetCreatedBy("john cena").
 			SetUpdatedBy("john cena").
-			SetIsDeleted(false).
 			Save(ctx)
 
 		if err != nil {

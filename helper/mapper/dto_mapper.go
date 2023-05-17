@@ -1,6 +1,6 @@
 // Package helper wrapper for mapper https://github.com/dranikpg/dto-mapper
 
-package helper
+package mapper
 
 import "github.com/dranikpg/dto-mapper"
 
