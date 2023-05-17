@@ -101,24 +101,3 @@ func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string
 
 	return data, nil
 }
-
-//TODO : add base schema
-/*func (repository *SystemParameterRepositoryImpl) GetByIdNotDeleted(ctx context.Context, id int) (*ent.SystemParameter, error) {
-	data, err := repository.client.SystemParameter.Get(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-
-	return data, nil
-}
-
-func (repository *SystemParameterRepositoryImpl) GetAllNotDeleted(ctx context.Context) ([]*ent.SystemParameter, error) {
-	data, err := repository.client.SystemParameter.Query().All(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-
-	return data, nil
-}*/

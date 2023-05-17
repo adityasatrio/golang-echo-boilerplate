@@ -3,6 +3,7 @@ package test_helper
 import (
 	"context"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
 	"myapp/ent/enttest"
