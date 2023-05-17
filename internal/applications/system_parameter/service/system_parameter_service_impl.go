@@ -39,22 +39,20 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 
 func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) {
 
-	existId, err := s.repository.GetById(ctx, id)
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-	}
-
 	existKey, err := s.repository.GetByKey(ctx, update.Key)
 	if existKey != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
 	}
 
-	newData := ent.SystemParameter{
-		Key:   update.Key,
-		Value: update.Value,
+	existId, err := s.repository.GetById(ctx, id)
+	if err != nil || existId == nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 
-	updated, err := s.repository.Update(ctx, existId.ID, &newData)
+	existId.Key = update.Key
+	existId.Value = update.Value
+
+	updated, err := s.repository.Update(ctx, existId.ID, existId)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
@@ -78,16 +76,16 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 
 func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) {
 	exist, err := s.repository.GetById(ctx, id)
-	if err != nil {
+	if err != nil || exist == nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 
-	_, err = s.repository.SoftDelete(ctx, id)
+	deleted, err := s.repository.SoftDelete(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
-	return exist, nil
+	return deleted, nil
 }
 
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
