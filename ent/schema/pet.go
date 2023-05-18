@@ -3,7 +3,7 @@
 package schema
 
 import (
-	"myapp/helper"
+	"myapp/globalutils"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
@@ -26,7 +26,7 @@ func (Pet) Fields() []ent.Field {
 		field.Int("age_month").Positive(),
 	}
 
-	return helper.InitBaseSchema(schema)
+	return globalutils.InitBaseSchema(schema)
 }
 
 // Edges of the Pet.

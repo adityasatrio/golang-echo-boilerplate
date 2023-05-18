@@ -5,8 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"myapp/exceptions"
-	"myapp/helper"
-	"myapp/helper/json"
+	"myapp/internal/apputils"
 	mock_service "myapp/mocks/hello_worlds/service"
 	"net/http"
 	"net/http/httptest"
@@ -46,7 +45,7 @@ func TestHello(t *testing.T) {
 	if assert.NoError(t, controller.Hello(c)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 
-		dataKey, _ := json.GetFieldBytes(recorder.Body.Bytes(), "data.Message")
+		dataKey, _ := apputils.GetFieldBytes(recorder.Body.Bytes(), "data.Message")
 		assert.Equal(t, "success", dataKey)
 
 	}
@@ -73,12 +72,8 @@ func TestHelloErr(t *testing.T) {
 
 	// Assertions
 	if assert.Errorf(t, serviceErr, "business logic error", controller.Hello(c)) {
-		// Get the response body as a string
-		responseString := recorder.Body.String()
-		jsonResponse := helper.StringToJson(responseString)
 
-		//sample response
-		//"{\"code\":200,\"message\":\"OK\",\"data\":\"success\",\"error\":\"\",\"serverTime\":\"Sun, 19 Mar 2023 19:20:57 WIB\"}\n"
-		assert.Equal(t, nil, jsonResponse["data"])
+		dataKey, _ := apputils.GetFieldBytes(recorder.Body.Bytes(), "data.Message")
+		assert.Equal(t, nil, dataKey)
 	}
 }

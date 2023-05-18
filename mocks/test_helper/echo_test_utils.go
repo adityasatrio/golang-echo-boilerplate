@@ -2,7 +2,7 @@ package test_helper
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/config/validator"
+	"myapp/configs/validator"
 	"testing"
 )
 

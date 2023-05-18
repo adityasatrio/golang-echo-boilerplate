@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/helper"
+	"myapp/globalutils"
 )
 
 type UserDevice struct {
@@ -21,7 +21,7 @@ func (UserDevice) Fields() []ent.Field {
 		field.String("device_id").Optional(),
 	}
 
-	return helper.InitBaseSchema(schema)
+	return globalutils.InitBaseSchema(schema)
 
 }
 func (UserDevice) Edges() []ent.Edge {

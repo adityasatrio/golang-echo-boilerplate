@@ -2,10 +2,9 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/helper/mapper"
-	"myapp/helper/response"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/applications/user/service"
+	"myapp/internal/apputils"
 	"strconv"
 )
 
@@ -19,14 +18,9 @@ func NewUserController(service service.UserService) *UserController {
 
 func (c *UserController) Create(ctx echo.Context) error {
 	request := new(dto.UserRequest)
-	err := ctx.Bind(request)
+	err := apputils.BindAndValidate(ctx, request)
 	if err != nil {
-		return err
-	}
-
-	err = ctx.Validate(request)
-	if err != nil {
-		return err
+		return apputils.BadRequest(ctx, err)
 	}
 
 	created, err := c.service.Create(ctx.Request().Context(), request)
@@ -35,24 +29,19 @@ func (c *UserController) Create(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.UserResponse)
-	err = mapper.Mapper(&responseDto, created)
+	err = apputils.Mapper(&responseDto, created)
 	if err != nil {
 		return err
 	}
 
-	return response.Created(ctx, responseDto)
+	return apputils.Created(ctx, responseDto)
 }
 
 func (c *UserController) Update(ctx echo.Context) error {
 	request := new(dto.UserRequest)
-	err := ctx.Bind(&request)
+	err := apputils.BindAndValidate(ctx, request)
 	if err != nil {
-		return err
-	}
-
-	err = ctx.Validate(request)
-	if err != nil {
-		return err
+		return apputils.BadRequest(ctx, err)
 	}
 
 	idString := ctx.Param("id")
@@ -63,10 +52,16 @@ func (c *UserController) Update(ctx echo.Context) error {
 
 	updated, err := c.service.Update(ctx.Request().Context(), uint64(id), request)
 	if err != nil {
+		return apputils.BadRequest(ctx, err)
+	}
+
+	var responseDto = new(dto.UserResponse)
+	err = apputils.Mapper(&responseDto, updated)
+	if err != nil {
 		return err
 	}
 
-	return response.Success(ctx, updated)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) Delete(ctx echo.Context) error {
@@ -82,7 +77,13 @@ func (c *UserController) Delete(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, deleted)
+	var responseDto = new(dto.UserResponse)
+	err = apputils.Mapper(&responseDto, deleted)
+	if err != nil {
+		return err
+	}
+
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) GetById(ctx echo.Context) error {
@@ -98,7 +99,13 @@ func (c *UserController) GetById(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, result)
+	var responseDto = new(dto.UserResponse)
+	err = apputils.Mapper(&responseDto, result)
+	if err != nil {
+		return err
+	}
+
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) GetAll(ctx echo.Context) error {
@@ -107,5 +114,15 @@ func (c *UserController) GetAll(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, results)
+	var responseDtos []*dto.UserResponse
+	for _, result := range results {
+		responseDto := new(dto.UserResponse)
+		err = apputils.Mapper(responseDto, result)
+		if err != nil {
+			return err
+		}
+		responseDtos = append(responseDtos, responseDto)
+	}
+
+	return apputils.Success(ctx, results)
 }

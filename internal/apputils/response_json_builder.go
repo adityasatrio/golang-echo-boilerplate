@@ -1,8 +1,11 @@
-package response
+package apputils
 
 import (
 	"errors"
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"myapp/exceptions"
 	"net/http"
 	"time"
 )
@@ -53,6 +56,30 @@ func Success(ctx echo.Context, data interface{}) error {
 	}
 
 	return Base(ctx, http.StatusOK, http.StatusOK, http.StatusText(http.StatusOK), data, nil)
+}
+
+func BadRequest(ctx echo.Context, err error) error {
+	if err == nil {
+		panic(errors.New("success response : data on body is mandatory"))
+	}
+
+	if castedObject, ok := err.(validator.ValidationErrors); ok {
+		var errMessages []string
+		for _, errField := range castedObject {
+			errMsg := fmt.Sprintf("%s is %s", errField.Field(), errField.Tag())
+			errMessages = append(errMessages, errMsg)
+		}
+		return Base(ctx, http.StatusBadRequest, http.StatusBadGateway, http.StatusText(http.StatusBadRequest), errMessages, err)
+	}
+
+	if errors.Is(err, exceptions.TargetBusinessLogicError) {
+		errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
+		errorLogic := exceptions.BusinessLogicReason(errorCode)
+		return Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
+	}
+
+	//unhandled error
+	return Base(ctx, http.StatusInternalServerError, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err, nil)
 }
 
 //goland:noinspection GoUnusedExportedFunction

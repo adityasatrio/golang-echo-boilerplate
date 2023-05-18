@@ -2,9 +2,9 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/helper/response"
 	"myapp/internal/applications/hello_worlds/dto"
 	"myapp/internal/applications/hello_worlds/service"
+	"myapp/internal/apputils"
 	"time"
 )
 
@@ -36,5 +36,5 @@ func (controller *HelloWorldsController) Hello(c echo.Context) error {
 		UpdatedAt: time.Now().String(),
 	}
 
-	return response.Success(c, responseDto)
+	return apputils.Success(c, responseDto)
 }

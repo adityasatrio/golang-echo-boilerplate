@@ -1,4 +1,4 @@
-package json
+package apputils
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 func GetFieldBytes(json []byte, path string) (interface{}, error) {
 	result := gjson.GetBytes(json, path)
 	if !result.Exists() {
-		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, result)
+		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, string(json))
 		log.Error(errMsg)
 
 		return nil, errors.New(errMsg)
@@ -22,7 +22,7 @@ func GetFieldBytes(json []byte, path string) (interface{}, error) {
 func GetField(json string, path string) (interface{}, error) {
 	result := gjson.Get(json, path)
 	if !result.Exists() {
-		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, result)
+		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, string(json))
 		log.Error(errMsg)
 
 		return nil, errors.New(errMsg)
@@ -34,7 +34,7 @@ func GetField(json string, path string) (interface{}, error) {
 func GetResultBytes(json []byte, path string) (gjson.Result, error) {
 	result := gjson.GetBytes(json, path)
 	if !result.Exists() {
-		errMsg := fmt.Sprintf("path not exist : %s ", path)
+		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, string(json))
 		log.Error(errMsg)
 
 		return result, errors.New(errMsg)
@@ -46,7 +46,7 @@ func GetResultBytes(json []byte, path string) (gjson.Result, error) {
 func GetResult(json string, path string) (gjson.Result, error) {
 	result := gjson.Get(json, path)
 	if !result.Exists() {
-		errMsg := fmt.Sprintf("path not exist : %s ", path)
+		errMsg := fmt.Sprintf("path not exist : %s # raw json is : %s", path, string(json))
 		log.Error(errMsg)
 
 		return result, errors.New(errMsg)

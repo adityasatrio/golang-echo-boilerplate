@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/helper"
+	"myapp/globalutils"
 )
 
 type RoleUser struct {
@@ -19,7 +19,7 @@ func (RoleUser) Fields() []ent.Field {
 		field.Uint64("role_id").Optional(),
 	}
 
-	return helper.InitBaseSchema(schema)
+	return globalutils.InitBaseSchema(schema)
 }
 func (RoleUser) Edges() []ent.Edge {
 	return nil

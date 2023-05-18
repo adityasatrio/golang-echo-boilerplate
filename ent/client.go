@@ -242,7 +242,7 @@ type PetClient struct {
 	config
 }
 
-// NewPetClient returns a client for the Pet from the given config.
+// NewPetClient returns a client for the Pet from the given configs.
 func NewPetClient(c config) *PetClient {
 	return &PetClient{config: c}
 }
@@ -360,7 +360,7 @@ type RoleClient struct {
 	config
 }
 
-// NewRoleClient returns a client for the Role from the given config.
+// NewRoleClient returns a client for the Role from the given configs.
 func NewRoleClient(c config) *RoleClient {
 	return &RoleClient{config: c}
 }
@@ -478,7 +478,7 @@ type RoleUserClient struct {
 	config
 }
 
-// NewRoleUserClient returns a client for the RoleUser from the given config.
+// NewRoleUserClient returns a client for the RoleUser from the given configs.
 func NewRoleUserClient(c config) *RoleUserClient {
 	return &RoleUserClient{config: c}
 }
@@ -596,7 +596,7 @@ type SystemParameterClient struct {
 	config
 }
 
-// NewSystemParameterClient returns a client for the SystemParameter from the given config.
+// NewSystemParameterClient returns a client for the SystemParameter from the given configs.
 func NewSystemParameterClient(c config) *SystemParameterClient {
 	return &SystemParameterClient{config: c}
 }
@@ -714,7 +714,7 @@ type UserClient struct {
 	config
 }
 
-// NewUserClient returns a client for the User from the given config.
+// NewUserClient returns a client for the User from the given configs.
 func NewUserClient(c config) *UserClient {
 	return &UserClient{config: c}
 }
@@ -832,7 +832,7 @@ type UserDeviceClient struct {
 	config
 }
 
-// NewUserDeviceClient returns a client for the UserDevice from the given config.
+// NewUserDeviceClient returns a client for the UserDevice from the given configs.
 func NewUserDeviceClient(c config) *UserDeviceClient {
 	return &UserDeviceClient{config: c}
 }

@@ -7,23 +7,23 @@ import (
 	"github.com/labstack/echo/v4"
 	"log"
 	"myapp/exceptions"
-	"myapp/helper/response"
+	"myapp/internal/apputils"
 	"net/http"
 )
 
-func SetupHttpErrorHandler(e *echo.Echo) {
-	e.HTTPErrorHandler = NewHttpErrorHandler()
-	log.Default().Println("initialized NewHttpErrorHandler : success")
+func SetupGlobalHttpUnhandleErrors(e *echo.Echo) {
+	e.HTTPErrorHandler = GlobalUnHandleErrors()
+	log.Default().Println("initialized GlobalUnHandleErrors : success")
 }
 
-func NewHttpErrorHandler() func(err error, ctx echo.Context) {
+func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 	return func(err error, ctx echo.Context) {
 		_, ok := err.(*echo.HTTPError)
 		if !ok {
 			if errors.Is(err, exceptions.TargetBusinessLogicError) {
 				errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
 				errorLogic := exceptions.BusinessLogicReason(errorCode)
-				_ = response.Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
+				_ = apputils.Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
 				return
 			}
 		}
@@ -47,7 +47,7 @@ func NewHttpErrorHandler() func(err error, ctx echo.Context) {
 			}
 		}
 
-		_ = response.Base(ctx, http.StatusBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest), nil, errors.New(errorMessage))
+		_ = apputils.Base(ctx, http.StatusBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest), nil, errors.New(errorMessage))
 		return
 	}
 }

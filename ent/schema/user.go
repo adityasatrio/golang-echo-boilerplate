@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/helper"
+	"myapp/globalutils"
 )
 
 type User struct {
@@ -45,7 +45,7 @@ func (User) Fields() []ent.Field {
 		field.Time("latest_skip_update").Optional(),
 		field.Time("latest_deleted_at").Optional()}
 
-	return helper.InitBaseSchema(schema)
+	return globalutils.InitBaseSchema(schema)
 }
 func (User) Edges() []ent.Edge {
 	return nil

@@ -2,10 +2,9 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/helper/mapper"
-	"myapp/helper/response"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/service"
+	"myapp/internal/apputils"
 	"strconv"
 )
 
@@ -21,12 +20,7 @@ func NewSystemParameterController(service service.SystemParameterService) *Syste
 
 func (c *SystemParameterController) Create(ctx echo.Context) error {
 	request := new(dto.SystemParameterCreateRequest)
-	err := ctx.Bind(&request)
-	if err != nil {
-		return err
-	}
-
-	err = ctx.Validate(request)
+	err := apputils.BindAndValidate(ctx, request)
 	if err != nil {
 		return err
 	}
@@ -37,25 +31,17 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = mapper.Mapper(&responseDto, created)
+	err = apputils.Mapper(&responseDto, created)
 	if err != nil {
 		return err
 	}
 
-	return response.Created(ctx, responseDto)
+	return apputils.Created(ctx, responseDto)
 }
 
 func (c *SystemParameterController) Update(ctx echo.Context) error {
 	request := new(dto.SystemParameterUpdateRequest)
-	err := ctx.Bind(&request)
-	if err != nil {
-		return err
-	}
-
-	err = ctx.Validate(request)
-	if err != nil {
-		return err
-	}
+	err := apputils.BindAndValidate(ctx, request)
 
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
@@ -69,12 +55,12 @@ func (c *SystemParameterController) Update(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = mapper.Mapper(&responseDto, updated)
+	err = apputils.Mapper(&responseDto, updated)
 	if err != nil {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) Delete(ctx echo.Context) error {
@@ -91,12 +77,12 @@ func (c *SystemParameterController) Delete(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = mapper.Mapper(&responseDto, deleted)
+	err = apputils.Mapper(&responseDto, deleted)
 	if err != nil {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) GetById(ctx echo.Context) error {
@@ -113,12 +99,12 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = mapper.Mapper(&responseDto, result)
+	err = apputils.Mapper(&responseDto, result)
 	if err != nil {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) GetAll(ctx echo.Context) error {
@@ -130,12 +116,12 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error {
 	var responseDtos []*dto.SystemParameterResponse
 	for _, result := range results {
 		responseDto := new(dto.SystemParameterResponse)
-		err = mapper.Mapper(responseDto, result)
+		err = apputils.Mapper(responseDto, result)
 		if err != nil {
 			return err
 		}
 		responseDtos = append(responseDtos, responseDto)
 	}
 
-	return response.Success(ctx, responseDtos)
+	return apputils.Success(ctx, responseDtos)
 }

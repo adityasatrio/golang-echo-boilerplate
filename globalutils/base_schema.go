@@ -1,4 +1,4 @@
-package helper
+package globalutils
 
 import (
 	"entgo.io/ent"

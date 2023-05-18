@@ -4,8 +4,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 	"myapp/ent"
-	"myapp/helper/json"
 	"myapp/internal/applications/system_parameter/dto"
+	"myapp/internal/apputils"
 	mock_service "myapp/mocks/system_parameter/service"
 	"myapp/mocks/test_helper"
 	"net/http"
@@ -41,10 +41,10 @@ func TestSystemParameterController_Create(t *testing.T) {
 	if assert.NoError(t, controller.Create(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
-		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
@@ -78,10 +78,10 @@ func TestSystemParameterController_Update(t *testing.T) {
 	if assert.NoError(t, controller.Update(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
@@ -107,10 +107,10 @@ func TestSystemParameterController_Delete(t *testing.T) {
 	if assert.NoError(t, controller.Delete(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
@@ -136,10 +136,10 @@ func TestSystemParameterController_GetByID(t *testing.T) {
 	if assert.NoError(t, controller.GetById(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := json.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
@@ -171,7 +171,7 @@ func TestSystemParameterController_GetAll(t *testing.T) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
 		// Assert the "data" field is an empty array
-		data, _ := json.GetResultBytes(rec.Body.Bytes(), "data")
+		data, _ := apputils.GetResultBytes(rec.Body.Bytes(), "data")
 		assert.True(t, data.IsArray())
 		assert.Equal(t, 3, len(data.Array()))
 
