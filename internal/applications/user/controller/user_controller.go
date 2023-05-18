@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
+	"myapp/helper/mapper"
 	"myapp/helper/response"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/applications/user/service"
@@ -33,7 +34,13 @@ func (c *UserController) Create(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Created(ctx, created)
+	var responseDto = new(dto.UserResponse)
+	err = mapper.Mapper(&responseDto, created)
+	if err != nil {
+		return err
+	}
+
+	return response.Created(ctx, responseDto)
 }
 
 func (c *UserController) Update(ctx echo.Context) error {
