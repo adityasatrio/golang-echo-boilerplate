@@ -20,6 +20,7 @@ func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 	return func(err error, ctx echo.Context) {
 		_, ok := err.(*echo.HTTPError)
 		if !ok {
+			// TODO below function must on general error and called on test
 			if errors.Is(err, exceptions.TargetBusinessLogicError) {
 				errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
 				errorLogic := exceptions.BusinessLogicReason(errorCode)
@@ -28,6 +29,7 @@ func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 			}
 		}
 
+		// TODO below function must on general error and called on test
 		errorMessage := err.Error()
 		if castedObject, ok := err.(validator.ValidationErrors); ok {
 			for _, err := range castedObject {

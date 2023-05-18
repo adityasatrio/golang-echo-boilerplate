@@ -157,6 +157,7 @@ func TestUserController_Create(t *testing.T) {
 		err := controller.Create(c)
 
 		// Check the http response:
+		//TODO : should be have err and handle error with #response_json_builder.go generic error mapper
 		assert.NoError(t, err) //not error because when invalid we directly return bad request
 		assert.Equal(t, http.StatusBadRequest, res.Code)
 

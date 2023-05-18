@@ -20,7 +20,8 @@ func (c *UserController) Create(ctx echo.Context) error {
 	request := new(dto.UserRequest)
 	err := apputils.BindAndValidate(ctx, request)
 	if err != nil {
-		return apputils.BadRequest(ctx, err)
+		//return apputils.BadRequest(ctx, err)
+		return err
 	}
 
 	created, err := c.service.Create(ctx.Request().Context(), request)
@@ -41,7 +42,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 	request := new(dto.UserRequest)
 	err := apputils.BindAndValidate(ctx, request)
 	if err != nil {
-		return apputils.BadRequest(ctx, err)
+		return err
 	}
 
 	idString := ctx.Param("id")
@@ -52,7 +53,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 
 	updated, err := c.service.Update(ctx.Request().Context(), uint64(id), request)
 	if err != nil {
-		return apputils.BadRequest(ctx, err)
+		return err
 	}
 
 	var responseDto = new(dto.UserResponse)
