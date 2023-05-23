@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestDbConnection(t *testing.T) (*ent.Client, context.Context) {
+func TestDbConnection(t *testing.T) (newClient *ent.Client, newContext context.Context) {
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),
 	}
@@ -23,7 +23,7 @@ func TestDbConnection(t *testing.T) (*ent.Client, context.Context) {
 	return client, ctx
 }
 
-func TestDbConnectionTx(t *testing.T) (*ent.Client, *ent.Tx, context.Context) {
+func TestDbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.Tx, newContext context.Context) {
 
 	client, ctx := TestDbConnection(t)
 	txClient, err := client.Tx(ctx)
