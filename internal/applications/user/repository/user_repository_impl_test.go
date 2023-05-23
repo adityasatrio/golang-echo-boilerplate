@@ -4,7 +4,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/mocks/test_helper"
+	"myapp/test/test_helper"
 	"testing"
 )
 

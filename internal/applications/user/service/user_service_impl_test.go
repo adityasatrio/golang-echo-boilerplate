@@ -11,9 +11,9 @@ import (
 	"myapp/internal/applications/user/dto"
 	mockRoleRepo "myapp/mocks/role/repository"
 	mockRoleUserRepo "myapp/mocks/role_user/repository"
-	"myapp/mocks/test_helper"
 	mockTrx "myapp/mocks/transaction"
 	"myapp/mocks/user/repository"
+	"myapp/test/test_helper"
 	"testing"
 	"time"
 )

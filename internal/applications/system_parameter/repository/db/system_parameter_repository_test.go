@@ -3,7 +3,7 @@ package db
 import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/mocks/test_helper"
+	"myapp/test/test_helper"
 	"testing"
 )
 

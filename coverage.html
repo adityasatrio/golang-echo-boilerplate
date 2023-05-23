@@ -63,25 +63,31 @@
 				
 				<option value="file3">myapp/internal/applications/hello_worlds/service/hello_worlds_service_impl.go (100.0%)</option>
 				
-				<option value="file4">myapp/internal/applications/role/service/role_service_impl.go (100.0%)</option>
+				<option value="file4">myapp/internal/applications/role/repository/role_repository_impl.go (76.0%)</option>
 				
-				<option value="file5">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (0.0%)</option>
+				<option value="file5">myapp/internal/applications/role/service/role_service_impl.go (100.0%)</option>
 				
-				<option value="file6">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
+				<option value="file6">myapp/internal/applications/role_user/repository/role_user_repository_impl.go (77.8%)</option>
 				
-				<option value="file7">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (0.0%)</option>
+				<option value="file7">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (77.4%)</option>
 				
-				<option value="file8">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (0.0%)</option>
+				<option value="file8">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
 				
-				<option value="file9">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
+				<option value="file9">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (75.9%)</option>
 				
-				<option value="file10">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
+				<option value="file10">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (74.4%)</option>
 				
-				<option value="file11">myapp/internal/applications/user/controller/user_controller.go (89.4%)</option>
+				<option value="file11">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
 				
-				<option value="file12">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
+				<option value="file12">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
 				
-				<option value="file13">myapp/internal/applications/user/service/user_service_impl.go (90.7%)</option>
+				<option value="file13">myapp/internal/applications/user/controller/user_controller.go (87.5%)</option>
+				
+				<option value="file14">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
+				
+				<option value="file15">myapp/internal/applications/user/repository/user_repository_impl.go (76.0%)</option>
+				
+				<option value="file16">myapp/internal/applications/user/service/user_service_impl.go (90.7%)</option>
 				
 				</select>
 			</div>
@@ -99,8 +105,10 @@
 
 import (
         "github.com/labstack/echo/v4"
-        "myapp/helper/response"
+        "myapp/internal/applications/hello_worlds/dto"
         "myapp/internal/applications/hello_worlds/service"
+        "myapp/internal/apputils"
+        "time"
 )
 
 type HelloWorldsController struct {
@@ -123,7 +131,15 @@ func (controller *HelloWorldsController) Hello(c echo.Context) error <span class
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Success(c, result)</span>
+        <span class="cov8" title="1">var responseDto = dto.HelloWorldsResponse{
+                Message:   result,
+                CreatedBy: "user",
+                CreatedAt: time.Now().String(),
+                UpdatedBy: "user",
+                UpdatedAt: time.Now().String(),
+        }
+
+        return apputils.Success(c, responseDto)</span>
 }
 </pre>
 		
@@ -217,7 +233,99 @@ func (s *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, erro
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package service
+		<pre class="file" id="file4" style="display: none">package repository
+
+import (
+        "context"
+        "myapp/ent"
+        "myapp/ent/role"
+        "time"
+)
+
+type RoleRepositoryImpl struct {
+        client *ent.Client
+}
+
+func NewRoleRepositoryImpl(client *ent.Client) *RoleRepositoryImpl <span class="cov8" title="1">{
+        return &amp;RoleRepositoryImpl{client: client}
+}</span>
+
+func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Role, error) <span class="cov8" title="1">{
+
+        response, err := r.client.Role.Create().
+                SetName(role.Name).
+                SetText(role.Text).
+                SetCreatedBy(role.CreatedBy).
+                SetCreatedAt(time.Now()).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return response, nil</span>
+}
+
+func (r *RoleRepositoryImpl) Update(ctx context.Context, role ent.Role, id uint64) (*ent.Role, error) <span class="cov8" title="1">{
+        response, err := r.client.Role.
+                UpdateOneID(id).
+                SetName(role.Name).
+                SetText(role.Text).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return response, nil</span>
+}
+
+func (r *RoleRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.Role, error) <span class="cov8" title="1">{
+        err := r.client.Role.DeleteOneID(id).Exec(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return nil, nil</span>
+}
+
+func (r *RoleRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Role, error) <span class="cov8" title="1">{
+        deleted, err := r.client.Role.
+                UpdateOneID(id).
+                SetDeletedBy("user").
+                SetDeletedAt(time.Now()).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return deleted, nil</span>
+}
+
+func (r *RoleRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.Role, error) <span class="cov8" title="1">{
+        data, err := r.client.Role.Get(ctx, id)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return data, err</span>
+}
+
+func (r *RoleRepositoryImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <span class="cov8" title="1">{
+        data, err := r.client.Role.Query().
+                Where(role.DeletedAtIsNil()).
+                All(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package service
 
 import (
         "context"
@@ -307,13 +415,59 @@ func (s *RoleServiceImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <span
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package controller
+		<pre class="file" id="file6" style="display: none">package repository
+
+import (
+        "context"
+        "myapp/ent"
+        "time"
+)
+
+type RoleUserRepositoryImpl struct {
+}
+
+func NewRoleUserRepositoryImpl() *RoleUserRepositoryImpl <span class="cov8" title="1">{
+        return &amp;RoleUserRepositoryImpl{}
+}</span>
+
+func (r *RoleUserRepositoryImpl) CreateTx(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser) (*ent.RoleUser, error) <span class="cov8" title="1">{
+        response, err := clientTrx.RoleUser.Create().
+                SetUserID(request.UserID).
+                SetRoleID(request.RoleID).
+                SetCreatedBy("user").
+                SetCreatedAt(time.Now()).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return response, nil</span>
+}
+
+func (r *RoleUserRepositoryImpl) Update(ctx context.Context, clientTrx *ent.Client, request ent.RoleUser, id uint64) (*ent.RoleUser, error) <span class="cov8" title="1">{
+        response, err := clientTrx.RoleUser.UpdateOneID(request.ID).
+                SetUserID(request.UserID).
+                SetRoleID(request.RoleID).
+                SetUpdatedAt(time.Now()).
+                SetUpdatedBy("user").
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return response, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
-        "myapp/helper/response"
         "myapp/internal/applications/system_parameter/dto"
         "myapp/internal/applications/system_parameter/service"
+        "myapp/internal/apputils"
         "strconv"
 )
 
@@ -321,59 +475,36 @@ type SystemParameterController struct {
         service service.SystemParameterService
 }
 
-func NewSystemParameterController(service service.SystemParameterService) *SystemParameterController <span class="cov0" title="0">{
+func NewSystemParameterController(service service.SystemParameterService) *SystemParameterController <span class="cov8" title="1">{
         return &amp;SystemParameterController{
                 service: service,
         }
 }</span>
 
-func (c *SystemParameterController) Create(ctx echo.Context) error <span class="cov0" title="0">{
+func (c *SystemParameterController) Create(ctx echo.Context) error <span class="cov8" title="1">{
         request := new(dto.SystemParameterCreateRequest)
-        err := ctx.Bind(&amp;request)
+        err := apputils.BindAndValidate(ctx, request)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">err = ctx.Validate(request)
+        <span class="cov8" title="1">created, err := c.service.Create(ctx.Request().Context(), request)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">created, err := c.service.Create(ctx.Request().Context(), request)
+        <span class="cov8" title="1">var responseDto = new(dto.SystemParameterResponse)
+        err = apputils.Mapper(&amp;responseDto, created)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return response.Created(ctx, created)</span>
+        <span class="cov8" title="1">return apputils.Created(ctx, responseDto)</span>
 }
 
-func (c *SystemParameterController) Update(ctx echo.Context) error <span class="cov0" title="0">{
+func (c *SystemParameterController) Update(ctx echo.Context) error <span class="cov8" title="1">{
         request := new(dto.SystemParameterUpdateRequest)
-        err := ctx.Bind(&amp;request)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">err = ctx.Validate(request)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">idString := ctx.Param("id")
-        id, err := strconv.Atoi(idString)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">updated, err := c.service.Update(ctx.Request().Context(), id, request)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">return response.Success(ctx, updated)</span>
-}
-
-func (c *SystemParameterController) Delete(ctx echo.Context) error <span class="cov0" title="0">{
+        err := apputils.BindAndValidate(ctx, request)
 
         idString := ctx.Param("id")
         id, err := strconv.Atoi(idString)
@@ -381,15 +512,21 @@ func (c *SystemParameterController) Delete(ctx echo.Context) error <span class="
                 return err
         }</span>
 
-        <span class="cov0" title="0">deleted, err := c.service.Delete(ctx.Request().Context(), id)
+        <span class="cov8" title="1">updated, err := c.service.Update(ctx.Request().Context(), id, request)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return response.Success(ctx, deleted)</span>
+        <span class="cov8" title="1">var responseDto = new(dto.SystemParameterResponse)
+        err = apputils.Mapper(&amp;responseDto, updated)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
 }
 
-func (c *SystemParameterController) GetById(ctx echo.Context) error <span class="cov0" title="0">{
+func (c *SystemParameterController) Delete(ctx echo.Context) error <span class="cov8" title="1">{
 
         idString := ctx.Param("id")
         id, err := strconv.Atoi(idString)
@@ -397,25 +534,63 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error <span class=
                 return err
         }</span>
 
-        <span class="cov0" title="0">result, err := c.service.GetById(ctx.Request().Context(), id)
+        <span class="cov8" title="1">deleted, err := c.service.Delete(ctx.Request().Context(), id)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return response.Success(ctx, result)</span>
+        <span class="cov8" title="1">var responseDto = new(dto.SystemParameterResponse)
+        err = apputils.Mapper(&amp;responseDto, deleted)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
 }
 
-func (c *SystemParameterController) GetAll(ctx echo.Context) error <span class="cov0" title="0">{
+func (c *SystemParameterController) GetById(ctx echo.Context) error <span class="cov8" title="1">{
+
+        idString := ctx.Param("id")
+        id, err := strconv.Atoi(idString)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">result, err := c.service.GetById(ctx.Request().Context(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">var responseDto = new(dto.SystemParameterResponse)
+        err = apputils.Mapper(&amp;responseDto, result)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
+}
+
+func (c *SystemParameterController) GetAll(ctx echo.Context) error <span class="cov8" title="1">{
         results, err := c.service.GetAll(ctx.Request().Context())
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return response.Success(ctx, results)</span>
+        <span class="cov8" title="1">var responseDtos []*dto.SystemParameterResponse
+        for _, result := range results </span><span class="cov8" title="1">{
+                responseDto := new(dto.SystemParameterResponse)
+                err = apputils.Mapper(responseDto, result)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">responseDtos = append(responseDtos, responseDto)</span>
+        }
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDtos)</span>
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package controller
+		<pre class="file" id="file8" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -437,40 +612,41 @@ func (c *SystemParameterController) AddRoutes(e *echo.Echo) <span class="cov0" t
 }</span>
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package db
+		<pre class="file" id="file9" style="display: none">package db
 
 import (
         "context"
         "myapp/ent"
         "myapp/ent/systemparameter"
+        "time"
 )
 
 type SystemParameterRepositoryImpl struct {
         client *ent.Client
 }
 
-func NewSystemParameterRepository(dbConn *ent.Client) *SystemParameterRepositoryImpl <span class="cov0" title="0">{
+func NewSystemParameterRepository(dbConn *ent.Client) *SystemParameterRepositoryImpl <span class="cov8" title="1">{
         return &amp;SystemParameterRepositoryImpl{
                 client: dbConn,
         }
 }</span>
 
-func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent.SystemParameter) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent.SystemParameter) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         saved, err := r.client.SystemParameter.
                 Create().
                 SetKey(newData.Key).
                 SetValue(newData.Value).
-                SetCreatedBy("admin").
+                SetCreatedBy("user").
                 Save(ctx)
 
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return saved, nil</span>
+        <span class="cov8" title="1">return saved, nil</span>
 }
 
-func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         saved, err := r.client.SystemParameter.
                 UpdateOneID(id).
                 SetKey(updateData.Key).
@@ -481,10 +657,10 @@ func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, upda
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return saved, nil</span>
+        <span class="cov8" title="1">return saved, nil</span>
 }
-func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov0" title="0">{
-        //TODO : soft delete
+
+func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         err := r.client.SystemParameter.
                 DeleteOneID(id).
                 Exec(ctx)
@@ -493,27 +669,42 @@ func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*en
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return nil, nil</span>
+        <span class="cov8" title="1">return nil, nil</span>
 }
-func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+
+func (r *SystemParameterRepositoryImpl) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
+        updated, err := r.client.SystemParameter.
+                UpdateOneID(id).
+                SetDeletedBy("user").
+                SetDeletedAt(time.Now()).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return updated, nil</span>
+}
+
+func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         data, err := r.client.SystemParameter.Get(ctx, id)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return data, nil</span>
+        <span class="cov8" title="1">return data, nil</span>
 }
 
-func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) <span class="cov8" title="1">{
         data, err := r.client.SystemParameter.Query().All(ctx)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return data, nil</span>
+        <span class="cov8" title="1">return data, nil</span>
 }
 
-func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         data, err := r.client.SystemParameter.Query().
                 Where(systemparameter.KeyEqualFold(key)).
                 Only(ctx)
@@ -522,32 +713,11 @@ func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return data, nil</span>
+        <span class="cov8" title="1">return data, nil</span>
 }
-
-//TODO : add base schema
-/*func (repository *SystemParameterRepositoryImpl) GetByIdNotDeleted(ctx context.Context, id int) (*ent.SystemParameter, error) {
-        data, err := repository.client.SystemParameter.Get(ctx, id)
-        if err != nil {
-                return nil, err
-        }
-
-
-        return data, nil
-}
-
-func (repository *SystemParameterRepositoryImpl) GetAllNotDeleted(ctx context.Context) ([]*ent.SystemParameter, error) {
-        data, err := repository.client.SystemParameter.Query().All(ctx)
-        if err != nil {
-                return nil, err
-        }
-
-
-        return data, nil
-}*/
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package service
+		<pre class="file" id="file10" style="display: none">package service
 
 import (
         "context"
@@ -561,13 +731,13 @@ type SystemParameterServiceImpl struct {
         repository db.SystemParameterRepository
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository) *SystemParameterServiceImpl <span class="cov0" title="0">{
+func NewSystemParameterService(repository db.SystemParameterRepository) *SystemParameterServiceImpl <span class="cov8" title="1">{
         return &amp;SystemParameterServiceImpl{
                 repository: repository,
         }
 }</span>
 
-func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         newData := ent.SystemParameter{
                 Key:   create.Key,
                 Value: create.Value,
@@ -578,73 +748,85 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
         }</span>
 
-        <span class="cov0" title="0">result, err := s.repository.Create(ctx, &amp;newData)
+        <span class="cov8" title="1">result, err := s.repository.Create(ctx, &amp;newData)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
         }</span>
 
-        <span class="cov0" title="0">return result, nil</span>
+        <span class="cov8" title="1">return result, nil</span>
 }
 
-func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) <span class="cov8" title="1">{
 
-        existId, err := s.repository.GetById(ctx, id)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-        }</span>
-
-        <span class="cov0" title="0">existKey, err := s.repository.GetByKey(ctx, update.Key)
+        existKey, err := s.repository.GetByKey(ctx, update.Key)
         if existKey != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
         }</span>
 
-        <span class="cov0" title="0">newData := ent.SystemParameter{
-                Key:   update.Key,
-                Value: update.Value,
-        }
+        <span class="cov8" title="1">existId, err := s.repository.GetById(ctx, id)
+        if err != nil || existId == nil </span><span class="cov0" title="0">{
+                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+        }</span>
 
-        updated, err := s.repository.Update(ctx, existId.ID, &amp;newData)
+        <span class="cov8" title="1">existId.Key = update.Key
+        existId.Value = update.Value
+
+        updated, err := s.repository.Update(ctx, existId.ID, existId)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
         }</span>
 
-        <span class="cov0" title="0">return updated, nil</span>
+        <span class="cov8" title="1">return updated, nil</span>
 }
 
-func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         exist, err := s.repository.GetById(ctx, id)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
         }</span>
 
-        <span class="cov0" title="0">_, err = s.repository.Delete(ctx, exist.ID)
+        <span class="cov8" title="1">_, err = s.repository.Delete(ctx, exist.ID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
         }</span>
 
-        <span class="cov0" title="0">return exist, nil</span>
+        <span class="cov8" title="1">return exist, nil</span>
 }
 
-func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
+        exist, err := s.repository.GetById(ctx, id)
+        if err != nil || exist == nil </span><span class="cov0" title="0">{
+                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+        }</span>
+
+        <span class="cov8" title="1">deleted, err := s.repository.SoftDelete(ctx, id)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
+        }</span>
+
+        <span class="cov8" title="1">return deleted, nil</span>
+}
+
+func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
         result, err := s.repository.GetById(ctx, id)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
         }</span>
 
-        <span class="cov0" title="0">return result, nil</span>
+        <span class="cov8" title="1">return result, nil</span>
 }
 
-func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) <span class="cov0" title="0">{
+func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) <span class="cov8" title="1">{
         result, err := s.repository.GetAll(ctx)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
         }</span>
 
-        <span class="cov0" title="0">return result, nil</span>
+        <span class="cov8" title="1">return result, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package transaction
+		<pre class="file" id="file11" style="display: none">package transaction
 
 import (
         "context"
@@ -687,7 +869,7 @@ func (r *TrxServiceImpl) WithTx(ctx context.Context, fn func(tx *ent.Tx) error) 
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">// Code generated by Wire. DO NOT EDIT.
+		<pre class="file" id="file12" style="display: none">// Code generated by Wire. DO NOT EDIT.
 
 //go:generate go run github.com/google/wire/cmd/wire
 //go:build !wireinject
@@ -714,13 +896,13 @@ var provider = wire.NewSet(
 )
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package controller
+		<pre class="file" id="file13" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
-        "myapp/helper/response"
         "myapp/internal/applications/user/dto"
         "myapp/internal/applications/user/service"
+        "myapp/internal/apputils"
         "strconv"
 )
 
@@ -734,13 +916,9 @@ func NewUserController(service service.UserService) *UserController <span class=
 
 func (c *UserController) Create(ctx echo.Context) error <span class="cov8" title="1">{
         request := new(dto.UserRequest)
-        err := ctx.Bind(request)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov8" title="1">err = ctx.Validate(request)
+        err := apputils.BindAndValidate(ctx, request)
         if err != nil </span><span class="cov8" title="1">{
+                //return apputils.BadRequest(ctx, err)
                 return err
         }</span>
 
@@ -749,17 +927,18 @@ func (c *UserController) Create(ctx echo.Context) error <span class="cov8" title
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Created(ctx, created)</span>
-}
-
-func (c *UserController) Update(ctx echo.Context) error <span class="cov8" title="1">{
-        request := new(dto.UserRequest)
-        err := ctx.Bind(&amp;request)
+        <span class="cov8" title="1">var responseDto = new(dto.UserResponse)
+        err = apputils.Mapper(&amp;responseDto, created)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov8" title="1">err = ctx.Validate(request)
+        <span class="cov8" title="1">return apputils.Created(ctx, responseDto)</span>
+}
+
+func (c *UserController) Update(ctx echo.Context) error <span class="cov8" title="1">{
+        request := new(dto.UserRequest)
+        err := apputils.BindAndValidate(ctx, request)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
@@ -775,7 +954,13 @@ func (c *UserController) Update(ctx echo.Context) error <span class="cov8" title
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Success(ctx, updated)</span>
+        <span class="cov8" title="1">var responseDto = new(dto.UserResponse)
+        err = apputils.Mapper(&amp;responseDto, updated)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
 }
 
 func (c *UserController) Delete(ctx echo.Context) error <span class="cov8" title="1">{
@@ -791,7 +976,13 @@ func (c *UserController) Delete(ctx echo.Context) error <span class="cov8" title
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Success(ctx, deleted)</span>
+        <span class="cov8" title="1">var responseDto = new(dto.UserResponse)
+        err = apputils.Mapper(&amp;responseDto, deleted)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
 }
 
 func (c *UserController) GetById(ctx echo.Context) error <span class="cov8" title="1">{
@@ -807,7 +998,13 @@ func (c *UserController) GetById(ctx echo.Context) error <span class="cov8" titl
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Success(ctx, result)</span>
+        <span class="cov8" title="1">var responseDto = new(dto.UserResponse)
+        err = apputils.Mapper(&amp;responseDto, result)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return apputils.Success(ctx, responseDto)</span>
 }
 
 func (c *UserController) GetAll(ctx echo.Context) error <span class="cov8" title="1">{
@@ -816,11 +1013,21 @@ func (c *UserController) GetAll(ctx echo.Context) error <span class="cov8" title
                 return err
         }</span>
 
-        <span class="cov8" title="1">return response.Success(ctx, results)</span>
+        <span class="cov8" title="1">var responseDtos []*dto.UserResponse
+        for _, result := range results </span><span class="cov8" title="1">{
+                responseDto := new(dto.UserResponse)
+                err = apputils.Mapper(responseDto, result)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">responseDtos = append(responseDtos, responseDto)</span>
+        }
+
+        <span class="cov8" title="1">return apputils.Success(ctx, results)</span>
 }
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package controller
+		<pre class="file" id="file14" style="display: none">package controller
 
 import "github.com/labstack/echo/v4"
 
@@ -835,7 +1042,113 @@ func (c *UserController) AddRoutes(e *echo.Echo) <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package service
+		<pre class="file" id="file15" style="display: none">package repository
+
+import (
+        "context"
+        "myapp/ent"
+        "myapp/ent/user"
+        "time"
+)
+
+type UserRepositoryImpl struct {
+        client *ent.Client //non transactional client
+}
+
+func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl <span class="cov8" title="1">{
+        return &amp;UserRepositoryImpl{client: client}
+}</span>
+
+func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) <span class="cov8" title="1">{
+        //txClient is transactional client that handled in service layer for post rollback logic
+        response, err := txClient.User.Create().
+                SetName(newUser.Name).
+                SetEmail(newUser.Email).
+                SetPassword(newUser.Password).
+                SetAvatar(newUser.Avatar).
+                SetCreatedBy("user").
+                SetRoleID(newUser.RoleID).
+                SetIsVerified(newUser.IsVerified).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return response, nil</span>
+}
+
+func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) <span class="cov8" title="1">{
+        saved, err := txClient.User.UpdateOneID(id).
+                SetName(updateUser.Name).
+                SetEmail(updateUser.Email).
+                SetPassword(updateUser.Password).
+                SetAvatar(updateUser.Avatar).
+                SetUpdatedBy("user").
+                SetUpdatedAt(time.Now()).
+                SetRoleID(updateUser.RoleID).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return saved, nil</span>
+}
+
+func (r *UserRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) <span class="cov8" title="1">{
+        err := r.client.User.DeleteOneID(id).Exec(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return nil, nil</span>
+}
+
+func (r *UserRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User, error) <span class="cov8" title="1">{
+        deleted, err := r.client.User.
+                UpdateOneID(id).
+                SetDeletedBy("user").
+                SetDeletedAt(time.Now()).
+                Save(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return deleted, nil</span>
+}
+
+func (r *UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) <span class="cov8" title="1">{
+        data, err := r.client.User.Query().
+                Where(user.And(
+                        user.ID(id),
+                        user.DeletedAtIsNil(),
+                )).
+                Only(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return data, err</span>
+}
+
+func (r *UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) <span class="cov8" title="1">{
+        data, err := r.client.User.Query().
+                Where(user.DeletedAtIsNil()).
+                All(ctx)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package service
 
 import (
         "context"
@@ -863,22 +1176,20 @@ func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) <span class="cov8" title="1">{
 
         //start transaction:
+
         var userNew = &amp;ent.User{}
         if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error </span><span class="cov8" title="1">{
 
                 //create user object:
                 userRequest := ent.User{
-                        RoleID:        request.RoleId,
-                        Name:          request.Name,
-                        Email:         request.Email,
-                        Password:      request.Password,
-                        IsVerified:    true,
-                        Avatar:        "",
-                        PregnancyMode: false,
+                        Name:     request.Name,
+                        Email:    request.Email,
+                        Password: request.Password,
+                        Avatar:   "",
                 }
 
                 //save user:
-                userResult, err := s.userRepository.Create(ctx, tx.Client(), userRequest)
+                userResult, err := s.userRepository.CreateTx(ctx, tx.Client(), userRequest)
                 if err != nil </span><span class="cov0" title="0">{
                         return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
                 }</span>
@@ -891,7 +1202,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
                 }
 
                 //save role_user:
-                _, errRoleUser := s.roleUserRepository.Create(ctx, tx.Client(), roleUserRequest)
+                _, errRoleUser := s.roleUserRepository.CreateTx(ctx, tx.Client(), roleUserRequest)
                 if errRoleUser != nil </span><span class="cov0" title="0">{
                         return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
                 }</span>
@@ -915,17 +1226,14 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 
                 //create user object:
                 userRequest := ent.User{
-                        RoleID:        request.RoleId,
-                        Name:          request.Name,
-                        Email:         request.Email,
-                        Password:      request.Password,
-                        IsVerified:    true,
-                        Avatar:        "",
-                        PregnancyMode: false,
+                        Name:     request.Name,
+                        Email:    request.Email,
+                        Password: request.Password,
+                        Avatar:   "",
                 }
 
                 //update user:
-                userResult, err := s.userRepository.Update(ctx, tx.Client(), userRequest, id)
+                userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userRequest, id)
                 if err != nil </span><span class="cov0" title="0">{
                         return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
                 }</span>

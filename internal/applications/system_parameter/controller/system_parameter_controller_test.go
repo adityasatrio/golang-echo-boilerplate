@@ -7,7 +7,7 @@ import (
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/apputils"
 	mock_service "myapp/mocks/system_parameter/service"
-	"myapp/mocks/test_helper"
+	"myapp/test/test_helper"
 	"net/http"
 	"net/http/httptest"
 	"strings"
