@@ -24,6 +24,11 @@ func TestSystemParameterRepositoryImpl_Create(t *testing.T) {
 	assert.NotNil(t, result.ID)
 	assert.Equal(t, createUser.Key, result.Key)
 	assert.Equal(t, createUser.Value, result.Value)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
+
 }
 
 func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
@@ -53,6 +58,10 @@ func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, updateUser.Key, updatedResult.Key)
 	assert.Equal(t, updateUser.Value, updatedResult.Value)
 
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
+
 }
 
 func TestSystemParameterRepositoryImpl_Delete(t *testing.T) {
@@ -74,6 +83,10 @@ func TestSystemParameterRepositoryImpl_Delete(t *testing.T) {
 	deletedResult, err := repo.Delete(ctx, result.ID)
 	assert.NoError(t, err)
 	assert.Nil(t, deletedResult)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
 }
 
 func TestSystemParameterRepositoryImpl_SoftDelete(t *testing.T) {
@@ -96,6 +109,10 @@ func TestSystemParameterRepositoryImpl_SoftDelete(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, deletedResult.DeletedAt)
 	assert.NotNil(t, deletedResult.DeletedBy)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
 }
 
 func TestSystemParameterRepositoryImpl_GetById(t *testing.T) {
@@ -119,6 +136,10 @@ func TestSystemParameterRepositoryImpl_GetById(t *testing.T) {
 	assert.Equal(t, result.ID, getResult.ID)
 	assert.Equal(t, result.Key, getResult.Key)
 	assert.Equal(t, result.Value, getResult.Value)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
 }
 
 func TestSystemParameterRepositoryImpl_GetAll(t *testing.T) {
@@ -140,6 +161,10 @@ func TestSystemParameterRepositoryImpl_GetAll(t *testing.T) {
 	getResultAll, err := repo.GetAll(ctx)
 	assert.NoError(t, err)
 	assert.NotNil(t, getResultAll)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
 
 }
 
@@ -164,4 +189,8 @@ func TestSystemParameterRepositoryImpl_GetByKey(t *testing.T) {
 	assert.Equal(t, result.ID, getResult.ID)
 	assert.Equal(t, result.Key, getResult.Key)
 	assert.Equal(t, result.Value, getResult.Value)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(client)
+	})
 }

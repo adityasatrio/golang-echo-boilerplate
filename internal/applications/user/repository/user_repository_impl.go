@@ -65,6 +65,7 @@ func (r *UserRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.User, 
 func (r *UserRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User, error) {
 	deleted, err := r.client.User.
 		UpdateOneID(id).
+		SetDeletedBy("user").
 		SetDeletedAt(time.Now()).
 		Save(ctx)
 

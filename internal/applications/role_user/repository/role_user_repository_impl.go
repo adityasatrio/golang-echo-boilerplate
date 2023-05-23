@@ -17,7 +17,7 @@ func (r *RoleUserRepositoryImpl) CreateTx(ctx context.Context, clientTrx *ent.Cl
 	response, err := clientTrx.RoleUser.Create().
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).
-		SetCreatedBy(request.CreatedBy).
+		SetCreatedBy("user").
 		SetCreatedAt(time.Now()).
 		Save(ctx)
 
@@ -33,7 +33,7 @@ func (r *RoleUserRepositoryImpl) Update(ctx context.Context, clientTrx *ent.Clie
 		SetUserID(request.UserID).
 		SetRoleID(request.RoleID).
 		SetUpdatedAt(time.Now()).
-		SetUpdatedBy(request.UpdatedBy).
+		SetUpdatedBy("user").
 		Save(ctx)
 
 	if err != nil {

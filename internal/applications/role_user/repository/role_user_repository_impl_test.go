@@ -28,6 +28,10 @@ func TestRoleUserRepositoryImpl_CreateTx(t *testing.T) {
 	assert.Equal(t, dummyRoleUser.RoleID, result.RoleID)
 	assert.Equal(t, dummyRoleUser.CreatedBy, result.CreatedBy)
 
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(clientTx)
+	})
+
 }
 
 func TestRoleUserRepositoryImpl_Update(t *testing.T) {
@@ -65,5 +69,9 @@ func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, dummyUpdatedRoleUser.UserID, resultUpdated.UserID)
 	assert.Equal(t, dummyUpdatedRoleUser.RoleID, resultUpdated.RoleID)
 	assert.Equal(t, dummyUpdatedRoleUser.CreatedBy, resultUpdated.CreatedBy)
+
+	t.Cleanup(func() {
+		test_helper.TestDbConnectionClose(clientTx)
+	})
 
 }

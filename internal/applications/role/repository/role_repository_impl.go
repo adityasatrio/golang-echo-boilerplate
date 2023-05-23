@@ -20,6 +20,8 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Ro
 	response, err := r.client.Role.Create().
 		SetName(role.Name).
 		SetText(role.Text).
+		SetCreatedBy(role.CreatedBy).
+		SetCreatedAt(time.Now()).
 		Save(ctx)
 
 	if err != nil {
@@ -56,6 +58,7 @@ func (r *RoleRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.Role, 
 func (r *RoleRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Role, error) {
 	deleted, err := r.client.Role.
 		UpdateOneID(id).
+		SetDeletedBy("user").
 		SetDeletedAt(time.Now()).
 		Save(ctx)
 
