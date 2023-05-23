@@ -36,14 +36,16 @@
 - [x] implement global error handling
 - [x] implement DI google wire
 - [ ] implement cache, use go cache as cache abstraction https://github.com/eko/gocache#a-chained-cache
+- [ ] implement cache https://github.com/eko/gocache#a-chained-cache
 - [ ] implement migration files, instead of using ent / atlas we decide to use https://pkg.go.dev/github.com/golang-migrate/migrate/v4 for easiness and simplicity
-- [ ] Example - implement test for CRUD example
+- [x] Example - implement test for CRUD example
+  - [x] positive test case 
+  - [ ] negative test case
   - great talk by imre ! [Writing Better Test in Go | Go Srilanka Meetup June 25th, 2021](https://www.youtube.com/watch?v=xTQI_4EKB8Y)
   - using testify for the sake concise code, no needs write many if for assertion
   - using mockery
-- [ ] implement cache https://github.com/eko/gocache#a-chained-cache
 - [ ] Example - implement outbound http calls - support config timeout, retry, circuit breaker
-- [ ] Example - implement transaction examples - https://entgo.io/docs/transactions
+- [x] Example - implement transaction examples - https://entgo.io/docs/transactions
 - [ ] Example - implement migration files - https://entgo.io/docs/data-migrations, https://atlasgo.io/
 - [ ] implement logger
 - [ ] integrate live reload
