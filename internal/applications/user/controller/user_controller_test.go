@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/configs/validator"
 	"myapp/ent"
+	"myapp/exceptions"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/apputils"
 	mockService "myapp/mocks/user/service"
@@ -13,6 +14,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestUserController_Create(t *testing.T) {
@@ -141,38 +143,34 @@ func TestUserController_Create(t *testing.T) {
 		})
 	}
 
-	//t.Run("Create_failed_validation", func(t *testing.T) {
-	//
-	//	userService := new(mockService.UserService)
-	//	controller := NewUserController(userService)
-	//
-	//	e := echo.New()
-	//	validator.SetupValidator(e)
-	//	validator.SetupGlobalHttpUnhandleErrors(e)
-	//
-	//	//reqBody := `{"name": "testing name", "email": "invalid_email", "password": "password", "role_id" : 1}`
-	//	reqBody := `{}`
-	//	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
-	//	req.Header.Set("Content-Type", "application/json")
-	//
-	//	// Call the  method of the UserController.
-	//	res := httptest.NewRecorder()
-	//	c := e.NewContext(req, res)
-	//
-	//	err := controller.Create(c)
-	//
-	//	// Check the http response:
-	//	//TODO : should be have err and handle error with #response_json_builder.go generic error mapper
-	//	assert.NoError(t, err) //not error because when invalid we directly return bad request
-	//	assert.Equal(t, http.StatusBadRequest, res.Code)
-	//
-	//	resData, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data")
-	//	assert.NotNil(t, resData)
-	//
-	//	resErr, _ := apputils.GetFieldBytes(res.Body.Bytes(), "error")
-	//	assert.NotNil(t, resErr)
-	//
-	//})
+	t.Run("Create_failed_dto_validation", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+
+		e := echo.New()
+		validator.SetupValidator(e)
+		validator.SetupGlobalHttpUnhandleErrors(e)
+
+		reqBody := `{"name": "testing name", "email": "invalid_email", "password": "password"}`
+		req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+
+		// Call the  method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+
+		err := controller.Create(c)
+
+		assert.Error(t, err)
+
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusBadRequest, errHttpCode)
+		assert.Equal(t, http.StatusBadRequest, errBusinessCode)
+		assert.Equal(t, "RoleId is required", errMsg)
+		assert.Nil(t, errOut)
+
+	})
 
 }
 
@@ -230,7 +228,7 @@ func TestUserController_Update(t *testing.T) {
 		assert.Equal(t, "Password123!", resPassword)
 	})
 
-	t.Run("Update_failed", func(t *testing.T) {
+	t.Run("Update_failed_on_service", func(t *testing.T) {
 		userService := new(mockService.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
@@ -241,8 +239,10 @@ func TestUserController_Update(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 
-		errorMessage := errors.New("failed got user")
-		userService.On("Update", req.Context(), uint64(1), &reqBodyJson).Return(nil, errorMessage)
+		errorMessage := errors.New("update data failed")
+		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10004, errorMessage)
+
+		userService.On("Update", req.Context(), uint64(1), &reqBodyJson).Return(nil, errEx)
 
 		// Call the CreateTx method of the UserController.
 		res := httptest.NewRecorder()
@@ -252,306 +252,303 @@ func TestUserController_Update(t *testing.T) {
 
 		err := controller.Update(c)
 
-		// Check the http response:
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusInternalServerError, res.Code)
+		assert.Error(t, err)
 
-		resData, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data")
-		assert.NotNil(t, resData)
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
+		assert.Equal(t, exceptions.EBL10004, errBusinessCode)
+		assert.Equal(t, "update data failed", errMsg)
+		assert.Nil(t, errOut)
 
-		resErr, _ := apputils.GetFieldBytes(res.Body.Bytes(), "error")
-		assert.NotNil(t, resErr)
 	})
 
-	//t.Run("Update_failed_validation", func(t *testing.T) {
-	//	userService := new(mockService.UserService)
-	//	controller := NewUserController(userService)
-	//	e := echo.New()
-	//	validator.SetupValidator(e)
-	//
-	//	// CreateTx a request.
-	//	reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-	//	req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
-	//	req.Header.Set("Content-Type", "application/json")
-	//
-	//	// CreateTx a mock response.
-	//	mockRes := buildUserResponse(reqBody)
-	//
-	//	// Call the CreateTx method of the UserController.
-	//	res := httptest.NewRecorder()
-	//	c := e.NewContext(req, res)
-	//	c.SetParamNames("id")
-	//	c.SetParamValues("1")
-	//	err := controller.Update(c)
-	//
-	//	// Check the http response:
-	//	assert.Error(t, err)
-	//	assert.Equal(t, http.StatusOK, res.Code)
-	//
-	//	// Check the data response:
-	//	resBody := mockRes
-	//	err = json.NewDecoder(res.Body).Decode(resBody)
-	//	assert.Error(t, err)
-	//	assert.Equal(t, mockRes, resBody)
-	//
-	//	userService.AssertExpectations(t)
-	//})
+	t.Run("Update_failed_dto_validation", func(t *testing.T) {
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		reqBody := `{"name": "testing name", "email": "testing@email.id", "role_id" : 1}`
+		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.SetParamNames("id")
+		c.SetParamValues("1")
+
+		err := controller.Update(c)
+
+		assert.Error(t, err)
+
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusBadRequest, errHttpCode)
+		assert.Equal(t, http.StatusBadRequest, errBusinessCode)
+		assert.Equal(t, "Password is required", errMsg)
+		assert.Nil(t, errOut)
+
+	})
 }
 
-//func TestUserController_Delete(t *testing.T) {
-//	t.Run("Delete_success", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		userService.On("Delete", req.Context(), uint64(1)).Return(mockRes, nil)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		c.SetParamNames("id")
-//		c.SetParamValues("1")
-//		err := controller.Delete(c)
-//
-//		// Check the http response:
-//		assert.NoError(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.NoError(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//
-//	t.Run("Delete_failed", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		errorMessage := errors.New("failed delete user")
-//		userService.On("Delete", req.Context(), uint64(1)).Return(mockRes, errorMessage)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		c.SetParamNames("id")
-//		c.SetParamValues("1")
-//		err := controller.Delete(c)
-//
-//		// Check the http response:
-//		assert.Error(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.Error(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//
-//}
+func TestUserController_Delete(t *testing.T) {
+	t.Run("Delete_success", func(t *testing.T) {
 
-//func TestUserController_GetById(t *testing.T) {
-//
-//	t.Run("Get_success", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		userService.On("GetById", req.Context(), uint64(1)).Return(mockRes, nil)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		c.SetParamNames("id")
-//		c.SetParamValues("1")
-//		err := controller.GetById(c)
-//
-//		// Check the http response:
-//		assert.NoError(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.NoError(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//
-//	t.Run("Get_failed", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		errorMessage := errors.New("failed get user")
-//		userService.On("GetById", req.Context(), uint64(1)).Return(mockRes, errorMessage)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		c.SetParamNames("id")
-//		c.SetParamValues("1")
-//		err := controller.GetById(c)
-//
-//		// Check the http response:
-//		assert.Error(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.Error(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//}
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
 
-//func TestUserController_GetAll(t *testing.T) {
-//
-//	t.Run("Get_All_success", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		mockListUser := make([]*ent.User, 0)
-//		mockListUser = append(mockListUser, mockRes)
-//
-//		userService.On("GetAll", req.Context()).Return(mockListUser, nil)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		err := controller.GetAll(c)
-//
-//		// Check the http response:
-//		assert.NoError(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.NoError(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//
-//	t.Run("Get_All_failed", func(t *testing.T) {
-//
-//		userService := new(mockService.UserService)
-//		controller := NewUserController(userService)
-//		e := echo.New()
-//		validator.SetupValidator(e)
-//
-//		// CreateTx a request.
-//		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
-//		req.Header.Set("Content-Type", "application/json")
-//
-//		// CreateTx a mock response.
-//		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "password", "role_id" : 1}`
-//		mockRes := buildUserResponse(reqBody)
-//
-//		errorMessage := errors.New("failed get user")
-//		userService.On("GetAll", req.Context()).Return(nil, errorMessage)
-//
-//		// Call the CreateTx method of the UserController.
-//		res := httptest.NewRecorder()
-//		c := e.NewContext(req, res)
-//		err := controller.GetAll(c)
-//
-//		// Check the http response:
-//		assert.Error(t, err)
-//		assert.Equal(t, http.StatusOK, res.Code)
-//
-//		// Check the data response:
-//		resBody := mockRes
-//		err = json.NewDecoder(res.Body).Decode(resBody)
-//		assert.Error(t, err)
-//		assert.Equal(t, mockRes, resBody)
-//
-//		userService.AssertExpectations(t)
-//	})
-//}
+		// CreateTx a request.
+		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
 
-//
-//func buildUserRequest(reqJson string) dto.UserRequest {
-//	data := dto.UserRequest{}
-//	errJson := json.Unmarshal([]byte(reqJson), &data)
-//
-//	if errJson != nil {
-//		log.Println(errJson)
-//		return data
-//	}
-//
-//	return data
-//}
-//
-//func buildUserResponse(reqJson string) *ent.User {
-//	data := ent.User{}
-//	errJson := json.Unmarshal([]byte(reqJson), &data)
-//
-//	if errJson != nil {
-//		log.Println(errJson)
-//		return &data
-//	}
-//
-//	return &data
-//}
+		userServiceResult := ent.User{
+			ID:        1,
+			RoleID:    1,
+			Name:      "testing name",
+			Email:     "testing@email.id",
+			Password:  "Password123!",
+			Avatar:    "xx/ava.png",
+			DeletedBy: "user",
+			DeletedAt: time.Now(),
+		}
+
+		userService.On("Delete", req.Context(), uint64(1)).Return(&userServiceResult, nil)
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+
+		c.SetParamNames("id")
+		c.SetParamValues("1")
+		err := controller.Delete(c)
+
+		// Check the http response:
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, res.Code)
+
+		resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+		assert.Equal(t, "testing name", resName)
+
+		resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+		assert.Equal(t, "testing@email.id", resEmail)
+
+		resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+		assert.Equal(t, "Password123!", resPassword)
+
+		deletedAt, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.deleted_at")
+		assert.NotNil(t, deletedAt)
+
+	})
+
+	t.Run("Delete_failed", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
+
+		errorMessage := errors.New("delete data failed")
+		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10005, errorMessage)
+
+		userService.On("Delete", req.Context(), uint64(1)).Return(nil, errEx)
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.SetParamNames("id")
+		c.SetParamValues("1")
+
+		err := controller.Delete(c)
+
+		assert.Error(t, err)
+
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
+		assert.Equal(t, exceptions.EBL10005, errBusinessCode)
+		assert.Equal(t, "delete data failed", errMsg)
+		assert.Nil(t, errOut)
+
+	})
+
+}
+
+func TestUserController_GetById(t *testing.T) {
+
+	t.Run("Get_success", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
+
+		userServiceResult := ent.User{
+			ID:       1,
+			RoleID:   1,
+			Name:     "testing name",
+			Email:    "testing@email.id",
+			Password: "Password123!",
+			Avatar:   "xx/ava.png",
+		}
+
+		userService.On("GetById", req.Context(), uint64(1)).Return(&userServiceResult, nil)
+
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.SetParamNames("id")
+		c.SetParamValues("1")
+
+		err := controller.GetById(c)
+
+		// Check the http response:
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, res.Code)
+
+		resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+		assert.Equal(t, "testing name", resName)
+
+		resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+		assert.Equal(t, "testing@email.id", resEmail)
+
+		resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+		assert.Equal(t, "Password123!", resPassword)
+
+	})
+
+	t.Run("Get_failed", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
+
+		errorMessage := errors.New("get data failed")
+		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10006, errorMessage)
+
+		userService.On("GetById", req.Context(), uint64(1)).Return(nil, errEx)
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.SetParamNames("id")
+		c.SetParamValues("1")
+
+		err := controller.GetById(c)
+
+		assert.Error(t, err)
+
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
+		assert.Equal(t, exceptions.EBL10006, errBusinessCode)
+		assert.Equal(t, "get data failed", errMsg)
+		assert.Nil(t, errOut)
+
+	})
+}
+
+func TestUserController_GetAll(t *testing.T) {
+
+	t.Run("Get_All_success", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		// CreateTx a request.
+		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
+
+		userServiceResult1 := ent.User{
+			ID:       1,
+			RoleID:   1,
+			Name:     "testing name 1",
+			Email:    "testing1@email.id",
+			Password: "Password123!",
+			Avatar:   "xx/ava1.png",
+		}
+
+		userServiceResult2 := ent.User{
+			ID:       1,
+			RoleID:   1,
+			Name:     "testing name 2",
+			Email:    "testing2@email.id",
+			Password: "Password123!",
+			Avatar:   "xx/ava2.png",
+		}
+
+		mockListUser := make([]*ent.User, 0)
+		mockListUser = append(mockListUser, &userServiceResult1, &userServiceResult2)
+
+		userService.On("GetAll", req.Context()).Return(mockListUser, nil)
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		err := controller.GetAll(c)
+
+		// Check the http response:
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, res.Code)
+
+		resName1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.name")
+		assert.Equal(t, "testing name 1", resName1)
+
+		resName2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.name")
+		assert.Equal(t, "testing name 2", resName2)
+
+		resEmail1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.email")
+		assert.Equal(t, "testing1@email.id", resEmail1)
+
+		resEmail2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.email")
+		assert.Equal(t, "testing2@email.id", resEmail2)
+
+		resPassword1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.password")
+		assert.Equal(t, "Password123!", resPassword1)
+
+		resPassword2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.password")
+		assert.Equal(t, "Password123!", resPassword2)
+
+	})
+
+	t.Run("Get_All_failed", func(t *testing.T) {
+
+		userService := new(mockService.UserService)
+		controller := NewUserController(userService)
+		e := echo.New()
+		validator.SetupValidator(e)
+
+		// CreateTx a request.
+		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
+		req.Header.Set("Content-Type", "application/json")
+
+		errorMessage := errors.New("get data failed")
+		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10006, errorMessage)
+
+		userService.On("GetAll", req.Context()).Return(nil, errEx)
+
+		// Call the CreateTx method of the UserController.
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		err := controller.GetAll(c)
+
+		assert.Error(t, err)
+
+		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
+		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
+		assert.Equal(t, exceptions.EBL10006, errBusinessCode)
+		assert.Equal(t, "get data failed", errMsg)
+		assert.Nil(t, errOut)
+
+	})
+}

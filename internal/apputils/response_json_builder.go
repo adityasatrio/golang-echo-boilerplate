@@ -73,7 +73,7 @@ func Success(ctx echo.Context, data interface{}) error {
 //	if errors.Is(err, exceptions.TargetBusinessLogicError) {
 //		errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
 //		errorLogic := exceptions.BusinessLogicReason(errorCode)
-//		return Base(ctx, errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil, err)
+//		return Base(ctx, errorLogic.HttpCode, errorLogic.ErrBusinessCode, errorLogic.Message, nil, err)
 //	}
 //
 //	//unhandled error
