@@ -11,9 +11,13 @@ import (
 	"myapp/ent/migrate"
 
 	"myapp/ent/pet"
-	"myapp/ent/system_parameter"
+	"myapp/ent/role"
+	"myapp/ent/roleuser"
+	"myapp/ent/systemparameter"
 	"myapp/ent/user"
+	"myapp/ent/userdevice"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
@@ -26,15 +30,21 @@ type Client struct {
 	Schema *migrate.Schema
 	// Pet is the client for interacting with the Pet builders.
 	Pet *PetClient
-	// System_parameter is the client for interacting with the System_parameter builders.
-	System_parameter *System_parameterClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
+	// RoleUser is the client for interacting with the RoleUser builders.
+	RoleUser *RoleUserClient
+	// SystemParameter is the client for interacting with the SystemParameter builders.
+	SystemParameter *SystemParameterClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserDevice is the client for interacting with the UserDevice builders.
+	UserDevice *UserDeviceClient
 }
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
 	cfg.options(opts...)
 	client := &Client{config: cfg}
 	client.init()
@@ -44,8 +54,60 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Pet = NewPetClient(c.config)
-	c.System_parameter = NewSystem_parameterClient(c.config)
+	c.Role = NewRoleClient(c.config)
+	c.RoleUser = NewRoleUserClient(c.config)
+	c.SystemParameter = NewSystemParameterClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserDevice = NewUserDeviceClient(c.config)
+}
+
+type (
+	// config is the configuration for the client and its builder.
+	config struct {
+		// driver used for executing database requests.
+		driver dialect.Driver
+		// debug enable a debug logging.
+		debug bool
+		// log used for logging on debug mode.
+		log func(...any)
+		// hooks to execute on mutations.
+		hooks *hooks
+		// interceptors to execute on queries.
+		inters *inters
+	}
+	// Option function to configure the client.
+	Option func(*config)
+)
+
+// options applies the options on the config object.
+func (c *config) options(opts ...Option) {
+	for _, opt := range opts {
+		opt(c)
+	}
+	if c.debug {
+		c.driver = dialect.Debug(c.driver, c.log)
+	}
+}
+
+// Debug enables debug logging on the ent.Driver.
+func Debug() Option {
+	return func(c *config) {
+		c.debug = true
+	}
+}
+
+// Log sets the logging function for debug mode.
+func Log(fn func(...any)) Option {
+	return func(c *config) {
+		c.log = fn
+	}
+}
+
+// Driver configures the client driver.
+func Driver(driver dialect.Driver) Option {
+	return func(c *config) {
+		c.driver = driver
+	}
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -77,11 +139,14 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		Pet:             NewPetClient(cfg),
+		Role:            NewRoleClient(cfg),
+		RoleUser:        NewRoleUserClient(cfg),
+		SystemParameter: NewSystemParameterClient(cfg),
+		User:            NewUserClient(cfg),
+		UserDevice:      NewUserDeviceClient(cfg),
 	}, nil
 }
 
@@ -99,11 +164,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		Pet:              NewPetClient(cfg),
-		System_parameter: NewSystem_parameterClient(cfg),
-		User:             NewUserClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		Pet:             NewPetClient(cfg),
+		Role:            NewRoleClient(cfg),
+		RoleUser:        NewRoleUserClient(cfg),
+		SystemParameter: NewSystemParameterClient(cfg),
+		User:            NewUserClient(cfg),
+		UserDevice:      NewUserDeviceClient(cfg),
 	}, nil
 }
 
@@ -113,7 +181,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 //		Pet.
 //		Query().
 //		Count(ctx)
-//
 func (c *Client) Debug() *Client {
 	if c.debug {
 		return c
@@ -133,9 +200,41 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Pet.Use(hooks...)
-	c.System_parameter.Use(hooks...)
-	c.User.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Pet, c.Role, c.RoleUser, c.SystemParameter, c.User, c.UserDevice,
+	} {
+		n.Use(hooks...)
+	}
+}
+
+// Intercept adds the query interceptors to all the entity clients.
+// In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
+func (c *Client) Intercept(interceptors ...Interceptor) {
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Pet, c.Role, c.RoleUser, c.SystemParameter, c.User, c.UserDevice,
+	} {
+		n.Intercept(interceptors...)
+	}
+}
+
+// Mutate implements the ent.Mutator interface.
+func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
+	switch m := m.(type) {
+	case *PetMutation:
+		return c.Pet.mutate(ctx, m)
+	case *RoleMutation:
+		return c.Role.mutate(ctx, m)
+	case *RoleUserMutation:
+		return c.RoleUser.mutate(ctx, m)
+	case *SystemParameterMutation:
+		return c.SystemParameter.mutate(ctx, m)
+	case *UserMutation:
+		return c.User.mutate(ctx, m)
+	case *UserDeviceMutation:
+		return c.UserDevice.mutate(ctx, m)
+	default:
+		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
 }
 
 // PetClient is a client for the Pet schema.
@@ -152,6 +251,12 @@ func NewPetClient(c config) *PetClient {
 // A call to `Use(f, g, h)` equals to `pet.Hooks(f(g(h())))`.
 func (c *PetClient) Use(hooks ...Hook) {
 	c.hooks.Pet = append(c.hooks.Pet, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pet.Intercept(f(g(h())))`.
+func (c *PetClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Pet = append(c.inters.Pet, interceptors...)
 }
 
 // Create returns a builder for creating a Pet entity.
@@ -206,6 +311,8 @@ func (c *PetClient) DeleteOneID(id uuid.UUID) *PetDeleteOne {
 func (c *PetClient) Query() *PetQuery {
 	return &PetQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypePet},
+		inters: c.Interceptors(),
 	}
 }
 
@@ -228,84 +335,112 @@ func (c *PetClient) Hooks() []Hook {
 	return c.hooks.Pet
 }
 
-// System_parameterClient is a client for the System_parameter schema.
-type System_parameterClient struct {
-	config
+// Interceptors returns the client interceptors.
+func (c *PetClient) Interceptors() []Interceptor {
+	return c.inters.Pet
 }
 
-// NewSystem_parameterClient returns a client for the System_parameter from the given config.
-func NewSystem_parameterClient(c config) *System_parameterClient {
-	return &System_parameterClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `system_parameter.Hooks(f(g(h())))`.
-func (c *System_parameterClient) Use(hooks ...Hook) {
-	c.hooks.System_parameter = append(c.hooks.System_parameter, hooks...)
-}
-
-// Create returns a builder for creating a System_parameter entity.
-func (c *System_parameterClient) Create() *SystemParameterCreate {
-	mutation := newSystemParameterMutation(c.config, OpCreate)
-	return &SystemParameterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of System_parameter entities.
-func (c *System_parameterClient) CreateBulk(builders ...*SystemParameterCreate) *SystemParameterCreateBulk {
-	return &SystemParameterCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for System_parameter.
-func (c *System_parameterClient) Update() *SystemParameterUpdate {
-	mutation := newSystemParameterMutation(c.config, OpUpdate)
-	return &SystemParameterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *System_parameterClient) UpdateOne(sp *System_parameter) *SystemParameterUpdateOne {
-	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystem_parameter(sp))
-	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *System_parameterClient) UpdateOneID(id int) *SystemParameterUpdateOne {
-	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystem_parameterID(id))
-	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for System_parameter.
-func (c *System_parameterClient) Delete() *SystemParameterDelete {
-	mutation := newSystemParameterMutation(c.config, OpDelete)
-	return &SystemParameterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *System_parameterClient) DeleteOne(sp *System_parameter) *SystemParameterDeleteOne {
-	return c.DeleteOneID(sp.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *System_parameterClient) DeleteOneID(id int) *SystemParameterDeleteOne {
-	builder := c.Delete().Where(system_parameter.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &SystemParameterDeleteOne{builder}
-}
-
-// Query returns a query builder for System_parameter.
-func (c *System_parameterClient) Query() *SystemParameterQuery {
-	return &SystemParameterQuery{
-		config: c.config,
+func (c *PetClient) mutate(ctx context.Context, m *PetMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PetCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PetUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PetDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Pet mutation op: %q", m.Op())
 	}
 }
 
-// Get returns a System_parameter entity by its id.
-func (c *System_parameterClient) Get(ctx context.Context, id int) (*System_parameter, error) {
-	return c.Query().Where(system_parameter.ID(id)).Only(ctx)
+// RoleClient is a client for the Role schema.
+type RoleClient struct {
+	config
+}
+
+// NewRoleClient returns a client for the Role from the given config.
+func NewRoleClient(c config) *RoleClient {
+	return &RoleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `role.Hooks(f(g(h())))`.
+func (c *RoleClient) Use(hooks ...Hook) {
+	c.hooks.Role = append(c.hooks.Role, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `role.Intercept(f(g(h())))`.
+func (c *RoleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Role = append(c.inters.Role, interceptors...)
+}
+
+// Create returns a builder for creating a Role entity.
+func (c *RoleClient) Create() *RoleCreate {
+	mutation := newRoleMutation(c.config, OpCreate)
+	return &RoleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Role entities.
+func (c *RoleClient) CreateBulk(builders ...*RoleCreate) *RoleCreateBulk {
+	return &RoleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Role.
+func (c *RoleClient) Update() *RoleUpdate {
+	mutation := newRoleMutation(c.config, OpUpdate)
+	return &RoleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RoleClient) UpdateOne(r *Role) *RoleUpdateOne {
+	mutation := newRoleMutation(c.config, OpUpdateOne, withRole(r))
+	return &RoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RoleClient) UpdateOneID(id uint64) *RoleUpdateOne {
+	mutation := newRoleMutation(c.config, OpUpdateOne, withRoleID(id))
+	return &RoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Role.
+func (c *RoleClient) Delete() *RoleDelete {
+	mutation := newRoleMutation(c.config, OpDelete)
+	return &RoleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RoleClient) DeleteOne(r *Role) *RoleDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RoleClient) DeleteOneID(id uint64) *RoleDeleteOne {
+	builder := c.Delete().Where(role.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RoleDeleteOne{builder}
+}
+
+// Query returns a query builder for Role.
+func (c *RoleClient) Query() *RoleQuery {
+	return &RoleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRole},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Role entity by its id.
+func (c *RoleClient) Get(ctx context.Context, id uint64) (*Role, error) {
+	return c.Query().Where(role.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *System_parameterClient) GetX(ctx context.Context, id int) *System_parameter {
+func (c *RoleClient) GetX(ctx context.Context, id uint64) *Role {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -314,8 +449,264 @@ func (c *System_parameterClient) GetX(ctx context.Context, id int) *System_param
 }
 
 // Hooks returns the client hooks.
-func (c *System_parameterClient) Hooks() []Hook {
-	return c.hooks.System_parameter
+func (c *RoleClient) Hooks() []Hook {
+	return c.hooks.Role
+}
+
+// Interceptors returns the client interceptors.
+func (c *RoleClient) Interceptors() []Interceptor {
+	return c.inters.Role
+}
+
+func (c *RoleClient) mutate(ctx context.Context, m *RoleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RoleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RoleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RoleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Role mutation op: %q", m.Op())
+	}
+}
+
+// RoleUserClient is a client for the RoleUser schema.
+type RoleUserClient struct {
+	config
+}
+
+// NewRoleUserClient returns a client for the RoleUser from the given config.
+func NewRoleUserClient(c config) *RoleUserClient {
+	return &RoleUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `roleuser.Hooks(f(g(h())))`.
+func (c *RoleUserClient) Use(hooks ...Hook) {
+	c.hooks.RoleUser = append(c.hooks.RoleUser, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `roleuser.Intercept(f(g(h())))`.
+func (c *RoleUserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RoleUser = append(c.inters.RoleUser, interceptors...)
+}
+
+// Create returns a builder for creating a RoleUser entity.
+func (c *RoleUserClient) Create() *RoleUserCreate {
+	mutation := newRoleUserMutation(c.config, OpCreate)
+	return &RoleUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RoleUser entities.
+func (c *RoleUserClient) CreateBulk(builders ...*RoleUserCreate) *RoleUserCreateBulk {
+	return &RoleUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RoleUser.
+func (c *RoleUserClient) Update() *RoleUserUpdate {
+	mutation := newRoleUserMutation(c.config, OpUpdate)
+	return &RoleUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RoleUserClient) UpdateOne(ru *RoleUser) *RoleUserUpdateOne {
+	mutation := newRoleUserMutation(c.config, OpUpdateOne, withRoleUser(ru))
+	return &RoleUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RoleUserClient) UpdateOneID(id uint64) *RoleUserUpdateOne {
+	mutation := newRoleUserMutation(c.config, OpUpdateOne, withRoleUserID(id))
+	return &RoleUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RoleUser.
+func (c *RoleUserClient) Delete() *RoleUserDelete {
+	mutation := newRoleUserMutation(c.config, OpDelete)
+	return &RoleUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RoleUserClient) DeleteOne(ru *RoleUser) *RoleUserDeleteOne {
+	return c.DeleteOneID(ru.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RoleUserClient) DeleteOneID(id uint64) *RoleUserDeleteOne {
+	builder := c.Delete().Where(roleuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RoleUserDeleteOne{builder}
+}
+
+// Query returns a query builder for RoleUser.
+func (c *RoleUserClient) Query() *RoleUserQuery {
+	return &RoleUserQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRoleUser},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RoleUser entity by its id.
+func (c *RoleUserClient) Get(ctx context.Context, id uint64) (*RoleUser, error) {
+	return c.Query().Where(roleuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RoleUserClient) GetX(ctx context.Context, id uint64) *RoleUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *RoleUserClient) Hooks() []Hook {
+	return c.hooks.RoleUser
+}
+
+// Interceptors returns the client interceptors.
+func (c *RoleUserClient) Interceptors() []Interceptor {
+	return c.inters.RoleUser
+}
+
+func (c *RoleUserClient) mutate(ctx context.Context, m *RoleUserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RoleUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RoleUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RoleUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RoleUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RoleUser mutation op: %q", m.Op())
+	}
+}
+
+// SystemParameterClient is a client for the SystemParameter schema.
+type SystemParameterClient struct {
+	config
+}
+
+// NewSystemParameterClient returns a client for the SystemParameter from the given config.
+func NewSystemParameterClient(c config) *SystemParameterClient {
+	return &SystemParameterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `systemparameter.Hooks(f(g(h())))`.
+func (c *SystemParameterClient) Use(hooks ...Hook) {
+	c.hooks.SystemParameter = append(c.hooks.SystemParameter, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `systemparameter.Intercept(f(g(h())))`.
+func (c *SystemParameterClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SystemParameter = append(c.inters.SystemParameter, interceptors...)
+}
+
+// Create returns a builder for creating a SystemParameter entity.
+func (c *SystemParameterClient) Create() *SystemParameterCreate {
+	mutation := newSystemParameterMutation(c.config, OpCreate)
+	return &SystemParameterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SystemParameter entities.
+func (c *SystemParameterClient) CreateBulk(builders ...*SystemParameterCreate) *SystemParameterCreateBulk {
+	return &SystemParameterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SystemParameter.
+func (c *SystemParameterClient) Update() *SystemParameterUpdate {
+	mutation := newSystemParameterMutation(c.config, OpUpdate)
+	return &SystemParameterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SystemParameterClient) UpdateOne(sp *SystemParameter) *SystemParameterUpdateOne {
+	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystemParameter(sp))
+	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SystemParameterClient) UpdateOneID(id int) *SystemParameterUpdateOne {
+	mutation := newSystemParameterMutation(c.config, OpUpdateOne, withSystemParameterID(id))
+	return &SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SystemParameter.
+func (c *SystemParameterClient) Delete() *SystemParameterDelete {
+	mutation := newSystemParameterMutation(c.config, OpDelete)
+	return &SystemParameterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SystemParameterClient) DeleteOne(sp *SystemParameter) *SystemParameterDeleteOne {
+	return c.DeleteOneID(sp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SystemParameterClient) DeleteOneID(id int) *SystemParameterDeleteOne {
+	builder := c.Delete().Where(systemparameter.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SystemParameterDeleteOne{builder}
+}
+
+// Query returns a query builder for SystemParameter.
+func (c *SystemParameterClient) Query() *SystemParameterQuery {
+	return &SystemParameterQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSystemParameter},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SystemParameter entity by its id.
+func (c *SystemParameterClient) Get(ctx context.Context, id int) (*SystemParameter, error) {
+	return c.Query().Where(systemparameter.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SystemParameterClient) GetX(ctx context.Context, id int) *SystemParameter {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SystemParameterClient) Hooks() []Hook {
+	return c.hooks.SystemParameter
+}
+
+// Interceptors returns the client interceptors.
+func (c *SystemParameterClient) Interceptors() []Interceptor {
+	return c.inters.SystemParameter
+}
+
+func (c *SystemParameterClient) mutate(ctx context.Context, m *SystemParameterMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SystemParameterCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SystemParameterUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SystemParameterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SystemParameterDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SystemParameter mutation op: %q", m.Op())
+	}
 }
 
 // UserClient is a client for the User schema.
@@ -332,6 +723,12 @@ func NewUserClient(c config) *UserClient {
 // A call to `Use(f, g, h)` equals to `user.Hooks(f(g(h())))`.
 func (c *UserClient) Use(hooks ...Hook) {
 	c.hooks.User = append(c.hooks.User, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `user.Intercept(f(g(h())))`.
+func (c *UserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.User = append(c.inters.User, interceptors...)
 }
 
 // Create returns a builder for creating a User entity.
@@ -358,7 +755,7 @@ func (c *UserClient) UpdateOne(u *User) *UserUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserClient) UpdateOneID(id uuid.UUID) *UserUpdateOne {
+func (c *UserClient) UpdateOneID(id uint64) *UserUpdateOne {
 	mutation := newUserMutation(c.config, OpUpdateOne, withUserID(id))
 	return &UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -375,7 +772,7 @@ func (c *UserClient) DeleteOne(u *User) *UserDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
+func (c *UserClient) DeleteOneID(id uint64) *UserDeleteOne {
 	builder := c.Delete().Where(user.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -386,16 +783,18 @@ func (c *UserClient) DeleteOneID(id uuid.UUID) *UserDeleteOne {
 func (c *UserClient) Query() *UserQuery {
 	return &UserQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeUser},
+		inters: c.Interceptors(),
 	}
 }
 
 // Get returns a User entity by its id.
-func (c *UserClient) Get(ctx context.Context, id uuid.UUID) (*User, error) {
+func (c *UserClient) Get(ctx context.Context, id uint64) (*User, error) {
 	return c.Query().Where(user.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
+func (c *UserClient) GetX(ctx context.Context, id uint64) *User {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -407,3 +806,151 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
 }
+
+// Interceptors returns the client interceptors.
+func (c *UserClient) Interceptors() []Interceptor {
+	return c.inters.User
+}
+
+func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown User mutation op: %q", m.Op())
+	}
+}
+
+// UserDeviceClient is a client for the UserDevice schema.
+type UserDeviceClient struct {
+	config
+}
+
+// NewUserDeviceClient returns a client for the UserDevice from the given config.
+func NewUserDeviceClient(c config) *UserDeviceClient {
+	return &UserDeviceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userdevice.Hooks(f(g(h())))`.
+func (c *UserDeviceClient) Use(hooks ...Hook) {
+	c.hooks.UserDevice = append(c.hooks.UserDevice, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userdevice.Intercept(f(g(h())))`.
+func (c *UserDeviceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserDevice = append(c.inters.UserDevice, interceptors...)
+}
+
+// Create returns a builder for creating a UserDevice entity.
+func (c *UserDeviceClient) Create() *UserDeviceCreate {
+	mutation := newUserDeviceMutation(c.config, OpCreate)
+	return &UserDeviceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserDevice entities.
+func (c *UserDeviceClient) CreateBulk(builders ...*UserDeviceCreate) *UserDeviceCreateBulk {
+	return &UserDeviceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserDevice.
+func (c *UserDeviceClient) Update() *UserDeviceUpdate {
+	mutation := newUserDeviceMutation(c.config, OpUpdate)
+	return &UserDeviceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserDeviceClient) UpdateOne(ud *UserDevice) *UserDeviceUpdateOne {
+	mutation := newUserDeviceMutation(c.config, OpUpdateOne, withUserDevice(ud))
+	return &UserDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserDeviceClient) UpdateOneID(id uint64) *UserDeviceUpdateOne {
+	mutation := newUserDeviceMutation(c.config, OpUpdateOne, withUserDeviceID(id))
+	return &UserDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserDevice.
+func (c *UserDeviceClient) Delete() *UserDeviceDelete {
+	mutation := newUserDeviceMutation(c.config, OpDelete)
+	return &UserDeviceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserDeviceClient) DeleteOne(ud *UserDevice) *UserDeviceDeleteOne {
+	return c.DeleteOneID(ud.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserDeviceClient) DeleteOneID(id uint64) *UserDeviceDeleteOne {
+	builder := c.Delete().Where(userdevice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserDeviceDeleteOne{builder}
+}
+
+// Query returns a query builder for UserDevice.
+func (c *UserDeviceClient) Query() *UserDeviceQuery {
+	return &UserDeviceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserDevice},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserDevice entity by its id.
+func (c *UserDeviceClient) Get(ctx context.Context, id uint64) (*UserDevice, error) {
+	return c.Query().Where(userdevice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserDeviceClient) GetX(ctx context.Context, id uint64) *UserDevice {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserDeviceClient) Hooks() []Hook {
+	return c.hooks.UserDevice
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserDeviceClient) Interceptors() []Interceptor {
+	return c.inters.UserDevice
+}
+
+func (c *UserDeviceClient) mutate(ctx context.Context, m *UserDeviceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserDeviceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserDeviceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserDeviceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserDevice mutation op: %q", m.Op())
+	}
+}
+
+// hooks and interceptors per client, for fast access.
+type (
+	hooks struct {
+		Pet, Role, RoleUser, SystemParameter, User, UserDevice []ent.Hook
+	}
+	inters struct {
+		Pet, Role, RoleUser, SystemParameter, User, UserDevice []ent.Interceptor
+	}
+)

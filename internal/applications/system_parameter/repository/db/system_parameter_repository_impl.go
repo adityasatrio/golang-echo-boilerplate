@@ -3,7 +3,8 @@ package db
 import (
 	"context"
 	"myapp/ent"
-	"myapp/ent/system_parameter"
+	"myapp/ent/systemparameter"
+	"time"
 )
 
 type SystemParameterRepositoryImpl struct {
@@ -16,12 +17,12 @@ func NewSystemParameterRepository(dbConn *ent.Client) *SystemParameterRepository
 	}
 }
 
-func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.System_parameter) (*ent.System_parameter, error) {
-	saved, err := r.client.System_parameter.
+func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent.SystemParameter) (*ent.SystemParameter, error) {
+	saved, err := r.client.SystemParameter.
 		Create().
 		SetKey(newData.Key).
 		SetValue(newData.Value).
-		SetCreatedBy("admin").
+		SetCreatedBy("user").
 		Save(ctx)
 
 	if err != nil {
@@ -31,8 +32,8 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData ent.
 	return saved, nil
 }
 
-func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData ent.System_parameter) (*ent.System_parameter, error) {
-	saved, err := r.client.System_parameter.
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
+	saved, err := r.client.SystemParameter.
 		UpdateOneID(id).
 		SetKey(updateData.Key).
 		SetValue(updateData.Value).
@@ -44,9 +45,9 @@ func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, id int, upda
 
 	return saved, nil
 }
-func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.System_parameter, error) {
-	//TODO : soft delete
-	err := r.client.System_parameter.
+
+func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) {
+	err := r.client.SystemParameter.
 		DeleteOneID(id).
 		Exec(ctx)
 
@@ -56,8 +57,23 @@ func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*en
 
 	return nil, nil
 }
-func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.System_parameter, error) {
-	data, err := r.client.System_parameter.Get(ctx, id)
+
+func (r *SystemParameterRepositoryImpl) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) {
+	updated, err := r.client.SystemParameter.
+		UpdateOneID(id).
+		SetDeletedBy("user").
+		SetDeletedAt(time.Now()).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updated, nil
+}
+
+func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
+	data, err := r.client.SystemParameter.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +81,8 @@ func (r *SystemParameterRepositoryImpl) GetById(ctx context.Context, id int) (*e
 	return data, nil
 }
 
-func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.System_parameter, error) {
-	data, err := r.client.System_parameter.Query().All(ctx)
+func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
+	data, err := r.client.SystemParameter.Query().All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,9 +90,9 @@ func (r *SystemParameterRepositoryImpl) GetAll(ctx context.Context) ([]*ent.Syst
 	return data, nil
 }
 
-func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.System_parameter, error) {
-	data, err := r.client.System_parameter.Query().
-		Where(system_parameter.KeyEqualFold(key)).
+func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string) (*ent.SystemParameter, error) {
+	data, err := r.client.SystemParameter.Query().
+		Where(systemparameter.KeyEqualFold(key)).
 		Only(ctx)
 
 	if err != nil {
@@ -85,24 +101,3 @@ func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string
 
 	return data, nil
 }
-
-//TODO : add base schema
-/*func (repository *SystemParameterRepositoryImpl) GetByIdNotDeleted(ctx context.Context, id int) (*ent.System_parameter, error) {
-	data, err := repository.client.System_parameter.Get(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-
-	return data, nil
-}
-
-func (repository *SystemParameterRepositoryImpl) GetAllNotDeleted(ctx context.Context) ([]*ent.System_parameter, error) {
-	data, err := repository.client.System_parameter.Query().All(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-
-	return data, nil
-}*/

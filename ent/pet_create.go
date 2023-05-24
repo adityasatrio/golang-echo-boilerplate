@@ -45,20 +45,6 @@ func (pc *PetCreate) SetAgeMonth(i int) *PetCreate {
 	return pc
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (pc *PetCreate) SetIsDeleted(b bool) *PetCreate {
-	pc.mutation.SetIsDeleted(b)
-	return pc
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (pc *PetCreate) SetNillableIsDeleted(b *bool) *PetCreate {
-	if b != nil {
-		pc.SetIsDeleted(*b)
-	}
-	return pc
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (pc *PetCreate) SetCreatedBy(s string) *PetCreate {
 	pc.mutation.SetCreatedBy(s)
@@ -107,6 +93,34 @@ func (pc *PetCreate) SetNillableUpdatedAt(t *time.Time) *PetCreate {
 	return pc
 }
 
+// SetDeletedBy sets the "deleted_by" field.
+func (pc *PetCreate) SetDeletedBy(s string) *PetCreate {
+	pc.mutation.SetDeletedBy(s)
+	return pc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (pc *PetCreate) SetNillableDeletedBy(s *string) *PetCreate {
+	if s != nil {
+		pc.SetDeletedBy(*s)
+	}
+	return pc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (pc *PetCreate) SetDeletedAt(t time.Time) *PetCreate {
+	pc.mutation.SetDeletedAt(t)
+	return pc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (pc *PetCreate) SetNillableDeletedAt(t *time.Time) *PetCreate {
+	if t != nil {
+		pc.SetDeletedAt(*t)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PetCreate) SetID(u uuid.UUID) *PetCreate {
 	pc.mutation.SetID(u)
@@ -128,50 +142,8 @@ func (pc *PetCreate) Mutation() *PetMutation {
 
 // Save creates the Pet in the database.
 func (pc *PetCreate) Save(ctx context.Context) (*Pet, error) {
-	var (
-		err  error
-		node *Pet
-	)
 	pc.defaults()
-	if len(pc.hooks) == 0 {
-		if err = pc.check(); err != nil {
-			return nil, err
-		}
-		node, err = pc.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*PetMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = pc.check(); err != nil {
-				return nil, err
-			}
-			pc.mutation = mutation
-			if node, err = pc.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(pc.hooks) - 1; i >= 0; i-- {
-			if pc.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = pc.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, pc.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Pet)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from PetMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks(ctx, pc.sqlSave, pc.mutation, pc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -198,10 +170,6 @@ func (pc *PetCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *PetCreate) defaults() {
-	if _, ok := pc.mutation.IsDeleted(); !ok {
-		v := pet.DefaultIsDeleted
-		pc.mutation.SetIsDeleted(v)
-	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		v := pet.DefaultCreatedAt
 		pc.mutation.SetCreatedAt(v)
@@ -250,9 +218,6 @@ func (pc *PetCreate) check() error {
 			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
 		}
 	}
-	if _, ok := pc.mutation.IsDeleted(); !ok {
-		return &ValidationError{Name: "is_deleted", err: errors.New(`ent: missing required field "Pet.is_deleted"`)}
-	}
 	if _, ok := pc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Pet.created_by"`)}
 	}
@@ -268,6 +233,9 @@ func (pc *PetCreate) check() error {
 }
 
 func (pc *PetCreate) sqlSave(ctx context.Context) (*Pet, error) {
+	if err := pc.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := pc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -282,19 +250,15 @@ func (pc *PetCreate) sqlSave(ctx context.Context) (*Pet, error) {
 			return nil, err
 		}
 	}
+	pc.mutation.id = &_node.ID
+	pc.mutation.done = true
 	return _node, nil
 }
 
 func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Pet{config: pc.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: pet.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: pet.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(pet.Table, sqlgraph.NewFieldSpec(pet.FieldID, field.TypeUUID))
 	)
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
@@ -316,10 +280,6 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 		_spec.SetField(pet.FieldAgeMonth, field.TypeInt, value)
 		_node.AgeMonth = value
 	}
-	if value, ok := pc.mutation.IsDeleted(); ok {
-		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
-		_node.IsDeleted = value
-	}
 	if value, ok := pc.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
@@ -335,6 +295,14 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.UpdatedAt(); ok {
 		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := pc.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := pc.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }
@@ -363,8 +331,8 @@ func (pcb *PetCreateBulk) Save(ctx context.Context) ([]*Pet, error) {
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, pcb.builders[i+1].mutation)
 				} else {

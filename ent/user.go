@@ -8,23 +8,55 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 // User is the model entity for the User schema.
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Password holds the value of the "password" field.
+	Password string `json:"password,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
+	// RoleID holds the value of the "role_id" field.
+	RoleID int32 `json:"role_id,omitempty"`
+	// IsVerified holds the value of the "is_verified" field.
+	IsVerified bool `json:"is_verified,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
+	// EmailVerifiedAt holds the value of the "email_verified_at" field.
+	EmailVerifiedAt time.Time `json:"email_verified_at,omitempty"`
+	// RememberToken holds the value of the "remember_token" field.
+	RememberToken string `json:"remember_token,omitempty"`
+	// SocialMediaID holds the value of the "social_media_id" field.
+	SocialMediaID string `json:"social_media_id,omitempty"`
+	// LoginType holds the value of the "login_type" field.
+	LoginType string `json:"login_type,omitempty"`
+	// SubSpecialist holds the value of the "sub_specialist" field.
+	SubSpecialist string `json:"sub_specialist,omitempty"`
+	// FirebaseToken holds the value of the "firebase_token" field.
+	FirebaseToken string `json:"firebase_token,omitempty"`
+	// Info holds the value of the "info" field.
+	Info string `json:"info,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
+	// Specialist holds the value of the "specialist" field.
+	Specialist string `json:"specialist,omitempty"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
-	// IsDeleted holds the value of the "is_deleted" field.
-	IsDeleted bool `json:"is_deleted,omitempty"`
+	// LastAccessAt holds the value of the "last_access_at" field.
+	LastAccessAt time.Time `json:"last_access_at,omitempty"`
+	// PregnancyMode holds the value of the "pregnancy_mode" field.
+	PregnancyMode bool `json:"pregnancy_mode,omitempty"`
+	// LatestSkipUpdate holds the value of the "latest_skip_update" field.
+	LatestSkipUpdate time.Time `json:"latest_skip_update,omitempty"`
+	// LatestDeletedAt holds the value of the "latest_deleted_at" field.
+	LatestDeletedAt time.Time `json:"latest_deleted_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -33,6 +65,11 @@ type User struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -40,16 +77,16 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldIsDeleted:
+		case user.FieldIsVerified, user.FieldPregnancyMode:
 			values[i] = new(sql.NullBool)
-		case user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCreatedBy, user.FieldUpdatedBy:
+		case user.FieldID, user.FieldRoleID:
+			values[i] = new(sql.NullInt64)
+		case user.FieldName, user.FieldPassword, user.FieldAvatar, user.FieldEmail, user.FieldRememberToken, user.FieldSocialMediaID, user.FieldLoginType, user.FieldSubSpecialist, user.FieldFirebaseToken, user.FieldInfo, user.FieldDescription, user.FieldSpecialist, user.FieldPhone, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt:
+		case user.FieldEmailVerifiedAt, user.FieldLastAccessAt, user.FieldLatestSkipUpdate, user.FieldLatestDeletedAt, user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case user.FieldID:
-			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -64,16 +101,40 @@ func (u *User) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case user.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				u.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			u.ID = uint64(value.Int64)
 		case user.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				u.Name = value.String
+			}
+		case user.FieldPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field password", values[i])
+			} else if value.Valid {
+				u.Password = value.String
+			}
+		case user.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				u.Avatar = value.String
+			}
+		case user.FieldRoleID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				u.RoleID = int32(value.Int64)
+			}
+		case user.FieldIsVerified:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_verified", values[i])
+			} else if value.Valid {
+				u.IsVerified = value.Bool
 			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -81,17 +142,89 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Email = value.String
 			}
+		case user.FieldEmailVerifiedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field email_verified_at", values[i])
+			} else if value.Valid {
+				u.EmailVerifiedAt = value.Time
+			}
+		case user.FieldRememberToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remember_token", values[i])
+			} else if value.Valid {
+				u.RememberToken = value.String
+			}
+		case user.FieldSocialMediaID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field social_media_id", values[i])
+			} else if value.Valid {
+				u.SocialMediaID = value.String
+			}
+		case user.FieldLoginType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field login_type", values[i])
+			} else if value.Valid {
+				u.LoginType = value.String
+			}
+		case user.FieldSubSpecialist:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sub_specialist", values[i])
+			} else if value.Valid {
+				u.SubSpecialist = value.String
+			}
+		case user.FieldFirebaseToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field firebase_token", values[i])
+			} else if value.Valid {
+				u.FirebaseToken = value.String
+			}
+		case user.FieldInfo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field info", values[i])
+			} else if value.Valid {
+				u.Info = value.String
+			}
+		case user.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				u.Description = value.String
+			}
+		case user.FieldSpecialist:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field specialist", values[i])
+			} else if value.Valid {
+				u.Specialist = value.String
+			}
 		case user.FieldPhone:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field phone", values[i])
 			} else if value.Valid {
 				u.Phone = value.String
 			}
-		case user.FieldIsDeleted:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
+		case user.FieldLastAccessAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_access_at", values[i])
 			} else if value.Valid {
-				u.IsDeleted = value.Bool
+				u.LastAccessAt = value.Time
+			}
+		case user.FieldPregnancyMode:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field pregnancy_mode", values[i])
+			} else if value.Valid {
+				u.PregnancyMode = value.Bool
+			}
+		case user.FieldLatestSkipUpdate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field latest_skip_update", values[i])
+			} else if value.Valid {
+				u.LatestSkipUpdate = value.Time
+			}
+		case user.FieldLatestDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field latest_deleted_at", values[i])
+			} else if value.Valid {
+				u.LatestDeletedAt = value.Time
 			}
 		case user.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -117,16 +250,36 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.UpdatedAt = value.Time
 			}
+		case user.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				u.DeletedBy = value.String
+			}
+		case user.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				u.DeletedAt = value.Time
+			}
+		default:
+			u.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the User.
+// This includes values selected through modifiers, order, etc.
+func (u *User) Value(name string) (ent.Value, error) {
+	return u.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (u *User) Update() *UserUpdateOne {
-	return (&UserClient{config: u.config}).UpdateOne(u)
+	return NewUserClient(u.config).UpdateOne(u)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
@@ -148,14 +301,62 @@ func (u *User) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(u.Name)
 	builder.WriteString(", ")
+	builder.WriteString("password=")
+	builder.WriteString(u.Password)
+	builder.WriteString(", ")
+	builder.WriteString("avatar=")
+	builder.WriteString(u.Avatar)
+	builder.WriteString(", ")
+	builder.WriteString("role_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
+	builder.WriteString(", ")
+	builder.WriteString("is_verified=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsVerified))
+	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", ")
+	builder.WriteString("email_verified_at=")
+	builder.WriteString(u.EmailVerifiedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("remember_token=")
+	builder.WriteString(u.RememberToken)
+	builder.WriteString(", ")
+	builder.WriteString("social_media_id=")
+	builder.WriteString(u.SocialMediaID)
+	builder.WriteString(", ")
+	builder.WriteString("login_type=")
+	builder.WriteString(u.LoginType)
+	builder.WriteString(", ")
+	builder.WriteString("sub_specialist=")
+	builder.WriteString(u.SubSpecialist)
+	builder.WriteString(", ")
+	builder.WriteString("firebase_token=")
+	builder.WriteString(u.FirebaseToken)
+	builder.WriteString(", ")
+	builder.WriteString("info=")
+	builder.WriteString(u.Info)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(u.Description)
+	builder.WriteString(", ")
+	builder.WriteString("specialist=")
+	builder.WriteString(u.Specialist)
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
 	builder.WriteString(u.Phone)
 	builder.WriteString(", ")
-	builder.WriteString("is_deleted=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsDeleted))
+	builder.WriteString("last_access_at=")
+	builder.WriteString(u.LastAccessAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("pregnancy_mode=")
+	builder.WriteString(fmt.Sprintf("%v", u.PregnancyMode))
+	builder.WriteString(", ")
+	builder.WriteString("latest_skip_update=")
+	builder.WriteString(u.LatestSkipUpdate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("latest_deleted_at=")
+	builder.WriteString(u.LatestDeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(u.CreatedBy)
@@ -168,15 +369,15 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(u.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(u.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
 // Users is a parsable slice of User.
 type Users []*User
-
-func (u Users) config(cfg config) {
-	for _i := range u {
-		u[_i].config = cfg
-	}
-}

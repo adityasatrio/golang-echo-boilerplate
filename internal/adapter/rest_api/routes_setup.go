@@ -8,20 +8,25 @@ import (
 	"myapp/internal/applications/hello_worlds/service"
 	"myapp/internal/applications/system_parameter"
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
+	"myapp/internal/applications/user"
+	userController "myapp/internal/applications/user/controller"
 )
 
-func SetupRouteHandler(e *echo.Echo, connection *ent.Client) {
+func SetupRouteHandler(e *echo.Echo, connDb *ent.Client) {
 
 	//manual injection
-	helloWorldsRepository := repository.NewHelloWorldsRepository(connection)
+	helloWorldsRepository := repository.NewHelloWorldsRepository(connDb)
 	helloWorldsService := service.NewHelloWorldsService(helloWorldsRepository)
 	helloController.
 		NewHelloWorldsController(helloWorldsService).
 		AddRoutes(e)
 
 	//injection using code gen - google wire
-	SystemParameterService := system_parameter.InitializedSystemParameterService(connection)
+	SystemParameterService := system_parameter.InitializedSystemParameterService(connDb)
 	systemParameterController.NewSystemParameterController(SystemParameterService).
 		AddRoutes(e)
+
+	UserService := user.InitializedUserService(connDb)
+	userController.NewUserController(UserService).AddRoutes(e)
 
 }

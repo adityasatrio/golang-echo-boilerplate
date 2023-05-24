@@ -2,8 +2,10 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/helper/response"
+	"myapp/internal/applications/hello_worlds/dto"
 	"myapp/internal/applications/hello_worlds/service"
+	"myapp/internal/apputils"
+	"time"
 )
 
 type HelloWorldsController struct {
@@ -19,12 +21,20 @@ func NewHelloWorldsController(service service.HelloWorldsService) *HelloWorldsCo
 func (controller *HelloWorldsController) Hello(c echo.Context) error {
 
 	errorFlag := c.QueryParam("error")
-	messageController := "hello from controller -"
+	messageController := "hello from controller ->"
 
 	result, err := controller.service.Hello(c.Request().Context(), messageController, errorFlag)
 	if err != nil {
 		return err
 	}
 
-	return response.Success(c, result)
+	var responseDto = dto.HelloWorldsResponse{
+		Message:   result,
+		CreatedBy: "user",
+		CreatedAt: time.Now().String(),
+		UpdatedBy: "user",
+		UpdatedAt: time.Now().String(),
+	}
+
+	return apputils.Success(c, responseDto)
 }
