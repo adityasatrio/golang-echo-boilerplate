@@ -23,14 +23,20 @@ type UserDevice struct {
 	Version string `json:"version,omitempty"`
 	// Platform holds the value of the "platform" field.
 	Platform string `json:"platform,omitempty"`
-	// LatestSkipUpdate holds the value of the "latest_skip_update" field.
-	LatestSkipUpdate time.Time `json:"latest_skip_update,omitempty"`
+	// DeviceID holds the value of the "device_id" field.
+	DeviceID string `json:"device_id,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeviceID holds the value of the "device_id" field.
-	DeviceID     string `json:"device_id,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -41,9 +47,9 @@ func (*UserDevice) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userdevice.FieldID, userdevice.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case userdevice.FieldVersion, userdevice.FieldPlatform, userdevice.FieldDeviceID:
+		case userdevice.FieldVersion, userdevice.FieldPlatform, userdevice.FieldDeviceID, userdevice.FieldCreatedBy, userdevice.FieldUpdatedBy, userdevice.FieldDeletedBy:
 			values[i] = new(sql.NullString)
-		case userdevice.FieldLatestSkipUpdate, userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt:
+		case userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt, userdevice.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -84,11 +90,17 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ud.Platform = value.String
 			}
-		case userdevice.FieldLatestSkipUpdate:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field latest_skip_update", values[i])
+		case userdevice.FieldDeviceID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field device_id", values[i])
 			} else if value.Valid {
-				ud.LatestSkipUpdate = value.Time
+				ud.DeviceID = value.String
+			}
+		case userdevice.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				ud.CreatedBy = value.String
 			}
 		case userdevice.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -96,17 +108,29 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ud.CreatedAt = value.Time
 			}
+		case userdevice.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				ud.UpdatedBy = value.String
+			}
 		case userdevice.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				ud.UpdatedAt = value.Time
 			}
-		case userdevice.FieldDeviceID:
+		case userdevice.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field device_id", values[i])
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				ud.DeviceID = value.String
+				ud.DeletedBy = value.String
+			}
+		case userdevice.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				ud.DeletedAt = value.Time
 			}
 		default:
 			ud.selectValues.Set(columns[i], values[i])
@@ -153,17 +177,26 @@ func (ud *UserDevice) String() string {
 	builder.WriteString("platform=")
 	builder.WriteString(ud.Platform)
 	builder.WriteString(", ")
-	builder.WriteString("latest_skip_update=")
-	builder.WriteString(ud.LatestSkipUpdate.Format(time.ANSIC))
+	builder.WriteString("device_id=")
+	builder.WriteString(ud.DeviceID)
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(ud.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(ud.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(ud.UpdatedBy)
+	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(ud.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("device_id=")
-	builder.WriteString(ud.DeviceID)
+	builder.WriteString("deleted_by=")
+	builder.WriteString(ud.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(ud.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

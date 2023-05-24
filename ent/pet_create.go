@@ -45,20 +45,6 @@ func (pc *PetCreate) SetAgeMonth(i int) *PetCreate {
 	return pc
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (pc *PetCreate) SetIsDeleted(b bool) *PetCreate {
-	pc.mutation.SetIsDeleted(b)
-	return pc
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (pc *PetCreate) SetNillableIsDeleted(b *bool) *PetCreate {
-	if b != nil {
-		pc.SetIsDeleted(*b)
-	}
-	return pc
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (pc *PetCreate) SetCreatedBy(s string) *PetCreate {
 	pc.mutation.SetCreatedBy(s)
@@ -103,6 +89,34 @@ func (pc *PetCreate) SetUpdatedAt(t time.Time) *PetCreate {
 func (pc *PetCreate) SetNillableUpdatedAt(t *time.Time) *PetCreate {
 	if t != nil {
 		pc.SetUpdatedAt(*t)
+	}
+	return pc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (pc *PetCreate) SetDeletedBy(s string) *PetCreate {
+	pc.mutation.SetDeletedBy(s)
+	return pc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (pc *PetCreate) SetNillableDeletedBy(s *string) *PetCreate {
+	if s != nil {
+		pc.SetDeletedBy(*s)
+	}
+	return pc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (pc *PetCreate) SetDeletedAt(t time.Time) *PetCreate {
+	pc.mutation.SetDeletedAt(t)
+	return pc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (pc *PetCreate) SetNillableDeletedAt(t *time.Time) *PetCreate {
+	if t != nil {
+		pc.SetDeletedAt(*t)
 	}
 	return pc
 }
@@ -156,10 +170,6 @@ func (pc *PetCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *PetCreate) defaults() {
-	if _, ok := pc.mutation.IsDeleted(); !ok {
-		v := pet.DefaultIsDeleted
-		pc.mutation.SetIsDeleted(v)
-	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		v := pet.DefaultCreatedAt
 		pc.mutation.SetCreatedAt(v)
@@ -207,9 +217,6 @@ func (pc *PetCreate) check() error {
 		if err := pet.AgeMonthValidator(v); err != nil {
 			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
 		}
-	}
-	if _, ok := pc.mutation.IsDeleted(); !ok {
-		return &ValidationError{Name: "is_deleted", err: errors.New(`ent: missing required field "Pet.is_deleted"`)}
 	}
 	if _, ok := pc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Pet.created_by"`)}
@@ -273,10 +280,6 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 		_spec.SetField(pet.FieldAgeMonth, field.TypeInt, value)
 		_node.AgeMonth = value
 	}
-	if value, ok := pc.mutation.IsDeleted(); ok {
-		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
-		_node.IsDeleted = value
-	}
 	if value, ok := pc.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
@@ -292,6 +295,14 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.UpdatedAt(); ok {
 		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := pc.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := pc.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }

@@ -8,13 +8,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
-	"myapp/ent/enttest"
-	"myapp/ent/migrate"
 	"myapp/internal/applications/user/dto"
 	mockRoleRepo "myapp/mocks/role/repository"
 	mockRoleUserRepo "myapp/mocks/role_user/repository"
 	mockTrx "myapp/mocks/transaction"
 	"myapp/mocks/user/repository"
+	"myapp/test/test_helper"
 	"testing"
 	"time"
 )
@@ -28,17 +27,21 @@ var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRol
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
-		ID:               id,
-		Name:             name,
-		Email:            email,
-		IsVerified:       true,
+		ID:    id,
+		Name:  name,
+		Email: email,
+		//WARNING : becarefull with bool value, it always have default value as FALSE,
+		//make sure when do testing DTO / request and actual mock or return value have same value
+
+		// uncomment IsVerified will impact on failed test, because expected value false from default value,
+		//if must true then need to adjust logic on service to alway set as true or get from method parameter / request
+		//IsVerified: true,
+
 		EmailVerifiedAt:  time.Time{},
 		Password:         password,
 		RememberToken:    "",
 		SocialMediaID:    "",
 		Avatar:           "",
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
 		RoleID:           0,
 		LoginType:        "",
 		SubSpecialist:    "",
@@ -49,7 +52,6 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 		Phone:            "",
 		LastAccessAt:     time.Time{},
 		PregnancyMode:    false,
-		DeletedAt:        time.Time{},
 		LatestSkipUpdate: time.Time{},
 		LatestDeletedAt:  time.Time{},
 	}
@@ -59,7 +61,7 @@ func TestUserServiceImpl_Create(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "Admin",
-		Email:    "admin@tentanganak.id",
+		Email:    "admin@email.com",
 		Password: "12345",
 	}
 
@@ -75,38 +77,29 @@ func TestUserServiceImpl_Create(t *testing.T) {
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123000},
 			name:         "Create_User_Success-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123000), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123000), "Admin", "admin@email.com", "12345"),
 			scenario:     true,
 		},
 		{
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Success-2",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
 			scenario:     true,
 		},
 		{
 			request:      request,
 			roleRequest:  ent.RoleUser{UserID: 123001},
 			name:         "Create_User_Failed-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
+			userRequest:  getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userResponse: getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
 			scenario:     false,
 		},
 	}
 
-	opts := []enttest.Option{
-		enttest.WithOptions(ent.Log(t.Log)),
-		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
-	}
-	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
-
-	ctx := context.Background()
-	txClient, err := client.Tx(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, txClient.Client()) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
@@ -131,10 +124,10 @@ func TestUserServiceImpl_Create(t *testing.T) {
 					Once()
 
 				//the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
-				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userRequest).
 					Return(&userMock.userResponse, nil)
 
-				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Return(&userMock.roleRequest, nil)
 
 				result, err := service.Create(ctx, &userMock.request)
@@ -157,10 +150,10 @@ func TestUserServiceImpl_Create(t *testing.T) {
 					Return(errors.New("fake failed saved")). //this return is the key for `withTx` do rollback process
 					Once()
 
-				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userRequest).
 					Return(&userMock.userResponse, nil)
 
-				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Panic("failed saved")
 
 				result, err := service.Create(ctx, &request)
@@ -175,25 +168,16 @@ func TestUserServiceImpl_Update(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User",
-		Email:    "user@tentanganak.id",
+		Email:    "user@email.com",
 		Password: "12345",
 	}
 
 	id := uint64(123000)
-	userRequest := getUserMock(uint64(0), "User", "user@tentanganak.id", "12345")
-	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
+	userRequest := getUserMock(uint64(0), "User", "user@email.com", "12345")
+	userResponse := getUserMock(uint64(123000), "User", "user@email.com", "12345")
 	roleRequest := ent.RoleUser{UserID: 123000}
 
-	opts := []enttest.Option{
-		enttest.WithOptions(ent.Log(t.Log)),
-		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
-	}
-	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
-
-	ctx := context.Background()
-	txClient, err := client.Tx(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, txClient.Client())
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	t.Run("Update_User_Success", func(t *testing.T) {
 
@@ -211,7 +195,7 @@ func TestUserServiceImpl_Update(t *testing.T) {
 			}).Return(nil).
 			Once()
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+		mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userRequest, id).
 			Return(&userResponse, nil)
 
 		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
@@ -239,7 +223,7 @@ func TestUserServiceImpl_Update(t *testing.T) {
 			}).Return(err).
 			Once()
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+		mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userRequest, id).
 			Return(nil, err)
 
 		result, err := service.Update(ctx, id, &request)
@@ -263,7 +247,7 @@ func TestUserServiceImpl_Update(t *testing.T) {
 			}).Return(err).
 			Once()
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
+		mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userRequest, id).
 			Return(&userResponse, nil)
 
 		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).

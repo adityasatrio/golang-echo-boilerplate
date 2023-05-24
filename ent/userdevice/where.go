@@ -69,9 +69,14 @@ func Platform(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldPlatform, v))
 }
 
-// LatestSkipUpdate applies equality check predicate on the "latest_skip_update" field. It's identical to LatestSkipUpdateEQ.
-func LatestSkipUpdate(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldLatestSkipUpdate, v))
+// DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
+func DeviceID(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
+}
+
+// CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
+func CreatedBy(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -79,14 +84,24 @@ func CreatedAt(v time.Time) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldCreatedAt, v))
 }
 
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
 // UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
-func DeviceID(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeletedAt, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
@@ -259,156 +274,6 @@ func PlatformContainsFold(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldContainsFold(FieldPlatform, v))
 }
 
-// LatestSkipUpdateEQ applies the EQ predicate on the "latest_skip_update" field.
-func LatestSkipUpdateEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateNEQ applies the NEQ predicate on the "latest_skip_update" field.
-func LatestSkipUpdateNEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateIn applies the In predicate on the "latest_skip_update" field.
-func LatestSkipUpdateIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldLatestSkipUpdate, vs...))
-}
-
-// LatestSkipUpdateNotIn applies the NotIn predicate on the "latest_skip_update" field.
-func LatestSkipUpdateNotIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldLatestSkipUpdate, vs...))
-}
-
-// LatestSkipUpdateGT applies the GT predicate on the "latest_skip_update" field.
-func LatestSkipUpdateGT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateGTE applies the GTE predicate on the "latest_skip_update" field.
-func LatestSkipUpdateGTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateLT applies the LT predicate on the "latest_skip_update" field.
-func LatestSkipUpdateLT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateLTE applies the LTE predicate on the "latest_skip_update" field.
-func LatestSkipUpdateLTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldLatestSkipUpdate, v))
-}
-
-// LatestSkipUpdateIsNil applies the IsNil predicate on the "latest_skip_update" field.
-func LatestSkipUpdateIsNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIsNull(FieldLatestSkipUpdate))
-}
-
-// LatestSkipUpdateNotNil applies the NotNil predicate on the "latest_skip_update" field.
-func LatestSkipUpdateNotNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotNull(FieldLatestSkipUpdate))
-}
-
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldCreatedAt, v))
-}
-
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldCreatedAt, v))
-}
-
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldCreatedAt, v))
-}
-
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotNull(FieldCreatedAt))
-}
-
-// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
-func UpdatedAtEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
-// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
-func UpdatedAtNEQ(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIn applies the In predicate on the "updated_at" field.
-func UpdatedAtIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldUpdatedAt, vs...))
-}
-
-// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
-func UpdatedAtNotIn(vs ...time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldUpdatedAt, vs...))
-}
-
-// UpdatedAtGT applies the GT predicate on the "updated_at" field.
-func UpdatedAtGT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldUpdatedAt, v))
-}
-
-// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
-func UpdatedAtGTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtLT applies the LT predicate on the "updated_at" field.
-func UpdatedAtLT(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldUpdatedAt, v))
-}
-
-// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
-func UpdatedAtLTE(v time.Time) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeviceIDEQ applies the EQ predicate on the "device_id" field.
 func DeviceIDEQ(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
@@ -482,6 +347,361 @@ func DeviceIDEqualFold(v string) predicate.UserDevice {
 // DeviceIDContainsFold applies the ContainsFold predicate on the "device_id" field.
 func DeviceIDContainsFold(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldContainsFold(FieldDeviceID, v))
+}
+
+// CreatedByEQ applies the EQ predicate on the "created_by" field.
+func CreatedByEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldCreatedBy, v))
+}
+
+// CreatedByNEQ applies the NEQ predicate on the "created_by" field.
+func CreatedByNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldCreatedBy, v))
+}
+
+// CreatedByIn applies the In predicate on the "created_by" field.
+func CreatedByIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldCreatedBy, vs...))
+}
+
+// CreatedByNotIn applies the NotIn predicate on the "created_by" field.
+func CreatedByNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldCreatedBy, vs...))
+}
+
+// CreatedByGT applies the GT predicate on the "created_by" field.
+func CreatedByGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldCreatedBy, v))
+}
+
+// CreatedByGTE applies the GTE predicate on the "created_by" field.
+func CreatedByGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldCreatedBy, v))
+}
+
+// CreatedByLT applies the LT predicate on the "created_by" field.
+func CreatedByLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldCreatedBy, v))
+}
+
+// CreatedByLTE applies the LTE predicate on the "created_by" field.
+func CreatedByLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldCreatedBy, v))
+}
+
+// CreatedByContains applies the Contains predicate on the "created_by" field.
+func CreatedByContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldCreatedBy, v))
+}
+
+// CreatedByHasPrefix applies the HasPrefix predicate on the "created_by" field.
+func CreatedByHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldCreatedBy, v))
+}
+
+// CreatedByHasSuffix applies the HasSuffix predicate on the "created_by" field.
+func CreatedByHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldCreatedBy, v))
+}
+
+// CreatedByEqualFold applies the EqualFold predicate on the "created_by" field.
+func CreatedByEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldCreatedBy, v))
+}
+
+// CreatedByContainsFold applies the ContainsFold predicate on the "created_by" field.
+func CreatedByContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldCreatedBy, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldUpdatedBy, v))
+}
+
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldUpdatedBy, v))
+}
+
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByContains applies the Contains predicate on the "updated_by" field.
+func UpdatedByContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldUpdatedBy, v))
+}
+
+// UpdatedByHasPrefix applies the HasPrefix predicate on the "updated_by" field.
+func UpdatedByHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldUpdatedBy, v))
+}
+
+// UpdatedByHasSuffix applies the HasSuffix predicate on the "updated_by" field.
+func UpdatedByHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldUpdatedBy))
+}
+
+// UpdatedByEqualFold applies the EqualFold predicate on the "updated_by" field.
+func UpdatedByEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldUpdatedBy, v))
+}
+
+// UpdatedByContainsFold applies the ContainsFold predicate on the "updated_by" field.
+func UpdatedByContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldUpdatedBy, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByContains applies the Contains predicate on the "deleted_by" field.
+func DeletedByContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldDeletedBy, v))
+}
+
+// DeletedByHasPrefix applies the HasPrefix predicate on the "deleted_by" field.
+func DeletedByHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldDeletedBy, v))
+}
+
+// DeletedByHasSuffix applies the HasSuffix predicate on the "deleted_by" field.
+func DeletedByHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// DeletedByEqualFold applies the EqualFold predicate on the "deleted_by" field.
+func DeletedByEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldDeletedBy, v))
+}
+
+// DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
+func DeletedByContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // And groups predicates with the AND operator between them.

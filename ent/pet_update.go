@@ -59,20 +59,6 @@ func (pu *PetUpdate) AddAgeMonth(i int) *PetUpdate {
 	return pu
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (pu *PetUpdate) SetIsDeleted(b bool) *PetUpdate {
-	pu.mutation.SetIsDeleted(b)
-	return pu
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (pu *PetUpdate) SetNillableIsDeleted(b *bool) *PetUpdate {
-	if b != nil {
-		pu.SetIsDeleted(*b)
-	}
-	return pu
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (pu *PetUpdate) SetCreatedBy(s string) *PetUpdate {
 	pu.mutation.SetCreatedBy(s)
@@ -116,6 +102,46 @@ func (pu *PetUpdate) SetNillableUpdatedAt(t *time.Time) *PetUpdate {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (pu *PetUpdate) ClearUpdatedAt() *PetUpdate {
 	pu.mutation.ClearUpdatedAt()
+	return pu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (pu *PetUpdate) SetDeletedBy(s string) *PetUpdate {
+	pu.mutation.SetDeletedBy(s)
+	return pu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableDeletedBy(s *string) *PetUpdate {
+	if s != nil {
+		pu.SetDeletedBy(*s)
+	}
+	return pu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (pu *PetUpdate) ClearDeletedBy() *PetUpdate {
+	pu.mutation.ClearDeletedBy()
+	return pu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (pu *PetUpdate) SetDeletedAt(t time.Time) *PetUpdate {
+	pu.mutation.SetDeletedAt(t)
+	return pu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableDeletedAt(t *time.Time) *PetUpdate {
+	if t != nil {
+		pu.SetDeletedAt(*t)
+	}
+	return pu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (pu *PetUpdate) ClearDeletedAt() *PetUpdate {
+	pu.mutation.ClearDeletedAt()
 	return pu
 }
 
@@ -208,9 +234,6 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
 	}
-	if value, ok := pu.mutation.IsDeleted(); ok {
-		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
-	}
 	if value, ok := pu.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
 	}
@@ -225,6 +248,18 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := pu.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+	}
+	if pu.mutation.DeletedByCleared() {
+		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := pu.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+	}
+	if pu.mutation.DeletedAtCleared() {
+		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -277,20 +312,6 @@ func (puo *PetUpdateOne) AddAgeMonth(i int) *PetUpdateOne {
 	return puo
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (puo *PetUpdateOne) SetIsDeleted(b bool) *PetUpdateOne {
-	puo.mutation.SetIsDeleted(b)
-	return puo
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (puo *PetUpdateOne) SetNillableIsDeleted(b *bool) *PetUpdateOne {
-	if b != nil {
-		puo.SetIsDeleted(*b)
-	}
-	return puo
-}
-
 // SetCreatedBy sets the "created_by" field.
 func (puo *PetUpdateOne) SetCreatedBy(s string) *PetUpdateOne {
 	puo.mutation.SetCreatedBy(s)
@@ -334,6 +355,46 @@ func (puo *PetUpdateOne) SetNillableUpdatedAt(t *time.Time) *PetUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (puo *PetUpdateOne) ClearUpdatedAt() *PetUpdateOne {
 	puo.mutation.ClearUpdatedAt()
+	return puo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (puo *PetUpdateOne) SetDeletedBy(s string) *PetUpdateOne {
+	puo.mutation.SetDeletedBy(s)
+	return puo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableDeletedBy(s *string) *PetUpdateOne {
+	if s != nil {
+		puo.SetDeletedBy(*s)
+	}
+	return puo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (puo *PetUpdateOne) ClearDeletedBy() *PetUpdateOne {
+	puo.mutation.ClearDeletedBy()
+	return puo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (puo *PetUpdateOne) SetDeletedAt(t time.Time) *PetUpdateOne {
+	puo.mutation.SetDeletedAt(t)
+	return puo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableDeletedAt(t *time.Time) *PetUpdateOne {
+	if t != nil {
+		puo.SetDeletedAt(*t)
+	}
+	return puo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (puo *PetUpdateOne) ClearDeletedAt() *PetUpdateOne {
+	puo.mutation.ClearDeletedAt()
 	return puo
 }
 
@@ -456,9 +517,6 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	if value, ok := puo.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
 	}
-	if value, ok := puo.mutation.IsDeleted(); ok {
-		_spec.SetField(pet.FieldIsDeleted, field.TypeBool, value)
-	}
 	if value, ok := puo.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
 	}
@@ -473,6 +531,18 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	}
 	if puo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+	}
+	if puo.mutation.DeletedByCleared() {
+		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := puo.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+	}
+	if puo.mutation.DeletedAtCleared() {
+		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &Pet{config: puo.config}
 	_spec.Assign = _node.assignValues

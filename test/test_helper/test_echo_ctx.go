@@ -1,4 +1,4 @@
-package helper_test
+package test_helper
 
 import (
 	"context"

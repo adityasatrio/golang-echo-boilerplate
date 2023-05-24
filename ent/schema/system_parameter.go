@@ -3,7 +3,7 @@
 package schema
 
 import (
-	"myapp/helper"
+	"myapp/globalutils"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
@@ -22,7 +22,7 @@ func (SystemParameter) Fields() []ent.Field {
 		field.String("value").NotEmpty(),
 	}
 
-	return helper.InitBaseSchema(schema)
+	return globalutils.InitBaseSchema(schema)
 }
 
 // Edges of the SystemParameter.
