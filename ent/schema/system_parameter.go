@@ -3,7 +3,7 @@
 package schema
 
 import (
-	"myapp/globalutils"
+	//"myapp/globalutils"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
@@ -15,6 +15,14 @@ type SystemParameter struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (SystemParameter) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 // Fields of the SystemParameter.
 func (SystemParameter) Fields() []ent.Field {
 	schema := []ent.Field{
@@ -22,7 +30,8 @@ func (SystemParameter) Fields() []ent.Field {
 		field.String("value").NotEmpty(),
 	}
 
-	return globalutils.InitBaseSchema(schema)
+	//return globalutils.InitBaseSchema(schema)
+	return schema
 }
 
 // Edges of the SystemParameter.

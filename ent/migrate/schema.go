@@ -79,14 +79,15 @@ var (
 	// SystemParametersColumns holds the columns for the "system_parameters" table.
 	SystemParametersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "key", Type: field.TypeString, Unique: true},
-		{Name: "value", Type: field.TypeString},
+		{Name: "version", Type: field.TypeInt64},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "key", Type: field.TypeString, Unique: true},
+		{Name: "value", Type: field.TypeString},
 	}
 	// SystemParametersTable holds the schema information for the "system_parameters" table.
 	SystemParametersTable = &schema.Table{
@@ -97,12 +98,12 @@ var (
 			{
 				Name:    "systemparameter_key",
 				Unique:  false,
-				Columns: []*schema.Column{SystemParametersColumns[1]},
+				Columns: []*schema.Column{SystemParametersColumns[8]},
 			},
 			{
 				Name:    "systemparameter_value",
 				Unique:  false,
-				Columns: []*schema.Column{SystemParametersColumns[2]},
+				Columns: []*schema.Column{SystemParametersColumns[9]},
 			},
 		},
 	}

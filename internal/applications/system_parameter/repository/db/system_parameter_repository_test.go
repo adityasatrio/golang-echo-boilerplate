@@ -47,16 +47,20 @@ func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, createUser.Key, result.Key)
 	assert.Equal(t, createUser.Value, result.Value)
 
-	updateUser := ent.SystemParameter{
-		Key:   "key20002",
-		Value: "value20002",
-	}
+	resultId, err := repo.GetById(ctx, result.ID)
+	assert.NoError(t, err)
+	assert.NotNil(t, result.ID)
+	assert.Equal(t, createUser.Key, resultId.Key)
+	assert.Equal(t, createUser.Value, resultId.Value)
 
-	updatedResult, err := repo.Update(ctx, result.ID, &updateUser)
+	resultId.Key = "key20002"
+	resultId.Value = "value20002"
+
+	updatedResult, err := repo.Update(ctx, resultId)
 	assert.NoError(t, err)
 	assert.Equal(t, result.ID, updatedResult.ID)
-	assert.Equal(t, updateUser.Key, updatedResult.Key)
-	assert.Equal(t, updateUser.Value, updatedResult.Value)
+	assert.Equal(t, "key20002", updatedResult.Key)
+	assert.Equal(t, "value20002", updatedResult.Value)
 
 	t.Cleanup(func() {
 		test_helper.TestDbConnectionClose(client)

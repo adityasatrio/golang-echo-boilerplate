@@ -61,7 +61,7 @@ func TestSystemParameterServiceImpl_Update(t *testing.T) {
 
 	mockRepo.On("GetById", ctx, 1).Return(&createSystemParameter, nil)
 
-	mockRepo.On("Update", ctx, 1, &createSystemParameter).Return(&createSystemParameter, nil)
+	mockRepo.On("Update", ctx, &createSystemParameter).Return(&createSystemParameter, nil)
 
 	result, err := service.Update(ctx, 1, &updateRequest)
 

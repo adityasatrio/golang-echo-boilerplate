@@ -54,14 +54,9 @@ func IDLTE(id int) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldLTE(FieldID, id))
 }
 
-// Key applies equality check predicate on the "key" field. It's identical to KeyEQ.
-func Key(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldEQ(FieldKey, v))
-}
-
-// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
-func Value(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldEQ(FieldValue, v))
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEQ(FieldVersion, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -94,134 +89,54 @@ func DeletedAt(v time.Time) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// KeyEQ applies the EQ predicate on the "key" field.
-func KeyEQ(v string) predicate.SystemParameter {
+// Key applies equality check predicate on the "key" field. It's identical to KeyEQ.
+func Key(v string) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldEQ(FieldKey, v))
 }
 
-// KeyNEQ applies the NEQ predicate on the "key" field.
-func KeyNEQ(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldNEQ(FieldKey, v))
-}
-
-// KeyIn applies the In predicate on the "key" field.
-func KeyIn(vs ...string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldIn(FieldKey, vs...))
-}
-
-// KeyNotIn applies the NotIn predicate on the "key" field.
-func KeyNotIn(vs ...string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldNotIn(FieldKey, vs...))
-}
-
-// KeyGT applies the GT predicate on the "key" field.
-func KeyGT(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldGT(FieldKey, v))
-}
-
-// KeyGTE applies the GTE predicate on the "key" field.
-func KeyGTE(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldGTE(FieldKey, v))
-}
-
-// KeyLT applies the LT predicate on the "key" field.
-func KeyLT(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldLT(FieldKey, v))
-}
-
-// KeyLTE applies the LTE predicate on the "key" field.
-func KeyLTE(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldLTE(FieldKey, v))
-}
-
-// KeyContains applies the Contains predicate on the "key" field.
-func KeyContains(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldContains(FieldKey, v))
-}
-
-// KeyHasPrefix applies the HasPrefix predicate on the "key" field.
-func KeyHasPrefix(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldHasPrefix(FieldKey, v))
-}
-
-// KeyHasSuffix applies the HasSuffix predicate on the "key" field.
-func KeyHasSuffix(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldHasSuffix(FieldKey, v))
-}
-
-// KeyEqualFold applies the EqualFold predicate on the "key" field.
-func KeyEqualFold(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldEqualFold(FieldKey, v))
-}
-
-// KeyContainsFold applies the ContainsFold predicate on the "key" field.
-func KeyContainsFold(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldContainsFold(FieldKey, v))
-}
-
-// ValueEQ applies the EQ predicate on the "value" field.
-func ValueEQ(v string) predicate.SystemParameter {
+// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
+func Value(v string) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldEQ(FieldValue, v))
 }
 
-// ValueNEQ applies the NEQ predicate on the "value" field.
-func ValueNEQ(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldNEQ(FieldValue, v))
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEQ(FieldVersion, v))
 }
 
-// ValueIn applies the In predicate on the "value" field.
-func ValueIn(vs ...string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldIn(FieldValue, vs...))
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNEQ(FieldVersion, v))
 }
 
-// ValueNotIn applies the NotIn predicate on the "value" field.
-func ValueNotIn(vs ...string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldNotIn(FieldValue, vs...))
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldIn(FieldVersion, vs...))
 }
 
-// ValueGT applies the GT predicate on the "value" field.
-func ValueGT(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldGT(FieldValue, v))
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNotIn(FieldVersion, vs...))
 }
 
-// ValueGTE applies the GTE predicate on the "value" field.
-func ValueGTE(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldGTE(FieldValue, v))
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGT(FieldVersion, v))
 }
 
-// ValueLT applies the LT predicate on the "value" field.
-func ValueLT(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldLT(FieldValue, v))
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGTE(FieldVersion, v))
 }
 
-// ValueLTE applies the LTE predicate on the "value" field.
-func ValueLTE(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldLTE(FieldValue, v))
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLT(FieldVersion, v))
 }
 
-// ValueContains applies the Contains predicate on the "value" field.
-func ValueContains(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldContains(FieldValue, v))
-}
-
-// ValueHasPrefix applies the HasPrefix predicate on the "value" field.
-func ValueHasPrefix(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldHasPrefix(FieldValue, v))
-}
-
-// ValueHasSuffix applies the HasSuffix predicate on the "value" field.
-func ValueHasSuffix(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldHasSuffix(FieldValue, v))
-}
-
-// ValueEqualFold applies the EqualFold predicate on the "value" field.
-func ValueEqualFold(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldEqualFold(FieldValue, v))
-}
-
-// ValueContainsFold applies the ContainsFold predicate on the "value" field.
-func ValueContainsFold(v string) predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldContainsFold(FieldValue, v))
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v int64) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLTE(FieldVersion, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -444,16 +359,6 @@ func UpdatedAtLTE(v time.Time) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.SystemParameter {
-	return predicate.SystemParameter(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
 func DeletedByEQ(v string) predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldEQ(FieldDeletedBy, v))
@@ -577,6 +482,136 @@ func DeletedAtIsNil() predicate.SystemParameter {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.SystemParameter {
 	return predicate.SystemParameter(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// KeyEQ applies the EQ predicate on the "key" field.
+func KeyEQ(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEQ(FieldKey, v))
+}
+
+// KeyNEQ applies the NEQ predicate on the "key" field.
+func KeyNEQ(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNEQ(FieldKey, v))
+}
+
+// KeyIn applies the In predicate on the "key" field.
+func KeyIn(vs ...string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldIn(FieldKey, vs...))
+}
+
+// KeyNotIn applies the NotIn predicate on the "key" field.
+func KeyNotIn(vs ...string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNotIn(FieldKey, vs...))
+}
+
+// KeyGT applies the GT predicate on the "key" field.
+func KeyGT(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGT(FieldKey, v))
+}
+
+// KeyGTE applies the GTE predicate on the "key" field.
+func KeyGTE(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGTE(FieldKey, v))
+}
+
+// KeyLT applies the LT predicate on the "key" field.
+func KeyLT(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLT(FieldKey, v))
+}
+
+// KeyLTE applies the LTE predicate on the "key" field.
+func KeyLTE(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLTE(FieldKey, v))
+}
+
+// KeyContains applies the Contains predicate on the "key" field.
+func KeyContains(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldContains(FieldKey, v))
+}
+
+// KeyHasPrefix applies the HasPrefix predicate on the "key" field.
+func KeyHasPrefix(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldHasPrefix(FieldKey, v))
+}
+
+// KeyHasSuffix applies the HasSuffix predicate on the "key" field.
+func KeyHasSuffix(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldHasSuffix(FieldKey, v))
+}
+
+// KeyEqualFold applies the EqualFold predicate on the "key" field.
+func KeyEqualFold(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEqualFold(FieldKey, v))
+}
+
+// KeyContainsFold applies the ContainsFold predicate on the "key" field.
+func KeyContainsFold(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldContainsFold(FieldKey, v))
+}
+
+// ValueEQ applies the EQ predicate on the "value" field.
+func ValueEQ(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEQ(FieldValue, v))
+}
+
+// ValueNEQ applies the NEQ predicate on the "value" field.
+func ValueNEQ(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNEQ(FieldValue, v))
+}
+
+// ValueIn applies the In predicate on the "value" field.
+func ValueIn(vs ...string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldIn(FieldValue, vs...))
+}
+
+// ValueNotIn applies the NotIn predicate on the "value" field.
+func ValueNotIn(vs ...string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldNotIn(FieldValue, vs...))
+}
+
+// ValueGT applies the GT predicate on the "value" field.
+func ValueGT(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGT(FieldValue, v))
+}
+
+// ValueGTE applies the GTE predicate on the "value" field.
+func ValueGTE(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldGTE(FieldValue, v))
+}
+
+// ValueLT applies the LT predicate on the "value" field.
+func ValueLT(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLT(FieldValue, v))
+}
+
+// ValueLTE applies the LTE predicate on the "value" field.
+func ValueLTE(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldLTE(FieldValue, v))
+}
+
+// ValueContains applies the Contains predicate on the "value" field.
+func ValueContains(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldContains(FieldValue, v))
+}
+
+// ValueHasPrefix applies the HasPrefix predicate on the "value" field.
+func ValueHasPrefix(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldHasPrefix(FieldValue, v))
+}
+
+// ValueHasSuffix applies the HasSuffix predicate on the "value" field.
+func ValueHasSuffix(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldHasSuffix(FieldValue, v))
+}
+
+// ValueEqualFold applies the EqualFold predicate on the "value" field.
+func ValueEqualFold(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldEqualFold(FieldValue, v))
+}
+
+// ValueContainsFold applies the ContainsFold predicate on the "value" field.
+func ValueContainsFold(v string) predicate.SystemParameter {
+	return predicate.SystemParameter(sql.FieldContainsFold(FieldValue, v))
 }
 
 // And groups predicates with the AND operator between them.

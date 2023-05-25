@@ -13,10 +13,8 @@ const (
 	Label = "system_parameter"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldKey holds the string denoting the key field in the database.
-	FieldKey = "key"
-	// FieldValue holds the string denoting the value field in the database.
-	FieldValue = "value"
+	// FieldVersion holds the string denoting the version field in the database.
+	FieldVersion = "version"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -29,6 +27,10 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldKey holds the string denoting the key field in the database.
+	FieldKey = "key"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
 	// Table holds the table name of the systemparameter in the database.
 	Table = "system_parameters"
 )
@@ -36,14 +38,15 @@ const (
 // Columns holds all SQL columns for systemparameter fields.
 var Columns = []string{
 	FieldID,
-	FieldKey,
-	FieldValue,
+	FieldVersion,
 	FieldCreatedBy,
 	FieldCreatedAt,
 	FieldUpdatedBy,
 	FieldUpdatedAt,
 	FieldDeletedBy,
 	FieldDeletedAt,
+	FieldKey,
+	FieldValue,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -57,16 +60,20 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultVersion holds the default value on creation for the "version" field.
+	DefaultVersion func() int64
+	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	CreatedByValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 	// KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	KeyValidator func(string) error
 	// ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	ValueValidator func(string) error
-	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	CreatedByValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt time.Time
 )
 
 // OrderOption defines the ordering options for the SystemParameter queries.
@@ -77,14 +84,9 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByKey orders the results by the key field.
-func ByKey(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldKey, opts...).ToFunc()
-}
-
-// ByValue orders the results by the value field.
-func ByValue(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldValue, opts...).ToFunc()
+// ByVersion orders the results by the version field.
+func ByVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVersion, opts...).ToFunc()
 }
 
 // ByCreatedBy orders the results by the created_by field.
@@ -115,4 +117,14 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedAt orders the results by the deleted_at field.
 func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByKey orders the results by the key field.
+func ByKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKey, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
 }

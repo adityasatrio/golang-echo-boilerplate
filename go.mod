@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	entgo.io/ent v0.12.3
+	//entgo.io/ent v0.11.0 //stable
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-sql-driver/mysql v1.6.0

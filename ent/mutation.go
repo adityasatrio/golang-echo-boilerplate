@@ -2664,14 +2664,16 @@ type SystemParameterMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	key           *string
-	value         *string
+	version       *int64
+	addversion    *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
 	updated_at    *time.Time
 	deleted_by    *string
 	deleted_at    *time.Time
+	key           *string
+	value         *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*SystemParameter, error)
@@ -2776,76 +2778,60 @@ func (m *SystemParameterMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
-// SetKey sets the "key" field.
-func (m *SystemParameterMutation) SetKey(s string) {
-	m.key = &s
+// SetVersion sets the "version" field.
+func (m *SystemParameterMutation) SetVersion(i int64) {
+	m.version = &i
+	m.addversion = nil
 }
 
-// Key returns the value of the "key" field in the mutation.
-func (m *SystemParameterMutation) Key() (r string, exists bool) {
-	v := m.key
+// Version returns the value of the "version" field in the mutation.
+func (m *SystemParameterMutation) Version() (r int64, exists bool) {
+	v := m.version
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldKey returns the old "key" field's value of the SystemParameter entity.
+// OldVersion returns the old "version" field's value of the SystemParameter entity.
 // If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SystemParameterMutation) OldKey(ctx context.Context) (v string, err error) {
+func (m *SystemParameterMutation) OldVersion(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldKey is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldKey requires an ID field in the mutation")
+		return v, errors.New("OldVersion requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldKey: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
 	}
-	return oldValue.Key, nil
+	return oldValue.Version, nil
 }
 
-// ResetKey resets all changes to the "key" field.
-func (m *SystemParameterMutation) ResetKey() {
-	m.key = nil
+// AddVersion adds i to the "version" field.
+func (m *SystemParameterMutation) AddVersion(i int64) {
+	if m.addversion != nil {
+		*m.addversion += i
+	} else {
+		m.addversion = &i
+	}
 }
 
-// SetValue sets the "value" field.
-func (m *SystemParameterMutation) SetValue(s string) {
-	m.value = &s
-}
-
-// Value returns the value of the "value" field in the mutation.
-func (m *SystemParameterMutation) Value() (r string, exists bool) {
-	v := m.value
+// AddedVersion returns the value that was added to the "version" field in this mutation.
+func (m *SystemParameterMutation) AddedVersion() (r int64, exists bool) {
+	v := m.addversion
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldValue returns the old "value" field's value of the SystemParameter entity.
-// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SystemParameterMutation) OldValue(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldValue is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldValue requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldValue: %w", err)
-	}
-	return oldValue.Value, nil
-}
-
-// ResetValue resets all changes to the "value" field.
-func (m *SystemParameterMutation) ResetValue() {
-	m.value = nil
+// ResetVersion resets all changes to the "version" field.
+func (m *SystemParameterMutation) ResetVersion() {
+	m.version = nil
+	m.addversion = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -3000,22 +2986,9 @@ func (m *SystemParameterMutation) OldUpdatedAt(ctx context.Context) (v time.Time
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *SystemParameterMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[systemparameter.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *SystemParameterMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[systemparameter.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *SystemParameterMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, systemparameter.FieldUpdatedAt)
 }
 
 // SetDeletedBy sets the "deleted_by" field.
@@ -3116,6 +3089,78 @@ func (m *SystemParameterMutation) ResetDeletedAt() {
 	delete(m.clearedFields, systemparameter.FieldDeletedAt)
 }
 
+// SetKey sets the "key" field.
+func (m *SystemParameterMutation) SetKey(s string) {
+	m.key = &s
+}
+
+// Key returns the value of the "key" field in the mutation.
+func (m *SystemParameterMutation) Key() (r string, exists bool) {
+	v := m.key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKey returns the old "key" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SystemParameterMutation) OldKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKey: %w", err)
+	}
+	return oldValue.Key, nil
+}
+
+// ResetKey resets all changes to the "key" field.
+func (m *SystemParameterMutation) ResetKey() {
+	m.key = nil
+}
+
+// SetValue sets the "value" field.
+func (m *SystemParameterMutation) SetValue(s string) {
+	m.value = &s
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *SystemParameterMutation) Value() (r string, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the SystemParameter entity.
+// If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SystemParameterMutation) OldValue(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *SystemParameterMutation) ResetValue() {
+	m.value = nil
+}
+
 // Where appends a list predicates to the SystemParameterMutation builder.
 func (m *SystemParameterMutation) Where(ps ...predicate.SystemParameter) {
 	m.predicates = append(m.predicates, ps...)
@@ -3150,12 +3195,9 @@ func (m *SystemParameterMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SystemParameterMutation) Fields() []string {
-	fields := make([]string, 0, 8)
-	if m.key != nil {
-		fields = append(fields, systemparameter.FieldKey)
-	}
-	if m.value != nil {
-		fields = append(fields, systemparameter.FieldValue)
+	fields := make([]string, 0, 9)
+	if m.version != nil {
+		fields = append(fields, systemparameter.FieldVersion)
 	}
 	if m.created_by != nil {
 		fields = append(fields, systemparameter.FieldCreatedBy)
@@ -3175,6 +3217,12 @@ func (m *SystemParameterMutation) Fields() []string {
 	if m.deleted_at != nil {
 		fields = append(fields, systemparameter.FieldDeletedAt)
 	}
+	if m.key != nil {
+		fields = append(fields, systemparameter.FieldKey)
+	}
+	if m.value != nil {
+		fields = append(fields, systemparameter.FieldValue)
+	}
 	return fields
 }
 
@@ -3183,10 +3231,8 @@ func (m *SystemParameterMutation) Fields() []string {
 // schema.
 func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case systemparameter.FieldKey:
-		return m.Key()
-	case systemparameter.FieldValue:
-		return m.Value()
+	case systemparameter.FieldVersion:
+		return m.Version()
 	case systemparameter.FieldCreatedBy:
 		return m.CreatedBy()
 	case systemparameter.FieldCreatedAt:
@@ -3199,6 +3245,10 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case systemparameter.FieldDeletedAt:
 		return m.DeletedAt()
+	case systemparameter.FieldKey:
+		return m.Key()
+	case systemparameter.FieldValue:
+		return m.Value()
 	}
 	return nil, false
 }
@@ -3208,10 +3258,8 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case systemparameter.FieldKey:
-		return m.OldKey(ctx)
-	case systemparameter.FieldValue:
-		return m.OldValue(ctx)
+	case systemparameter.FieldVersion:
+		return m.OldVersion(ctx)
 	case systemparameter.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case systemparameter.FieldCreatedAt:
@@ -3224,6 +3272,10 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 		return m.OldDeletedBy(ctx)
 	case systemparameter.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case systemparameter.FieldKey:
+		return m.OldKey(ctx)
+	case systemparameter.FieldValue:
+		return m.OldValue(ctx)
 	}
 	return nil, fmt.Errorf("unknown SystemParameter field %s", name)
 }
@@ -3233,19 +3285,12 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case systemparameter.FieldKey:
-		v, ok := value.(string)
+	case systemparameter.FieldVersion:
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetKey(v)
-		return nil
-	case systemparameter.FieldValue:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetValue(v)
+		m.SetVersion(v)
 		return nil
 	case systemparameter.FieldCreatedBy:
 		v, ok := value.(string)
@@ -3289,6 +3334,20 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedAt(v)
 		return nil
+	case systemparameter.FieldKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKey(v)
+		return nil
+	case systemparameter.FieldValue:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter field %s", name)
 }
@@ -3296,13 +3355,21 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *SystemParameterMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addversion != nil {
+		fields = append(fields, systemparameter.FieldVersion)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *SystemParameterMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case systemparameter.FieldVersion:
+		return m.AddedVersion()
+	}
 	return nil, false
 }
 
@@ -3311,6 +3378,13 @@ func (m *SystemParameterMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SystemParameterMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case systemparameter.FieldVersion:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVersion(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter numeric field %s", name)
 }
@@ -3321,9 +3395,6 @@ func (m *SystemParameterMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(systemparameter.FieldUpdatedBy) {
 		fields = append(fields, systemparameter.FieldUpdatedBy)
-	}
-	if m.FieldCleared(systemparameter.FieldUpdatedAt) {
-		fields = append(fields, systemparameter.FieldUpdatedAt)
 	}
 	if m.FieldCleared(systemparameter.FieldDeletedBy) {
 		fields = append(fields, systemparameter.FieldDeletedBy)
@@ -3348,9 +3419,6 @@ func (m *SystemParameterMutation) ClearField(name string) error {
 	case systemparameter.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
-	case systemparameter.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case systemparameter.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
@@ -3365,11 +3433,8 @@ func (m *SystemParameterMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *SystemParameterMutation) ResetField(name string) error {
 	switch name {
-	case systemparameter.FieldKey:
-		m.ResetKey()
-		return nil
-	case systemparameter.FieldValue:
-		m.ResetValue()
+	case systemparameter.FieldVersion:
+		m.ResetVersion()
 		return nil
 	case systemparameter.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -3388,6 +3453,12 @@ func (m *SystemParameterMutation) ResetField(name string) error {
 		return nil
 	case systemparameter.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case systemparameter.FieldKey:
+		m.ResetKey()
+		return nil
+	case systemparameter.FieldValue:
+		m.ResetValue()
 		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter field %s", name)

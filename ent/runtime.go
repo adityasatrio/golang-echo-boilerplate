@@ -92,8 +92,31 @@ func init() {
 	roleuserDescUpdatedAt := roleuserFields[6].Descriptor()
 	// roleuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	roleuser.DefaultUpdatedAt = roleuserDescUpdatedAt.Default.(time.Time)
+	systemparameterMixin := schema.SystemParameter{}.Mixin()
+	systemparameterMixinFields0 := systemparameterMixin[0].Fields()
+	_ = systemparameterMixinFields0
+	systemparameterMixinFields1 := systemparameterMixin[1].Fields()
+	_ = systemparameterMixinFields1
 	systemparameterFields := schema.SystemParameter{}.Fields()
 	_ = systemparameterFields
+	// systemparameterDescVersion is the schema descriptor for version field.
+	systemparameterDescVersion := systemparameterMixinFields0[0].Descriptor()
+	// systemparameter.DefaultVersion holds the default value on creation for the version field.
+	systemparameter.DefaultVersion = systemparameterDescVersion.Default.(func() int64)
+	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
+	systemparameterDescCreatedBy := systemparameterMixinFields1[0].Descriptor()
+	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	systemparameter.CreatedByValidator = systemparameterDescCreatedBy.Validators[0].(func(string) error)
+	// systemparameterDescCreatedAt is the schema descriptor for created_at field.
+	systemparameterDescCreatedAt := systemparameterMixinFields1[1].Descriptor()
+	// systemparameter.DefaultCreatedAt holds the default value on creation for the created_at field.
+	systemparameter.DefaultCreatedAt = systemparameterDescCreatedAt.Default.(func() time.Time)
+	// systemparameterDescUpdatedAt is the schema descriptor for updated_at field.
+	systemparameterDescUpdatedAt := systemparameterMixinFields1[3].Descriptor()
+	// systemparameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	systemparameter.DefaultUpdatedAt = systemparameterDescUpdatedAt.Default.(func() time.Time)
+	// systemparameter.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	systemparameter.UpdateDefaultUpdatedAt = systemparameterDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// systemparameterDescKey is the schema descriptor for key field.
 	systemparameterDescKey := systemparameterFields[0].Descriptor()
 	// systemparameter.KeyValidator is a validator for the "key" field. It is called by the builders before save.
@@ -102,18 +125,6 @@ func init() {
 	systemparameterDescValue := systemparameterFields[1].Descriptor()
 	// systemparameter.ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	systemparameter.ValueValidator = systemparameterDescValue.Validators[0].(func(string) error)
-	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
-	systemparameterDescCreatedBy := systemparameterFields[2].Descriptor()
-	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	systemparameter.CreatedByValidator = systemparameterDescCreatedBy.Validators[0].(func(string) error)
-	// systemparameterDescCreatedAt is the schema descriptor for created_at field.
-	systemparameterDescCreatedAt := systemparameterFields[3].Descriptor()
-	// systemparameter.DefaultCreatedAt holds the default value on creation for the created_at field.
-	systemparameter.DefaultCreatedAt = systemparameterDescCreatedAt.Default.(time.Time)
-	// systemparameterDescUpdatedAt is the schema descriptor for updated_at field.
-	systemparameterDescUpdatedAt := systemparameterFields[5].Descriptor()
-	// systemparameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	systemparameter.DefaultUpdatedAt = systemparameterDescUpdatedAt.Default.(time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedBy is the schema descriptor for created_by field.

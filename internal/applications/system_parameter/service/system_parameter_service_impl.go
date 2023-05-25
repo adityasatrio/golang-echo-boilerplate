@@ -52,7 +52,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 	existId.Key = update.Key
 	existId.Value = update.Value
 
-	updated, err := s.repository.Update(ctx, existId.ID, existId)
+	updated, err := s.repository.Update(ctx, existId)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}

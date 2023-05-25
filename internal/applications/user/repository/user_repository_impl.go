@@ -45,6 +45,16 @@ func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client,
 		SetRoleID(updateUser.RoleID).
 		Save(ctx)
 
+	/*saved, err := txClient.User.Update().Where(user.ID(updateUser.ID), user.ver)
+	SetName(updateUser.Name).
+	SetEmail(updateUser.Email).
+	SetPassword(updateUser.Password).
+	SetAvatar(updateUser.Avatar).
+	SetUpdatedBy("user").
+	SetUpdatedAt(time.Now()).
+	SetRoleID(updateUser.RoleID).
+	Save(ctx)*/
+
 	if err != nil {
 		return nil, err
 	}
