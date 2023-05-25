@@ -145,6 +145,32 @@ func (_m *SystemParameterRepository) GetByKey(ctx context.Context, key string) (
 	return r0, r1
 }
 
+// SoftDelete provides a mock function with given fields: ctx, id
+func (_m *SystemParameterRepository) SoftDelete(ctx context.Context, id int) (*ent.SystemParameter, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 *ent.SystemParameter
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) (*ent.SystemParameter, error)); ok {
+		return rf(ctx, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int) *ent.SystemParameter); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.SystemParameter)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: ctx, id, updateData
 func (_m *SystemParameterRepository) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
 	ret := _m.Called(ctx, id, updateData)

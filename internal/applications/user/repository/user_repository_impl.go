@@ -15,18 +15,16 @@ func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 
-func (r *UserRepositoryImpl) Create(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
+func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
 	//txClient is transactional client that handled in service layer for post rollback logic
 	response, err := txClient.User.Create().
-		SetRoleID(newUser.RoleID).
 		SetName(newUser.Name).
 		SetEmail(newUser.Email).
 		SetPassword(newUser.Password).
-		SetIsVerified(newUser.IsVerified).
 		SetAvatar(newUser.Avatar).
-		SetLastAccessAt(time.Now()).
-		SetPregnancyMode(newUser.PregnancyMode).
-		SetCreatedAt(time.Now()).
+		SetCreatedBy("user").
+		SetRoleID(newUser.RoleID).
+		SetIsVerified(newUser.IsVerified).
 		Save(ctx)
 
 	if err != nil {
@@ -36,17 +34,15 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, txClient *ent.Client, n
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
+func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
 	saved, err := txClient.User.UpdateOneID(id).
-		SetRoleID(updateUser.RoleID).
 		SetName(updateUser.Name).
 		SetEmail(updateUser.Email).
 		SetPassword(updateUser.Password).
-		SetIsVerified(updateUser.IsVerified).
 		SetAvatar(updateUser.Avatar).
-		SetLastAccessAt(time.Now()).
-		SetPregnancyMode(updateUser.PregnancyMode).
+		SetUpdatedBy("user").
 		SetUpdatedAt(time.Now()).
+		SetRoleID(updateUser.RoleID).
 		Save(ctx)
 
 	if err != nil {
@@ -56,8 +52,8 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, txClient *ent.Client, u
 	return saved, nil
 }
 
-func (r *UserRepositoryImpl) Delete(ctx context.Context, tx *ent.Tx, id uint64) (*ent.User, error) {
-	err := tx.Client().Role.DeleteOneID(id).Exec(ctx)
+func (r *UserRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) {
+	err := r.client.User.DeleteOneID(id).Exec(ctx)
 
 	if err != nil {
 		return nil, err
@@ -69,6 +65,7 @@ func (r *UserRepositoryImpl) Delete(ctx context.Context, tx *ent.Tx, id uint64) 
 func (r *UserRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.User, error) {
 	deleted, err := r.client.User.
 		UpdateOneID(id).
+		SetDeletedBy("user").
 		SetDeletedAt(time.Now()).
 		Save(ctx)
 
@@ -86,6 +83,7 @@ func (r *UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User,
 			user.DeletedAtIsNil(),
 		)).
 		Only(ctx)
+
 	if err != nil {
 		return nil, err
 	}

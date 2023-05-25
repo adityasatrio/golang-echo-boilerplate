@@ -63,6 +63,7 @@ func TestRoleServiceImpl_Update(t *testing.T) {
 		mockRoleRepository.On("Update", ctx, role, id).Return(&role, nil).Once()
 
 		result, err := service.Update(ctx, roleRequest, id)
+
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})

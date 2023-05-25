@@ -38,17 +38,23 @@ func (udc *UserDeviceCreate) SetPlatform(s string) *UserDeviceCreate {
 	return udc
 }
 
-// SetLatestSkipUpdate sets the "latest_skip_update" field.
-func (udc *UserDeviceCreate) SetLatestSkipUpdate(t time.Time) *UserDeviceCreate {
-	udc.mutation.SetLatestSkipUpdate(t)
+// SetDeviceID sets the "device_id" field.
+func (udc *UserDeviceCreate) SetDeviceID(s string) *UserDeviceCreate {
+	udc.mutation.SetDeviceID(s)
 	return udc
 }
 
-// SetNillableLatestSkipUpdate sets the "latest_skip_update" field if the given value is not nil.
-func (udc *UserDeviceCreate) SetNillableLatestSkipUpdate(t *time.Time) *UserDeviceCreate {
-	if t != nil {
-		udc.SetLatestSkipUpdate(*t)
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableDeviceID(s *string) *UserDeviceCreate {
+	if s != nil {
+		udc.SetDeviceID(*s)
 	}
+	return udc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (udc *UserDeviceCreate) SetCreatedBy(s string) *UserDeviceCreate {
+	udc.mutation.SetCreatedBy(s)
 	return udc
 }
 
@@ -62,6 +68,20 @@ func (udc *UserDeviceCreate) SetCreatedAt(t time.Time) *UserDeviceCreate {
 func (udc *UserDeviceCreate) SetNillableCreatedAt(t *time.Time) *UserDeviceCreate {
 	if t != nil {
 		udc.SetCreatedAt(*t)
+	}
+	return udc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (udc *UserDeviceCreate) SetUpdatedBy(s string) *UserDeviceCreate {
+	udc.mutation.SetUpdatedBy(s)
+	return udc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableUpdatedBy(s *string) *UserDeviceCreate {
+	if s != nil {
+		udc.SetUpdatedBy(*s)
 	}
 	return udc
 }
@@ -80,16 +100,30 @@ func (udc *UserDeviceCreate) SetNillableUpdatedAt(t *time.Time) *UserDeviceCreat
 	return udc
 }
 
-// SetDeviceID sets the "device_id" field.
-func (udc *UserDeviceCreate) SetDeviceID(s string) *UserDeviceCreate {
-	udc.mutation.SetDeviceID(s)
+// SetDeletedBy sets the "deleted_by" field.
+func (udc *UserDeviceCreate) SetDeletedBy(s string) *UserDeviceCreate {
+	udc.mutation.SetDeletedBy(s)
 	return udc
 }
 
-// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
-func (udc *UserDeviceCreate) SetNillableDeviceID(s *string) *UserDeviceCreate {
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableDeletedBy(s *string) *UserDeviceCreate {
 	if s != nil {
-		udc.SetDeviceID(*s)
+		udc.SetDeletedBy(*s)
+	}
+	return udc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (udc *UserDeviceCreate) SetDeletedAt(t time.Time) *UserDeviceCreate {
+	udc.mutation.SetDeletedAt(t)
+	return udc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableDeletedAt(t *time.Time) *UserDeviceCreate {
+	if t != nil {
+		udc.SetDeletedAt(*t)
 	}
 	return udc
 }
@@ -107,6 +141,7 @@ func (udc *UserDeviceCreate) Mutation() *UserDeviceMutation {
 
 // Save creates the UserDevice in the database.
 func (udc *UserDeviceCreate) Save(ctx context.Context) (*UserDevice, error) {
+	udc.defaults()
 	return withHooks(ctx, udc.sqlSave, udc.mutation, udc.hooks)
 }
 
@@ -132,6 +167,18 @@ func (udc *UserDeviceCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (udc *UserDeviceCreate) defaults() {
+	if _, ok := udc.mutation.CreatedAt(); !ok {
+		v := userdevice.DefaultCreatedAt
+		udc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := udc.mutation.UpdatedAt(); !ok {
+		v := userdevice.DefaultUpdatedAt
+		udc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (udc *UserDeviceCreate) check() error {
 	if _, ok := udc.mutation.UserID(); !ok {
@@ -142,6 +189,17 @@ func (udc *UserDeviceCreate) check() error {
 	}
 	if _, ok := udc.mutation.Platform(); !ok {
 		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "UserDevice.platform"`)}
+	}
+	if _, ok := udc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "UserDevice.created_by"`)}
+	}
+	if v, ok := udc.mutation.CreatedBy(); ok {
+		if err := userdevice.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "UserDevice.created_by": %w`, err)}
+		}
+	}
+	if _, ok := udc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "UserDevice.created_at"`)}
 	}
 	return nil
 }
@@ -187,21 +245,33 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 		_spec.SetField(userdevice.FieldPlatform, field.TypeString, value)
 		_node.Platform = value
 	}
-	if value, ok := udc.mutation.LatestSkipUpdate(); ok {
-		_spec.SetField(userdevice.FieldLatestSkipUpdate, field.TypeTime, value)
-		_node.LatestSkipUpdate = value
+	if value, ok := udc.mutation.DeviceID(); ok {
+		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)
+		_node.DeviceID = value
+	}
+	if value, ok := udc.mutation.CreatedBy(); ok {
+		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
 	}
 	if value, ok := udc.mutation.CreatedAt(); ok {
 		_spec.SetField(userdevice.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
+	if value, ok := udc.mutation.UpdatedBy(); ok {
+		_spec.SetField(userdevice.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
+	}
 	if value, ok := udc.mutation.UpdatedAt(); ok {
 		_spec.SetField(userdevice.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := udc.mutation.DeviceID(); ok {
-		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)
-		_node.DeviceID = value
+	if value, ok := udc.mutation.DeletedBy(); ok {
+		_spec.SetField(userdevice.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := udc.mutation.DeletedAt(); ok {
+		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
 	}
 	return _node, _spec
 }
@@ -220,6 +290,7 @@ func (udcb *UserDeviceCreateBulk) Save(ctx context.Context) ([]*UserDevice, erro
 	for i := range udcb.builders {
 		func(i int, root context.Context) {
 			builder := udcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserDeviceMutation)
 				if !ok {

@@ -17,8 +17,6 @@ const (
 	FieldKey = "key"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
-	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
-	FieldIsDeleted = "is_deleted"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -27,6 +25,10 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
 	// Table holds the table name of the systemparameter in the database.
 	Table = "system_parameters"
 )
@@ -36,11 +38,12 @@ var Columns = []string{
 	FieldID,
 	FieldKey,
 	FieldValue,
-	FieldIsDeleted,
 	FieldCreatedBy,
 	FieldCreatedAt,
 	FieldUpdatedBy,
 	FieldUpdatedAt,
+	FieldDeletedBy,
+	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -58,8 +61,6 @@ var (
 	KeyValidator func(string) error
 	// ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	ValueValidator func(string) error
-	// DefaultIsDeleted holds the default value on creation for the "is_deleted" field.
-	DefaultIsDeleted bool
 	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
 	CreatedByValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -86,11 +87,6 @@ func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
 }
 
-// ByIsDeleted orders the results by the is_deleted field.
-func ByIsDeleted(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsDeleted, opts...).ToFunc()
-}
-
 // ByCreatedBy orders the results by the created_by field.
 func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedBy, opts...).ToFunc()
@@ -109,4 +105,14 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }

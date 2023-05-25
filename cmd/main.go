@@ -4,21 +4,21 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	"myapp/config"
-	"myapp/config/database"
-	"myapp/config/middleware"
-	"myapp/config/validator"
+	"myapp/configs"
+	"myapp/configs/database"
+	"myapp/configs/validator"
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest_api"
+	"myapp/middleware"
 )
 
 func main() {
 	e := echo.New()
 
-	config.SetupConfigEnv(e)
+	configs.SetupConfigEnv(e)
 	middleware.SetupMiddlewares(e)
 	validator.SetupValidator(e)
-	validator.SetupHttpErrorHandler(e)
+	validator.SetupGlobalHttpUnhandleErrors(e)
 
 	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
 	//dbConnection := database.NewEntClient() //using ent only
@@ -34,7 +34,7 @@ func main() {
 
 	restApi.SetupRouteHandler(e, dbConnection)
 
-	//load config
+	//load configs
 	port := viper.GetString("application.port")
 	err := e.Start(":" + port)
 	if err != nil {

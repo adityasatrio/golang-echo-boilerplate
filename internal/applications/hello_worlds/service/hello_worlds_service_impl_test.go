@@ -5,12 +5,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/exceptions"
 	mock_repository "myapp/mocks/hello_worlds/repository"
-	"myapp/test/helper_test"
+	"myapp/test/test_helper"
 	"testing"
 )
 
 func TestNewHelloWorldsService(t *testing.T) {
-	// Create a mock service object.
+	// CreateTx a mock service object.
 	mockRepository := &mock_repository.HelloWorldsRepository{}
 
 	// Call the function being tested.
@@ -24,7 +24,7 @@ func TestNewHelloWorldsService(t *testing.T) {
 
 func TestHello(t *testing.T) {
 
-	ctx := helper_test.NewServiceCtx()
+	ctx := test_helper.NewServiceCtx()
 
 	mockRepository := &mock_repository.HelloWorldsRepository{}
 	mockRepository.On("Hello", ctx, "hello from controller -> hello from s-impl layer ->", "").
@@ -39,7 +39,7 @@ func TestHello(t *testing.T) {
 
 func TestHelloErr(t *testing.T) {
 
-	ctx := helper_test.NewServiceCtx()
+	ctx := test_helper.NewServiceCtx()
 
 	mockRepository := &mock_repository.HelloWorldsRepository{}
 	messageService := "hello from controller -> hello from s-impl layer ->"

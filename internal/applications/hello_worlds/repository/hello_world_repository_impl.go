@@ -33,5 +33,7 @@ func (repo *HelloWorldsRepositoryImpl) Hello(ctx context.Context, message string
 	}
 
 	messageRepository := message + " hello from repository-impl layer "
-	return messageRepository, nil
+	trimmedMessageRepository := strings.Trim(messageRepository, " ")
+
+	return trimmedMessageRepository, nil
 }
