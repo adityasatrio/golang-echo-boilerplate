@@ -3,14 +3,14 @@
 
 # Build the project
 build:
-	rm -f ./cmd/main
-	go build -o cmd/main cmd/main.go
+	rm -f main
+	go build -o main cmd/main.go
 
 # Run tests and generate coverage report
 run:
-	rm -f ./cmd/main
-	go build -o cmd/main cmd/main.go
-	./cmd/main
+	rm -f main
+	go build -o main cmd/main.go
+	./main
 
 # Run tests and generate coverage report
 test:

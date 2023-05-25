@@ -10,7 +10,7 @@ import (
 const (
 	fileConfigPath = "."
 	fileConfigType = "yml"
-	fileConfigName = "app.configs"
+	fileConfigName = "app.config"
 )
 
 func SetupConfigEnv(e *echo.Echo) {
