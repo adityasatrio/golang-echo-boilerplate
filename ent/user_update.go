@@ -28,6 +28,99 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetVersion sets the "version" field.
+func (uu *UserUpdate) SetVersion(i int64) *UserUpdate {
+	uu.mutation.ResetVersion()
+	uu.mutation.SetVersion(i)
+	return uu
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableVersion(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetVersion(*i)
+	}
+	return uu
+}
+
+// AddVersion adds i to the "version" field.
+func (uu *UserUpdate) AddVersion(i int64) *UserUpdate {
+	uu.mutation.AddVersion(i)
+	return uu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (uu *UserUpdate) SetCreatedBy(s string) *UserUpdate {
+	uu.mutation.SetCreatedBy(s)
+	return uu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
+	uu.mutation.SetUpdatedBy(s)
+	return uu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUpdatedBy(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetUpdatedBy(*s)
+	}
+	return uu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (uu *UserUpdate) ClearUpdatedBy() *UserUpdate {
+	uu.mutation.ClearUpdatedBy()
+	return uu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uu *UserUpdate) SetDeletedBy(s string) *UserUpdate {
+	uu.mutation.SetDeletedBy(s)
+	return uu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedBy(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetDeletedBy(*s)
+	}
+	return uu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uu *UserUpdate) ClearDeletedBy() *UserUpdate {
+	uu.mutation.ClearDeletedBy()
+	return uu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetDeletedAt(t)
+	return uu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDeletedAt(*t)
+	}
+	return uu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
+	uu.mutation.ClearDeletedAt()
+	return uu
+}
+
 // SetName sets the "name" field.
 func (uu *UserUpdate) SetName(s string) *UserUpdate {
 	uu.mutation.SetName(s)
@@ -365,92 +458,6 @@ func (uu *UserUpdate) ClearLatestDeletedAt() *UserUpdate {
 	return uu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (uu *UserUpdate) SetCreatedBy(s string) *UserUpdate {
-	uu.mutation.SetCreatedBy(s)
-	return uu
-}
-
-// SetUpdatedBy sets the "updated_by" field.
-func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
-	uu.mutation.SetUpdatedBy(s)
-	return uu
-}
-
-// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUpdatedBy(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetUpdatedBy(*s)
-	}
-	return uu
-}
-
-// ClearUpdatedBy clears the value of the "updated_by" field.
-func (uu *UserUpdate) ClearUpdatedBy() *UserUpdate {
-	uu.mutation.ClearUpdatedBy()
-	return uu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetUpdatedAt(t)
-	return uu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUpdatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetUpdatedAt(*t)
-	}
-	return uu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
-	uu.mutation.ClearUpdatedAt()
-	return uu
-}
-
-// SetDeletedBy sets the "deleted_by" field.
-func (uu *UserUpdate) SetDeletedBy(s string) *UserUpdate {
-	uu.mutation.SetDeletedBy(s)
-	return uu
-}
-
-// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDeletedBy(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetDeletedBy(*s)
-	}
-	return uu
-}
-
-// ClearDeletedBy clears the value of the "deleted_by" field.
-func (uu *UserUpdate) ClearDeletedBy() *UserUpdate {
-	uu.mutation.ClearDeletedBy()
-	return uu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetDeletedAt(t)
-	return uu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetDeletedAt(*t)
-	}
-	return uu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
-	uu.mutation.ClearDeletedAt()
-	return uu
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -458,6 +465,7 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	uu.defaults()
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -483,6 +491,14 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() {
+	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
 	if v, ok := uu.mutation.CreatedBy(); ok {
@@ -504,6 +520,36 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uu.mutation.Version(); ok {
+		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedVersion(); ok {
+		_spec.AddField(user.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.CreatedBy(); ok {
+		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.UpdatedBy(); ok {
+		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
+	}
+	if uu.mutation.UpdatedByCleared() {
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
+	}
+	if uu.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := uu.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uu.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := uu.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
@@ -613,33 +659,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.LatestDeletedAtCleared() {
 		_spec.ClearField(user.FieldLatestDeletedAt, field.TypeTime)
 	}
-	if value, ok := uu.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
-	}
-	if value, ok := uu.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
-	}
-	if uu.mutation.UpdatedByCleared() {
-		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := uu.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if uu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := uu.mutation.DeletedBy(); ok {
-		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
-	}
-	if uu.mutation.DeletedByCleared() {
-		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
-	}
-	if value, ok := uu.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-	}
-	if uu.mutation.DeletedAtCleared() {
-		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -658,6 +677,99 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
+}
+
+// SetVersion sets the "version" field.
+func (uuo *UserUpdateOne) SetVersion(i int64) *UserUpdateOne {
+	uuo.mutation.ResetVersion()
+	uuo.mutation.SetVersion(i)
+	return uuo
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableVersion(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetVersion(*i)
+	}
+	return uuo
+}
+
+// AddVersion adds i to the "version" field.
+func (uuo *UserUpdateOne) AddVersion(i int64) *UserUpdateOne {
+	uuo.mutation.AddVersion(i)
+	return uuo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (uuo *UserUpdateOne) SetCreatedBy(s string) *UserUpdateOne {
+	uuo.mutation.SetCreatedBy(s)
+	return uuo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (uuo *UserUpdateOne) SetUpdatedBy(s string) *UserUpdateOne {
+	uuo.mutation.SetUpdatedBy(s)
+	return uuo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUpdatedBy(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetUpdatedBy(*s)
+	}
+	return uuo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (uuo *UserUpdateOne) ClearUpdatedBy() *UserUpdateOne {
+	uuo.mutation.ClearUpdatedBy()
+	return uuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uuo *UserUpdateOne) SetDeletedBy(s string) *UserUpdateOne {
+	uuo.mutation.SetDeletedBy(s)
+	return uuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedBy(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetDeletedBy(*s)
+	}
+	return uuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uuo *UserUpdateOne) ClearDeletedBy() *UserUpdateOne {
+	uuo.mutation.ClearDeletedBy()
+	return uuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetDeletedAt(t)
+	return uuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDeletedAt(*t)
+	}
+	return uuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
+	uuo.mutation.ClearDeletedAt()
+	return uuo
 }
 
 // SetName sets the "name" field.
@@ -997,92 +1109,6 @@ func (uuo *UserUpdateOne) ClearLatestDeletedAt() *UserUpdateOne {
 	return uuo
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (uuo *UserUpdateOne) SetCreatedBy(s string) *UserUpdateOne {
-	uuo.mutation.SetCreatedBy(s)
-	return uuo
-}
-
-// SetUpdatedBy sets the "updated_by" field.
-func (uuo *UserUpdateOne) SetUpdatedBy(s string) *UserUpdateOne {
-	uuo.mutation.SetUpdatedBy(s)
-	return uuo
-}
-
-// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUpdatedBy(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetUpdatedBy(*s)
-	}
-	return uuo
-}
-
-// ClearUpdatedBy clears the value of the "updated_by" field.
-func (uuo *UserUpdateOne) ClearUpdatedBy() *UserUpdateOne {
-	uuo.mutation.ClearUpdatedBy()
-	return uuo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetUpdatedAt(t)
-	return uuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetUpdatedAt(*t)
-	}
-	return uuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
-	uuo.mutation.ClearUpdatedAt()
-	return uuo
-}
-
-// SetDeletedBy sets the "deleted_by" field.
-func (uuo *UserUpdateOne) SetDeletedBy(s string) *UserUpdateOne {
-	uuo.mutation.SetDeletedBy(s)
-	return uuo
-}
-
-// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDeletedBy(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetDeletedBy(*s)
-	}
-	return uuo
-}
-
-// ClearDeletedBy clears the value of the "deleted_by" field.
-func (uuo *UserUpdateOne) ClearDeletedBy() *UserUpdateOne {
-	uuo.mutation.ClearDeletedBy()
-	return uuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetDeletedAt(t)
-	return uuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetDeletedAt(*t)
-	}
-	return uuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
-	uuo.mutation.ClearDeletedAt()
-	return uuo
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1103,6 +1129,7 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	uuo.defaults()
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -1125,6 +1152,14 @@ func (uuo *UserUpdateOne) Exec(ctx context.Context) error {
 func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -1166,6 +1201,36 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uuo.mutation.Version(); ok {
+		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedVersion(); ok {
+		_spec.AddField(user.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.CreatedBy(); ok {
+		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.UpdatedBy(); ok {
+		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
+	}
+	if uuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
+	}
+	if uuo.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := uuo.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
@@ -1274,33 +1339,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.LatestDeletedAtCleared() {
 		_spec.ClearField(user.FieldLatestDeletedAt, field.TypeTime)
-	}
-	if value, ok := uuo.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
-	}
-	if value, ok := uuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
-	}
-	if uuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := uuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if uuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := uuo.mutation.DeletedBy(); ok {
-		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
-	}
-	if uuo.mutation.DeletedByCleared() {
-		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
-	}
-	if value, ok := uuo.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-	}
-	if uuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

@@ -23,7 +23,7 @@ func (UserDevice) Mixin() []ent.Mixin {
 func (UserDevice) Fields() []ent.Field {
 	return []ent.Field{field.Uint64("id"),
 		field.Uint64("user_id"),
-		field.String("version"),
+		field.String("app_version"),
 		field.String("platform"),
 		field.String("device_id").Optional(),
 	}

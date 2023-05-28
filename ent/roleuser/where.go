@@ -54,14 +54,9 @@ func IDLTE(id uint64) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldLTE(FieldID, id))
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldEQ(FieldUserID, v))
-}
-
-// RoleID applies equality check predicate on the "role_id" field. It's identical to RoleIDEQ.
-func RoleID(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldEQ(FieldRoleID, v))
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldEQ(FieldVersion, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -94,104 +89,54 @@ func DeletedAt(v time.Time) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.RoleUser {
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint64) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldEQ(FieldUserID, v))
 }
 
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDIsNil applies the IsNil predicate on the "user_id" field.
-func UserIDIsNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldIsNull(FieldUserID))
-}
-
-// UserIDNotNil applies the NotNil predicate on the "user_id" field.
-func UserIDNotNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNotNull(FieldUserID))
-}
-
-// RoleIDEQ applies the EQ predicate on the "role_id" field.
-func RoleIDEQ(v uint64) predicate.RoleUser {
+// RoleID applies equality check predicate on the "role_id" field. It's identical to RoleIDEQ.
+func RoleID(v uint64) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldEQ(FieldRoleID, v))
 }
 
-// RoleIDNEQ applies the NEQ predicate on the "role_id" field.
-func RoleIDNEQ(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNEQ(FieldRoleID, v))
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldEQ(FieldVersion, v))
 }
 
-// RoleIDIn applies the In predicate on the "role_id" field.
-func RoleIDIn(vs ...uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldIn(FieldRoleID, vs...))
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNEQ(FieldVersion, v))
 }
 
-// RoleIDNotIn applies the NotIn predicate on the "role_id" field.
-func RoleIDNotIn(vs ...uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNotIn(FieldRoleID, vs...))
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldIn(FieldVersion, vs...))
 }
 
-// RoleIDGT applies the GT predicate on the "role_id" field.
-func RoleIDGT(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldGT(FieldRoleID, v))
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNotIn(FieldVersion, vs...))
 }
 
-// RoleIDGTE applies the GTE predicate on the "role_id" field.
-func RoleIDGTE(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldGTE(FieldRoleID, v))
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGT(FieldVersion, v))
 }
 
-// RoleIDLT applies the LT predicate on the "role_id" field.
-func RoleIDLT(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldLT(FieldRoleID, v))
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGTE(FieldVersion, v))
 }
 
-// RoleIDLTE applies the LTE predicate on the "role_id" field.
-func RoleIDLTE(v uint64) predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldLTE(FieldRoleID, v))
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLT(FieldVersion, v))
 }
 
-// RoleIDIsNil applies the IsNil predicate on the "role_id" field.
-func RoleIDIsNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldIsNull(FieldRoleID))
-}
-
-// RoleIDNotNil applies the NotNil predicate on the "role_id" field.
-func RoleIDNotNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNotNull(FieldRoleID))
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v int64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLTE(FieldVersion, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -414,16 +359,6 @@ func UpdatedAtLTE(v time.Time) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.RoleUser {
-	return predicate.RoleUser(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
 func DeletedByEQ(v string) predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldEQ(FieldDeletedBy, v))
@@ -547,6 +482,106 @@ func DeletedAtIsNil() predicate.RoleUser {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.RoleUser {
 	return predicate.RoleUser(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNotNull(FieldUserID))
+}
+
+// RoleIDEQ applies the EQ predicate on the "role_id" field.
+func RoleIDEQ(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldEQ(FieldRoleID, v))
+}
+
+// RoleIDNEQ applies the NEQ predicate on the "role_id" field.
+func RoleIDNEQ(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNEQ(FieldRoleID, v))
+}
+
+// RoleIDIn applies the In predicate on the "role_id" field.
+func RoleIDIn(vs ...uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldIn(FieldRoleID, vs...))
+}
+
+// RoleIDNotIn applies the NotIn predicate on the "role_id" field.
+func RoleIDNotIn(vs ...uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNotIn(FieldRoleID, vs...))
+}
+
+// RoleIDGT applies the GT predicate on the "role_id" field.
+func RoleIDGT(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGT(FieldRoleID, v))
+}
+
+// RoleIDGTE applies the GTE predicate on the "role_id" field.
+func RoleIDGTE(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldGTE(FieldRoleID, v))
+}
+
+// RoleIDLT applies the LT predicate on the "role_id" field.
+func RoleIDLT(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLT(FieldRoleID, v))
+}
+
+// RoleIDLTE applies the LTE predicate on the "role_id" field.
+func RoleIDLTE(v uint64) predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldLTE(FieldRoleID, v))
+}
+
+// RoleIDIsNil applies the IsNil predicate on the "role_id" field.
+func RoleIDIsNil() predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldIsNull(FieldRoleID))
+}
+
+// RoleIDNotNil applies the NotNil predicate on the "role_id" field.
+func RoleIDNotNil() predicate.RoleUser {
+	return predicate.RoleUser(sql.FieldNotNull(FieldRoleID))
 }
 
 // And groups predicates with the AND operator between them.

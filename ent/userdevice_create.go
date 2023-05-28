@@ -20,34 +20,16 @@ type UserDeviceCreate struct {
 	hooks    []Hook
 }
 
-// SetUserID sets the "user_id" field.
-func (udc *UserDeviceCreate) SetUserID(u uint64) *UserDeviceCreate {
-	udc.mutation.SetUserID(u)
-	return udc
-}
-
 // SetVersion sets the "version" field.
-func (udc *UserDeviceCreate) SetVersion(s string) *UserDeviceCreate {
-	udc.mutation.SetVersion(s)
+func (udc *UserDeviceCreate) SetVersion(i int64) *UserDeviceCreate {
+	udc.mutation.SetVersion(i)
 	return udc
 }
 
-// SetPlatform sets the "platform" field.
-func (udc *UserDeviceCreate) SetPlatform(s string) *UserDeviceCreate {
-	udc.mutation.SetPlatform(s)
-	return udc
-}
-
-// SetDeviceID sets the "device_id" field.
-func (udc *UserDeviceCreate) SetDeviceID(s string) *UserDeviceCreate {
-	udc.mutation.SetDeviceID(s)
-	return udc
-}
-
-// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
-func (udc *UserDeviceCreate) SetNillableDeviceID(s *string) *UserDeviceCreate {
-	if s != nil {
-		udc.SetDeviceID(*s)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableVersion(i *int64) *UserDeviceCreate {
+	if i != nil {
+		udc.SetVersion(*i)
 	}
 	return udc
 }
@@ -128,6 +110,38 @@ func (udc *UserDeviceCreate) SetNillableDeletedAt(t *time.Time) *UserDeviceCreat
 	return udc
 }
 
+// SetUserID sets the "user_id" field.
+func (udc *UserDeviceCreate) SetUserID(u uint64) *UserDeviceCreate {
+	udc.mutation.SetUserID(u)
+	return udc
+}
+
+// SetAppVersion sets the "app_version" field.
+func (udc *UserDeviceCreate) SetAppVersion(s string) *UserDeviceCreate {
+	udc.mutation.SetAppVersion(s)
+	return udc
+}
+
+// SetPlatform sets the "platform" field.
+func (udc *UserDeviceCreate) SetPlatform(s string) *UserDeviceCreate {
+	udc.mutation.SetPlatform(s)
+	return udc
+}
+
+// SetDeviceID sets the "device_id" field.
+func (udc *UserDeviceCreate) SetDeviceID(s string) *UserDeviceCreate {
+	udc.mutation.SetDeviceID(s)
+	return udc
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableDeviceID(s *string) *UserDeviceCreate {
+	if s != nil {
+		udc.SetDeviceID(*s)
+	}
+	return udc
+}
+
 // SetID sets the "id" field.
 func (udc *UserDeviceCreate) SetID(u uint64) *UserDeviceCreate {
 	udc.mutation.SetID(u)
@@ -169,26 +183,24 @@ func (udc *UserDeviceCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (udc *UserDeviceCreate) defaults() {
+	if _, ok := udc.mutation.Version(); !ok {
+		v := userdevice.DefaultVersion()
+		udc.mutation.SetVersion(v)
+	}
 	if _, ok := udc.mutation.CreatedAt(); !ok {
-		v := userdevice.DefaultCreatedAt
+		v := userdevice.DefaultCreatedAt()
 		udc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := udc.mutation.UpdatedAt(); !ok {
-		v := userdevice.DefaultUpdatedAt
+		v := userdevice.DefaultUpdatedAt()
 		udc.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (udc *UserDeviceCreate) check() error {
-	if _, ok := udc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "UserDevice.user_id"`)}
-	}
 	if _, ok := udc.mutation.Version(); !ok {
 		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "UserDevice.version"`)}
-	}
-	if _, ok := udc.mutation.Platform(); !ok {
-		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "UserDevice.platform"`)}
 	}
 	if _, ok := udc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "UserDevice.created_by"`)}
@@ -200,6 +212,18 @@ func (udc *UserDeviceCreate) check() error {
 	}
 	if _, ok := udc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "UserDevice.created_at"`)}
+	}
+	if _, ok := udc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "UserDevice.updated_at"`)}
+	}
+	if _, ok := udc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "UserDevice.user_id"`)}
+	}
+	if _, ok := udc.mutation.AppVersion(); !ok {
+		return &ValidationError{Name: "app_version", err: errors.New(`ent: missing required field "UserDevice.app_version"`)}
+	}
+	if _, ok := udc.mutation.Platform(); !ok {
+		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "UserDevice.platform"`)}
 	}
 	return nil
 }
@@ -233,21 +257,9 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := udc.mutation.UserID(); ok {
-		_spec.SetField(userdevice.FieldUserID, field.TypeUint64, value)
-		_node.UserID = value
-	}
 	if value, ok := udc.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeString, value)
+		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
 		_node.Version = value
-	}
-	if value, ok := udc.mutation.Platform(); ok {
-		_spec.SetField(userdevice.FieldPlatform, field.TypeString, value)
-		_node.Platform = value
-	}
-	if value, ok := udc.mutation.DeviceID(); ok {
-		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)
-		_node.DeviceID = value
 	}
 	if value, ok := udc.mutation.CreatedBy(); ok {
 		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
@@ -272,6 +284,22 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 	if value, ok := udc.mutation.DeletedAt(); ok {
 		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := udc.mutation.UserID(); ok {
+		_spec.SetField(userdevice.FieldUserID, field.TypeUint64, value)
+		_node.UserID = value
+	}
+	if value, ok := udc.mutation.AppVersion(); ok {
+		_spec.SetField(userdevice.FieldAppVersion, field.TypeString, value)
+		_node.AppVersion = value
+	}
+	if value, ok := udc.mutation.Platform(); ok {
+		_spec.SetField(userdevice.FieldPlatform, field.TypeString, value)
+		_node.Platform = value
+	}
+	if value, ok := udc.mutation.DeviceID(); ok {
+		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)
+		_node.DeviceID = value
 	}
 	return _node, _spec
 }

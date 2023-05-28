@@ -17,10 +17,8 @@ type RoleUser struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID uint64 `json:"user_id,omitempty"`
-	// RoleID holds the value of the "role_id" field.
-	RoleID uint64 `json:"role_id,omitempty"`
+	// Unix time of when the latest update occurred
+	Version int64 `json:"version,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -32,7 +30,11 @@ type RoleUser struct {
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uint64 `json:"user_id,omitempty"`
+	// RoleID holds the value of the "role_id" field.
+	RoleID       uint64 `json:"role_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -41,7 +43,7 @@ func (*RoleUser) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case roleuser.FieldID, roleuser.FieldUserID, roleuser.FieldRoleID:
+		case roleuser.FieldID, roleuser.FieldVersion, roleuser.FieldUserID, roleuser.FieldRoleID:
 			values[i] = new(sql.NullInt64)
 		case roleuser.FieldCreatedBy, roleuser.FieldUpdatedBy, roleuser.FieldDeletedBy:
 			values[i] = new(sql.NullString)
@@ -68,17 +70,11 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ru.ID = uint64(value.Int64)
-		case roleuser.FieldUserID:
+		case roleuser.FieldVersion:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
-				ru.UserID = uint64(value.Int64)
-			}
-		case roleuser.FieldRoleID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role_id", values[i])
-			} else if value.Valid {
-				ru.RoleID = uint64(value.Int64)
+				ru.Version = value.Int64
 			}
 		case roleuser.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -116,6 +112,18 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ru.DeletedAt = value.Time
 			}
+		case roleuser.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				ru.UserID = uint64(value.Int64)
+			}
+		case roleuser.FieldRoleID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				ru.RoleID = uint64(value.Int64)
+			}
 		default:
 			ru.selectValues.Set(columns[i], values[i])
 		}
@@ -152,11 +160,8 @@ func (ru *RoleUser) String() string {
 	var builder strings.Builder
 	builder.WriteString("RoleUser(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ru.ID))
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", ru.UserID))
-	builder.WriteString(", ")
-	builder.WriteString("role_id=")
-	builder.WriteString(fmt.Sprintf("%v", ru.RoleID))
+	builder.WriteString("version=")
+	builder.WriteString(fmt.Sprintf("%v", ru.Version))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(ru.CreatedBy)
@@ -175,6 +180,12 @@ func (ru *RoleUser) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(ru.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", ru.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("role_id=")
+	builder.WriteString(fmt.Sprintf("%v", ru.RoleID))
 	builder.WriteByte(')')
 	return builder.String()
 }

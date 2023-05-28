@@ -15,14 +15,8 @@ const (
 	Label = "pet"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
-	// FieldCode holds the string denoting the code field in the database.
-	FieldCode = "code"
-	// FieldAgeMonth holds the string denoting the age_month field in the database.
-	FieldAgeMonth = "age_month"
+	// FieldVersion holds the string denoting the version field in the database.
+	FieldVersion = "version"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -35,6 +29,14 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldCode holds the string denoting the code field in the database.
+	FieldCode = "code"
+	// FieldAgeMonth holds the string denoting the age_month field in the database.
+	FieldAgeMonth = "age_month"
 	// Table holds the table name of the pet in the database.
 	Table = "pets"
 )
@@ -42,16 +44,17 @@ const (
 // Columns holds all SQL columns for pet fields.
 var Columns = []string{
 	FieldID,
-	FieldName,
-	FieldType,
-	FieldCode,
-	FieldAgeMonth,
+	FieldVersion,
 	FieldCreatedBy,
 	FieldCreatedAt,
 	FieldUpdatedBy,
 	FieldUpdatedAt,
 	FieldDeletedBy,
 	FieldDeletedAt,
+	FieldName,
+	FieldType,
+	FieldCode,
+	FieldAgeMonth,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -65,18 +68,22 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultVersion holds the default value on creation for the "version" field.
+	DefaultVersion func() int64
+	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	CreatedByValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	CodeValidator func(string) error
 	// AgeMonthValidator is a validator for the "age_month" field. It is called by the builders before save.
 	AgeMonthValidator func(int) error
-	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	CreatedByValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -112,24 +119,9 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
-}
-
-// ByCode orders the results by the code field.
-func ByCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCode, opts...).ToFunc()
-}
-
-// ByAgeMonth orders the results by the age_month field.
-func ByAgeMonth(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAgeMonth, opts...).ToFunc()
+// ByVersion orders the results by the version field.
+func ByVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVersion, opts...).ToFunc()
 }
 
 // ByCreatedBy orders the results by the created_by field.
@@ -160,4 +152,24 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedAt orders the results by the deleted_at field.
 func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByCode orders the results by the code field.
+func ByCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCode, opts...).ToFunc()
+}
+
+// ByAgeMonth orders the results by the age_month field.
+func ByAgeMonth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAgeMonth, opts...).ToFunc()
 }

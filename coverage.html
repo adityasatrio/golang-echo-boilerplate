@@ -73,9 +73,9 @@
 				
 				<option value="file8">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
 				
-				<option value="file9">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (73.7%)</option>
+				<option value="file9">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (75.9%)</option>
 				
-				<option value="file10">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (74.4%)</option>
+				<option value="file10">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (73.9%)</option>
 				
 				<option value="file11">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
 				
@@ -616,7 +616,6 @@ func (c *SystemParameterController) AddRoutes(e *echo.Echo) <span class="cov0" t
 
 import (
         "context"
-        "github.com/labstack/gommon/log"
         "myapp/ent"
         "myapp/ent/systemparameter"
         "time"
@@ -647,33 +646,18 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent
         <span class="cov8" title="1">return saved, nil</span>
 }
 
-func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *ent.SystemParameter) (*ent.SystemParameter, error) <span class="cov8" title="1">{
-        tx, err := r.client.Tx(ctx)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov8" title="1">affected, err := tx.SystemParameter.
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *ent.SystemParameter) (int, error) <span class="cov8" title="1">{
+        affected, err := r.client.SystemParameter.
                 Update().Where(systemparameter.ID(updateData.ID), systemparameter.Version(updateData.Version)).
                 SetKey(updateData.Key).
                 SetValue(updateData.Value).
                 Save(ctx)
 
-        log.Debugf("updated date %s", affected)
         if err != nil </span><span class="cov0" title="0">{
-                return nil, tx.Rollback()
+                return 0, err
         }</span>
 
-        <span class="cov8" title="1">updated, err := tx.SystemParameter.Get(ctx, updateData.ID)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, tx.Rollback()
-        }</span>
-
-        <span class="cov8" title="1">if err := tx.Commit(); err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov8" title="1">return updated, nil</span>
+        <span class="cov8" title="1">return affected, nil</span>
 }
 
 func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
@@ -787,9 +771,14 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
         <span class="cov8" title="1">existId.Key = update.Key
         existId.Value = update.Value
 
-        updated, err := s.repository.Update(ctx, existId)
-        if err != nil </span><span class="cov0" title="0">{
+        affected, err := s.repository.Update(ctx, existId)
+        if affected &lt; 1 || err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
+        }</span>
+
+        <span class="cov8" title="1">updated, err := s.repository.GetById(ctx, existId.ID)
+        if err != nil || existId == nil </span><span class="cov0" title="0">{
+                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
         }</span>
 
         <span class="cov8" title="1">return updated, nil</span>

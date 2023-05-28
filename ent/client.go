@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-
 	"myapp/ent/migrate"
 
 	"myapp/ent/pet"

@@ -261,12 +261,12 @@ func (ruq *RoleUserQuery) Clone() *RoleUserQuery {
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.RoleUser.Query().
-//		GroupBy(roleuser.FieldUserID).
+//		GroupBy(roleuser.FieldVersion).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ruq *RoleUserQuery) GroupBy(field string, fields ...string) *RoleUserGroupBy {
@@ -284,11 +284,11 @@ func (ruq *RoleUserQuery) GroupBy(field string, fields ...string) *RoleUserGroup
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //	}
 //
 //	client.RoleUser.Query().
-//		Select(roleuser.FieldUserID).
+//		Select(roleuser.FieldVersion).
 //		Scan(ctx, &v)
 func (ruq *RoleUserQuery) Select(fields ...string) *RoleUserSelect {
 	ruq.ctx.Fields = append(ruq.ctx.Fields, fields...)

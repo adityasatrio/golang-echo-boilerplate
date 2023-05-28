@@ -54,14 +54,9 @@ func IDLTE(id uint64) predicate.Role {
 	return predicate.Role(sql.FieldLTE(FieldID, id))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Role {
-	return predicate.Role(sql.FieldEQ(FieldName, v))
-}
-
-// Text applies equality check predicate on the "text" field. It's identical to TextEQ.
-func Text(v string) predicate.Role {
-	return predicate.Role(sql.FieldEQ(FieldText, v))
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v int64) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldVersion, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -94,134 +89,54 @@ func DeletedAt(v time.Time) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Role {
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldName, v))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Role {
-	return predicate.Role(sql.FieldNEQ(FieldName, v))
-}
-
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Role {
-	return predicate.Role(sql.FieldIn(FieldName, vs...))
-}
-
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Role {
-	return predicate.Role(sql.FieldNotIn(FieldName, vs...))
-}
-
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Role {
-	return predicate.Role(sql.FieldGT(FieldName, v))
-}
-
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Role {
-	return predicate.Role(sql.FieldGTE(FieldName, v))
-}
-
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Role {
-	return predicate.Role(sql.FieldLT(FieldName, v))
-}
-
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Role {
-	return predicate.Role(sql.FieldLTE(FieldName, v))
-}
-
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Role {
-	return predicate.Role(sql.FieldContains(FieldName, v))
-}
-
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Role {
-	return predicate.Role(sql.FieldHasPrefix(FieldName, v))
-}
-
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Role {
-	return predicate.Role(sql.FieldHasSuffix(FieldName, v))
-}
-
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Role {
-	return predicate.Role(sql.FieldEqualFold(FieldName, v))
-}
-
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Role {
-	return predicate.Role(sql.FieldContainsFold(FieldName, v))
-}
-
-// TextEQ applies the EQ predicate on the "text" field.
-func TextEQ(v string) predicate.Role {
+// Text applies equality check predicate on the "text" field. It's identical to TextEQ.
+func Text(v string) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldText, v))
 }
 
-// TextNEQ applies the NEQ predicate on the "text" field.
-func TextNEQ(v string) predicate.Role {
-	return predicate.Role(sql.FieldNEQ(FieldText, v))
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v int64) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldVersion, v))
 }
 
-// TextIn applies the In predicate on the "text" field.
-func TextIn(vs ...string) predicate.Role {
-	return predicate.Role(sql.FieldIn(FieldText, vs...))
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v int64) predicate.Role {
+	return predicate.Role(sql.FieldNEQ(FieldVersion, v))
 }
 
-// TextNotIn applies the NotIn predicate on the "text" field.
-func TextNotIn(vs ...string) predicate.Role {
-	return predicate.Role(sql.FieldNotIn(FieldText, vs...))
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...int64) predicate.Role {
+	return predicate.Role(sql.FieldIn(FieldVersion, vs...))
 }
 
-// TextGT applies the GT predicate on the "text" field.
-func TextGT(v string) predicate.Role {
-	return predicate.Role(sql.FieldGT(FieldText, v))
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...int64) predicate.Role {
+	return predicate.Role(sql.FieldNotIn(FieldVersion, vs...))
 }
 
-// TextGTE applies the GTE predicate on the "text" field.
-func TextGTE(v string) predicate.Role {
-	return predicate.Role(sql.FieldGTE(FieldText, v))
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v int64) predicate.Role {
+	return predicate.Role(sql.FieldGT(FieldVersion, v))
 }
 
-// TextLT applies the LT predicate on the "text" field.
-func TextLT(v string) predicate.Role {
-	return predicate.Role(sql.FieldLT(FieldText, v))
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v int64) predicate.Role {
+	return predicate.Role(sql.FieldGTE(FieldVersion, v))
 }
 
-// TextLTE applies the LTE predicate on the "text" field.
-func TextLTE(v string) predicate.Role {
-	return predicate.Role(sql.FieldLTE(FieldText, v))
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v int64) predicate.Role {
+	return predicate.Role(sql.FieldLT(FieldVersion, v))
 }
 
-// TextContains applies the Contains predicate on the "text" field.
-func TextContains(v string) predicate.Role {
-	return predicate.Role(sql.FieldContains(FieldText, v))
-}
-
-// TextHasPrefix applies the HasPrefix predicate on the "text" field.
-func TextHasPrefix(v string) predicate.Role {
-	return predicate.Role(sql.FieldHasPrefix(FieldText, v))
-}
-
-// TextHasSuffix applies the HasSuffix predicate on the "text" field.
-func TextHasSuffix(v string) predicate.Role {
-	return predicate.Role(sql.FieldHasSuffix(FieldText, v))
-}
-
-// TextEqualFold applies the EqualFold predicate on the "text" field.
-func TextEqualFold(v string) predicate.Role {
-	return predicate.Role(sql.FieldEqualFold(FieldText, v))
-}
-
-// TextContainsFold applies the ContainsFold predicate on the "text" field.
-func TextContainsFold(v string) predicate.Role {
-	return predicate.Role(sql.FieldContainsFold(FieldText, v))
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v int64) predicate.Role {
+	return predicate.Role(sql.FieldLTE(FieldVersion, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -444,16 +359,6 @@ func UpdatedAtLTE(v time.Time) predicate.Role {
 	return predicate.Role(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.Role {
-	return predicate.Role(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.Role {
-	return predicate.Role(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
 func DeletedByEQ(v string) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldDeletedBy, v))
@@ -577,6 +482,136 @@ func DeletedAtIsNil() predicate.Role {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.Role {
 	return predicate.Role(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Role {
+	return predicate.Role(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Role {
+	return predicate.Role(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Role {
+	return predicate.Role(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Role {
+	return predicate.Role(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Role {
+	return predicate.Role(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Role {
+	return predicate.Role(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Role {
+	return predicate.Role(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Role {
+	return predicate.Role(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Role {
+	return predicate.Role(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Role {
+	return predicate.Role(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Role {
+	return predicate.Role(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Role {
+	return predicate.Role(sql.FieldContainsFold(FieldName, v))
+}
+
+// TextEQ applies the EQ predicate on the "text" field.
+func TextEQ(v string) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldText, v))
+}
+
+// TextNEQ applies the NEQ predicate on the "text" field.
+func TextNEQ(v string) predicate.Role {
+	return predicate.Role(sql.FieldNEQ(FieldText, v))
+}
+
+// TextIn applies the In predicate on the "text" field.
+func TextIn(vs ...string) predicate.Role {
+	return predicate.Role(sql.FieldIn(FieldText, vs...))
+}
+
+// TextNotIn applies the NotIn predicate on the "text" field.
+func TextNotIn(vs ...string) predicate.Role {
+	return predicate.Role(sql.FieldNotIn(FieldText, vs...))
+}
+
+// TextGT applies the GT predicate on the "text" field.
+func TextGT(v string) predicate.Role {
+	return predicate.Role(sql.FieldGT(FieldText, v))
+}
+
+// TextGTE applies the GTE predicate on the "text" field.
+func TextGTE(v string) predicate.Role {
+	return predicate.Role(sql.FieldGTE(FieldText, v))
+}
+
+// TextLT applies the LT predicate on the "text" field.
+func TextLT(v string) predicate.Role {
+	return predicate.Role(sql.FieldLT(FieldText, v))
+}
+
+// TextLTE applies the LTE predicate on the "text" field.
+func TextLTE(v string) predicate.Role {
+	return predicate.Role(sql.FieldLTE(FieldText, v))
+}
+
+// TextContains applies the Contains predicate on the "text" field.
+func TextContains(v string) predicate.Role {
+	return predicate.Role(sql.FieldContains(FieldText, v))
+}
+
+// TextHasPrefix applies the HasPrefix predicate on the "text" field.
+func TextHasPrefix(v string) predicate.Role {
+	return predicate.Role(sql.FieldHasPrefix(FieldText, v))
+}
+
+// TextHasSuffix applies the HasSuffix predicate on the "text" field.
+func TextHasSuffix(v string) predicate.Role {
+	return predicate.Role(sql.FieldHasSuffix(FieldText, v))
+}
+
+// TextEqualFold applies the EqualFold predicate on the "text" field.
+func TextEqualFold(v string) predicate.Role {
+	return predicate.Role(sql.FieldEqualFold(FieldText, v))
+}
+
+// TextContainsFold applies the ContainsFold predicate on the "text" field.
+func TextContainsFold(v string) predicate.Role {
+	return predicate.Role(sql.FieldContainsFold(FieldText, v))
 }
 
 // And groups predicates with the AND operator between them.

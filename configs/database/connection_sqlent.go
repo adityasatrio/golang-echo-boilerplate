@@ -6,8 +6,8 @@ import (
 
 	"context"
 	"fmt"
+	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	"log"
 	"myapp/ent"
 	"time"
 
@@ -22,7 +22,8 @@ func NewSqlEntClient() *ent.Client {
 		viper.GetString("db.configs.host"),
 		viper.GetString("db.configs.port"),
 		viper.GetString("db.configs.database"))
-	log.Println("DSN=", dsn)
+
+	log.Debug("DSN=", dsn) //for debug only
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -53,6 +54,6 @@ func NewSqlEntClient() *ent.Client {
 	//defer client.Close()
 
 	//result := Client{Connection: *client}
-	log.Default().Println("initialized database x sqlDb x orm ent : success")
+	log.Info("initialized database x sqlDb x orm ent : success")
 	return client
 }

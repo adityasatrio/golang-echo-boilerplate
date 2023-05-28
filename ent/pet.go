@@ -18,14 +18,8 @@ type Pet struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
-	// Type holds the value of the "type" field.
-	Type pet.Type `json:"type,omitempty"`
-	// Code holds the value of the "code" field.
-	Code string `json:"code,omitempty"`
-	// AgeMonth holds the value of the "age_month" field.
-	AgeMonth int `json:"age_month,omitempty"`
+	// Unix time of when the latest update occurred
+	Version int64 `json:"version,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -37,7 +31,15 @@ type Pet struct {
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// Type holds the value of the "type" field.
+	Type pet.Type `json:"type,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
+	// AgeMonth holds the value of the "age_month" field.
+	AgeMonth     int `json:"age_month,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -46,9 +48,9 @@ func (*Pet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pet.FieldAgeMonth:
+		case pet.FieldVersion, pet.FieldAgeMonth:
 			values[i] = new(sql.NullInt64)
-		case pet.FieldName, pet.FieldType, pet.FieldCode, pet.FieldCreatedBy, pet.FieldUpdatedBy, pet.FieldDeletedBy:
+		case pet.FieldCreatedBy, pet.FieldUpdatedBy, pet.FieldDeletedBy, pet.FieldName, pet.FieldType, pet.FieldCode:
 			values[i] = new(sql.NullString)
 		case pet.FieldCreatedAt, pet.FieldUpdatedAt, pet.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -75,29 +77,11 @@ func (pe *Pet) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				pe.ID = *value
 			}
-		case pet.FieldName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
-			} else if value.Valid {
-				pe.Name = value.String
-			}
-		case pet.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				pe.Type = pet.Type(value.String)
-			}
-		case pet.FieldCode:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field code", values[i])
-			} else if value.Valid {
-				pe.Code = value.String
-			}
-		case pet.FieldAgeMonth:
+		case pet.FieldVersion:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field age_month", values[i])
+				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
-				pe.AgeMonth = int(value.Int64)
+				pe.Version = value.Int64
 			}
 		case pet.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -135,6 +119,30 @@ func (pe *Pet) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pe.DeletedAt = value.Time
 			}
+		case pet.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				pe.Name = value.String
+			}
+		case pet.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				pe.Type = pet.Type(value.String)
+			}
+		case pet.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				pe.Code = value.String
+			}
+		case pet.FieldAgeMonth:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field age_month", values[i])
+			} else if value.Valid {
+				pe.AgeMonth = int(value.Int64)
+			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])
 		}
@@ -171,17 +179,8 @@ func (pe *Pet) String() string {
 	var builder strings.Builder
 	builder.WriteString("Pet(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", pe.ID))
-	builder.WriteString("name=")
-	builder.WriteString(pe.Name)
-	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", pe.Type))
-	builder.WriteString(", ")
-	builder.WriteString("code=")
-	builder.WriteString(pe.Code)
-	builder.WriteString(", ")
-	builder.WriteString("age_month=")
-	builder.WriteString(fmt.Sprintf("%v", pe.AgeMonth))
+	builder.WriteString("version=")
+	builder.WriteString(fmt.Sprintf("%v", pe.Version))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(pe.CreatedBy)
@@ -200,6 +199,18 @@ func (pe *Pet) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(pe.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(pe.Name)
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", pe.Type))
+	builder.WriteString(", ")
+	builder.WriteString("code=")
+	builder.WriteString(pe.Code)
+	builder.WriteString(", ")
+	builder.WriteString("age_month=")
+	builder.WriteString(fmt.Sprintf("%v", pe.AgeMonth))
 	builder.WriteByte(')')
 	return builder.String()
 }

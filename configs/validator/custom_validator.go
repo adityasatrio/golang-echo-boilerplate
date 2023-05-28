@@ -3,7 +3,7 @@ package validator
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"log"
+	"github.com/labstack/gommon/log"
 )
 
 type CustomValidator struct {
@@ -41,5 +41,5 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 func SetupValidator(e *echo.Echo) {
 	e.Validator = &CustomValidator{Validator: NewValidator()}
-	log.Default().Println("initialized CustomValidator : success")
+	log.Info("initialized CustomValidator : success")
 }
