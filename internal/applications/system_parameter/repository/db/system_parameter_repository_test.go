@@ -56,11 +56,7 @@ func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
 	resultId.Key = "key20002"
 	resultId.Value = "value20002"
 
-	affected, err := repo.Update(ctx, resultId)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, affected)
-
-	afterUpdated, err := repo.GetById(ctx, result.ID)
+	afterUpdated, err := repo.Update(ctx, resultId)
 	assert.NoError(t, err)
 	assert.Equal(t, result.ID, afterUpdated.ID)
 	assert.Equal(t, "key20002", afterUpdated.Key)

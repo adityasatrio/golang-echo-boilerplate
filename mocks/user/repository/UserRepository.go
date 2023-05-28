@@ -145,7 +145,7 @@ func (_m *UserRepository) SoftDelete(ctx context.Context, id uint64) (*ent.User,
 }
 
 // UpdateTx provides a mock function with given fields: ctx, txClient, updateUser, id
-func (_m *UserRepository) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
+func (_m *UserRepository) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User, id uint64) (*ent.User, error) {
 	ret := _m.Called(ctx, txClient, updateUser, id)
 
 	var r0 *ent.User

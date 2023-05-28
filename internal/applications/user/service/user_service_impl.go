@@ -74,31 +74,33 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 	var userUpdated = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
-		//create user object:
-		userRequest := ent.User{
-			Name:     request.Name,
-			Email:    request.Email,
-			Password: request.Password,
-			Avatar:   "",
+		userExist, err := s.userRepository.GetById(ctx, id)
+		if userExist == nil || err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 		}
 
+		userExist.Name = request.Name
+		userExist.Email = request.Email
+		userExist.Password = request.Password
+		userExist.Avatar = ""
+
 		//update user:
-		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userRequest, id)
+		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExist)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
-		userUpdated = userResult
 
-		//create role user object:
-		roleUserRequest := ent.RoleUser{
-			UserID: userUpdated.ID,
-			RoleID: uint64(request.RoleId),
+		existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExist.ID, request.RoleId)
+		if existingRoleUser == nil || err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 		}
 
-		//update role_user: delete role user and re-create row for role user
-		_, errRoleUser := s.roleUserRepository.Update(ctx, tx.Client(), roleUserRequest, id)
-		if errRoleUser != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
+		existingRoleUser.UserID = userResult.ID
+		existingRoleUser.RoleID = request.RoleId
+
+		_, err = s.roleUserRepository.UpdateTx(ctx, tx.Client(), existingRoleUser)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 		}
 
 		return nil

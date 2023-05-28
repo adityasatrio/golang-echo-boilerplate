@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"errors"
+	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/ent/systemparameter"
 	"time"
@@ -32,7 +34,7 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent
 	return saved, nil
 }
 
-func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *ent.SystemParameter) (int, error) {
+func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
 	affected, err := r.client.SystemParameter.
 		Update().Where(systemparameter.ID(updateData.ID), systemparameter.Version(updateData.Version)).
 		SetKey(updateData.Key).
@@ -40,10 +42,20 @@ func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *
 		Save(ctx)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return affected, nil
+	if affected < 1 {
+		log.Errorf("ID %s no records were updated in database", updateData.ID)
+		return nil, errors.New("no records were updated in database")
+	}
+
+	updated, err := r.client.SystemParameter.Get(ctx, updateData.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updated, nil
 }
 
 func (r *SystemParameterRepositoryImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) {
