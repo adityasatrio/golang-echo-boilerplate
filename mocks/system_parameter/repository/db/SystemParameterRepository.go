@@ -171,25 +171,25 @@ func (_m *SystemParameterRepository) SoftDelete(ctx context.Context, id int) (*e
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, id, updateData
-func (_m *SystemParameterRepository) Update(ctx context.Context, id int, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
-	ret := _m.Called(ctx, id, updateData)
+// Update provides a mock function with given fields: ctx, updateData
+func (_m *SystemParameterRepository) Update(ctx context.Context, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
+	ret := _m.Called(ctx, updateData)
 
 	var r0 *ent.SystemParameter
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, *ent.SystemParameter) (*ent.SystemParameter, error)); ok {
-		return rf(ctx, id, updateData)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) (*ent.SystemParameter, error)); ok {
+		return rf(ctx, updateData)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, *ent.SystemParameter) *ent.SystemParameter); ok {
-		r0 = rf(ctx, id, updateData)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) *ent.SystemParameter); ok {
+		r0 = rf(ctx, updateData)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.SystemParameter)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, *ent.SystemParameter) error); ok {
-		r1 = rf(ctx, id, updateData)
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.SystemParameter) error); ok {
+		r1 = rf(ctx, updateData)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -20,15 +20,17 @@ type SystemParameterCreate struct {
 	hooks    []Hook
 }
 
-// SetKey sets the "key" field.
-func (spc *SystemParameterCreate) SetKey(s string) *SystemParameterCreate {
-	spc.mutation.SetKey(s)
+// SetVersion sets the "version" field.
+func (spc *SystemParameterCreate) SetVersion(i int64) *SystemParameterCreate {
+	spc.mutation.SetVersion(i)
 	return spc
 }
 
-// SetValue sets the "value" field.
-func (spc *SystemParameterCreate) SetValue(s string) *SystemParameterCreate {
-	spc.mutation.SetValue(s)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (spc *SystemParameterCreate) SetNillableVersion(i *int64) *SystemParameterCreate {
+	if i != nil {
+		spc.SetVersion(*i)
+	}
 	return spc
 }
 
@@ -108,6 +110,18 @@ func (spc *SystemParameterCreate) SetNillableDeletedAt(t *time.Time) *SystemPara
 	return spc
 }
 
+// SetKey sets the "key" field.
+func (spc *SystemParameterCreate) SetKey(s string) *SystemParameterCreate {
+	spc.mutation.SetKey(s)
+	return spc
+}
+
+// SetValue sets the "value" field.
+func (spc *SystemParameterCreate) SetValue(s string) *SystemParameterCreate {
+	spc.mutation.SetValue(s)
+	return spc
+}
+
 // Mutation returns the SystemParameterMutation object of the builder.
 func (spc *SystemParameterCreate) Mutation() *SystemParameterMutation {
 	return spc.mutation
@@ -143,18 +157,39 @@ func (spc *SystemParameterCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (spc *SystemParameterCreate) defaults() {
+	if _, ok := spc.mutation.Version(); !ok {
+		v := systemparameter.DefaultVersion()
+		spc.mutation.SetVersion(v)
+	}
 	if _, ok := spc.mutation.CreatedAt(); !ok {
-		v := systemparameter.DefaultCreatedAt
+		v := systemparameter.DefaultCreatedAt()
 		spc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := spc.mutation.UpdatedAt(); !ok {
-		v := systemparameter.DefaultUpdatedAt
+		v := systemparameter.DefaultUpdatedAt()
 		spc.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (spc *SystemParameterCreate) check() error {
+	if _, ok := spc.mutation.Version(); !ok {
+		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "SystemParameter.version"`)}
+	}
+	if _, ok := spc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "SystemParameter.created_by"`)}
+	}
+	if v, ok := spc.mutation.CreatedBy(); ok {
+		if err := systemparameter.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
+		}
+	}
+	if _, ok := spc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "SystemParameter.created_at"`)}
+	}
+	if _, ok := spc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "SystemParameter.updated_at"`)}
+	}
 	if _, ok := spc.mutation.Key(); !ok {
 		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "SystemParameter.key"`)}
 	}
@@ -170,17 +205,6 @@ func (spc *SystemParameterCreate) check() error {
 		if err := systemparameter.ValueValidator(v); err != nil {
 			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.value": %w`, err)}
 		}
-	}
-	if _, ok := spc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "SystemParameter.created_by"`)}
-	}
-	if v, ok := spc.mutation.CreatedBy(); ok {
-		if err := systemparameter.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
-		}
-	}
-	if _, ok := spc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "SystemParameter.created_at"`)}
 	}
 	return nil
 }
@@ -208,13 +232,9 @@ func (spc *SystemParameterCreate) createSpec() (*SystemParameter, *sqlgraph.Crea
 		_node = &SystemParameter{config: spc.config}
 		_spec = sqlgraph.NewCreateSpec(systemparameter.Table, sqlgraph.NewFieldSpec(systemparameter.FieldID, field.TypeInt))
 	)
-	if value, ok := spc.mutation.Key(); ok {
-		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
-		_node.Key = value
-	}
-	if value, ok := spc.mutation.Value(); ok {
-		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
-		_node.Value = value
+	if value, ok := spc.mutation.Version(); ok {
+		_spec.SetField(systemparameter.FieldVersion, field.TypeInt64, value)
+		_node.Version = value
 	}
 	if value, ok := spc.mutation.CreatedBy(); ok {
 		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)
@@ -239,6 +259,14 @@ func (spc *SystemParameterCreate) createSpec() (*SystemParameter, *sqlgraph.Crea
 	if value, ok := spc.mutation.DeletedAt(); ok {
 		_spec.SetField(systemparameter.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := spc.mutation.Key(); ok {
+		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
+		_node.Key = value
+	}
+	if value, ok := spc.mutation.Value(); ok {
+		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
+		_node.Value = value
 	}
 	return _node, _spec
 }

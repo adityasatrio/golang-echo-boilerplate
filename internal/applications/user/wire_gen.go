@@ -21,7 +21,7 @@ import (
 func InitializedUserService(dbClient *ent.Client) *service.UserServiceImpl {
 	userRepositoryImpl := repository.NewUserRepositoryImpl(dbClient)
 	roleRepositoryImpl := repository2.NewRoleRepositoryImpl(dbClient)
-	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl()
+	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl(dbClient)
 	trxServiceImpl := transaction.NewTrxServiceImpl(dbClient)
 	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl)
 	return userServiceImpl

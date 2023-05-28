@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
+	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	"log"
 	"myapp/ent"
 	"time"
 
@@ -22,12 +22,11 @@ func NewEntClient() *ent.Client {
 		viper.GetString("db.configs.host"),
 		viper.GetString("db.configs.port"),
 		viper.GetString("db.configs.database"))
-	fmt.Println("DSN ", dsn)
+	log.Debugf("DSN ", dsn)
 
 	client, err := ent.Open("mysql", dsn, ent.Debug(), ent.Log(func(i ...interface{}) {
 		for _, v := range i {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), v)
-			fmt.Print("\n")
+			log.Debugf(time.Now().Format("2006-01-02 15:04:05"), v)
 		}
 	}))
 
@@ -43,6 +42,6 @@ func NewEntClient() *ent.Client {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	log.Default().Println("initialized database x orm : success")
+	log.Infof("initialized database x orm : success")
 	return client
 }

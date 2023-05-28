@@ -2,7 +2,9 @@
 
 # Golang CRUD boilerplate
   
-- Golang 1.18
+- Golang 1.19
+  - https://go.dev/doc/effective_go
+  - https://github.com/golovers/effective-go
   - https://go.dev/play/
   - Video references from PZN bahasa indo : [PZN-golang-playlist](https://www.youtube.com/watch?v=JOXbresHhIk&list=PL-CtdCApEFH-0i9dzMzLw6FKVrFWv3QvQ)
   - Tutorial bahasa indonesia [dasar golang noval agung](https://dasarpemrogramangolang.novalagung.com/1-berkenalan-dengan-golang.html)

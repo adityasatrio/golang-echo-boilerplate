@@ -79,23 +79,21 @@ func TestUserRepositoryImpl_Update(t *testing.T) {
 	assert.NotNil(t, result.ID)
 
 	// CreateTx an updated user with modified fields
-	updatedUser := ent.User{
-		RoleID:    2,
-		Name:      "Jane Smith",
-		Email:     "jane.smith@example.com",
-		Password:  "newpassword",
-		Avatar:    "new_avatar.jpg",
-		CreatedBy: "user",
-	}
+	result.RoleID = 2
+	result.Name = "Jane Smith"
+	result.Email = "jane.smith@example.com"
+	result.Password = "newpassword"
+	result.Avatar = "new_avatar.jpg"
+	result.CreatedBy = "user"
 
 	// UpdateTx the user using the repository method
-	updated, err := userRepo.UpdateTx(ctx, client, updatedUser, result.ID)
+	updated, err := userRepo.UpdateTx(ctx, client, result)
 	if err != nil {
 		t.Fatalf("failed to update user: %v", err)
 	}
 	assert.NoError(t, err)
-	assert.Equal(t, updated.Name, updatedUser.Name)
-	assert.Equal(t, updated.Email, updatedUser.Email)
+	assert.Equal(t, "Jane Smith", updated.Name)
+	assert.Equal(t, "jane.smith@example.com", updated.Email)
 	assert.Equal(t, result.ID, updated.ID)
 
 	t.Cleanup(func() {

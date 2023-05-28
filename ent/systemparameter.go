@@ -17,10 +17,8 @@ type SystemParameter struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Key holds the value of the "key" field.
-	Key string `json:"key,omitempty"`
-	// Value holds the value of the "value" field.
-	Value string `json:"value,omitempty"`
+	// Unix time of when the latest update occurred
+	Version int64 `json:"version,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -32,7 +30,11 @@ type SystemParameter struct {
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// Key holds the value of the "key" field.
+	Key string `json:"key,omitempty"`
+	// Value holds the value of the "value" field.
+	Value        string `json:"value,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -41,9 +43,9 @@ func (*SystemParameter) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case systemparameter.FieldID:
+		case systemparameter.FieldID, systemparameter.FieldVersion:
 			values[i] = new(sql.NullInt64)
-		case systemparameter.FieldKey, systemparameter.FieldValue, systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy, systemparameter.FieldDeletedBy:
+		case systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy, systemparameter.FieldDeletedBy, systemparameter.FieldKey, systemparameter.FieldValue:
 			values[i] = new(sql.NullString)
 		case systemparameter.FieldCreatedAt, systemparameter.FieldUpdatedAt, systemparameter.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -68,17 +70,11 @@ func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sp.ID = int(value.Int64)
-		case systemparameter.FieldKey:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field key", values[i])
+		case systemparameter.FieldVersion:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
-				sp.Key = value.String
-			}
-		case systemparameter.FieldValue:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field value", values[i])
-			} else if value.Valid {
-				sp.Value = value.String
+				sp.Version = value.Int64
 			}
 		case systemparameter.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -116,6 +112,18 @@ func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sp.DeletedAt = value.Time
 			}
+		case systemparameter.FieldKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field key", values[i])
+			} else if value.Valid {
+				sp.Key = value.String
+			}
+		case systemparameter.FieldValue:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field value", values[i])
+			} else if value.Valid {
+				sp.Value = value.String
+			}
 		default:
 			sp.selectValues.Set(columns[i], values[i])
 		}
@@ -152,11 +160,8 @@ func (sp *SystemParameter) String() string {
 	var builder strings.Builder
 	builder.WriteString("SystemParameter(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sp.ID))
-	builder.WriteString("key=")
-	builder.WriteString(sp.Key)
-	builder.WriteString(", ")
-	builder.WriteString("value=")
-	builder.WriteString(sp.Value)
+	builder.WriteString("version=")
+	builder.WriteString(fmt.Sprintf("%v", sp.Version))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(sp.CreatedBy)
@@ -175,6 +180,12 @@ func (sp *SystemParameter) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(sp.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("key=")
+	builder.WriteString(sp.Key)
+	builder.WriteString(", ")
+	builder.WriteString("value=")
+	builder.WriteString(sp.Value)
 	builder.WriteByte(')')
 	return builder.String()
 }
