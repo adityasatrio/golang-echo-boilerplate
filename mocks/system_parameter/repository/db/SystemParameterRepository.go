@@ -172,20 +172,18 @@ func (_m *SystemParameterRepository) SoftDelete(ctx context.Context, id int) (*e
 }
 
 // Update provides a mock function with given fields: ctx, updateData
-func (_m *SystemParameterRepository) Update(ctx context.Context, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
+func (_m *SystemParameterRepository) Update(ctx context.Context, updateData *ent.SystemParameter) (int, error) {
 	ret := _m.Called(ctx, updateData)
 
-	var r0 *ent.SystemParameter
+	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) (*ent.SystemParameter, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) (int, error)); ok {
 		return rf(ctx, updateData)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) *ent.SystemParameter); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.SystemParameter) int); ok {
 		r0 = rf(ctx, updateData)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.SystemParameter)
-		}
+		r0 = ret.Get(0).(int)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *ent.SystemParameter) error); ok {

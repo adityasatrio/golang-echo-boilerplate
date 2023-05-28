@@ -56,11 +56,15 @@ func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
 	resultId.Key = "key20002"
 	resultId.Value = "value20002"
 
-	updatedResult, err := repo.Update(ctx, resultId)
+	affected, err := repo.Update(ctx, resultId)
 	assert.NoError(t, err)
-	assert.Equal(t, result.ID, updatedResult.ID)
-	assert.Equal(t, "key20002", updatedResult.Key)
-	assert.Equal(t, "value20002", updatedResult.Value)
+	assert.Equal(t, 1, affected)
+
+	afterUpdated, err := repo.GetById(ctx, result.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, result.ID, afterUpdated.ID)
+	assert.Equal(t, "key20002", afterUpdated.Key)
+	assert.Equal(t, "value20002", afterUpdated.Value)
 
 	t.Cleanup(func() {
 		test_helper.TestDbConnectionClose(client)
