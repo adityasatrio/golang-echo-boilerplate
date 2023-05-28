@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
@@ -73,37 +74,38 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 	var userUpdated = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
-		userExist, err := s.userRepository.GetById(ctx, id)
-		if userExist == nil || err != nil {
-			log.Errorf("user data is not exist ID = %d", id)
+		userExisting, err := s.userRepository.GetById(ctx, id)
+		if userExisting == nil || err != nil {
+			//log.Errorf("user data is not exist ID = %d", id)
 			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 		}
 
-		////get existing data for role_user based on old value
-		//existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExist.ID, userExist.RoleID)
-		//if existingRoleUser == nil || err != nil {
-		//	log.Errorf("user role data is not exist ID = %d RoleId = %d", userExist.ID, userExist.RoleID)
-		//	return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-		//}
-		//
-		//userExist.Name = request.Name
-		//userExist.Email = request.Email
-		//userExist.Password = request.Password
-		//userExist.Avatar = ""
-		//
-		////update user:
-		//userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExist)
-		//if err != nil {
-		//	return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
-		//}
-		//
-		//existingRoleUser.UserID = userResult.ID
-		//existingRoleUser.RoleID = request.RoleId
-		//
-		//_, err = s.roleUserRepository.UpdateTx(ctx, tx.Client(), existingRoleUser)
-		//if err != nil {
-		//	return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
-		//}
+		//get existing data for role_user based on old value
+		existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExisting.ID, userExisting.RoleID)
+		if existingRoleUser == nil || err != nil {
+			log.Errorf("user role data is not exist ID = %d RoleId = %d", userExisting.ID, userExisting.RoleID)
+			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+		}
+
+		userExisting.Name = request.Name
+		userExisting.Email = request.Email
+		userExisting.Password = request.Password
+		userExisting.Avatar = ""
+
+		//update user:
+		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExisting)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
+		}
+		fmt.Print("" + userResult.Name)
+
+		existingRoleUser.UserID = userResult.ID
+		existingRoleUser.RoleID = request.RoleId
+
+		_, err = s.roleUserRepository.UpdateTx(ctx, tx.Client(), existingRoleUser)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
+		}
 
 		return nil
 

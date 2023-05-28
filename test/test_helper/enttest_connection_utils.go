@@ -41,5 +41,13 @@ func TestDbConnectionClose(client *ent.Client) {
 			fmt.Printf("error on connection db %s\n", err)
 		}
 	}(client)
+}
 
+func TestDbConnectionCloseTx(transaction *ent.Tx) {
+	defer func(transaction *ent.Tx) {
+		err := transaction.Client().Close()
+		if err != nil {
+			fmt.Printf("error on connection db %s\n", err)
+		}
+	}(transaction)
 }

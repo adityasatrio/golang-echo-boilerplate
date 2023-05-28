@@ -94,7 +94,7 @@ func (r *UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User,
 	data, err := r.client.User.Query().
 		Where(user.And(
 			user.ID(id),
-			//user.DeletedAtIsNil(),
+			user.DeletedAtIsNil(),
 		)).
 		Only(ctx)
 

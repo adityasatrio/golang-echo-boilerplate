@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -59,7 +60,7 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 	}
 }
 
-func TestUserServiceImpl_Create(t *testing.T) {
+func TestUserServiceImpl_Create_Success(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "Admin",
@@ -164,118 +165,148 @@ func TestUserServiceImpl_Create(t *testing.T) {
 			}
 		})
 	}
+
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
 }
 
-func TestUserServiceImpl_Update(t *testing.T) {
-	request := dto.UserRequest{
+func TestUserServiceImpl_Update_Success(t *testing.T) {
+	requestUpdate := dto.UserRequest{
 		RoleId:   0,
-		Name:     "User",
-		Email:    "user@email.com",
-		Password: "12345",
+		Name:     "User update",
+		Email:    "user_update@email.com",
+		Password: "12345_update",
 	}
-
-	id := uint64(123000)
-	//userRepoParameter := getUserMock(uint64(0), "User", "user@email.com", "12345")
-	userExisting := getUserMock(uint64(123000), "User", "user@email.com", "12345")
-	//userUpdated := getUserMock(uint64(123000), "User updated", "user_updated@email.com", "12345_updated")
-	//userRoleExisting := ent.RoleUser{UserID: 123000, RoleID: uint64(0)}
-	//userRoleUpdated := ent.RoleUser{UserID: 123000, RoleID: uint64(1)}
 
 	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
-	t.Run("Update_User_Success", func(t *testing.T) {
+	id := uint64(123000)
+	userExisting := getUserMock(uint64(123000), "User", "user@email.com", "12345")
+	userUpdated := getUserMock(uint64(123000), "User updated", "user_update@email.com", "12345_update")
+	userRoleExisting := ent.RoleUser{UserID: 123000, RoleID: uint64(0)}
+	userRoleUpdated := ent.RoleUser{UserID: 123000, RoleID: uint64(1)}
 
-		mockTransaction.On("WithTx", ctx, mock.Anything).
-			Run(func(args mock.Arguments) {
-				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
 
-				errTx := fnTx(txClient)
-				require.NoError(t, errTx)
-				require.NotNil(t, txClient.Client())
-				if errTx != nil {
-					return
-				}
+			errTx := fnTx(txClient)
+			fmt.Print(errTx)
 
-			}).Return(nil).
-			Once()
+			require.NoError(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
 
-		mockUserRepository.On("GetById", ctx, id).
-			Return(&userExisting)
+		}).Return(nil).
+		Once()
 
-		//mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).
-		//	Return(userRoleExisting)
-		//
-		////update data
-		//userExisting.Name = "User updated"
-		//userExisting.Email = "user_updated@email.com"
-		//userExisting.Password = "12345_updated"
-		//userExisting.Avatar = ""
-		//
-		//userRoleExisting.UserID = userExisting.ID
-		//userRoleExisting.RoleID = uint64(1)
-		//
-		//mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userExisting).
-		//	Return(&userUpdated, nil)
-		//
-		//mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), userRoleExisting).
-		//	Return(&userRoleUpdated, nil)
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(&userUpdated, nil)
 
-		result, err := service.Update(ctx, id, &request)
-		assert.NoError(t, err)
-		assert.NotNil(t, result)
-		//assert.Equal(t, &userRepoReturn, result)
-	})
+	userRoleExisting.UserID = userExisting.ID
+	userRoleExisting.RoleID = uint64(1)
+	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting).Return(&userRoleUpdated, nil)
 
-	//t.Run("Update_User_Failed_User", func(t *testing.T) {
-	//	err := errors.New("failed saved user")
-	//
-	//	mockTransaction.On("WithTx", ctx, mock.Anything).
-	//		Run(func(args mock.Arguments) {
-	//			fnTx := args.Get(1).(func(tx *ent.Tx) error)
-	//
-	//			errTx := fnTx(txClient)
-	//			require.NoError(t, errTx)
-	//			require.NotNil(t, txClient.Client())
-	//			if errTx != nil {
-	//				return
-	//			}
-	//		}).Return(err).
-	//		Once()
-	//
-	//	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userRepoParameter, id).
-	//		Return(nil, err)
-	//
-	//	result, err := service.Update(ctx, id, &request)
-	//	assert.NotNil(t, err)
-	//	assert.Nil(t, result)
-	//})
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
 
-	//t.Run("Update_User_Failed_Role_User", func(t *testing.T) {
-	//	err := errors.New("failed saved role")
-	//
-	//	mockTransaction.On("WithTx", ctx, mock.Anything).
-	//		Run(func(args mock.Arguments) {
-	//			fnTx := args.Get(1).(func(tx *ent.Tx) error)
-	//
-	//			errTx := fnTx(txClient)
-	//			require.NoError(t, errTx)
-	//			require.NotNil(t, txClient.Client())
-	//			if errTx != nil {
-	//				return
-	//			}
-	//		}).Return(err).
-	//		Once()
-	//
-	//	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), userRepoParameter, id).
-	//		Return(&userRepoReturn, nil)
-	//
-	//	mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
-	//		Return(nil, err)
-	//
-	//	result, err := service.Update(ctx, id, &request)
-	//	assert.NotNil(t, err)
-	//	assert.Nil(t, result)
-	//})
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
+
+}
+
+func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
+	requestUpdate := dto.UserRequest{
+		RoleId:   0,
+		Name:     "User2 update",
+		Email:    "user2_update@email.com",
+		Password: "12345_update",
+	}
+
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+
+	id := uint64(123002)
+	userExisting := getUserMock(uint64(123002), "User2", "user2@email.com", "12345")
+	userRoleExisting := ent.RoleUser{UserID: 123002, RoleID: uint64(0)}
+
+	err := errors.New("failed saved user")
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+			errTx := fnTx(txClient)
+			require.Error(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
+		}).Return(err).
+		Once()
+
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(nil, err)
+
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.Error(t, err)
+	assert.Nil(t, result)
+
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
+
+}
+
+func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
+	requestUpdate := dto.UserRequest{
+		RoleId:   0,
+		Name:     "User3 update",
+		Email:    "user3_update@email.com",
+		Password: "12345_update",
+	}
+
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+
+	id := uint64(123003)
+	userExisting := getUserMock(id, "User3", "user3@email.com", "12345")
+	userRoleExisting := ent.RoleUser{UserID: id, RoleID: uint64(0)}
+
+	err := errors.New("failed saved role")
+
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+			errTx := fnTx(txClient)
+			require.Error(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
+		}).Return(err).
+		Once()
+
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(nil, err)
+
+	userRoleExisting.UserID = userExisting.ID
+	userRoleExisting.RoleID = uint64(1)
+	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting, id).Return(nil, err)
+
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.Error(t, err)
+	assert.Nil(t, result)
+
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
 }
 
 func TestUserServiceImpl_Delete(t *testing.T) {
@@ -339,6 +370,7 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 
 func TestUserServiceImpl_GetAll(t *testing.T) {
 	ctx := context.Background()
+
 	//subtest success:
 	t.Run("GetAll_success", func(t *testing.T) {
 		user := getUserMock(uint64(13000), "user example", "example@email.com", "12345")
