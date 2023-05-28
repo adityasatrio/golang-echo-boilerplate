@@ -123,7 +123,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "password", Type: field.TypeString},
 		{Name: "avatar", Type: field.TypeString},
-		{Name: "role_id", Type: field.TypeInt32},
+		{Name: "role_id", Type: field.TypeUint64},
 		{Name: "is_verified", Type: field.TypeBool},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "email_verified_at", Type: field.TypeTime, Nullable: true},

@@ -140,15 +140,15 @@ func (uu *UserUpdate) SetAvatar(s string) *UserUpdate {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uu *UserUpdate) SetRoleID(i int32) *UserUpdate {
+func (uu *UserUpdate) SetRoleID(u uint64) *UserUpdate {
 	uu.mutation.ResetRoleID()
-	uu.mutation.SetRoleID(i)
+	uu.mutation.SetRoleID(u)
 	return uu
 }
 
-// AddRoleID adds i to the "role_id" field.
-func (uu *UserUpdate) AddRoleID(i int32) *UserUpdate {
-	uu.mutation.AddRoleID(i)
+// AddRoleID adds u to the "role_id" field.
+func (uu *UserUpdate) AddRoleID(u int64) *UserUpdate {
+	uu.mutation.AddRoleID(u)
 	return uu
 }
 
@@ -561,10 +561,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.SetField(user.FieldRoleID, field.TypeUint64, value)
 	}
 	if value, ok := uu.mutation.AddedRoleID(); ok {
-		_spec.AddField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.AddField(user.FieldRoleID, field.TypeUint64, value)
 	}
 	if value, ok := uu.mutation.IsVerified(); ok {
 		_spec.SetField(user.FieldIsVerified, field.TypeBool, value)
@@ -791,15 +791,15 @@ func (uuo *UserUpdateOne) SetAvatar(s string) *UserUpdateOne {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uuo *UserUpdateOne) SetRoleID(i int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetRoleID(u uint64) *UserUpdateOne {
 	uuo.mutation.ResetRoleID()
-	uuo.mutation.SetRoleID(i)
+	uuo.mutation.SetRoleID(u)
 	return uuo
 }
 
-// AddRoleID adds i to the "role_id" field.
-func (uuo *UserUpdateOne) AddRoleID(i int32) *UserUpdateOne {
-	uuo.mutation.AddRoleID(i)
+// AddRoleID adds u to the "role_id" field.
+func (uuo *UserUpdateOne) AddRoleID(u int64) *UserUpdateOne {
+	uuo.mutation.AddRoleID(u)
 	return uuo
 }
 
@@ -1242,10 +1242,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.SetField(user.FieldRoleID, field.TypeUint64, value)
 	}
 	if value, ok := uuo.mutation.AddedRoleID(); ok {
-		_spec.AddField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.AddField(user.FieldRoleID, field.TypeUint64, value)
 	}
 	if value, ok := uuo.mutation.IsVerified(); ok {
 		_spec.SetField(user.FieldIsVerified, field.TypeBool, value)

@@ -129,8 +129,8 @@ func (uc *UserCreate) SetAvatar(s string) *UserCreate {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uc *UserCreate) SetRoleID(i int32) *UserCreate {
-	uc.mutation.SetRoleID(i)
+func (uc *UserCreate) SetRoleID(u uint64) *UserCreate {
+	uc.mutation.SetRoleID(u)
 	return uc
 }
 
@@ -512,7 +512,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.Avatar = value
 	}
 	if value, ok := uc.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.SetField(user.FieldRoleID, field.TypeUint64, value)
 		_node.RoleID = value
 	}
 	if value, ok := uc.mutation.IsVerified(); ok {

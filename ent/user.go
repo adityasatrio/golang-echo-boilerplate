@@ -38,7 +38,7 @@ type User struct {
 	// Avatar holds the value of the "avatar" field.
 	Avatar string `json:"avatar,omitempty"`
 	// RoleID holds the value of the "role_id" field.
-	RoleID int32 `json:"role_id,omitempty"`
+	RoleID uint64 `json:"role_id,omitempty"`
 	// IsVerified holds the value of the "is_verified" field.
 	IsVerified bool `json:"is_verified,omitempty"`
 	// Email holds the value of the "email" field.
@@ -172,7 +172,7 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field role_id", values[i])
 			} else if value.Valid {
-				u.RoleID = int32(value.Int64)
+				u.RoleID = uint64(value.Int64)
 			}
 		case user.FieldIsVerified:
 			if value, ok := values[i].(*sql.NullBool); !ok {

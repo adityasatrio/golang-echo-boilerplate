@@ -26,7 +26,6 @@ func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
 
 	//start transaction:
-
 	var userNew = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
@@ -48,7 +47,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		//create role user object:
 		roleUserRequest := ent.RoleUser{
 			UserID: userNew.ID,
-			RoleID: uint64(request.RoleId),
+			RoleID: request.RoleId,
 		}
 
 		//save role_user:
@@ -76,32 +75,35 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 
 		userExist, err := s.userRepository.GetById(ctx, id)
 		if userExist == nil || err != nil {
+			log.Errorf("user data is not exist ID = %d", id)
 			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 		}
 
-		userExist.Name = request.Name
-		userExist.Email = request.Email
-		userExist.Password = request.Password
-		userExist.Avatar = ""
-
-		//update user:
-		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExist)
-		if err != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
-		}
-
-		existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExist.ID, request.RoleId)
-		if existingRoleUser == nil || err != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-		}
-
-		existingRoleUser.UserID = userResult.ID
-		existingRoleUser.RoleID = request.RoleId
-
-		_, err = s.roleUserRepository.UpdateTx(ctx, tx.Client(), existingRoleUser)
-		if err != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
-		}
+		////get existing data for role_user based on old value
+		//existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExist.ID, userExist.RoleID)
+		//if existingRoleUser == nil || err != nil {
+		//	log.Errorf("user role data is not exist ID = %d RoleId = %d", userExist.ID, userExist.RoleID)
+		//	return exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+		//}
+		//
+		//userExist.Name = request.Name
+		//userExist.Email = request.Email
+		//userExist.Password = request.Password
+		//userExist.Avatar = ""
+		//
+		////update user:
+		//userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExist)
+		//if err != nil {
+		//	return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
+		//}
+		//
+		//existingRoleUser.UserID = userResult.ID
+		//existingRoleUser.RoleID = request.RoleId
+		//
+		//_, err = s.roleUserRepository.UpdateTx(ctx, tx.Client(), existingRoleUser)
+		//if err != nil {
+		//	return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
+		//}
 
 		return nil
 

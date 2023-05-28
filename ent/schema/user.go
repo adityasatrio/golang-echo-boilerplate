@@ -28,8 +28,7 @@ func (User) Fields() []ent.Field {
 		field.String("name"),
 		field.String("password"),
 		field.String("avatar"),
-		field.Int32("role_id"),
-
+		field.Uint64("role_id"),
 
 		//WARNING : becarefull with bool value, it always have default value as FALSE,
 		//make sure when do testing DTO / request and actual mock or return value have same value

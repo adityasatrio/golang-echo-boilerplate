@@ -3736,8 +3736,8 @@ type UserMutation struct {
 	name               *string
 	password           *string
 	avatar             *string
-	role_id            *int32
-	addrole_id         *int32
+	role_id            *uint64
+	addrole_id         *int64
 	is_verified        *bool
 	email              *string
 	email_verified_at  *time.Time
@@ -4284,13 +4284,13 @@ func (m *UserMutation) ResetAvatar() {
 }
 
 // SetRoleID sets the "role_id" field.
-func (m *UserMutation) SetRoleID(i int32) {
-	m.role_id = &i
+func (m *UserMutation) SetRoleID(u uint64) {
+	m.role_id = &u
 	m.addrole_id = nil
 }
 
 // RoleID returns the value of the "role_id" field in the mutation.
-func (m *UserMutation) RoleID() (r int32, exists bool) {
+func (m *UserMutation) RoleID() (r uint64, exists bool) {
 	v := m.role_id
 	if v == nil {
 		return
@@ -4301,7 +4301,7 @@ func (m *UserMutation) RoleID() (r int32, exists bool) {
 // OldRoleID returns the old "role_id" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldRoleID(ctx context.Context) (v int32, err error) {
+func (m *UserMutation) OldRoleID(ctx context.Context) (v uint64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
 	}
@@ -4315,17 +4315,17 @@ func (m *UserMutation) OldRoleID(ctx context.Context) (v int32, err error) {
 	return oldValue.RoleID, nil
 }
 
-// AddRoleID adds i to the "role_id" field.
-func (m *UserMutation) AddRoleID(i int32) {
+// AddRoleID adds u to the "role_id" field.
+func (m *UserMutation) AddRoleID(u int64) {
 	if m.addrole_id != nil {
-		*m.addrole_id += i
+		*m.addrole_id += u
 	} else {
-		m.addrole_id = &i
+		m.addrole_id = &u
 	}
 }
 
 // AddedRoleID returns the value that was added to the "role_id" field in this mutation.
-func (m *UserMutation) AddedRoleID() (r int32, exists bool) {
+func (m *UserMutation) AddedRoleID() (r int64, exists bool) {
 	v := m.addrole_id
 	if v == nil {
 		return
@@ -5431,7 +5431,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetAvatar(v)
 		return nil
 	case user.FieldRoleID:
-		v, ok := value.(int32)
+		v, ok := value.(uint64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5592,7 +5592,7 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 		m.AddVersion(v)
 		return nil
 	case user.FieldRoleID:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -46,7 +46,7 @@ func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *
 	}
 
 	if affected < 1 {
-		log.Errorf("ID %s no records were updated in database", updateData.ID)
+		log.Errorf("ID %d no records were updated in database", updateData.ID)
 		return nil, errors.New("no records were updated in database")
 	}
 

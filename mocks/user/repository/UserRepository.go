@@ -144,25 +144,25 @@ func (_m *UserRepository) SoftDelete(ctx context.Context, id uint64) (*ent.User,
 	return r0, r1
 }
 
-// UpdateTx provides a mock function with given fields: ctx, txClient, updateUser, id
-func (_m *UserRepository) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User, id uint64) (*ent.User, error) {
-	ret := _m.Called(ctx, txClient, updateUser, id)
+// UpdateTx provides a mock function with given fields: ctx, txClient, updateUser
+func (_m *UserRepository) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User) (*ent.User, error) {
+	ret := _m.Called(ctx, txClient, updateUser)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) (*ent.User, error)); ok {
-		return rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.User) (*ent.User, error)); ok {
+		return rf(ctx, txClient, updateUser)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) *ent.User); ok {
-		r0 = rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.User) *ent.User); ok {
+		r0 = rf(ctx, txClient, updateUser)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, ent.User, uint64) error); ok {
-		r1 = rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, *ent.User) error); ok {
+		r1 = rf(ctx, txClient, updateUser)
 	} else {
 		r1 = ret.Error(1)
 	}

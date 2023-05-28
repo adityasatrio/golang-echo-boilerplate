@@ -105,7 +105,7 @@ func Avatar(v string) predicate.User {
 }
 
 // RoleID applies equality check predicate on the "role_id" field. It's identical to RoleIDEQ.
-func RoleID(v int32) predicate.User {
+func RoleID(v uint64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldRoleID, v))
 }
 
@@ -770,42 +770,42 @@ func AvatarContainsFold(v string) predicate.User {
 }
 
 // RoleIDEQ applies the EQ predicate on the "role_id" field.
-func RoleIDEQ(v int32) predicate.User {
+func RoleIDEQ(v uint64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldRoleID, v))
 }
 
 // RoleIDNEQ applies the NEQ predicate on the "role_id" field.
-func RoleIDNEQ(v int32) predicate.User {
+func RoleIDNEQ(v uint64) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldRoleID, v))
 }
 
 // RoleIDIn applies the In predicate on the "role_id" field.
-func RoleIDIn(vs ...int32) predicate.User {
+func RoleIDIn(vs ...uint64) predicate.User {
 	return predicate.User(sql.FieldIn(FieldRoleID, vs...))
 }
 
 // RoleIDNotIn applies the NotIn predicate on the "role_id" field.
-func RoleIDNotIn(vs ...int32) predicate.User {
+func RoleIDNotIn(vs ...uint64) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldRoleID, vs...))
 }
 
 // RoleIDGT applies the GT predicate on the "role_id" field.
-func RoleIDGT(v int32) predicate.User {
+func RoleIDGT(v uint64) predicate.User {
 	return predicate.User(sql.FieldGT(FieldRoleID, v))
 }
 
 // RoleIDGTE applies the GTE predicate on the "role_id" field.
-func RoleIDGTE(v int32) predicate.User {
+func RoleIDGTE(v uint64) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldRoleID, v))
 }
 
 // RoleIDLT applies the LT predicate on the "role_id" field.
-func RoleIDLT(v int32) predicate.User {
+func RoleIDLT(v uint64) predicate.User {
 	return predicate.User(sql.FieldLT(FieldRoleID, v))
 }
 
 // RoleIDLTE applies the LTE predicate on the "role_id" field.
-func RoleIDLTE(v int32) predicate.User {
+func RoleIDLTE(v uint64) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldRoleID, v))
 }
 
