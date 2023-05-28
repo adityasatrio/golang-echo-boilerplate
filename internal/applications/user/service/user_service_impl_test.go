@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -192,7 +191,6 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 			fnTx := args.Get(1).(func(tx *ent.Tx) error)
 
 			errTx := fnTx(txClient)
-			fmt.Print(errTx)
 
 			require.NoError(t, errTx)
 			require.NotNil(t, txClient.Client())
