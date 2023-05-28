@@ -1,4 +1,4 @@
-.PHONY: all build test generate-ent generate-mocks clean
+.PHONY: clean gen-schema gen-mocks test build run
 
 
 # Build the project
@@ -15,24 +15,34 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-gen-model:
+gen-schema:
 	go generate ./ent
 
 # Generate mockery mocks
 gen-mocks:
 	mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
 
-clean:
+confirm:
+	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [y/N]: $(shell tput sgr0)" choice; \
+	if [ "$$choice" != "y" ]; then \
+		echo "$(shell echo -e '\033[0;31m')Terminating the clean-up process.$(shell tput sgr0)"; \
+    	exit 1; \
+    fi
+
+clean: confirm
+	@echo "Warning this action will clean-up coverage report, ent schema and mockery generated codes "
+	sleep 10
+
 	@echo "Deleting coverage.out coverage.html on 5s"
 	sleep 5
 	rm -f coverage.out coverage.html
 
-	@echo "Deleting all directories and files in ./ent except ./ent/schema and ./ent/generate.go on 10s"
-	sleep 10
+	@echo "Deleting all directories and files in ./ent except ./ent/schema and ./ent/generate.go on 5s"
+	sleep 5
 	@find ./ent/* ! -path "./ent/schema*" ! -path "./ent/generate.go" -delete
 
-	@echo "Deleting all directories and files in /.mocks on 10s"
-	sleep 10
+	@echo "Deleting all directories and files in /.mocks on 5s"
+	sleep 5
 	rm -rf ./mocks/*
 
-all: gen-model gen-mocks test build
+all: gen-schema gen-mocks test build

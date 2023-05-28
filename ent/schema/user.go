@@ -6,16 +6,23 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/globalutils"
 )
 
 type User struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 func (User) Fields() []ent.Field {
 
-	schema := []ent.Field{
+	return []ent.Field{
 		//WARNING : mandatory value, make sure on repository on creat() function for model always set below field
 		field.Uint64("id"),
 		field.String("name"),
@@ -43,9 +50,8 @@ func (User) Fields() []ent.Field {
 		field.Time("last_access_at").Optional(),
 		field.Bool("pregnancy_mode").Optional(),
 		field.Time("latest_skip_update").Optional(),
-		field.Time("latest_deleted_at").Optional()}
-
-	return globalutils.InitBaseSchema(schema)
+		field.Time("latest_deleted_at").Optional(),
+	}
 }
 func (User) Edges() []ent.Edge {
 	return nil

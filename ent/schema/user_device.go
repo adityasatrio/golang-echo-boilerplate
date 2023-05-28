@@ -6,23 +6,27 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/globalutils"
 )
 
 type UserDevice struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (UserDevice) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 func (UserDevice) Fields() []ent.Field {
-	schema := []ent.Field{field.Uint64("id"),
+	return []ent.Field{field.Uint64("id"),
 		field.Uint64("user_id"),
 		field.String("version"),
 		field.String("platform"),
 		field.String("device_id").Optional(),
 	}
-
-	return globalutils.InitBaseSchema(schema)
-
 }
 func (UserDevice) Edges() []ent.Edge {
 	return nil

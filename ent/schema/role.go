@@ -6,20 +6,25 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"myapp/globalutils"
 )
 
 type Role struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (Role) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 func (Role) Fields() []ent.Field {
-	schema := []ent.Field{field.Uint64("id"),
+	return []ent.Field{field.Uint64("id"),
 		field.String("name"),
 		field.String("text"),
 	}
-
-	return globalutils.InitBaseSchema(schema)
 }
 func (Role) Edges() []ent.Edge {
 	return nil
