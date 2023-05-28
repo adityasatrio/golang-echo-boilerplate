@@ -1,4 +1,4 @@
-package apputils
+package response
 
 import (
 	"errors"
@@ -32,7 +32,7 @@ func Base(ctx echo.Context, httpCode int, errorCode int, message string, data in
 		bodyResponse.Error = err.Error()
 	}
 
-	//added header for standard
+	//added header for standard response
 	//https://developer.mozilla.org/en-US/docs/Glossary/Response_header
 	ctx.Response().Header().Add("date", date)
 

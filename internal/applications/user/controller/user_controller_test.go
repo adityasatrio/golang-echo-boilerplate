@@ -9,7 +9,7 @@ import (
 	"myapp/exceptions"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/apputils"
-	mockService "myapp/mocks/user/service"
+	mock_service "myapp/mocks/user/service"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -88,7 +88,7 @@ func TestUserController_Create(t *testing.T) {
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
 
-			userService := new(mockService.UserService)
+			userService := new(mock_service.UserService)
 			controller := NewUserController(userService)
 			e := echo.New()
 			validator.SetupValidator(e)
@@ -145,7 +145,7 @@ func TestUserController_Create(t *testing.T) {
 
 	t.Run("Create_failed_dto_validation", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 
 		e := echo.New()
@@ -194,7 +194,7 @@ func TestUserController_Update(t *testing.T) {
 
 	t.Run("Update_success", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -229,7 +229,7 @@ func TestUserController_Update(t *testing.T) {
 	})
 
 	t.Run("Update_failed_on_service", func(t *testing.T) {
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -263,7 +263,7 @@ func TestUserController_Update(t *testing.T) {
 	})
 
 	t.Run("Update_failed_dto_validation", func(t *testing.T) {
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -294,7 +294,7 @@ func TestUserController_Update(t *testing.T) {
 func TestUserController_Delete(t *testing.T) {
 	t.Run("Delete_success", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -344,7 +344,7 @@ func TestUserController_Delete(t *testing.T) {
 
 	t.Run("Delete_failed", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -381,7 +381,7 @@ func TestUserController_GetById(t *testing.T) {
 
 	t.Run("Get_success", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -424,7 +424,7 @@ func TestUserController_GetById(t *testing.T) {
 
 	t.Run("Get_failed", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -460,7 +460,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 	t.Run("Get_All_success", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)
@@ -523,7 +523,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 	t.Run("Get_All_failed", func(t *testing.T) {
 
-		userService := new(mockService.UserService)
+		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 		e := echo.New()
 		validator.SetupValidator(e)

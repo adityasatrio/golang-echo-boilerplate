@@ -7,8 +7,8 @@ package middleware
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	"log"
 	"net/http"
 	"time"
 )
@@ -24,7 +24,7 @@ func SetupMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Secure())
-	log.Default().Println("initialized middleware : success")
+	log.Info("initialized middleware : success")
 
 }
 

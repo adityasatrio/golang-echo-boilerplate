@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
+func TestTrxServiceImpl_WithSuccessfulTx(t *testing.T) {
 
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),

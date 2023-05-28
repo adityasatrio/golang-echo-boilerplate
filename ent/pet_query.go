@@ -262,12 +262,12 @@ func (pq *PetQuery) Clone() *PetQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Pet.Query().
-//		GroupBy(pet.FieldName).
+//		GroupBy(pet.FieldVersion).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pq *PetQuery) GroupBy(field string, fields ...string) *PetGroupBy {
@@ -285,11 +285,11 @@ func (pq *PetQuery) GroupBy(field string, fields ...string) *PetGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //	}
 //
 //	client.Pet.Query().
-//		Select(pet.FieldName).
+//		Select(pet.FieldVersion).
 //		Scan(ctx, &v)
 func (pq *PetQuery) Select(fields ...string) *PetSelect {
 	pq.ctx.Fields = append(pq.ctx.Fields, fields...)

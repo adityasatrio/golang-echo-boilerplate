@@ -55,19 +55,9 @@ func IDLTE(id uuid.UUID) predicate.Pet {
 	return predicate.Pet(sql.FieldLTE(FieldID, id))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldEQ(FieldName, v))
-}
-
-// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
-func Code(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldEQ(FieldCode, v))
-}
-
-// AgeMonth applies equality check predicate on the "age_month" field. It's identical to AgeMonthEQ.
-func AgeMonth(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldEQ(FieldAgeMonth, v))
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldVersion, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -100,194 +90,59 @@ func DeletedAt(v time.Time) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Pet {
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldName, v))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldNEQ(FieldName, v))
-}
-
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Pet {
-	return predicate.Pet(sql.FieldIn(FieldName, vs...))
-}
-
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Pet {
-	return predicate.Pet(sql.FieldNotIn(FieldName, vs...))
-}
-
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldGT(FieldName, v))
-}
-
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldGTE(FieldName, v))
-}
-
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldLT(FieldName, v))
-}
-
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldLTE(FieldName, v))
-}
-
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldContains(FieldName, v))
-}
-
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldHasPrefix(FieldName, v))
-}
-
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldHasSuffix(FieldName, v))
-}
-
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldEqualFold(FieldName, v))
-}
-
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldContainsFold(FieldName, v))
-}
-
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.Pet {
-	return predicate.Pet(sql.FieldEQ(FieldType, v))
-}
-
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.Pet {
-	return predicate.Pet(sql.FieldNEQ(FieldType, v))
-}
-
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.Pet {
-	return predicate.Pet(sql.FieldIn(FieldType, vs...))
-}
-
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.Pet {
-	return predicate.Pet(sql.FieldNotIn(FieldType, vs...))
-}
-
-// CodeEQ applies the EQ predicate on the "code" field.
-func CodeEQ(v string) predicate.Pet {
+// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
+func Code(v string) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldCode, v))
 }
 
-// CodeNEQ applies the NEQ predicate on the "code" field.
-func CodeNEQ(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldNEQ(FieldCode, v))
-}
-
-// CodeIn applies the In predicate on the "code" field.
-func CodeIn(vs ...string) predicate.Pet {
-	return predicate.Pet(sql.FieldIn(FieldCode, vs...))
-}
-
-// CodeNotIn applies the NotIn predicate on the "code" field.
-func CodeNotIn(vs ...string) predicate.Pet {
-	return predicate.Pet(sql.FieldNotIn(FieldCode, vs...))
-}
-
-// CodeGT applies the GT predicate on the "code" field.
-func CodeGT(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldGT(FieldCode, v))
-}
-
-// CodeGTE applies the GTE predicate on the "code" field.
-func CodeGTE(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldGTE(FieldCode, v))
-}
-
-// CodeLT applies the LT predicate on the "code" field.
-func CodeLT(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldLT(FieldCode, v))
-}
-
-// CodeLTE applies the LTE predicate on the "code" field.
-func CodeLTE(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldLTE(FieldCode, v))
-}
-
-// CodeContains applies the Contains predicate on the "code" field.
-func CodeContains(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldContains(FieldCode, v))
-}
-
-// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
-func CodeHasPrefix(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldHasPrefix(FieldCode, v))
-}
-
-// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
-func CodeHasSuffix(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldHasSuffix(FieldCode, v))
-}
-
-// CodeEqualFold applies the EqualFold predicate on the "code" field.
-func CodeEqualFold(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldEqualFold(FieldCode, v))
-}
-
-// CodeContainsFold applies the ContainsFold predicate on the "code" field.
-func CodeContainsFold(v string) predicate.Pet {
-	return predicate.Pet(sql.FieldContainsFold(FieldCode, v))
-}
-
-// AgeMonthEQ applies the EQ predicate on the "age_month" field.
-func AgeMonthEQ(v int) predicate.Pet {
+// AgeMonth applies equality check predicate on the "age_month" field. It's identical to AgeMonthEQ.
+func AgeMonth(v int) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldAgeMonth, v))
 }
 
-// AgeMonthNEQ applies the NEQ predicate on the "age_month" field.
-func AgeMonthNEQ(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldNEQ(FieldAgeMonth, v))
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldVersion, v))
 }
 
-// AgeMonthIn applies the In predicate on the "age_month" field.
-func AgeMonthIn(vs ...int) predicate.Pet {
-	return predicate.Pet(sql.FieldIn(FieldAgeMonth, vs...))
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldVersion, v))
 }
 
-// AgeMonthNotIn applies the NotIn predicate on the "age_month" field.
-func AgeMonthNotIn(vs ...int) predicate.Pet {
-	return predicate.Pet(sql.FieldNotIn(FieldAgeMonth, vs...))
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...int64) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldVersion, vs...))
 }
 
-// AgeMonthGT applies the GT predicate on the "age_month" field.
-func AgeMonthGT(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldGT(FieldAgeMonth, v))
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...int64) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldVersion, vs...))
 }
 
-// AgeMonthGTE applies the GTE predicate on the "age_month" field.
-func AgeMonthGTE(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldGTE(FieldAgeMonth, v))
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldVersion, v))
 }
 
-// AgeMonthLT applies the LT predicate on the "age_month" field.
-func AgeMonthLT(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldLT(FieldAgeMonth, v))
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldVersion, v))
 }
 
-// AgeMonthLTE applies the LTE predicate on the "age_month" field.
-func AgeMonthLTE(v int) predicate.Pet {
-	return predicate.Pet(sql.FieldLTE(FieldAgeMonth, v))
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldVersion, v))
+}
+
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldVersion, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -510,16 +365,6 @@ func UpdatedAtLTE(v time.Time) predicate.Pet {
 	return predicate.Pet(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.Pet {
-	return predicate.Pet(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.Pet {
-	return predicate.Pet(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
 func DeletedByEQ(v string) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldDeletedBy, v))
@@ -643,6 +488,196 @@ func DeletedAtIsNil() predicate.Pet {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.Pet {
 	return predicate.Pet(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldContainsFold(FieldName, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v Type) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v Type) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...Type) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...Type) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldType, vs...))
+}
+
+// CodeEQ applies the EQ predicate on the "code" field.
+func CodeEQ(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldCode, v))
+}
+
+// CodeNEQ applies the NEQ predicate on the "code" field.
+func CodeNEQ(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldCode, v))
+}
+
+// CodeIn applies the In predicate on the "code" field.
+func CodeIn(vs ...string) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldCode, vs...))
+}
+
+// CodeNotIn applies the NotIn predicate on the "code" field.
+func CodeNotIn(vs ...string) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldCode, vs...))
+}
+
+// CodeGT applies the GT predicate on the "code" field.
+func CodeGT(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldCode, v))
+}
+
+// CodeGTE applies the GTE predicate on the "code" field.
+func CodeGTE(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldCode, v))
+}
+
+// CodeLT applies the LT predicate on the "code" field.
+func CodeLT(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldCode, v))
+}
+
+// CodeLTE applies the LTE predicate on the "code" field.
+func CodeLTE(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldCode, v))
+}
+
+// CodeContains applies the Contains predicate on the "code" field.
+func CodeContains(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldContains(FieldCode, v))
+}
+
+// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
+func CodeHasPrefix(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldHasPrefix(FieldCode, v))
+}
+
+// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
+func CodeHasSuffix(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldHasSuffix(FieldCode, v))
+}
+
+// CodeEqualFold applies the EqualFold predicate on the "code" field.
+func CodeEqualFold(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldEqualFold(FieldCode, v))
+}
+
+// CodeContainsFold applies the ContainsFold predicate on the "code" field.
+func CodeContainsFold(v string) predicate.Pet {
+	return predicate.Pet(sql.FieldContainsFold(FieldCode, v))
+}
+
+// AgeMonthEQ applies the EQ predicate on the "age_month" field.
+func AgeMonthEQ(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldAgeMonth, v))
+}
+
+// AgeMonthNEQ applies the NEQ predicate on the "age_month" field.
+func AgeMonthNEQ(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldAgeMonth, v))
+}
+
+// AgeMonthIn applies the In predicate on the "age_month" field.
+func AgeMonthIn(vs ...int) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldAgeMonth, vs...))
+}
+
+// AgeMonthNotIn applies the NotIn predicate on the "age_month" field.
+func AgeMonthNotIn(vs ...int) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldAgeMonth, vs...))
+}
+
+// AgeMonthGT applies the GT predicate on the "age_month" field.
+func AgeMonthGT(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldAgeMonth, v))
+}
+
+// AgeMonthGTE applies the GTE predicate on the "age_month" field.
+func AgeMonthGTE(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldAgeMonth, v))
+}
+
+// AgeMonthLT applies the LT predicate on the "age_month" field.
+func AgeMonthLT(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldAgeMonth, v))
+}
+
+// AgeMonthLTE applies the LTE predicate on the "age_month" field.
+func AgeMonthLTE(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldAgeMonth, v))
 }
 
 // And groups predicates with the AND operator between them.

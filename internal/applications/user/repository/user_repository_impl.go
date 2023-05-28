@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/ent/user"
 	"time"
@@ -34,8 +36,10 @@ func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client,
 	return response, nil
 }
 
-func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
-	saved, err := txClient.User.UpdateOneID(id).
+func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User) (*ent.User, error) {
+
+	affected, err := txClient.User.Update().
+		Where(user.ID(updateUser.ID), user.Version(updateUser.Version)).
 		SetName(updateUser.Name).
 		SetEmail(updateUser.Email).
 		SetPassword(updateUser.Password).
@@ -49,7 +53,17 @@ func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client,
 		return nil, err
 	}
 
-	return saved, nil
+	if affected < 1 {
+		log.Errorf("ID %s no records were updated in database", updateUser.ID)
+		return nil, errors.New("no records were updated in database")
+	}
+
+	updated, err := txClient.User.Get(ctx, updateUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updated, nil
 }
 
 func (r *UserRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.User, error) {

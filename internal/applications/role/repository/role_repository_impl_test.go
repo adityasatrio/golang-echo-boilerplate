@@ -50,18 +50,14 @@ func TestRoleRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, dummyRole.Name, result.Name)
 	assert.Equal(t, dummyRole.Text, result.Text)
 
-	dummyUpdateRole := ent.Role{
-		Name:      "john doe updated",
-		Text:      "head heart wallets updated",
-		CreatedBy: "user",
-		CreatedAt: time.Time{},
-	}
+	result.Name = "john doe updated"
+	result.Text = "head heart wallets updated"
 
-	resultUpdated, err := roleRepo.Update(ctx, dummyUpdateRole, result.ID)
+	resultUpdated, err := roleRepo.Update(ctx, result)
 	assert.NoError(t, err)
 	assert.NotNil(t, resultUpdated.ID)
-	assert.Equal(t, dummyUpdateRole.Name, resultUpdated.Name)
-	assert.Equal(t, dummyUpdateRole.Text, resultUpdated.Text)
+	assert.Equal(t, "john doe updated", resultUpdated.Name)
+	assert.Equal(t, "head heart wallets updated", resultUpdated.Text)
 
 	t.Cleanup(func() {
 		test_helper.TestDbConnectionClose(client)
