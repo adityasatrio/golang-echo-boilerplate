@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
@@ -97,7 +96,6 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
-		fmt.Print("" + userResult.Name)
 
 		existingRoleUser.UserID = userResult.ID
 		existingRoleUser.RoleID = request.RoleId
@@ -107,6 +105,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 		}
 
+		userUpdated = userResult
 		return nil
 
 	}); err != nil {

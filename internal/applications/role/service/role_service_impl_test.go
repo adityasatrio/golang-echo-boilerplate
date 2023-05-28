@@ -60,7 +60,9 @@ func TestRoleServiceImpl_Update(t *testing.T) {
 
 	t.Run("Update_success", func(t *testing.T) {
 		role := getRole(id, "CS", "Customer Service")
-		mockRoleRepository.On("Update", ctx, role, id).Return(&role, nil).Once()
+
+		mockRoleRepository.On("GetById", ctx, id).Return(&role, nil)
+		mockRoleRepository.On("Update", ctx, &role).Return(&role, nil).Once()
 
 		result, err := service.Update(ctx, roleRequest, id)
 
@@ -71,7 +73,9 @@ func TestRoleServiceImpl_Update(t *testing.T) {
 	t.Run("Update_failed", func(t *testing.T) {
 		errMessage := errors.New("failed update role")
 		role := getRole(id, "CS", "Customer Service")
-		mockRoleRepository.On("Update", ctx, role, id).Return(nil, errMessage).Once()
+
+		mockRoleRepository.On("GetById", ctx, id).Return(&role, nil)
+		mockRoleRepository.On("Update", ctx, &role).Return(nil, errMessage).Once()
 
 		result, err := service.Update(ctx, roleRequest, id)
 		assert.NotNil(t, err)

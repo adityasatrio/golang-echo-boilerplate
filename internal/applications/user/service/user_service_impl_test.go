@@ -183,7 +183,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 
 	id := uint64(123000)
 	userExisting := getUserMock(uint64(123000), "User", "user@email.com", "12345")
-	userUpdated := getUserMock(uint64(123000), "User updated", "user_update@email.com", "12345_update")
+	userUpdated := getUserMock(uint64(123000), "User update", "user_update@email.com", "12345_update")
 	userRoleExisting := ent.RoleUser{UserID: 123000, RoleID: uint64(0)}
 	userRoleUpdated := ent.RoleUser{UserID: 123000, RoleID: uint64(1)}
 
@@ -213,12 +213,13 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 
 	result, err := service.Update(ctx, id, &requestUpdate)
 	assert.NoError(t, err)
-	assert.NotNil(t, result)
+	assert.Equal(t, requestUpdate.Name, result.Name)
+	assert.Equal(t, requestUpdate.Email, result.Email)
+	assert.Equal(t, requestUpdate.Password, result.Password)
 
 	defer func() {
 		test_helper.TestDbConnectionCloseTx(txClient)
 	}()
-
 }
 
 func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
