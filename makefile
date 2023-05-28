@@ -20,12 +20,8 @@ gen-schema:
 
 # Generate mockery mocks
 # Generate mockery mocks
-gen-mocks1:
-	mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
-	#mockery --all --dir internal/applications --output mocks --keeptree --inpackage-suffix
-gen-mocks2:
-	#mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
-	mockery --all --dir internal/applications --output mocks --keeptree --inpackage-sufix _mock
+gen-mocks:
+	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \

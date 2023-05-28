@@ -9,19 +9,19 @@ import (
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
 	"myapp/internal/applications/user/dto"
-	mockRoleRepo "myapp/mocks/role/repository"
-	mockRoleUserRepo "myapp/mocks/role_user/repository"
-	mockTrx "myapp/mocks/transaction"
-	"myapp/mocks/user/repository"
+	mock_repository "myapp/mocks/role/repository"
+	mock_repository3 "myapp/mocks/role_user/repository"
+	mock_transaction "myapp/mocks/transaction"
+	mock_repository2 "myapp/mocks/user/repository"
 	"myapp/test/test_helper"
 	"testing"
 	"time"
 )
 
-var mockUserRepository = new(mock_repository.UserRepository)
-var mockRoleRepository = new(mockRoleRepo.RoleRepository)
-var mockRoleUserRepository = new(mockRoleUserRepo.RoleUserRepository)
-var mockTransaction = new(mockTrx.TrxService)
+var mockUserRepository = new(mock_repository2.UserRepository)
+var mockRoleRepository = new(mock_repository.RoleRepository)
+var mockRoleUserRepository = new(mock_repository3.RoleUserRepository)
+var mockTransaction = new(mock_transaction.TrxService)
 
 var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
 

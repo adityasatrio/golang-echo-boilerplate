@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
 	"myapp/internal/applications/role/dto"
-	mockRoleRepo "myapp/mocks/role/repository"
+	mock_repository "myapp/mocks/role/repository"
 	"testing"
 )
 
-var mockRoleRepository = new(mockRoleRepo.RoleRepository)
+var mockRoleRepository = new(mock_repository.RoleRepository)
 var service = NewRoleServiceImpl(mockRoleRepository)
 
 func getRole(id uint64, name string, text string) ent.Role {
