@@ -46,4 +46,4 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: gen-schema gen-mocks test build
+all: gen-schema gen-mocks test build run

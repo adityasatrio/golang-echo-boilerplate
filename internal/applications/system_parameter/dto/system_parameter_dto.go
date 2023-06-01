@@ -12,6 +12,7 @@ type (
 	}
 
 	SystemParameterResponse struct {
+		ID    int    `json:"ID" validate:"required"`
 		Key   string `json:"Key" validate:"required"`
 		Value string `json:"Value" validate:"required"`
 		//CreatedBy string `json:"CreatedBy" validate:"required"`

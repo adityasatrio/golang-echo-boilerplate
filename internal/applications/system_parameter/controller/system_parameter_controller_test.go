@@ -37,9 +37,12 @@ func TestSystemParameterController_Create(t *testing.T) {
 	}
 
 	// Test Create function
-	mockService.On("Create", req.Context(), dtoCreate).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
+	mockService.On("Create", req.Context(), dtoCreate).Return(&ent.SystemParameter{ID: 1, Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.Create(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
+
+		IdKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.ID")
+		assert.Equal(t, "key1", IdKey)
 
 		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
