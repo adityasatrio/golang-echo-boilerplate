@@ -40,7 +40,7 @@ clean: confirm
 
 	@echo "Deleting all directories and files in ./ent except ./ent/schema and ./ent/generate.go on 5s"
 	sleep 5
-	@find ./ent/* ! -path "./ent/schema*" ! -path "./ent/generate.go" -delete
+	@find ./ent/* ! -path "./ent/schema*" ! -path "./ent/generate.go" ! -path "./ent/hook*" -delete
 
 	@echo "Deleting all directories and files in /.mocks on 5s"
 	sleep 5

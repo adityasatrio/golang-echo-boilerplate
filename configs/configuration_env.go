@@ -40,8 +40,8 @@ func setDefaultKeys() {
 	host := []string{"localhost", "https://labstack.com", "https://labstack.net"}
 	viper.SetDefault("application.cors.allowedHost", host)
 
-	viper.SetDefault("db.configs.username", "root")
-	viper.SetDefault("db.configs.password", "password")
+	//viper.SetDefault("db.configs.username", "root")
+	//viper.SetDefault("db.configs.password", "password")
 	viper.SetDefault("db.configs.host", "127.0.0.1")
 	viper.SetDefault("db.configs.port", "3306")
 	viper.SetDefault("db.configs.database", "echo_sample")
