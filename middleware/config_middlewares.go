@@ -5,6 +5,7 @@
 package middleware
 
 import (
+	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -24,6 +25,12 @@ func SetupMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Secure())
+
+	e.Use(echoprometheus.NewMiddleware("myapp")) // adds middleware to gather metrics
+
+	//https://echo.labstack.com/middleware/recover/#custom-configuration
+	e.Use(middleware.Recover())
+
 	log.Info("initialized middleware : success")
 
 }

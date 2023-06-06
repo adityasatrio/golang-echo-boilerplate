@@ -3,6 +3,7 @@ package rest_api
 import (
 	"github.com/labstack/echo/v4"
 	"myapp/ent"
+	"myapp/internal/applications"
 	helloController "myapp/internal/applications/hello_worlds/controller"
 	"myapp/internal/applications/hello_worlds/repository"
 	"myapp/internal/applications/hello_worlds/service"
@@ -13,6 +14,8 @@ import (
 )
 
 func SetupRouteHandler(e *echo.Echo, connDb *ent.Client) {
+	//apps status metrics
+	applications.AddRoutes(e)
 
 	//manual injection
 	helloWorldsRepository := repository.NewHelloWorldsRepository(connDb)
