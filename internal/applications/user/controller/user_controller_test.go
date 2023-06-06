@@ -38,7 +38,7 @@ func TestUserController_Create(t *testing.T) {
 				Password: "Password123!",
 			},
 			resBodyJson: dto.UserResponse{
-				Id:       1,
+				ID:       1,
 				RoleId:   1,
 				Name:     "testing name",
 				Email:    "testing@email.id",
@@ -65,7 +65,7 @@ func TestUserController_Create(t *testing.T) {
 				Password: "Password123!",
 			},
 			resBodyJson: dto.UserResponse{
-				Id:       1,
+				ID:       1,
 				RoleId:   1,
 				Name:     "testing name",
 				Email:    "testing@email.id",

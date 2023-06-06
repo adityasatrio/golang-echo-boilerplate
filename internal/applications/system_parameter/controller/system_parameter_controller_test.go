@@ -42,7 +42,7 @@ func TestSystemParameterController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
 		IdKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.ID")
-		assert.Equal(t, "key1", IdKey)
+		assert.Equal(t, float64(1), IdKey)
 
 		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
