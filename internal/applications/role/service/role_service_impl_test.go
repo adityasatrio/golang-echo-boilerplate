@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
 	"myapp/internal/applications/role/dto"
-	mockRoleRepo "myapp/mocks/role/repository"
+	mock_repository "myapp/mocks/role/repository"
 	"testing"
 )
 
-var mockRoleRepository = new(mockRoleRepo.RoleRepository)
+var mockRoleRepository = new(mock_repository.RoleRepository)
 var service = NewRoleServiceImpl(mockRoleRepository)
 
 func getRole(id uint64, name string, text string) ent.Role {
@@ -60,7 +60,9 @@ func TestRoleServiceImpl_Update(t *testing.T) {
 
 	t.Run("Update_success", func(t *testing.T) {
 		role := getRole(id, "CS", "Customer Service")
-		mockRoleRepository.On("Update", ctx, role, id).Return(&role, nil).Once()
+
+		mockRoleRepository.On("GetById", ctx, id).Return(&role, nil)
+		mockRoleRepository.On("Update", ctx, &role).Return(&role, nil).Once()
 
 		result, err := service.Update(ctx, roleRequest, id)
 
@@ -71,7 +73,9 @@ func TestRoleServiceImpl_Update(t *testing.T) {
 	t.Run("Update_failed", func(t *testing.T) {
 		errMessage := errors.New("failed update role")
 		role := getRole(id, "CS", "Customer Service")
-		mockRoleRepository.On("Update", ctx, role, id).Return(nil, errMessage).Once()
+
+		mockRoleRepository.On("GetById", ctx, id).Return(&role, nil)
+		mockRoleRepository.On("Update", ctx, &role).Return(nil, errMessage).Once()
 
 		result, err := service.Update(ctx, roleRequest, id)
 		assert.NotNil(t, err)

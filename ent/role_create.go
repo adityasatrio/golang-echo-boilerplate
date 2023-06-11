@@ -20,15 +20,17 @@ type RoleCreate struct {
 	hooks    []Hook
 }
 
-// SetName sets the "name" field.
-func (rc *RoleCreate) SetName(s string) *RoleCreate {
-	rc.mutation.SetName(s)
+// SetVersion sets the "version" field.
+func (rc *RoleCreate) SetVersion(i int64) *RoleCreate {
+	rc.mutation.SetVersion(i)
 	return rc
 }
 
-// SetText sets the "text" field.
-func (rc *RoleCreate) SetText(s string) *RoleCreate {
-	rc.mutation.SetText(s)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (rc *RoleCreate) SetNillableVersion(i *int64) *RoleCreate {
+	if i != nil {
+		rc.SetVersion(*i)
+	}
 	return rc
 }
 
@@ -108,6 +110,18 @@ func (rc *RoleCreate) SetNillableDeletedAt(t *time.Time) *RoleCreate {
 	return rc
 }
 
+// SetName sets the "name" field.
+func (rc *RoleCreate) SetName(s string) *RoleCreate {
+	rc.mutation.SetName(s)
+	return rc
+}
+
+// SetText sets the "text" field.
+func (rc *RoleCreate) SetText(s string) *RoleCreate {
+	rc.mutation.SetText(s)
+	return rc
+}
+
 // SetID sets the "id" field.
 func (rc *RoleCreate) SetID(u uint64) *RoleCreate {
 	rc.mutation.SetID(u)
@@ -149,23 +163,24 @@ func (rc *RoleCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (rc *RoleCreate) defaults() {
+	if _, ok := rc.mutation.Version(); !ok {
+		v := role.DefaultVersion()
+		rc.mutation.SetVersion(v)
+	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
-		v := role.DefaultCreatedAt
+		v := role.DefaultCreatedAt()
 		rc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := rc.mutation.UpdatedAt(); !ok {
-		v := role.DefaultUpdatedAt
+		v := role.DefaultUpdatedAt()
 		rc.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (rc *RoleCreate) check() error {
-	if _, ok := rc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Role.name"`)}
-	}
-	if _, ok := rc.mutation.Text(); !ok {
-		return &ValidationError{Name: "text", err: errors.New(`ent: missing required field "Role.text"`)}
+	if _, ok := rc.mutation.Version(); !ok {
+		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "Role.version"`)}
 	}
 	if _, ok := rc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Role.created_by"`)}
@@ -177,6 +192,15 @@ func (rc *RoleCreate) check() error {
 	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Role.created_at"`)}
+	}
+	if _, ok := rc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Role.updated_at"`)}
+	}
+	if _, ok := rc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Role.name"`)}
+	}
+	if _, ok := rc.mutation.Text(); !ok {
+		return &ValidationError{Name: "text", err: errors.New(`ent: missing required field "Role.text"`)}
 	}
 	return nil
 }
@@ -210,13 +234,9 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := rc.mutation.Name(); ok {
-		_spec.SetField(role.FieldName, field.TypeString, value)
-		_node.Name = value
-	}
-	if value, ok := rc.mutation.Text(); ok {
-		_spec.SetField(role.FieldText, field.TypeString, value)
-		_node.Text = value
+	if value, ok := rc.mutation.Version(); ok {
+		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
+		_node.Version = value
 	}
 	if value, ok := rc.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
@@ -241,6 +261,14 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 	if value, ok := rc.mutation.DeletedAt(); ok {
 		_spec.SetField(role.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := rc.mutation.Name(); ok {
+		_spec.SetField(role.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := rc.mutation.Text(); ok {
+		_spec.SetField(role.FieldText, field.TypeString, value)
+		_node.Text = value
 	}
 	return _node, _spec
 }

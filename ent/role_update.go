@@ -28,15 +28,24 @@ func (ru *RoleUpdate) Where(ps ...predicate.Role) *RoleUpdate {
 	return ru
 }
 
-// SetName sets the "name" field.
-func (ru *RoleUpdate) SetName(s string) *RoleUpdate {
-	ru.mutation.SetName(s)
+// SetVersion sets the "version" field.
+func (ru *RoleUpdate) SetVersion(i int64) *RoleUpdate {
+	ru.mutation.ResetVersion()
+	ru.mutation.SetVersion(i)
 	return ru
 }
 
-// SetText sets the "text" field.
-func (ru *RoleUpdate) SetText(s string) *RoleUpdate {
-	ru.mutation.SetText(s)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableVersion(i *int64) *RoleUpdate {
+	if i != nil {
+		ru.SetVersion(*i)
+	}
+	return ru
+}
+
+// AddVersion adds i to the "version" field.
+func (ru *RoleUpdate) AddVersion(i int64) *RoleUpdate {
+	ru.mutation.AddVersion(i)
 	return ru
 }
 
@@ -69,20 +78,6 @@ func (ru *RoleUpdate) ClearUpdatedBy() *RoleUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (ru *RoleUpdate) SetUpdatedAt(t time.Time) *RoleUpdate {
 	ru.mutation.SetUpdatedAt(t)
-	return ru
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ru *RoleUpdate) SetNillableUpdatedAt(t *time.Time) *RoleUpdate {
-	if t != nil {
-		ru.SetUpdatedAt(*t)
-	}
-	return ru
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (ru *RoleUpdate) ClearUpdatedAt() *RoleUpdate {
-	ru.mutation.ClearUpdatedAt()
 	return ru
 }
 
@@ -126,6 +121,18 @@ func (ru *RoleUpdate) ClearDeletedAt() *RoleUpdate {
 	return ru
 }
 
+// SetName sets the "name" field.
+func (ru *RoleUpdate) SetName(s string) *RoleUpdate {
+	ru.mutation.SetName(s)
+	return ru
+}
+
+// SetText sets the "text" field.
+func (ru *RoleUpdate) SetText(s string) *RoleUpdate {
+	ru.mutation.SetText(s)
+	return ru
+}
+
 // Mutation returns the RoleMutation object of the builder.
 func (ru *RoleUpdate) Mutation() *RoleMutation {
 	return ru.mutation
@@ -133,6 +140,7 @@ func (ru *RoleUpdate) Mutation() *RoleMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ru *RoleUpdate) Save(ctx context.Context) (int, error) {
+	ru.defaults()
 	return withHooks(ctx, ru.sqlSave, ru.mutation, ru.hooks)
 }
 
@@ -158,6 +166,14 @@ func (ru *RoleUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ru *RoleUpdate) defaults() {
+	if _, ok := ru.mutation.UpdatedAt(); !ok {
+		v := role.UpdateDefaultUpdatedAt()
+		ru.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ru *RoleUpdate) check() error {
 	if v, ok := ru.mutation.CreatedBy(); ok {
@@ -180,11 +196,11 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ru.mutation.Name(); ok {
-		_spec.SetField(role.FieldName, field.TypeString, value)
+	if value, ok := ru.mutation.Version(); ok {
+		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
 	}
-	if value, ok := ru.mutation.Text(); ok {
-		_spec.SetField(role.FieldText, field.TypeString, value)
+	if value, ok := ru.mutation.AddedVersion(); ok {
+		_spec.AddField(role.FieldVersion, field.TypeInt64, value)
 	}
 	if value, ok := ru.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
@@ -198,9 +214,6 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ru.mutation.UpdatedAt(); ok {
 		_spec.SetField(role.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if ru.mutation.UpdatedAtCleared() {
-		_spec.ClearField(role.FieldUpdatedAt, field.TypeTime)
-	}
 	if value, ok := ru.mutation.DeletedBy(); ok {
 		_spec.SetField(role.FieldDeletedBy, field.TypeString, value)
 	}
@@ -212,6 +225,12 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.DeletedAtCleared() {
 		_spec.ClearField(role.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := ru.mutation.Name(); ok {
+		_spec.SetField(role.FieldName, field.TypeString, value)
+	}
+	if value, ok := ru.mutation.Text(); ok {
+		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -233,15 +252,24 @@ type RoleUpdateOne struct {
 	mutation *RoleMutation
 }
 
-// SetName sets the "name" field.
-func (ruo *RoleUpdateOne) SetName(s string) *RoleUpdateOne {
-	ruo.mutation.SetName(s)
+// SetVersion sets the "version" field.
+func (ruo *RoleUpdateOne) SetVersion(i int64) *RoleUpdateOne {
+	ruo.mutation.ResetVersion()
+	ruo.mutation.SetVersion(i)
 	return ruo
 }
 
-// SetText sets the "text" field.
-func (ruo *RoleUpdateOne) SetText(s string) *RoleUpdateOne {
-	ruo.mutation.SetText(s)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableVersion(i *int64) *RoleUpdateOne {
+	if i != nil {
+		ruo.SetVersion(*i)
+	}
+	return ruo
+}
+
+// AddVersion adds i to the "version" field.
+func (ruo *RoleUpdateOne) AddVersion(i int64) *RoleUpdateOne {
+	ruo.mutation.AddVersion(i)
 	return ruo
 }
 
@@ -274,20 +302,6 @@ func (ruo *RoleUpdateOne) ClearUpdatedBy() *RoleUpdateOne {
 // SetUpdatedAt sets the "updated_at" field.
 func (ruo *RoleUpdateOne) SetUpdatedAt(t time.Time) *RoleUpdateOne {
 	ruo.mutation.SetUpdatedAt(t)
-	return ruo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ruo *RoleUpdateOne) SetNillableUpdatedAt(t *time.Time) *RoleUpdateOne {
-	if t != nil {
-		ruo.SetUpdatedAt(*t)
-	}
-	return ruo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (ruo *RoleUpdateOne) ClearUpdatedAt() *RoleUpdateOne {
-	ruo.mutation.ClearUpdatedAt()
 	return ruo
 }
 
@@ -331,6 +345,18 @@ func (ruo *RoleUpdateOne) ClearDeletedAt() *RoleUpdateOne {
 	return ruo
 }
 
+// SetName sets the "name" field.
+func (ruo *RoleUpdateOne) SetName(s string) *RoleUpdateOne {
+	ruo.mutation.SetName(s)
+	return ruo
+}
+
+// SetText sets the "text" field.
+func (ruo *RoleUpdateOne) SetText(s string) *RoleUpdateOne {
+	ruo.mutation.SetText(s)
+	return ruo
+}
+
 // Mutation returns the RoleMutation object of the builder.
 func (ruo *RoleUpdateOne) Mutation() *RoleMutation {
 	return ruo.mutation
@@ -351,6 +377,7 @@ func (ruo *RoleUpdateOne) Select(field string, fields ...string) *RoleUpdateOne 
 
 // Save executes the query and returns the updated Role entity.
 func (ruo *RoleUpdateOne) Save(ctx context.Context) (*Role, error) {
+	ruo.defaults()
 	return withHooks(ctx, ruo.sqlSave, ruo.mutation, ruo.hooks)
 }
 
@@ -373,6 +400,14 @@ func (ruo *RoleUpdateOne) Exec(ctx context.Context) error {
 func (ruo *RoleUpdateOne) ExecX(ctx context.Context) {
 	if err := ruo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ruo *RoleUpdateOne) defaults() {
+	if _, ok := ruo.mutation.UpdatedAt(); !ok {
+		v := role.UpdateDefaultUpdatedAt()
+		ruo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -415,11 +450,11 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 			}
 		}
 	}
-	if value, ok := ruo.mutation.Name(); ok {
-		_spec.SetField(role.FieldName, field.TypeString, value)
+	if value, ok := ruo.mutation.Version(); ok {
+		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
 	}
-	if value, ok := ruo.mutation.Text(); ok {
-		_spec.SetField(role.FieldText, field.TypeString, value)
+	if value, ok := ruo.mutation.AddedVersion(); ok {
+		_spec.AddField(role.FieldVersion, field.TypeInt64, value)
 	}
 	if value, ok := ruo.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
@@ -433,9 +468,6 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	if value, ok := ruo.mutation.UpdatedAt(); ok {
 		_spec.SetField(role.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if ruo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(role.FieldUpdatedAt, field.TypeTime)
-	}
 	if value, ok := ruo.mutation.DeletedBy(); ok {
 		_spec.SetField(role.FieldDeletedBy, field.TypeString, value)
 	}
@@ -447,6 +479,12 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	}
 	if ruo.mutation.DeletedAtCleared() {
 		_spec.ClearField(role.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := ruo.mutation.Name(); ok {
+		_spec.SetField(role.FieldName, field.TypeString, value)
+	}
+	if value, ok := ruo.mutation.Text(); ok {
+		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
 	_node = &Role{config: ruo.config}
 	_spec.Assign = _node.assignValues

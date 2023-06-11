@@ -144,25 +144,25 @@ func (_m *RoleRepository) SoftDelete(ctx context.Context, id uint64) (*ent.Role,
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, role, id
-func (_m *RoleRepository) Update(ctx context.Context, role ent.Role, id uint64) (*ent.Role, error) {
-	ret := _m.Called(ctx, role, id)
+// Update provides a mock function with given fields: ctx, updateRole
+func (_m *RoleRepository) Update(ctx context.Context, updateRole *ent.Role) (*ent.Role, error) {
+	ret := _m.Called(ctx, updateRole)
 
 	var r0 *ent.Role
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, ent.Role, uint64) (*ent.Role, error)); ok {
-		return rf(ctx, role, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Role) (*ent.Role, error)); ok {
+		return rf(ctx, updateRole)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, ent.Role, uint64) *ent.Role); ok {
-		r0 = rf(ctx, role, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Role) *ent.Role); ok {
+		r0 = rf(ctx, updateRole)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.Role)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, ent.Role, uint64) error); ok {
-		r1 = rf(ctx, role, id)
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Role) error); ok {
+		r1 = rf(ctx, updateRole)
 	} else {
 		r1 = ret.Error(1)
 	}

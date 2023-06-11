@@ -54,24 +54,9 @@ func IDLTE(id uint64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldLTE(FieldID, id))
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldUserID, v))
-}
-
 // Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
-func Version(v string) predicate.UserDevice {
+func Version(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldVersion, v))
-}
-
-// Platform applies equality check predicate on the "platform" field. It's identical to PlatformEQ.
-func Platform(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldPlatform, v))
-}
-
-// DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
-func DeviceID(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -104,249 +89,64 @@ func DeletedAt(v time.Time) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.UserDevice {
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldUserID, v))
 }
 
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldUserID, v))
+// AppVersion applies equality check predicate on the "app_version" field. It's identical to AppVersionEQ.
+func AppVersion(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldAppVersion, v))
 }
 
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldUserID, vs...))
+// Platform applies equality check predicate on the "platform" field. It's identical to PlatformEQ.
+func Platform(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldPlatform, v))
 }
 
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldUserID, v))
+// DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
+func DeviceID(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
 }
 
 // VersionEQ applies the EQ predicate on the "version" field.
-func VersionEQ(v string) predicate.UserDevice {
+func VersionEQ(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldVersion, v))
 }
 
 // VersionNEQ applies the NEQ predicate on the "version" field.
-func VersionNEQ(v string) predicate.UserDevice {
+func VersionNEQ(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldNEQ(FieldVersion, v))
 }
 
 // VersionIn applies the In predicate on the "version" field.
-func VersionIn(vs ...string) predicate.UserDevice {
+func VersionIn(vs ...int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldIn(FieldVersion, vs...))
 }
 
 // VersionNotIn applies the NotIn predicate on the "version" field.
-func VersionNotIn(vs ...string) predicate.UserDevice {
+func VersionNotIn(vs ...int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldNotIn(FieldVersion, vs...))
 }
 
 // VersionGT applies the GT predicate on the "version" field.
-func VersionGT(v string) predicate.UserDevice {
+func VersionGT(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldGT(FieldVersion, v))
 }
 
 // VersionGTE applies the GTE predicate on the "version" field.
-func VersionGTE(v string) predicate.UserDevice {
+func VersionGTE(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldGTE(FieldVersion, v))
 }
 
 // VersionLT applies the LT predicate on the "version" field.
-func VersionLT(v string) predicate.UserDevice {
+func VersionLT(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldLT(FieldVersion, v))
 }
 
 // VersionLTE applies the LTE predicate on the "version" field.
-func VersionLTE(v string) predicate.UserDevice {
+func VersionLTE(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldLTE(FieldVersion, v))
-}
-
-// VersionContains applies the Contains predicate on the "version" field.
-func VersionContains(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContains(FieldVersion, v))
-}
-
-// VersionHasPrefix applies the HasPrefix predicate on the "version" field.
-func VersionHasPrefix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasPrefix(FieldVersion, v))
-}
-
-// VersionHasSuffix applies the HasSuffix predicate on the "version" field.
-func VersionHasSuffix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasSuffix(FieldVersion, v))
-}
-
-// VersionEqualFold applies the EqualFold predicate on the "version" field.
-func VersionEqualFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEqualFold(FieldVersion, v))
-}
-
-// VersionContainsFold applies the ContainsFold predicate on the "version" field.
-func VersionContainsFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContainsFold(FieldVersion, v))
-}
-
-// PlatformEQ applies the EQ predicate on the "platform" field.
-func PlatformEQ(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldPlatform, v))
-}
-
-// PlatformNEQ applies the NEQ predicate on the "platform" field.
-func PlatformNEQ(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldPlatform, v))
-}
-
-// PlatformIn applies the In predicate on the "platform" field.
-func PlatformIn(vs ...string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldPlatform, vs...))
-}
-
-// PlatformNotIn applies the NotIn predicate on the "platform" field.
-func PlatformNotIn(vs ...string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldPlatform, vs...))
-}
-
-// PlatformGT applies the GT predicate on the "platform" field.
-func PlatformGT(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldPlatform, v))
-}
-
-// PlatformGTE applies the GTE predicate on the "platform" field.
-func PlatformGTE(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldPlatform, v))
-}
-
-// PlatformLT applies the LT predicate on the "platform" field.
-func PlatformLT(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldPlatform, v))
-}
-
-// PlatformLTE applies the LTE predicate on the "platform" field.
-func PlatformLTE(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldPlatform, v))
-}
-
-// PlatformContains applies the Contains predicate on the "platform" field.
-func PlatformContains(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContains(FieldPlatform, v))
-}
-
-// PlatformHasPrefix applies the HasPrefix predicate on the "platform" field.
-func PlatformHasPrefix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasPrefix(FieldPlatform, v))
-}
-
-// PlatformHasSuffix applies the HasSuffix predicate on the "platform" field.
-func PlatformHasSuffix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasSuffix(FieldPlatform, v))
-}
-
-// PlatformEqualFold applies the EqualFold predicate on the "platform" field.
-func PlatformEqualFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEqualFold(FieldPlatform, v))
-}
-
-// PlatformContainsFold applies the ContainsFold predicate on the "platform" field.
-func PlatformContainsFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContainsFold(FieldPlatform, v))
-}
-
-// DeviceIDEQ applies the EQ predicate on the "device_id" field.
-func DeviceIDEQ(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
-}
-
-// DeviceIDNEQ applies the NEQ predicate on the "device_id" field.
-func DeviceIDNEQ(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldDeviceID, v))
-}
-
-// DeviceIDIn applies the In predicate on the "device_id" field.
-func DeviceIDIn(vs ...string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldDeviceID, vs...))
-}
-
-// DeviceIDNotIn applies the NotIn predicate on the "device_id" field.
-func DeviceIDNotIn(vs ...string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldDeviceID, vs...))
-}
-
-// DeviceIDGT applies the GT predicate on the "device_id" field.
-func DeviceIDGT(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldDeviceID, v))
-}
-
-// DeviceIDGTE applies the GTE predicate on the "device_id" field.
-func DeviceIDGTE(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldDeviceID, v))
-}
-
-// DeviceIDLT applies the LT predicate on the "device_id" field.
-func DeviceIDLT(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldDeviceID, v))
-}
-
-// DeviceIDLTE applies the LTE predicate on the "device_id" field.
-func DeviceIDLTE(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldDeviceID, v))
-}
-
-// DeviceIDContains applies the Contains predicate on the "device_id" field.
-func DeviceIDContains(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContains(FieldDeviceID, v))
-}
-
-// DeviceIDHasPrefix applies the HasPrefix predicate on the "device_id" field.
-func DeviceIDHasPrefix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasPrefix(FieldDeviceID, v))
-}
-
-// DeviceIDHasSuffix applies the HasSuffix predicate on the "device_id" field.
-func DeviceIDHasSuffix(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldHasSuffix(FieldDeviceID, v))
-}
-
-// DeviceIDIsNil applies the IsNil predicate on the "device_id" field.
-func DeviceIDIsNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIsNull(FieldDeviceID))
-}
-
-// DeviceIDNotNil applies the NotNil predicate on the "device_id" field.
-func DeviceIDNotNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotNull(FieldDeviceID))
-}
-
-// DeviceIDEqualFold applies the EqualFold predicate on the "device_id" field.
-func DeviceIDEqualFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEqualFold(FieldDeviceID, v))
-}
-
-// DeviceIDContainsFold applies the ContainsFold predicate on the "device_id" field.
-func DeviceIDContainsFold(v string) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldContainsFold(FieldDeviceID, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -569,16 +369,6 @@ func UpdatedAtLTE(v time.Time) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotNull(FieldUpdatedAt))
-}
-
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
 func DeletedByEQ(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldDeletedBy, v))
@@ -702,6 +492,251 @@ func DeletedAtIsNil() predicate.UserDevice {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v uint64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldUserID, v))
+}
+
+// AppVersionEQ applies the EQ predicate on the "app_version" field.
+func AppVersionEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldAppVersion, v))
+}
+
+// AppVersionNEQ applies the NEQ predicate on the "app_version" field.
+func AppVersionNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldAppVersion, v))
+}
+
+// AppVersionIn applies the In predicate on the "app_version" field.
+func AppVersionIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldAppVersion, vs...))
+}
+
+// AppVersionNotIn applies the NotIn predicate on the "app_version" field.
+func AppVersionNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldAppVersion, vs...))
+}
+
+// AppVersionGT applies the GT predicate on the "app_version" field.
+func AppVersionGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldAppVersion, v))
+}
+
+// AppVersionGTE applies the GTE predicate on the "app_version" field.
+func AppVersionGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldAppVersion, v))
+}
+
+// AppVersionLT applies the LT predicate on the "app_version" field.
+func AppVersionLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldAppVersion, v))
+}
+
+// AppVersionLTE applies the LTE predicate on the "app_version" field.
+func AppVersionLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldAppVersion, v))
+}
+
+// AppVersionContains applies the Contains predicate on the "app_version" field.
+func AppVersionContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldAppVersion, v))
+}
+
+// AppVersionHasPrefix applies the HasPrefix predicate on the "app_version" field.
+func AppVersionHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldAppVersion, v))
+}
+
+// AppVersionHasSuffix applies the HasSuffix predicate on the "app_version" field.
+func AppVersionHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldAppVersion, v))
+}
+
+// AppVersionEqualFold applies the EqualFold predicate on the "app_version" field.
+func AppVersionEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldAppVersion, v))
+}
+
+// AppVersionContainsFold applies the ContainsFold predicate on the "app_version" field.
+func AppVersionContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldAppVersion, v))
+}
+
+// PlatformEQ applies the EQ predicate on the "platform" field.
+func PlatformEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldPlatform, v))
+}
+
+// PlatformNEQ applies the NEQ predicate on the "platform" field.
+func PlatformNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldPlatform, v))
+}
+
+// PlatformIn applies the In predicate on the "platform" field.
+func PlatformIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldPlatform, vs...))
+}
+
+// PlatformNotIn applies the NotIn predicate on the "platform" field.
+func PlatformNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldPlatform, vs...))
+}
+
+// PlatformGT applies the GT predicate on the "platform" field.
+func PlatformGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldPlatform, v))
+}
+
+// PlatformGTE applies the GTE predicate on the "platform" field.
+func PlatformGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldPlatform, v))
+}
+
+// PlatformLT applies the LT predicate on the "platform" field.
+func PlatformLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldPlatform, v))
+}
+
+// PlatformLTE applies the LTE predicate on the "platform" field.
+func PlatformLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldPlatform, v))
+}
+
+// PlatformContains applies the Contains predicate on the "platform" field.
+func PlatformContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldPlatform, v))
+}
+
+// PlatformHasPrefix applies the HasPrefix predicate on the "platform" field.
+func PlatformHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldPlatform, v))
+}
+
+// PlatformHasSuffix applies the HasSuffix predicate on the "platform" field.
+func PlatformHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldPlatform, v))
+}
+
+// PlatformEqualFold applies the EqualFold predicate on the "platform" field.
+func PlatformEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldPlatform, v))
+}
+
+// PlatformContainsFold applies the ContainsFold predicate on the "platform" field.
+func PlatformContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldPlatform, v))
+}
+
+// DeviceIDEQ applies the EQ predicate on the "device_id" field.
+func DeviceIDEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
+}
+
+// DeviceIDNEQ applies the NEQ predicate on the "device_id" field.
+func DeviceIDNEQ(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldDeviceID, v))
+}
+
+// DeviceIDIn applies the In predicate on the "device_id" field.
+func DeviceIDIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldDeviceID, vs...))
+}
+
+// DeviceIDNotIn applies the NotIn predicate on the "device_id" field.
+func DeviceIDNotIn(vs ...string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldDeviceID, vs...))
+}
+
+// DeviceIDGT applies the GT predicate on the "device_id" field.
+func DeviceIDGT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldDeviceID, v))
+}
+
+// DeviceIDGTE applies the GTE predicate on the "device_id" field.
+func DeviceIDGTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldDeviceID, v))
+}
+
+// DeviceIDLT applies the LT predicate on the "device_id" field.
+func DeviceIDLT(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldDeviceID, v))
+}
+
+// DeviceIDLTE applies the LTE predicate on the "device_id" field.
+func DeviceIDLTE(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldDeviceID, v))
+}
+
+// DeviceIDContains applies the Contains predicate on the "device_id" field.
+func DeviceIDContains(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContains(FieldDeviceID, v))
+}
+
+// DeviceIDHasPrefix applies the HasPrefix predicate on the "device_id" field.
+func DeviceIDHasPrefix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasPrefix(FieldDeviceID, v))
+}
+
+// DeviceIDHasSuffix applies the HasSuffix predicate on the "device_id" field.
+func DeviceIDHasSuffix(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldHasSuffix(FieldDeviceID, v))
+}
+
+// DeviceIDIsNil applies the IsNil predicate on the "device_id" field.
+func DeviceIDIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldDeviceID))
+}
+
+// DeviceIDNotNil applies the NotNil predicate on the "device_id" field.
+func DeviceIDNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldDeviceID))
+}
+
+// DeviceIDEqualFold applies the EqualFold predicate on the "device_id" field.
+func DeviceIDEqualFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEqualFold(FieldDeviceID, v))
+}
+
+// DeviceIDContainsFold applies the ContainsFold predicate on the "device_id" field.
+func DeviceIDContainsFold(v string) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldContainsFold(FieldDeviceID, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"log"
+	"github.com/labstack/gommon/log"
 	"myapp/exceptions"
-	"myapp/internal/apputils"
+	"myapp/internal/apputils/response"
 	"net/http"
 )
 
 func SetupGlobalHttpUnhandleErrors(e *echo.Echo) {
 	e.HTTPErrorHandler = GlobalUnHandleErrors()
-	log.Default().Println("initialized GlobalUnHandleErrors : success")
+	log.Infof("initialized GlobalUnHandleErrors : success")
 }
 
 func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
@@ -22,12 +22,12 @@ func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 		if !ok {
 
 			errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
-			_ = apputils.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
+			_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
 			return
 		}
 
 		errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
-		_ = apputils.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
+		_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
 		return
 	}
 }

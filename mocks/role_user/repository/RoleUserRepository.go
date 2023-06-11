@@ -40,25 +40,51 @@ func (_m *RoleUserRepository) CreateTx(ctx context.Context, client *ent.Client, 
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, client, request, id
-func (_m *RoleUserRepository) Update(ctx context.Context, client *ent.Client, request ent.RoleUser, id uint64) (*ent.RoleUser, error) {
-	ret := _m.Called(ctx, client, request, id)
+// GetByUserIdAndRoleId provides a mock function with given fields: ctx, userId, roleId
+func (_m *RoleUserRepository) GetByUserIdAndRoleId(ctx context.Context, userId uint64, roleId uint64) (*ent.RoleUser, error) {
+	ret := _m.Called(ctx, userId, roleId)
 
 	var r0 *ent.RoleUser
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.RoleUser, uint64) (*ent.RoleUser, error)); ok {
-		return rf(ctx, client, request, id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint64, uint64) (*ent.RoleUser, error)); ok {
+		return rf(ctx, userId, roleId)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.RoleUser, uint64) *ent.RoleUser); ok {
-		r0 = rf(ctx, client, request, id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint64, uint64) *ent.RoleUser); ok {
+		r0 = rf(ctx, userId, roleId)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.RoleUser)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, ent.RoleUser, uint64) error); ok {
-		r1 = rf(ctx, client, request, id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint64, uint64) error); ok {
+		r1 = rf(ctx, userId, roleId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateTx provides a mock function with given fields: ctx, client, request
+func (_m *RoleUserRepository) UpdateTx(ctx context.Context, client *ent.Client, request *ent.RoleUser) (*ent.RoleUser, error) {
+	ret := _m.Called(ctx, client, request)
+
+	var r0 *ent.RoleUser
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.RoleUser) (*ent.RoleUser, error)); ok {
+		return rf(ctx, client, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.RoleUser) *ent.RoleUser); ok {
+		r0 = rf(ctx, client, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.RoleUser)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, *ent.RoleUser) error); ok {
+		r1 = rf(ctx, client, request)
 	} else {
 		r1 = ret.Error(1)
 	}

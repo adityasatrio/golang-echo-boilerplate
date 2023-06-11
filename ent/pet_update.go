@@ -28,34 +28,24 @@ func (pu *PetUpdate) Where(ps ...predicate.Pet) *PetUpdate {
 	return pu
 }
 
-// SetName sets the "name" field.
-func (pu *PetUpdate) SetName(s string) *PetUpdate {
-	pu.mutation.SetName(s)
+// SetVersion sets the "version" field.
+func (pu *PetUpdate) SetVersion(i int64) *PetUpdate {
+	pu.mutation.ResetVersion()
+	pu.mutation.SetVersion(i)
 	return pu
 }
 
-// SetType sets the "type" field.
-func (pu *PetUpdate) SetType(pe pet.Type) *PetUpdate {
-	pu.mutation.SetType(pe)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableVersion(i *int64) *PetUpdate {
+	if i != nil {
+		pu.SetVersion(*i)
+	}
 	return pu
 }
 
-// SetCode sets the "code" field.
-func (pu *PetUpdate) SetCode(s string) *PetUpdate {
-	pu.mutation.SetCode(s)
-	return pu
-}
-
-// SetAgeMonth sets the "age_month" field.
-func (pu *PetUpdate) SetAgeMonth(i int) *PetUpdate {
-	pu.mutation.ResetAgeMonth()
-	pu.mutation.SetAgeMonth(i)
-	return pu
-}
-
-// AddAgeMonth adds i to the "age_month" field.
-func (pu *PetUpdate) AddAgeMonth(i int) *PetUpdate {
-	pu.mutation.AddAgeMonth(i)
+// AddVersion adds i to the "version" field.
+func (pu *PetUpdate) AddVersion(i int64) *PetUpdate {
+	pu.mutation.AddVersion(i)
 	return pu
 }
 
@@ -88,20 +78,6 @@ func (pu *PetUpdate) ClearUpdatedBy() *PetUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (pu *PetUpdate) SetUpdatedAt(t time.Time) *PetUpdate {
 	pu.mutation.SetUpdatedAt(t)
-	return pu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (pu *PetUpdate) SetNillableUpdatedAt(t *time.Time) *PetUpdate {
-	if t != nil {
-		pu.SetUpdatedAt(*t)
-	}
-	return pu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (pu *PetUpdate) ClearUpdatedAt() *PetUpdate {
-	pu.mutation.ClearUpdatedAt()
 	return pu
 }
 
@@ -145,6 +121,37 @@ func (pu *PetUpdate) ClearDeletedAt() *PetUpdate {
 	return pu
 }
 
+// SetName sets the "name" field.
+func (pu *PetUpdate) SetName(s string) *PetUpdate {
+	pu.mutation.SetName(s)
+	return pu
+}
+
+// SetType sets the "type" field.
+func (pu *PetUpdate) SetType(pe pet.Type) *PetUpdate {
+	pu.mutation.SetType(pe)
+	return pu
+}
+
+// SetCode sets the "code" field.
+func (pu *PetUpdate) SetCode(s string) *PetUpdate {
+	pu.mutation.SetCode(s)
+	return pu
+}
+
+// SetAgeMonth sets the "age_month" field.
+func (pu *PetUpdate) SetAgeMonth(i int) *PetUpdate {
+	pu.mutation.ResetAgeMonth()
+	pu.mutation.SetAgeMonth(i)
+	return pu
+}
+
+// AddAgeMonth adds i to the "age_month" field.
+func (pu *PetUpdate) AddAgeMonth(i int) *PetUpdate {
+	pu.mutation.AddAgeMonth(i)
+	return pu
+}
+
 // Mutation returns the PetMutation object of the builder.
 func (pu *PetUpdate) Mutation() *PetMutation {
 	return pu.mutation
@@ -152,6 +159,7 @@ func (pu *PetUpdate) Mutation() *PetMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *PetUpdate) Save(ctx context.Context) (int, error) {
+	pu.defaults()
 	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
 }
 
@@ -177,8 +185,21 @@ func (pu *PetUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (pu *PetUpdate) defaults() {
+	if _, ok := pu.mutation.UpdatedAt(); !ok {
+		v := pet.UpdateDefaultUpdatedAt()
+		pu.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (pu *PetUpdate) check() error {
+	if v, ok := pu.mutation.CreatedBy(); ok {
+		if err := pet.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
+		}
+	}
 	if v, ok := pu.mutation.Name(); ok {
 		if err := pet.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Pet.name": %w`, err)}
@@ -199,11 +220,6 @@ func (pu *PetUpdate) check() error {
 			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
 		}
 	}
-	if v, ok := pu.mutation.CreatedBy(); ok {
-		if err := pet.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -219,6 +235,36 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := pu.mutation.Version(); ok {
+		_spec.SetField(pet.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.AddedVersion(); ok {
+		_spec.AddField(pet.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.CreatedBy(); ok {
+		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.UpdatedBy(); ok {
+		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
+	}
+	if pu.mutation.UpdatedByCleared() {
+		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := pu.mutation.UpdatedAt(); ok {
+		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := pu.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+	}
+	if pu.mutation.DeletedByCleared() {
+		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := pu.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+	}
+	if pu.mutation.DeletedAtCleared() {
+		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := pu.mutation.Name(); ok {
 		_spec.SetField(pet.FieldName, field.TypeString, value)
 	}
@@ -233,33 +279,6 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
-	}
-	if value, ok := pu.mutation.CreatedBy(); ok {
-		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
-	}
-	if value, ok := pu.mutation.UpdatedBy(); ok {
-		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
-	}
-	if pu.mutation.UpdatedByCleared() {
-		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := pu.mutation.UpdatedAt(); ok {
-		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if pu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := pu.mutation.DeletedBy(); ok {
-		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
-	}
-	if pu.mutation.DeletedByCleared() {
-		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
-	}
-	if value, ok := pu.mutation.DeletedAt(); ok {
-		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
-	}
-	if pu.mutation.DeletedAtCleared() {
-		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -281,34 +300,24 @@ type PetUpdateOne struct {
 	mutation *PetMutation
 }
 
-// SetName sets the "name" field.
-func (puo *PetUpdateOne) SetName(s string) *PetUpdateOne {
-	puo.mutation.SetName(s)
+// SetVersion sets the "version" field.
+func (puo *PetUpdateOne) SetVersion(i int64) *PetUpdateOne {
+	puo.mutation.ResetVersion()
+	puo.mutation.SetVersion(i)
 	return puo
 }
 
-// SetType sets the "type" field.
-func (puo *PetUpdateOne) SetType(pe pet.Type) *PetUpdateOne {
-	puo.mutation.SetType(pe)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableVersion(i *int64) *PetUpdateOne {
+	if i != nil {
+		puo.SetVersion(*i)
+	}
 	return puo
 }
 
-// SetCode sets the "code" field.
-func (puo *PetUpdateOne) SetCode(s string) *PetUpdateOne {
-	puo.mutation.SetCode(s)
-	return puo
-}
-
-// SetAgeMonth sets the "age_month" field.
-func (puo *PetUpdateOne) SetAgeMonth(i int) *PetUpdateOne {
-	puo.mutation.ResetAgeMonth()
-	puo.mutation.SetAgeMonth(i)
-	return puo
-}
-
-// AddAgeMonth adds i to the "age_month" field.
-func (puo *PetUpdateOne) AddAgeMonth(i int) *PetUpdateOne {
-	puo.mutation.AddAgeMonth(i)
+// AddVersion adds i to the "version" field.
+func (puo *PetUpdateOne) AddVersion(i int64) *PetUpdateOne {
+	puo.mutation.AddVersion(i)
 	return puo
 }
 
@@ -341,20 +350,6 @@ func (puo *PetUpdateOne) ClearUpdatedBy() *PetUpdateOne {
 // SetUpdatedAt sets the "updated_at" field.
 func (puo *PetUpdateOne) SetUpdatedAt(t time.Time) *PetUpdateOne {
 	puo.mutation.SetUpdatedAt(t)
-	return puo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (puo *PetUpdateOne) SetNillableUpdatedAt(t *time.Time) *PetUpdateOne {
-	if t != nil {
-		puo.SetUpdatedAt(*t)
-	}
-	return puo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (puo *PetUpdateOne) ClearUpdatedAt() *PetUpdateOne {
-	puo.mutation.ClearUpdatedAt()
 	return puo
 }
 
@@ -398,6 +393,37 @@ func (puo *PetUpdateOne) ClearDeletedAt() *PetUpdateOne {
 	return puo
 }
 
+// SetName sets the "name" field.
+func (puo *PetUpdateOne) SetName(s string) *PetUpdateOne {
+	puo.mutation.SetName(s)
+	return puo
+}
+
+// SetType sets the "type" field.
+func (puo *PetUpdateOne) SetType(pe pet.Type) *PetUpdateOne {
+	puo.mutation.SetType(pe)
+	return puo
+}
+
+// SetCode sets the "code" field.
+func (puo *PetUpdateOne) SetCode(s string) *PetUpdateOne {
+	puo.mutation.SetCode(s)
+	return puo
+}
+
+// SetAgeMonth sets the "age_month" field.
+func (puo *PetUpdateOne) SetAgeMonth(i int) *PetUpdateOne {
+	puo.mutation.ResetAgeMonth()
+	puo.mutation.SetAgeMonth(i)
+	return puo
+}
+
+// AddAgeMonth adds i to the "age_month" field.
+func (puo *PetUpdateOne) AddAgeMonth(i int) *PetUpdateOne {
+	puo.mutation.AddAgeMonth(i)
+	return puo
+}
+
 // Mutation returns the PetMutation object of the builder.
 func (puo *PetUpdateOne) Mutation() *PetMutation {
 	return puo.mutation
@@ -418,6 +444,7 @@ func (puo *PetUpdateOne) Select(field string, fields ...string) *PetUpdateOne {
 
 // Save executes the query and returns the updated Pet entity.
 func (puo *PetUpdateOne) Save(ctx context.Context) (*Pet, error) {
+	puo.defaults()
 	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
 }
 
@@ -443,8 +470,21 @@ func (puo *PetUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (puo *PetUpdateOne) defaults() {
+	if _, ok := puo.mutation.UpdatedAt(); !ok {
+		v := pet.UpdateDefaultUpdatedAt()
+		puo.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (puo *PetUpdateOne) check() error {
+	if v, ok := puo.mutation.CreatedBy(); ok {
+		if err := pet.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
+		}
+	}
 	if v, ok := puo.mutation.Name(); ok {
 		if err := pet.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Pet.name": %w`, err)}
@@ -463,11 +503,6 @@ func (puo *PetUpdateOne) check() error {
 	if v, ok := puo.mutation.AgeMonth(); ok {
 		if err := pet.AgeMonthValidator(v); err != nil {
 			return &ValidationError{Name: "age_month", err: fmt.Errorf(`ent: validator failed for field "Pet.age_month": %w`, err)}
-		}
-	}
-	if v, ok := puo.mutation.CreatedBy(); ok {
-		if err := pet.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "Pet.created_by": %w`, err)}
 		}
 	}
 	return nil
@@ -502,6 +537,36 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 			}
 		}
 	}
+	if value, ok := puo.mutation.Version(); ok {
+		_spec.SetField(pet.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.AddedVersion(); ok {
+		_spec.AddField(pet.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.CreatedBy(); ok {
+		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.UpdatedBy(); ok {
+		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
+	}
+	if puo.mutation.UpdatedByCleared() {
+		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := puo.mutation.UpdatedAt(); ok {
+		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := puo.mutation.DeletedBy(); ok {
+		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
+	}
+	if puo.mutation.DeletedByCleared() {
+		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := puo.mutation.DeletedAt(); ok {
+		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
+	}
+	if puo.mutation.DeletedAtCleared() {
+		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := puo.mutation.Name(); ok {
 		_spec.SetField(pet.FieldName, field.TypeString, value)
 	}
@@ -516,33 +581,6 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	}
 	if value, ok := puo.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
-	}
-	if value, ok := puo.mutation.CreatedBy(); ok {
-		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
-	}
-	if value, ok := puo.mutation.UpdatedBy(); ok {
-		_spec.SetField(pet.FieldUpdatedBy, field.TypeString, value)
-	}
-	if puo.mutation.UpdatedByCleared() {
-		_spec.ClearField(pet.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := puo.mutation.UpdatedAt(); ok {
-		_spec.SetField(pet.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if puo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(pet.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := puo.mutation.DeletedBy(); ok {
-		_spec.SetField(pet.FieldDeletedBy, field.TypeString, value)
-	}
-	if puo.mutation.DeletedByCleared() {
-		_spec.ClearField(pet.FieldDeletedBy, field.TypeString)
-	}
-	if value, ok := puo.mutation.DeletedAt(); ok {
-		_spec.SetField(pet.FieldDeletedAt, field.TypeTime, value)
-	}
-	if puo.mutation.DeletedAtCleared() {
-		_spec.ClearField(pet.FieldDeletedAt, field.TypeTime)
 	}
 	_node = &Pet{config: puo.config}
 	_spec.Assign = _node.assignValues

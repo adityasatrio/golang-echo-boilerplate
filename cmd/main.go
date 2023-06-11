@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
@@ -10,12 +11,17 @@ import (
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest_api"
 	"myapp/middleware"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func main() {
 	e := echo.New()
 
 	configs.SetupConfigEnv(e)
+	configs.SetupLogger(e)
 	middleware.SetupMiddlewares(e)
 	validator.SetupValidator(e)
 	validator.SetupGlobalHttpUnhandleErrors(e)
@@ -32,14 +38,27 @@ func main() {
 		}
 	}(dbConnection)
 
+	//setup router
 	restApi.SetupRouteHandler(e, dbConnection)
 
-	//load configs
 	port := viper.GetString("application.port")
-	err := e.Start(":" + port)
-	if err != nil {
-		return
+	// Start server
+	go func() {
+		if err := e.Start(":" + port); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
+			e.Logger.Fatal(err)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
 	}
 
-	e.Logger.Fatal(err)
 }

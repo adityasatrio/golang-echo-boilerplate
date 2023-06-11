@@ -20,6 +20,96 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
+// SetVersion sets the "version" field.
+func (uc *UserCreate) SetVersion(i int64) *UserCreate {
+	uc.mutation.SetVersion(i)
+	return uc
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (uc *UserCreate) SetNillableVersion(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetVersion(*i)
+	}
+	return uc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (uc *UserCreate) SetCreatedBy(s string) *UserCreate {
+	uc.mutation.SetCreatedBy(s)
+	return uc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetCreatedAt(t)
+	return uc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCreatedAt(*t)
+	}
+	return uc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (uc *UserCreate) SetUpdatedBy(s string) *UserCreate {
+	uc.mutation.SetUpdatedBy(s)
+	return uc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedBy(s *string) *UserCreate {
+	if s != nil {
+		uc.SetUpdatedBy(*s)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdatedAt(t)
+	return uc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
+	}
+	return uc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uc *UserCreate) SetDeletedBy(s string) *UserCreate {
+	uc.mutation.SetDeletedBy(s)
+	return uc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDeletedBy(s *string) *UserCreate {
+	if s != nil {
+		uc.SetDeletedBy(*s)
+	}
+	return uc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uc *UserCreate) SetDeletedAt(t time.Time) *UserCreate {
+	uc.mutation.SetDeletedAt(t)
+	return uc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDeletedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetDeletedAt(*t)
+	}
+	return uc
+}
+
 // SetName sets the "name" field.
 func (uc *UserCreate) SetName(s string) *UserCreate {
 	uc.mutation.SetName(s)
@@ -39,8 +129,8 @@ func (uc *UserCreate) SetAvatar(s string) *UserCreate {
 }
 
 // SetRoleID sets the "role_id" field.
-func (uc *UserCreate) SetRoleID(i int32) *UserCreate {
-	uc.mutation.SetRoleID(i)
+func (uc *UserCreate) SetRoleID(u uint64) *UserCreate {
+	uc.mutation.SetRoleID(u)
 	return uc
 }
 
@@ -260,82 +350,6 @@ func (uc *UserCreate) SetNillableLatestDeletedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (uc *UserCreate) SetCreatedBy(s string) *UserCreate {
-	uc.mutation.SetCreatedBy(s)
-	return uc
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetCreatedAt(t)
-	return uc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetCreatedAt(*t)
-	}
-	return uc
-}
-
-// SetUpdatedBy sets the "updated_by" field.
-func (uc *UserCreate) SetUpdatedBy(s string) *UserCreate {
-	uc.mutation.SetUpdatedBy(s)
-	return uc
-}
-
-// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedBy(s *string) *UserCreate {
-	if s != nil {
-		uc.SetUpdatedBy(*s)
-	}
-	return uc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetUpdatedAt(t)
-	return uc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetUpdatedAt(*t)
-	}
-	return uc
-}
-
-// SetDeletedBy sets the "deleted_by" field.
-func (uc *UserCreate) SetDeletedBy(s string) *UserCreate {
-	uc.mutation.SetDeletedBy(s)
-	return uc
-}
-
-// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDeletedBy(s *string) *UserCreate {
-	if s != nil {
-		uc.SetDeletedBy(*s)
-	}
-	return uc
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (uc *UserCreate) SetDeletedAt(t time.Time) *UserCreate {
-	uc.mutation.SetDeletedAt(t)
-	return uc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDeletedAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetDeletedAt(*t)
-	}
-	return uc
-}
-
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(u uint64) *UserCreate {
 	uc.mutation.SetID(u)
@@ -377,18 +391,39 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.Version(); !ok {
+		v := user.DefaultVersion()
+		uc.mutation.SetVersion(v)
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
-		v := user.DefaultCreatedAt
+		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		v := user.DefaultUpdatedAt
+		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.Version(); !ok {
+		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "User.version"`)}
+	}
+	if _, ok := uc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "User.created_by"`)}
+	}
+	if v, ok := uc.mutation.CreatedBy(); ok {
+		if err := user.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "User.created_by": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
+	}
 	if _, ok := uc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "User.name"`)}
 	}
@@ -403,17 +438,6 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.IsVerified(); !ok {
 		return &ValidationError{Name: "is_verified", err: errors.New(`ent: missing required field "User.is_verified"`)}
-	}
-	if _, ok := uc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "User.created_by"`)}
-	}
-	if v, ok := uc.mutation.CreatedBy(); ok {
-		if err := user.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "User.created_by": %w`, err)}
-		}
-	}
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
 	}
 	return nil
 }
@@ -447,6 +471,34 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := uc.mutation.Version(); ok {
+		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
+		_node.Version = value
+	}
+	if value, ok := uc.mutation.CreatedBy(); ok {
+		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := uc.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := uc.mutation.UpdatedBy(); ok {
+		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
+	}
+	if value, ok := uc.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := uc.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := uc.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
 	if value, ok := uc.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -460,7 +512,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.Avatar = value
 	}
 	if value, ok := uc.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt32, value)
+		_spec.SetField(user.FieldRoleID, field.TypeUint64, value)
 		_node.RoleID = value
 	}
 	if value, ok := uc.mutation.IsVerified(); ok {
@@ -526,30 +578,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.LatestDeletedAt(); ok {
 		_spec.SetField(user.FieldLatestDeletedAt, field.TypeTime, value)
 		_node.LatestDeletedAt = value
-	}
-	if value, ok := uc.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
-	}
-	if value, ok := uc.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := uc.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
-	}
-	if value, ok := uc.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := uc.mutation.DeletedBy(); ok {
-		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
-		_node.DeletedBy = value
-	}
-	if value, ok := uc.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
 	}
 	return _node, _spec
 }

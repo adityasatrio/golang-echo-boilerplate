@@ -261,12 +261,12 @@ func (udq *UserDeviceQuery) Clone() *UserDeviceQuery {
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.UserDevice.Query().
-//		GroupBy(userdevice.FieldUserID).
+//		GroupBy(userdevice.FieldVersion).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (udq *UserDeviceQuery) GroupBy(field string, fields ...string) *UserDeviceGroupBy {
@@ -284,11 +284,11 @@ func (udq *UserDeviceQuery) GroupBy(field string, fields ...string) *UserDeviceG
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //	}
 //
 //	client.UserDevice.Query().
-//		Select(userdevice.FieldUserID).
+//		Select(userdevice.FieldVersion).
 //		Scan(ctx, &v)
 func (udq *UserDeviceQuery) Select(fields ...string) *UserDeviceSelect {
 	udq.ctx.Fields = append(udq.ctx.Fields, fields...)
