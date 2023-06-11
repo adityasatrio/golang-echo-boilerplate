@@ -28,6 +28,7 @@ func main() {
 
 	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
 	//dbConnection := database.NewEntClient() //using ent only
+	database.SetupHooks(dbConnection)
 
 	log.Info("initialized database configuration=", dbConnection)
 	//from docs define close on this function, but will impact cant create DB session on repository

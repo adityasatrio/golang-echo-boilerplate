@@ -12,11 +12,12 @@ type (
 	}
 
 	SystemParameterResponse struct {
+		ID    int    `json:"ID" validate:"required"`
 		Key   string `json:"Key" validate:"required"`
 		Value string `json:"Value" validate:"required"`
-		//CreatedBy string `json:"CreatedBy" validate:"required"`
-		//CreatedAt string `json:"CreatedAt" validate:"required"`
-		//UpdatedBy string `json:"UpdatedBy" validate:"required"`
-		//UpdatedAt string `json:"UpdateAt" validate:"required"`
+		//CreatedBy time.Time `json:"CreatedBy" validate:"required"`
+		//CreatedAt time.Time `json:"CreatedAt" validate:"required"`
+		//UpdatedBy time.Time `json:"UpdatedBy" validate:"required"`
+		//UpdatedAt time.Time `json:"UpdateAt" validate:"required"`
 	}
 )

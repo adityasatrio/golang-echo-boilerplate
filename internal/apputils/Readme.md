@@ -1,1 +1,1 @@
-# Put your internal utils that used on core application or domain logic implementation
+# This package is for utils / function for use on core domain logic or operation
