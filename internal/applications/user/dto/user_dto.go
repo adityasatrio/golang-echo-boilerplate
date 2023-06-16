@@ -11,7 +11,7 @@ type (
 	}
 
 	UserResponse struct {
-		Id       int64  `json:"id" validate:"required"`
+		ID       int64  `json:"id" validate:"required"`
 		Name     string `json:"name" validate:"required"`
 		Email    string `json:"email" validate:"required"`
 		Avatar   string `json:"avatar" validate:"required"`
