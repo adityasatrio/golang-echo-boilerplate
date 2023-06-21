@@ -6,7 +6,7 @@ application:
 
 db.config:
   username: root
-  password: MyRoot!23
+  password: root
   host: localhost
   port: 3306
   database: test_ent
