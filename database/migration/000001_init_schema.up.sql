@@ -23,3 +23,9 @@ CREATE TABLE `transfers` (
                              `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`)
 );
+
+CREATE INDEX idx_accounts_create_date ON accounts (created_at);
+
+ALTER TABLE accounts ADD INDEX idx_accounts_varchar (balance), ALGORITHM=INPLACE, LOCK=NONE;
+
+ALTER TABLE accounts ADD COLUMN email VARCHAR(100) NOT NULL, ADD COLUMN hourly_rate decimal(10,2) NOT NULL;

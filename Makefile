@@ -1,17 +1,17 @@
-# Nama file Makefile
+# Makefile
 
-# Direktori migrasi
+# Directory for migrasi file
 MIGRATE_DIR := database/migration
 
 .PHONY: migration
-create-migration:
-	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(MIGRATION_NAME)
+migration-create:
+	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
 
-run-migration:
-	 go run database/executor/migration_up/main.go
+migration-up:
+	 go run database/cmd/main.go -type up
 
-rollback-migration:
-	go run database/executor/migration_down/main.go $(MIGRATION_VERSION)
+migration-down:
+	go run database/cmd/main.go -type down -version $(version)
 
-force-migration:
-	go run database/executor/migration_force/main.go $(MIGRATION_VERSION)
+migration-force:
+	go run database/cmd/main.go -type force -version $(version)

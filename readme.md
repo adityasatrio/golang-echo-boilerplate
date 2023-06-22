@@ -96,3 +96,13 @@ generate mock file for all interface in domains
 ```
  mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
 ```
+
+### Migration
+generate migration, up, down and force
+```
+ 1. Run the command go get -u github.com/golang-migrate/migrate to download and install the migrate library.
+ 2. Run the command for migration creation => make migration-create name={name_migration}
+ 3. Run the command for migration up => make migration-up
+ 4. Run the command for migration down => make migration-down version={your_version}
+ 5. Run the command for migration force => make migration-force version={your_version}
+```
