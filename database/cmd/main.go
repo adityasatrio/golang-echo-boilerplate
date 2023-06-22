@@ -25,15 +25,15 @@ func main() {
 
 	//this for capture argument:
 	migrationType := flag.String("type", "no-type", "type your migration")
-	migrationVersion := flag.Int64("version", 0, "version your migration")
+	migrationVersion := flag.Int("version", 0, "version your migration")
 	flag.Parse()
 
 	if *migrationType == Up {
 		executeMigrationUp(migrationsPath, dbConnString, Up)
 	} else if *migrationType == Down {
-		executeMigration(migrationsPath, dbConnString, Down, int(*migrationVersion))
+		executeMigration(migrationsPath, dbConnString, Down, *migrationVersion)
 	} else if *migrationType == Force {
-		executeMigration(migrationsPath, dbConnString, Force, int(*migrationVersion))
+		executeMigration(migrationsPath, dbConnString, Force, *migrationVersion)
 	} else {
 		log.Println("please use arguments to run the migration you need")
 	}
