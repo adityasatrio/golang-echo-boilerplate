@@ -37,7 +37,7 @@ func WithOptions(opts ...ent.Option) Option {
 	}
 }
 
-// WithMigrateOptions forwards options to auto executor.
+// WithMigrateOptions forwards options to auto migration.
 func WithMigrateOptions(opts ...schema.MigrateOption) Option {
 	return func(o *options) {
 		o.migrateOpts = append(o.migrateOpts, opts...)
@@ -52,7 +52,7 @@ func newOptions(opts []Option) *options {
 	return o
 }
 
-// Open calls ent.Open and auto-run executor.
+// Open calls ent.Open and auto-run migration.
 func Open(t TestingT, driverName, dataSourceName string, opts ...Option) *ent.Client {
 	o := newOptions(opts)
 	c, err := ent.Open(driverName, dataSourceName, o.opts...)
@@ -64,7 +64,7 @@ func Open(t TestingT, driverName, dataSourceName string, opts ...Option) *ent.Cl
 	return c
 }
 
-// NewClient calls ent.NewClient and auto-run executor.
+// NewClient calls ent.NewClient and auto-run migration.
 func NewClient(t TestingT, opts ...Option) *ent.Client {
 	o := newOptions(opts)
 	c := ent.NewClient(o.opts...)
