@@ -19,6 +19,7 @@ require (
 
 require (
 	github.com/dranikpg/dto-mapper v0.1.1
+	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/tidwall/gjson v1.14.4
 )
 
@@ -32,6 +33,8 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
@@ -55,11 +58,12 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
-	golang.org/x/crypto v0.6.0 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
