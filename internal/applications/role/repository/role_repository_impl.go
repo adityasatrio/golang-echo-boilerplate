@@ -2,8 +2,11 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/ent/role"
+	//"myapp/ent/role"
 	"time"
 )
 
@@ -20,6 +23,8 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Ro
 	response, err := r.client.Role.Create().
 		SetName(role.Name).
 		SetText(role.Text).
+		SetCreatedBy(role.CreatedBy).
+		SetCreatedAt(time.Now()).
 		Save(ctx)
 
 	if err != nil {
@@ -29,18 +34,28 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Ro
 	return response, nil
 }
 
-func (r *RoleRepositoryImpl) Update(ctx context.Context, role ent.Role, id uint64) (*ent.Role, error) {
-	response, err := r.client.Role.
-		UpdateOneID(id).
-		SetName(role.Name).
-		SetText(role.Text).
+func (r *RoleRepositoryImpl) Update(ctx context.Context, updateRole *ent.Role) (*ent.Role, error) {
+	affected, err := r.client.Role.
+		Update().Where(role.ID(updateRole.ID), role.Version(updateRole.Version)).
+		SetName(updateRole.Name).
+		SetText(updateRole.Text).
 		Save(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return response, nil
+	if affected < 1 {
+		log.Errorf("ID %d no records were updated in database", updateRole.ID)
+		return nil, errors.New("no records were updated in database")
+	}
+
+	updatedRole, err := r.client.Role.Get(ctx, updateRole.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedRole, nil
 }
 
 func (r *RoleRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.Role, error) {
@@ -56,6 +71,7 @@ func (r *RoleRepositoryImpl) Delete(ctx context.Context, id uint64) (*ent.Role, 
 func (r *RoleRepositoryImpl) SoftDelete(ctx context.Context, id uint64) (*ent.Role, error) {
 	deleted, err := r.client.Role.
 		UpdateOneID(id).
+		SetDeletedBy("user").
 		SetDeletedAt(time.Now()).
 		Save(ctx)
 

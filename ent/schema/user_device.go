@@ -12,8 +12,21 @@ type UserDevice struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (UserDevice) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 func (UserDevice) Fields() []ent.Field {
-	return []ent.Field{field.Uint64("id"), field.Uint64("user_id"), field.String("version"), field.String("platform"), field.Time("latest_skip_update").Optional(), field.Time("created_at").Optional(), field.Time("updated_at").Optional(), field.String("device_id").Optional()}
+	return []ent.Field{field.Uint64("id"),
+		field.Uint64("user_id"),
+		field.String("app_version"),
+		field.String("platform"),
+		field.String("device_id").Optional(),
+	}
 }
 func (UserDevice) Edges() []ent.Edge {
 	return nil

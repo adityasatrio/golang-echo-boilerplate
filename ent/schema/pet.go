@@ -3,8 +3,6 @@
 package schema
 
 import (
-	"myapp/helper"
-
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -16,17 +14,23 @@ type Pet struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (Pet) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 // Fields of the Pet.
 func (Pet) Fields() []ent.Field {
-	schema := []ent.Field{
+	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New),
 		field.String("name").NotEmpty().MinLen(5).MaxLen(10),
 		field.Enum("type").Values("DOG", "CAT"),
 		field.String("code").NotEmpty().Unique(),
 		field.Int("age_month").Positive(),
 	}
-
-	return helper.InitBaseSchema(schema)
 }
 
 // Edges of the Pet.

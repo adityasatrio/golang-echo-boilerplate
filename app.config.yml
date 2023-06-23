@@ -4,9 +4,9 @@ application:
   cors:
     allowedHost: localhost, https://labstack.com, https://labstack.net
 
-db.config:
+db.configs:
   username: root
-  password: MyRoot!23
+  password:
   host: localhost
   port: 3306
   database: test_ent

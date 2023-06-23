@@ -7,16 +7,17 @@ type (
 	}
 
 	SystemParameterUpdateRequest struct {
-		Key   string `json:"key" validate:"gte=5,lte=50"`
-		Value string `json:"value" validate:"gte=5,lte=50"`
+		Key   string `json:"key" validate:"gte=3,lte=50"`
+		Value string `json:"value" validate:"gte=3,lte=50"`
 	}
 
 	SystemParameterResponse struct {
-		Key       string `json:"key" validate:"required"`
-		Value     string `json:"value" validate:"required"`
-		CreatedBy string `json:"created-by" validate:"required"`
-		CreatedAt string `json:"created-at" validate:"required"`
-		UpdatedBy string `json:"updated-by" validate:"required"`
-		UpdatedAt string `json:"update-at" validate:"required"`
+		ID    int    `json:"ID" validate:"required"`
+		Key   string `json:"Key" validate:"required"`
+		Value string `json:"Value" validate:"required"`
+		//CreatedBy time.Time `json:"CreatedBy" validate:"required"`
+		//CreatedAt time.Time `json:"CreatedAt" validate:"required"`
+		//UpdatedBy time.Time `json:"UpdatedBy" validate:"required"`
+		//UpdatedAt time.Time `json:"UpdateAt" validate:"required"`
 	}
 )

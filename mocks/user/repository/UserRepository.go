@@ -14,8 +14,8 @@ type UserRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, txClient, newUser
-func (_m *UserRepository) Create(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
+// CreateTx provides a mock function with given fields: ctx, txClient, newUser
+func (_m *UserRepository) CreateTx(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
 	ret := _m.Called(ctx, txClient, newUser)
 
 	var r0 *ent.User
@@ -40,25 +40,25 @@ func (_m *UserRepository) Create(ctx context.Context, txClient *ent.Client, newU
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: ctx, tx, id
-func (_m *UserRepository) Delete(ctx context.Context, tx *ent.Tx, id uint64) (*ent.User, error) {
-	ret := _m.Called(ctx, tx, id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *UserRepository) Delete(ctx context.Context, id uint64) (*ent.User, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, uint64) (*ent.User, error)); ok {
-		return rf(ctx, tx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint64) (*ent.User, error)); ok {
+		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Tx, uint64) *ent.User); ok {
-		r0 = rf(ctx, tx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint64) *ent.User); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Tx, uint64) error); ok {
-		r1 = rf(ctx, tx, id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -144,25 +144,25 @@ func (_m *UserRepository) SoftDelete(ctx context.Context, id uint64) (*ent.User,
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, txClient, updateUser, id
-func (_m *UserRepository) Update(ctx context.Context, txClient *ent.Client, updateUser ent.User, id uint64) (*ent.User, error) {
-	ret := _m.Called(ctx, txClient, updateUser, id)
+// UpdateTx provides a mock function with given fields: ctx, txClient, updateUser
+func (_m *UserRepository) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User) (*ent.User, error) {
+	ret := _m.Called(ctx, txClient, updateUser)
 
 	var r0 *ent.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) (*ent.User, error)); ok {
-		return rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.User) (*ent.User, error)); ok {
+		return rf(ctx, txClient, updateUser)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, ent.User, uint64) *ent.User); ok {
-		r0 = rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(0).(func(context.Context, *ent.Client, *ent.User) *ent.User); ok {
+		r0 = rf(ctx, txClient, updateUser)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, ent.User, uint64) error); ok {
-		r1 = rf(ctx, txClient, updateUser, id)
+	if rf, ok := ret.Get(1).(func(context.Context, *ent.Client, *ent.User) error); ok {
+		r1 = rf(ctx, txClient, updateUser)
 	} else {
 		r1 = ret.Error(1)
 	}

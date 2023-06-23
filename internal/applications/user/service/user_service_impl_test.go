@@ -8,38 +8,42 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
-	"myapp/ent/enttest"
-	"myapp/ent/migrate"
 	"myapp/internal/applications/user/dto"
-	mockRoleRepo "myapp/mocks/role/repository"
-	mockRoleUserRepo "myapp/mocks/role_user/repository"
-	mockTrx "myapp/mocks/transaction"
-	"myapp/mocks/user/repository"
+	mock_repository "myapp/mocks/role/repository"
+	mock_repository3 "myapp/mocks/role_user/repository"
+	mock_transaction "myapp/mocks/transaction"
+	mock_repository2 "myapp/mocks/user/repository"
+	"myapp/test/test_helper"
 	"testing"
 	"time"
 )
 
-var mockUserRepository = new(mock_repository.UserRepository)
-var mockRoleRepository = new(mockRoleRepo.RoleRepository)
-var mockRoleUserRepository = new(mockRoleUserRepo.RoleUserRepository)
-var mockTransaction = new(mockTrx.TrxService)
+var mockUserRepository = new(mock_repository2.UserRepository)
+var mockRoleRepository = new(mock_repository.RoleRepository)
+var mockRoleUserRepository = new(mock_repository3.RoleUserRepository)
+var mockTransaction = new(mock_transaction.TrxService)
 
 var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
-		ID:               id,
-		Name:             name,
-		Email:            email,
-		IsVerified:       true,
+		ID:      id,
+		Version: int64(0),
+		Name:    name,
+		Email:   email,
+		//WARNING : careful with bool value, it always has default value as FALSE,
+		//make sure when do testing DTO / request and actual mock or return value have same value
+
+		// uncomment IsVerified will impact on failed test, because expected value false from default value,
+		//if you must true then need to adjust logic on service to always set as true or get from method parameter / request
+		//IsVerified: true,
+
 		EmailVerifiedAt:  time.Time{},
 		Password:         password,
 		RememberToken:    "",
 		SocialMediaID:    "",
 		Avatar:           "",
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		RoleID:           0,
+		RoleID:           uint64(0),
 		LoginType:        "",
 		SubSpecialist:    "",
 		FirebaseToken:    "",
@@ -49,64 +53,55 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 		Phone:            "",
 		LastAccessAt:     time.Time{},
 		PregnancyMode:    false,
-		DeletedAt:        time.Time{},
 		LatestSkipUpdate: time.Time{},
 		LatestDeletedAt:  time.Time{},
+		//DeletedAt:        nil,
 	}
 }
 
-func TestUserServiceImpl_Create(t *testing.T) {
+func TestUserServiceImpl_Create_Success(t *testing.T) {
 	request := dto.UserRequest{
 		RoleId:   0,
 		Name:     "Admin",
-		Email:    "admin@tentanganak.id",
+		Email:    "admin@email.com",
 		Password: "12345",
 	}
 
 	userMocks := []struct {
-		name         string
-		request      dto.UserRequest
-		roleRequest  ent.RoleUser
-		userRequest  ent.User
-		userResponse ent.User
-		scenario     bool
+		name                 string
+		request              dto.UserRequest
+		roleRequest          ent.RoleUser
+		userServiceParameter ent.User
+		userServiceReturn    ent.User
+		scenario             bool
 	}{
 		{
-			request:      request,
-			roleRequest:  ent.RoleUser{UserID: 123000},
-			name:         "Create_User_Success-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123000), "Admin", "admin@tentanganak.id", "12345"),
-			scenario:     true,
+			request:              request,
+			roleRequest:          ent.RoleUser{UserID: 123000},
+			name:                 "Create_User_Success-1",
+			userServiceParameter: getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userServiceReturn:    getUserMock(uint64(123000), "Admin", "admin@email.com", "12345"),
+			scenario:             true,
 		},
 		{
-			request:      request,
-			roleRequest:  ent.RoleUser{UserID: 123001},
-			name:         "Create_User_Success-2",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
-			scenario:     true,
+			request:              request,
+			roleRequest:          ent.RoleUser{UserID: 123001},
+			name:                 "Create_User_Success-2",
+			userServiceParameter: getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userServiceReturn:    getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
+			scenario:             true,
 		},
 		{
-			request:      request,
-			roleRequest:  ent.RoleUser{UserID: 123001},
-			name:         "Create_User_Failed-1",
-			userRequest:  getUserMock(uint64(0), "Admin", "admin@tentanganak.id", "12345"),
-			userResponse: getUserMock(uint64(123001), "Admin", "admin@tentanganak.id", "12345"),
-			scenario:     false,
+			request:              request,
+			roleRequest:          ent.RoleUser{UserID: 123001},
+			name:                 "Create_User_Failed-1",
+			userServiceParameter: getUserMock(uint64(0), "Admin", "admin@email.com", "12345"),
+			userServiceReturn:    getUserMock(uint64(123001), "Admin", "admin@email.com", "12345"),
+			scenario:             false,
 		},
 	}
 
-	opts := []enttest.Option{
-		enttest.WithOptions(ent.Log(t.Log)),
-		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
-	}
-	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
-
-	ctx := context.Background()
-	txClient, err := client.Tx(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, txClient.Client()) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
@@ -131,17 +126,17 @@ func TestUserServiceImpl_Create(t *testing.T) {
 					Once()
 
 				//the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
-				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
-					Return(&userMock.userResponse, nil)
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
+					Return(&userMock.userServiceReturn, nil)
 
-				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Return(&userMock.roleRequest, nil)
 
 				result, err := service.Create(ctx, &userMock.request)
 
 				assert.NoError(t, err)
 				assert.NotNil(t, result)
-				assert.Equal(t, &userMock.userResponse, result)
+				assert.Equal(t, &userMock.userServiceReturn, result)
 
 			} else {
 				mockTransaction.On("WithTx", ctx, mock.Anything).
@@ -157,10 +152,10 @@ func TestUserServiceImpl_Create(t *testing.T) {
 					Return(errors.New("fake failed saved")). //this return is the key for `withTx` do rollback process
 					Once()
 
-				mockUserRepository.On("Create", ctx, txClient.Client(), userMock.userRequest).
-					Return(&userMock.userResponse, nil)
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
+					Return(&userMock.userServiceReturn, nil)
 
-				mockRoleUserRepository.On("Create", ctx, txClient.Client(), userMock.roleRequest).
+				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Panic("failed saved")
 
 				result, err := service.Create(ctx, &request)
@@ -169,110 +164,148 @@ func TestUserServiceImpl_Create(t *testing.T) {
 			}
 		})
 	}
+
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
 }
 
-func TestUserServiceImpl_Update(t *testing.T) {
-	request := dto.UserRequest{
+func TestUserServiceImpl_Update_Success(t *testing.T) {
+	requestUpdate := dto.UserRequest{
 		RoleId:   0,
-		Name:     "User",
-		Email:    "user@tentanganak.id",
-		Password: "12345",
+		Name:     "User update",
+		Email:    "user_update@email.com",
+		Password: "12345_update",
 	}
+
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
 	id := uint64(123000)
-	userRequest := getUserMock(uint64(0), "User", "user@tentanganak.id", "12345")
-	userResponse := getUserMock(uint64(123000), "User", "user@tentanganak.id", "12345")
-	roleRequest := ent.RoleUser{UserID: 123000}
+	userExisting := getUserMock(uint64(123000), "User", "user@email.com", "12345")
+	userUpdated := getUserMock(uint64(123000), "User update", "user_update@email.com", "12345_update")
+	userRoleExisting := ent.RoleUser{UserID: 123000, RoleID: uint64(0)}
+	userRoleUpdated := ent.RoleUser{UserID: 123000, RoleID: uint64(1)}
 
-	opts := []enttest.Option{
-		enttest.WithOptions(ent.Log(t.Log)),
-		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
+
+			errTx := fnTx(txClient)
+
+			require.NoError(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
+
+		}).Return(nil).
+		Once()
+
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(&userUpdated, nil)
+
+	userRoleExisting.UserID = userExisting.ID
+	userRoleExisting.RoleID = uint64(1)
+	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting).Return(&userRoleUpdated, nil)
+
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.NoError(t, err)
+	assert.Equal(t, requestUpdate.Name, result.Name)
+	assert.Equal(t, requestUpdate.Email, result.Email)
+	assert.Equal(t, requestUpdate.Password, result.Password)
+
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
+}
+
+func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
+	requestUpdate := dto.UserRequest{
+		RoleId:   0,
+		Name:     "User2 update",
+		Email:    "user2_update@email.com",
+		Password: "12345_update",
 	}
-	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
 
-	ctx := context.Background()
-	txClient, err := client.Tx(ctx)
-	require.NoError(t, err)
-	require.NotNil(t, txClient.Client())
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
-	t.Run("Update_User_Success", func(t *testing.T) {
+	id := uint64(123002)
+	userExisting := getUserMock(uint64(123002), "User2", "user2@email.com", "12345")
+	userRoleExisting := ent.RoleUser{UserID: 123002, RoleID: uint64(0)}
 
-		mockTransaction.On("WithTx", ctx, mock.Anything).
-			Run(func(args mock.Arguments) {
-				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+	err := errors.New("failed saved user")
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
 
-				errTx := fnTx(txClient)
-				require.NoError(t, errTx)
-				require.NotNil(t, txClient.Client())
-				if errTx != nil {
-					return
-				}
+			errTx := fnTx(txClient)
+			require.Error(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
+		}).Return(err).
+		Once()
 
-			}).Return(nil).
-			Once()
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(nil, err)
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
-			Return(&userResponse, nil)
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.Error(t, err)
+	assert.Nil(t, result)
 
-		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
-			Return(&roleRequest, nil)
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
 
-		result, err := service.Update(ctx, id, &request)
-		assert.NoError(t, err)
-		assert.NotNil(t, result)
-		assert.Equal(t, &userResponse, result)
-	})
+}
 
-	t.Run("Update_User_Failed_User", func(t *testing.T) {
-		err := errors.New("failed saved user")
+func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
+	requestUpdate := dto.UserRequest{
+		RoleId:   0,
+		Name:     "User3 update",
+		Email:    "user3_update@email.com",
+		Password: "12345_update",
+	}
 
-		mockTransaction.On("WithTx", ctx, mock.Anything).
-			Run(func(args mock.Arguments) {
-				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
 
-				errTx := fnTx(txClient)
-				require.NoError(t, errTx)
-				require.NotNil(t, txClient.Client())
-				if errTx != nil {
-					return
-				}
-			}).Return(err).
-			Once()
+	id := uint64(123003)
+	userExisting := getUserMock(id, "User3", "user3@email.com", "12345")
+	userRoleExisting := ent.RoleUser{UserID: id, RoleID: uint64(0)}
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
-			Return(nil, err)
+	err := errors.New("failed saved role")
 
-		result, err := service.Update(ctx, id, &request)
-		assert.NotNil(t, err)
-		assert.Nil(t, result)
-	})
+	mockTransaction.On("WithTx", ctx, mock.Anything).
+		Run(func(args mock.Arguments) {
+			fnTx := args.Get(1).(func(tx *ent.Tx) error)
 
-	t.Run("Update_User_Failed_Role_User", func(t *testing.T) {
-		err := errors.New("failed saved role")
+			errTx := fnTx(txClient)
+			require.Error(t, errTx)
+			require.NotNil(t, txClient.Client())
+			if errTx != nil {
+				return
+			}
+		}).Return(err).
+		Once()
 
-		mockTransaction.On("WithTx", ctx, mock.Anything).
-			Run(func(args mock.Arguments) {
-				fnTx := args.Get(1).(func(tx *ent.Tx) error)
+	mockUserRepository.On("GetById", ctx, id).Return(&userExisting, nil)
+	mockRoleUserRepository.On("GetByUserIdAndRoleId", ctx, userExisting.ID, userExisting.RoleID).Return(&userRoleExisting, nil)
+	mockUserRepository.On("UpdateTx", ctx, txClient.Client(), &userExisting).Return(nil, err)
 
-				errTx := fnTx(txClient)
-				require.NoError(t, errTx)
-				require.NotNil(t, txClient.Client())
-				if errTx != nil {
-					return
-				}
-			}).Return(err).
-			Once()
+	userRoleExisting.UserID = userExisting.ID
+	userRoleExisting.RoleID = uint64(1)
+	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting, id).Return(nil, err)
 
-		mockUserRepository.On("Update", ctx, txClient.Client(), userRequest, id).
-			Return(&userResponse, nil)
+	result, err := service.Update(ctx, id, &requestUpdate)
+	assert.Error(t, err)
+	assert.Nil(t, result)
 
-		mockRoleUserRepository.On("Update", ctx, txClient.Client(), roleRequest, id).
-			Return(nil, err)
-
-		result, err := service.Update(ctx, id, &request)
-		assert.NotNil(t, err)
-		assert.Nil(t, result)
-	})
+	defer func() {
+		test_helper.TestDbConnectionCloseTx(txClient)
+	}()
 }
 
 func TestUserServiceImpl_Delete(t *testing.T) {
@@ -336,6 +369,7 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 
 func TestUserServiceImpl_GetAll(t *testing.T) {
 	ctx := context.Background()
+
 	//subtest success:
 	t.Run("GetAll_success", func(t *testing.T) {
 		user := getUserMock(uint64(13000), "user example", "example@email.com", "12345")

@@ -261,12 +261,12 @@ func (spq *SystemParameterQuery) Clone() *SystemParameterQuery {
 // Example:
 //
 //	var v []struct {
-//		Key string `json:"key,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.SystemParameter.Query().
-//		GroupBy(systemparameter.FieldKey).
+//		GroupBy(systemparameter.FieldVersion).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *SystemParameterGroupBy {
@@ -284,11 +284,11 @@ func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *System
 // Example:
 //
 //	var v []struct {
-//		Key string `json:"key,omitempty"`
+//		Version int64 `json:"version,omitempty"`
 //	}
 //
 //	client.SystemParameter.Query().
-//		Select(systemparameter.FieldKey).
+//		Select(systemparameter.FieldVersion).
 //		Scan(ctx, &v)
 func (spq *SystemParameterQuery) Select(fields ...string) *SystemParameterSelect {
 	spq.ctx.Fields = append(spq.ctx.Fields, fields...)

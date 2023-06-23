@@ -17,14 +17,24 @@ type RoleUser struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
+	// Unix time of when the latest update occurred
+	Version int64 `json:"version,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy string `json:"created_by,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy string `json:"updated_by,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uint64 `json:"user_id,omitempty"`
 	// RoleID holds the value of the "role_id" field.
-	RoleID uint64 `json:"role_id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	RoleID       uint64 `json:"role_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -33,9 +43,11 @@ func (*RoleUser) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case roleuser.FieldID, roleuser.FieldUserID, roleuser.FieldRoleID:
+		case roleuser.FieldID, roleuser.FieldVersion, roleuser.FieldUserID, roleuser.FieldRoleID:
 			values[i] = new(sql.NullInt64)
-		case roleuser.FieldCreatedAt, roleuser.FieldUpdatedAt:
+		case roleuser.FieldCreatedBy, roleuser.FieldUpdatedBy, roleuser.FieldDeletedBy:
+			values[i] = new(sql.NullString)
+		case roleuser.FieldCreatedAt, roleuser.FieldUpdatedAt, roleuser.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -58,6 +70,48 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ru.ID = uint64(value.Int64)
+		case roleuser.FieldVersion:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field version", values[i])
+			} else if value.Valid {
+				ru.Version = value.Int64
+			}
+		case roleuser.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				ru.CreatedBy = value.String
+			}
+		case roleuser.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				ru.CreatedAt = value.Time
+			}
+		case roleuser.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				ru.UpdatedBy = value.String
+			}
+		case roleuser.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				ru.UpdatedAt = value.Time
+			}
+		case roleuser.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				ru.DeletedBy = value.String
+			}
+		case roleuser.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				ru.DeletedAt = value.Time
+			}
 		case roleuser.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
@@ -69,18 +123,6 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field role_id", values[i])
 			} else if value.Valid {
 				ru.RoleID = uint64(value.Int64)
-			}
-		case roleuser.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				ru.CreatedAt = value.Time
-			}
-		case roleuser.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				ru.UpdatedAt = value.Time
 			}
 		default:
 			ru.selectValues.Set(columns[i], values[i])
@@ -118,17 +160,32 @@ func (ru *RoleUser) String() string {
 	var builder strings.Builder
 	builder.WriteString("RoleUser(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ru.ID))
+	builder.WriteString("version=")
+	builder.WriteString(fmt.Sprintf("%v", ru.Version))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(ru.CreatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(ru.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(ru.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(ru.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(ru.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(ru.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", ru.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("role_id=")
 	builder.WriteString(fmt.Sprintf("%v", ru.RoleID))
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(ru.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(ru.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

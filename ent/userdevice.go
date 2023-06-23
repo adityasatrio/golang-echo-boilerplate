@@ -17,18 +17,26 @@ type UserDevice struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID uint64 `json:"user_id,omitempty"`
-	// Version holds the value of the "version" field.
-	Version string `json:"version,omitempty"`
-	// Platform holds the value of the "platform" field.
-	Platform string `json:"platform,omitempty"`
-	// LatestSkipUpdate holds the value of the "latest_skip_update" field.
-	LatestSkipUpdate time.Time `json:"latest_skip_update,omitempty"`
+	// Unix time of when the latest update occurred
+	Version int64 `json:"version,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uint64 `json:"user_id,omitempty"`
+	// AppVersion holds the value of the "app_version" field.
+	AppVersion string `json:"app_version,omitempty"`
+	// Platform holds the value of the "platform" field.
+	Platform string `json:"platform,omitempty"`
 	// DeviceID holds the value of the "device_id" field.
 	DeviceID     string `json:"device_id,omitempty"`
 	selectValues sql.SelectValues
@@ -39,11 +47,11 @@ func (*UserDevice) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userdevice.FieldID, userdevice.FieldUserID:
+		case userdevice.FieldID, userdevice.FieldVersion, userdevice.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case userdevice.FieldVersion, userdevice.FieldPlatform, userdevice.FieldDeviceID:
+		case userdevice.FieldCreatedBy, userdevice.FieldUpdatedBy, userdevice.FieldDeletedBy, userdevice.FieldAppVersion, userdevice.FieldPlatform, userdevice.FieldDeviceID:
 			values[i] = new(sql.NullString)
-		case userdevice.FieldLatestSkipUpdate, userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt:
+		case userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt, userdevice.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -66,29 +74,17 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ud.ID = uint64(value.Int64)
-		case userdevice.FieldUserID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				ud.UserID = uint64(value.Int64)
-			}
 		case userdevice.FieldVersion:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
-				ud.Version = value.String
+				ud.Version = value.Int64
 			}
-		case userdevice.FieldPlatform:
+		case userdevice.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field platform", values[i])
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				ud.Platform = value.String
-			}
-		case userdevice.FieldLatestSkipUpdate:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field latest_skip_update", values[i])
-			} else if value.Valid {
-				ud.LatestSkipUpdate = value.Time
+				ud.CreatedBy = value.String
 			}
 		case userdevice.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -96,11 +92,47 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ud.CreatedAt = value.Time
 			}
+		case userdevice.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				ud.UpdatedBy = value.String
+			}
 		case userdevice.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				ud.UpdatedAt = value.Time
+			}
+		case userdevice.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				ud.DeletedBy = value.String
+			}
+		case userdevice.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				ud.DeletedAt = value.Time
+			}
+		case userdevice.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				ud.UserID = uint64(value.Int64)
+			}
+		case userdevice.FieldAppVersion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_version", values[i])
+			} else if value.Valid {
+				ud.AppVersion = value.String
+			}
+		case userdevice.FieldPlatform:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field platform", values[i])
+			} else if value.Valid {
+				ud.Platform = value.String
 			}
 		case userdevice.FieldDeviceID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -144,23 +176,35 @@ func (ud *UserDevice) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserDevice(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ud.ID))
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", ud.UserID))
-	builder.WriteString(", ")
 	builder.WriteString("version=")
-	builder.WriteString(ud.Version)
+	builder.WriteString(fmt.Sprintf("%v", ud.Version))
 	builder.WriteString(", ")
-	builder.WriteString("platform=")
-	builder.WriteString(ud.Platform)
-	builder.WriteString(", ")
-	builder.WriteString("latest_skip_update=")
-	builder.WriteString(ud.LatestSkipUpdate.Format(time.ANSIC))
+	builder.WriteString("created_by=")
+	builder.WriteString(ud.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(ud.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(ud.UpdatedBy)
+	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(ud.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(ud.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(ud.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", ud.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("app_version=")
+	builder.WriteString(ud.AppVersion)
+	builder.WriteString(", ")
+	builder.WriteString("platform=")
+	builder.WriteString(ud.Platform)
 	builder.WriteString(", ")
 	builder.WriteString("device_id=")
 	builder.WriteString(ud.DeviceID)

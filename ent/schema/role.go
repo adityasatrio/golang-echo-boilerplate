@@ -12,8 +12,19 @@ type Role struct {
 	ent.Schema
 }
 
+// Mixin of the User.
+func (Role) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		VersionMixin{},
+		BaseFieldMixin{},
+	}
+}
+
 func (Role) Fields() []ent.Field {
-	return []ent.Field{field.Uint64("id"), field.String("name"), field.Time("created_at").Optional(), field.Time("updated_at").Optional(), field.String("text"), field.Time("deleted_at").Optional()}
+	return []ent.Field{field.Uint64("id"),
+		field.String("name"),
+		field.String("text"),
+	}
 }
 func (Role) Edges() []ent.Edge {
 	return nil

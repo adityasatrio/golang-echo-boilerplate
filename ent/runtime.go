@@ -4,8 +4,12 @@ package ent
 
 import (
 	"myapp/ent/pet"
+	"myapp/ent/role"
+	"myapp/ent/roleuser"
 	"myapp/ent/schema"
 	"myapp/ent/systemparameter"
+	"myapp/ent/user"
+	"myapp/ent/userdevice"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,8 +19,31 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	petMixin := schema.Pet{}.Mixin()
+	petMixinFields0 := petMixin[0].Fields()
+	_ = petMixinFields0
+	petMixinFields1 := petMixin[1].Fields()
+	_ = petMixinFields1
 	petFields := schema.Pet{}.Fields()
 	_ = petFields
+	// petDescVersion is the schema descriptor for version field.
+	petDescVersion := petMixinFields0[0].Descriptor()
+	// pet.DefaultVersion holds the default value on creation for the version field.
+	pet.DefaultVersion = petDescVersion.Default.(func() int64)
+	// petDescCreatedBy is the schema descriptor for created_by field.
+	petDescCreatedBy := petMixinFields1[0].Descriptor()
+	// pet.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	pet.CreatedByValidator = petDescCreatedBy.Validators[0].(func(string) error)
+	// petDescCreatedAt is the schema descriptor for created_at field.
+	petDescCreatedAt := petMixinFields1[1].Descriptor()
+	// pet.DefaultCreatedAt holds the default value on creation for the created_at field.
+	pet.DefaultCreatedAt = petDescCreatedAt.Default.(func() time.Time)
+	// petDescUpdatedAt is the schema descriptor for updated_at field.
+	petDescUpdatedAt := petMixinFields1[3].Descriptor()
+	// pet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	pet.DefaultUpdatedAt = petDescUpdatedAt.Default.(func() time.Time)
+	// pet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	pet.UpdateDefaultUpdatedAt = petDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// petDescName is the schema descriptor for name field.
 	petDescName := petFields[1].Descriptor()
 	// pet.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -44,28 +71,85 @@ func init() {
 	petDescAgeMonth := petFields[4].Descriptor()
 	// pet.AgeMonthValidator is a validator for the "age_month" field. It is called by the builders before save.
 	pet.AgeMonthValidator = petDescAgeMonth.Validators[0].(func(int) error)
-	// petDescIsDeleted is the schema descriptor for is_deleted field.
-	petDescIsDeleted := petFields[5].Descriptor()
-	// pet.DefaultIsDeleted holds the default value on creation for the is_deleted field.
-	pet.DefaultIsDeleted = petDescIsDeleted.Default.(bool)
-	// petDescCreatedBy is the schema descriptor for created_by field.
-	petDescCreatedBy := petFields[6].Descriptor()
-	// pet.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	pet.CreatedByValidator = petDescCreatedBy.Validators[0].(func(string) error)
-	// petDescCreatedAt is the schema descriptor for created_at field.
-	petDescCreatedAt := petFields[7].Descriptor()
-	// pet.DefaultCreatedAt holds the default value on creation for the created_at field.
-	pet.DefaultCreatedAt = petDescCreatedAt.Default.(time.Time)
-	// petDescUpdatedAt is the schema descriptor for updated_at field.
-	petDescUpdatedAt := petFields[9].Descriptor()
-	// pet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	pet.DefaultUpdatedAt = petDescUpdatedAt.Default.(time.Time)
 	// petDescID is the schema descriptor for id field.
 	petDescID := petFields[0].Descriptor()
 	// pet.DefaultID holds the default value on creation for the id field.
 	pet.DefaultID = petDescID.Default.(func() uuid.UUID)
+	roleMixin := schema.Role{}.Mixin()
+	roleMixinFields0 := roleMixin[0].Fields()
+	_ = roleMixinFields0
+	roleMixinFields1 := roleMixin[1].Fields()
+	_ = roleMixinFields1
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescVersion is the schema descriptor for version field.
+	roleDescVersion := roleMixinFields0[0].Descriptor()
+	// role.DefaultVersion holds the default value on creation for the version field.
+	role.DefaultVersion = roleDescVersion.Default.(func() int64)
+	// roleDescCreatedBy is the schema descriptor for created_by field.
+	roleDescCreatedBy := roleMixinFields1[0].Descriptor()
+	// role.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	role.CreatedByValidator = roleDescCreatedBy.Validators[0].(func(string) error)
+	// roleDescCreatedAt is the schema descriptor for created_at field.
+	roleDescCreatedAt := roleMixinFields1[1].Descriptor()
+	// role.DefaultCreatedAt holds the default value on creation for the created_at field.
+	role.DefaultCreatedAt = roleDescCreatedAt.Default.(func() time.Time)
+	// roleDescUpdatedAt is the schema descriptor for updated_at field.
+	roleDescUpdatedAt := roleMixinFields1[3].Descriptor()
+	// role.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	role.DefaultUpdatedAt = roleDescUpdatedAt.Default.(func() time.Time)
+	// role.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	role.UpdateDefaultUpdatedAt = roleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	roleuserMixin := schema.RoleUser{}.Mixin()
+	roleuserMixinFields0 := roleuserMixin[0].Fields()
+	_ = roleuserMixinFields0
+	roleuserMixinFields1 := roleuserMixin[1].Fields()
+	_ = roleuserMixinFields1
+	roleuserFields := schema.RoleUser{}.Fields()
+	_ = roleuserFields
+	// roleuserDescVersion is the schema descriptor for version field.
+	roleuserDescVersion := roleuserMixinFields0[0].Descriptor()
+	// roleuser.DefaultVersion holds the default value on creation for the version field.
+	roleuser.DefaultVersion = roleuserDescVersion.Default.(func() int64)
+	// roleuserDescCreatedBy is the schema descriptor for created_by field.
+	roleuserDescCreatedBy := roleuserMixinFields1[0].Descriptor()
+	// roleuser.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	roleuser.CreatedByValidator = roleuserDescCreatedBy.Validators[0].(func(string) error)
+	// roleuserDescCreatedAt is the schema descriptor for created_at field.
+	roleuserDescCreatedAt := roleuserMixinFields1[1].Descriptor()
+	// roleuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	roleuser.DefaultCreatedAt = roleuserDescCreatedAt.Default.(func() time.Time)
+	// roleuserDescUpdatedAt is the schema descriptor for updated_at field.
+	roleuserDescUpdatedAt := roleuserMixinFields1[3].Descriptor()
+	// roleuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	roleuser.DefaultUpdatedAt = roleuserDescUpdatedAt.Default.(func() time.Time)
+	// roleuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	roleuser.UpdateDefaultUpdatedAt = roleuserDescUpdatedAt.UpdateDefault.(func() time.Time)
+	systemparameterMixin := schema.SystemParameter{}.Mixin()
+	systemparameterMixinFields0 := systemparameterMixin[0].Fields()
+	_ = systemparameterMixinFields0
+	systemparameterMixinFields1 := systemparameterMixin[1].Fields()
+	_ = systemparameterMixinFields1
 	systemparameterFields := schema.SystemParameter{}.Fields()
 	_ = systemparameterFields
+	// systemparameterDescVersion is the schema descriptor for version field.
+	systemparameterDescVersion := systemparameterMixinFields0[0].Descriptor()
+	// systemparameter.DefaultVersion holds the default value on creation for the version field.
+	systemparameter.DefaultVersion = systemparameterDescVersion.Default.(func() int64)
+	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
+	systemparameterDescCreatedBy := systemparameterMixinFields1[0].Descriptor()
+	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	systemparameter.CreatedByValidator = systemparameterDescCreatedBy.Validators[0].(func(string) error)
+	// systemparameterDescCreatedAt is the schema descriptor for created_at field.
+	systemparameterDescCreatedAt := systemparameterMixinFields1[1].Descriptor()
+	// systemparameter.DefaultCreatedAt holds the default value on creation for the created_at field.
+	systemparameter.DefaultCreatedAt = systemparameterDescCreatedAt.Default.(func() time.Time)
+	// systemparameterDescUpdatedAt is the schema descriptor for updated_at field.
+	systemparameterDescUpdatedAt := systemparameterMixinFields1[3].Descriptor()
+	// systemparameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	systemparameter.DefaultUpdatedAt = systemparameterDescUpdatedAt.Default.(func() time.Time)
+	// systemparameter.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	systemparameter.UpdateDefaultUpdatedAt = systemparameterDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// systemparameterDescKey is the schema descriptor for key field.
 	systemparameterDescKey := systemparameterFields[0].Descriptor()
 	// systemparameter.KeyValidator is a validator for the "key" field. It is called by the builders before save.
@@ -74,20 +158,54 @@ func init() {
 	systemparameterDescValue := systemparameterFields[1].Descriptor()
 	// systemparameter.ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	systemparameter.ValueValidator = systemparameterDescValue.Validators[0].(func(string) error)
-	// systemparameterDescIsDeleted is the schema descriptor for is_deleted field.
-	systemparameterDescIsDeleted := systemparameterFields[2].Descriptor()
-	// systemparameter.DefaultIsDeleted holds the default value on creation for the is_deleted field.
-	systemparameter.DefaultIsDeleted = systemparameterDescIsDeleted.Default.(bool)
-	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
-	systemparameterDescCreatedBy := systemparameterFields[3].Descriptor()
-	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
-	systemparameter.CreatedByValidator = systemparameterDescCreatedBy.Validators[0].(func(string) error)
-	// systemparameterDescCreatedAt is the schema descriptor for created_at field.
-	systemparameterDescCreatedAt := systemparameterFields[4].Descriptor()
-	// systemparameter.DefaultCreatedAt holds the default value on creation for the created_at field.
-	systemparameter.DefaultCreatedAt = systemparameterDescCreatedAt.Default.(time.Time)
-	// systemparameterDescUpdatedAt is the schema descriptor for updated_at field.
-	systemparameterDescUpdatedAt := systemparameterFields[6].Descriptor()
-	// systemparameter.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	systemparameter.DefaultUpdatedAt = systemparameterDescUpdatedAt.Default.(time.Time)
+	userMixin := schema.User{}.Mixin()
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
+	userMixinFields1 := userMixin[1].Fields()
+	_ = userMixinFields1
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescVersion is the schema descriptor for version field.
+	userDescVersion := userMixinFields0[0].Descriptor()
+	// user.DefaultVersion holds the default value on creation for the version field.
+	user.DefaultVersion = userDescVersion.Default.(func() int64)
+	// userDescCreatedBy is the schema descriptor for created_by field.
+	userDescCreatedBy := userMixinFields1[0].Descriptor()
+	// user.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	user.CreatedByValidator = userDescCreatedBy.Validators[0].(func(string) error)
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userMixinFields1[1].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userMixinFields1[3].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	userdeviceMixin := schema.UserDevice{}.Mixin()
+	userdeviceMixinFields0 := userdeviceMixin[0].Fields()
+	_ = userdeviceMixinFields0
+	userdeviceMixinFields1 := userdeviceMixin[1].Fields()
+	_ = userdeviceMixinFields1
+	userdeviceFields := schema.UserDevice{}.Fields()
+	_ = userdeviceFields
+	// userdeviceDescVersion is the schema descriptor for version field.
+	userdeviceDescVersion := userdeviceMixinFields0[0].Descriptor()
+	// userdevice.DefaultVersion holds the default value on creation for the version field.
+	userdevice.DefaultVersion = userdeviceDescVersion.Default.(func() int64)
+	// userdeviceDescCreatedBy is the schema descriptor for created_by field.
+	userdeviceDescCreatedBy := userdeviceMixinFields1[0].Descriptor()
+	// userdevice.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
+	userdevice.CreatedByValidator = userdeviceDescCreatedBy.Validators[0].(func(string) error)
+	// userdeviceDescCreatedAt is the schema descriptor for created_at field.
+	userdeviceDescCreatedAt := userdeviceMixinFields1[1].Descriptor()
+	// userdevice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userdevice.DefaultCreatedAt = userdeviceDescCreatedAt.Default.(func() time.Time)
+	// userdeviceDescUpdatedAt is the schema descriptor for updated_at field.
+	userdeviceDescUpdatedAt := userdeviceMixinFields1[3].Descriptor()
+	// userdevice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userdevice.DefaultUpdatedAt = userdeviceDescUpdatedAt.Default.(func() time.Time)
+	// userdevice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userdevice.UpdateDefaultUpdatedAt = userdeviceDescUpdatedAt.UpdateDefault.(func() time.Time)
 }

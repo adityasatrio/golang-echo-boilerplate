@@ -28,6 +28,99 @@ func (udu *UserDeviceUpdate) Where(ps ...predicate.UserDevice) *UserDeviceUpdate
 	return udu
 }
 
+// SetVersion sets the "version" field.
+func (udu *UserDeviceUpdate) SetVersion(i int64) *UserDeviceUpdate {
+	udu.mutation.ResetVersion()
+	udu.mutation.SetVersion(i)
+	return udu
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableVersion(i *int64) *UserDeviceUpdate {
+	if i != nil {
+		udu.SetVersion(*i)
+	}
+	return udu
+}
+
+// AddVersion adds i to the "version" field.
+func (udu *UserDeviceUpdate) AddVersion(i int64) *UserDeviceUpdate {
+	udu.mutation.AddVersion(i)
+	return udu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (udu *UserDeviceUpdate) SetCreatedBy(s string) *UserDeviceUpdate {
+	udu.mutation.SetCreatedBy(s)
+	return udu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (udu *UserDeviceUpdate) SetUpdatedBy(s string) *UserDeviceUpdate {
+	udu.mutation.SetUpdatedBy(s)
+	return udu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableUpdatedBy(s *string) *UserDeviceUpdate {
+	if s != nil {
+		udu.SetUpdatedBy(*s)
+	}
+	return udu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (udu *UserDeviceUpdate) ClearUpdatedBy() *UserDeviceUpdate {
+	udu.mutation.ClearUpdatedBy()
+	return udu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (udu *UserDeviceUpdate) SetUpdatedAt(t time.Time) *UserDeviceUpdate {
+	udu.mutation.SetUpdatedAt(t)
+	return udu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (udu *UserDeviceUpdate) SetDeletedBy(s string) *UserDeviceUpdate {
+	udu.mutation.SetDeletedBy(s)
+	return udu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableDeletedBy(s *string) *UserDeviceUpdate {
+	if s != nil {
+		udu.SetDeletedBy(*s)
+	}
+	return udu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (udu *UserDeviceUpdate) ClearDeletedBy() *UserDeviceUpdate {
+	udu.mutation.ClearDeletedBy()
+	return udu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (udu *UserDeviceUpdate) SetDeletedAt(t time.Time) *UserDeviceUpdate {
+	udu.mutation.SetDeletedAt(t)
+	return udu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableDeletedAt(t *time.Time) *UserDeviceUpdate {
+	if t != nil {
+		udu.SetDeletedAt(*t)
+	}
+	return udu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (udu *UserDeviceUpdate) ClearDeletedAt() *UserDeviceUpdate {
+	udu.mutation.ClearDeletedAt()
+	return udu
+}
+
 // SetUserID sets the "user_id" field.
 func (udu *UserDeviceUpdate) SetUserID(u uint64) *UserDeviceUpdate {
 	udu.mutation.ResetUserID()
@@ -41,75 +134,15 @@ func (udu *UserDeviceUpdate) AddUserID(u int64) *UserDeviceUpdate {
 	return udu
 }
 
-// SetVersion sets the "version" field.
-func (udu *UserDeviceUpdate) SetVersion(s string) *UserDeviceUpdate {
-	udu.mutation.SetVersion(s)
+// SetAppVersion sets the "app_version" field.
+func (udu *UserDeviceUpdate) SetAppVersion(s string) *UserDeviceUpdate {
+	udu.mutation.SetAppVersion(s)
 	return udu
 }
 
 // SetPlatform sets the "platform" field.
 func (udu *UserDeviceUpdate) SetPlatform(s string) *UserDeviceUpdate {
 	udu.mutation.SetPlatform(s)
-	return udu
-}
-
-// SetLatestSkipUpdate sets the "latest_skip_update" field.
-func (udu *UserDeviceUpdate) SetLatestSkipUpdate(t time.Time) *UserDeviceUpdate {
-	udu.mutation.SetLatestSkipUpdate(t)
-	return udu
-}
-
-// SetNillableLatestSkipUpdate sets the "latest_skip_update" field if the given value is not nil.
-func (udu *UserDeviceUpdate) SetNillableLatestSkipUpdate(t *time.Time) *UserDeviceUpdate {
-	if t != nil {
-		udu.SetLatestSkipUpdate(*t)
-	}
-	return udu
-}
-
-// ClearLatestSkipUpdate clears the value of the "latest_skip_update" field.
-func (udu *UserDeviceUpdate) ClearLatestSkipUpdate() *UserDeviceUpdate {
-	udu.mutation.ClearLatestSkipUpdate()
-	return udu
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (udu *UserDeviceUpdate) SetCreatedAt(t time.Time) *UserDeviceUpdate {
-	udu.mutation.SetCreatedAt(t)
-	return udu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (udu *UserDeviceUpdate) SetNillableCreatedAt(t *time.Time) *UserDeviceUpdate {
-	if t != nil {
-		udu.SetCreatedAt(*t)
-	}
-	return udu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (udu *UserDeviceUpdate) ClearCreatedAt() *UserDeviceUpdate {
-	udu.mutation.ClearCreatedAt()
-	return udu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (udu *UserDeviceUpdate) SetUpdatedAt(t time.Time) *UserDeviceUpdate {
-	udu.mutation.SetUpdatedAt(t)
-	return udu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (udu *UserDeviceUpdate) SetNillableUpdatedAt(t *time.Time) *UserDeviceUpdate {
-	if t != nil {
-		udu.SetUpdatedAt(*t)
-	}
-	return udu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (udu *UserDeviceUpdate) ClearUpdatedAt() *UserDeviceUpdate {
-	udu.mutation.ClearUpdatedAt()
 	return udu
 }
 
@@ -140,6 +173,7 @@ func (udu *UserDeviceUpdate) Mutation() *UserDeviceMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (udu *UserDeviceUpdate) Save(ctx context.Context) (int, error) {
+	udu.defaults()
 	return withHooks(ctx, udu.sqlSave, udu.mutation, udu.hooks)
 }
 
@@ -165,7 +199,28 @@ func (udu *UserDeviceUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (udu *UserDeviceUpdate) defaults() {
+	if _, ok := udu.mutation.UpdatedAt(); !ok {
+		v := userdevice.UpdateDefaultUpdatedAt()
+		udu.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (udu *UserDeviceUpdate) check() error {
+	if v, ok := udu.mutation.CreatedBy(); ok {
+		if err := userdevice.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "UserDevice.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := udu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(userdevice.Table, userdevice.Columns, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeUint64))
 	if ps := udu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -174,35 +229,47 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := udu.mutation.Version(); ok {
+		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := udu.mutation.AddedVersion(); ok {
+		_spec.AddField(userdevice.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := udu.mutation.CreatedBy(); ok {
+		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := udu.mutation.UpdatedBy(); ok {
+		_spec.SetField(userdevice.FieldUpdatedBy, field.TypeString, value)
+	}
+	if udu.mutation.UpdatedByCleared() {
+		_spec.ClearField(userdevice.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := udu.mutation.UpdatedAt(); ok {
+		_spec.SetField(userdevice.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := udu.mutation.DeletedBy(); ok {
+		_spec.SetField(userdevice.FieldDeletedBy, field.TypeString, value)
+	}
+	if udu.mutation.DeletedByCleared() {
+		_spec.ClearField(userdevice.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := udu.mutation.DeletedAt(); ok {
+		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if udu.mutation.DeletedAtCleared() {
+		_spec.ClearField(userdevice.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := udu.mutation.UserID(); ok {
 		_spec.SetField(userdevice.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := udu.mutation.AddedUserID(); ok {
 		_spec.AddField(userdevice.FieldUserID, field.TypeUint64, value)
 	}
-	if value, ok := udu.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeString, value)
+	if value, ok := udu.mutation.AppVersion(); ok {
+		_spec.SetField(userdevice.FieldAppVersion, field.TypeString, value)
 	}
 	if value, ok := udu.mutation.Platform(); ok {
 		_spec.SetField(userdevice.FieldPlatform, field.TypeString, value)
-	}
-	if value, ok := udu.mutation.LatestSkipUpdate(); ok {
-		_spec.SetField(userdevice.FieldLatestSkipUpdate, field.TypeTime, value)
-	}
-	if udu.mutation.LatestSkipUpdateCleared() {
-		_spec.ClearField(userdevice.FieldLatestSkipUpdate, field.TypeTime)
-	}
-	if value, ok := udu.mutation.CreatedAt(); ok {
-		_spec.SetField(userdevice.FieldCreatedAt, field.TypeTime, value)
-	}
-	if udu.mutation.CreatedAtCleared() {
-		_spec.ClearField(userdevice.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := udu.mutation.UpdatedAt(); ok {
-		_spec.SetField(userdevice.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if udu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(userdevice.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := udu.mutation.DeviceID(); ok {
 		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)
@@ -230,6 +297,99 @@ type UserDeviceUpdateOne struct {
 	mutation *UserDeviceMutation
 }
 
+// SetVersion sets the "version" field.
+func (uduo *UserDeviceUpdateOne) SetVersion(i int64) *UserDeviceUpdateOne {
+	uduo.mutation.ResetVersion()
+	uduo.mutation.SetVersion(i)
+	return uduo
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableVersion(i *int64) *UserDeviceUpdateOne {
+	if i != nil {
+		uduo.SetVersion(*i)
+	}
+	return uduo
+}
+
+// AddVersion adds i to the "version" field.
+func (uduo *UserDeviceUpdateOne) AddVersion(i int64) *UserDeviceUpdateOne {
+	uduo.mutation.AddVersion(i)
+	return uduo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (uduo *UserDeviceUpdateOne) SetCreatedBy(s string) *UserDeviceUpdateOne {
+	uduo.mutation.SetCreatedBy(s)
+	return uduo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (uduo *UserDeviceUpdateOne) SetUpdatedBy(s string) *UserDeviceUpdateOne {
+	uduo.mutation.SetUpdatedBy(s)
+	return uduo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableUpdatedBy(s *string) *UserDeviceUpdateOne {
+	if s != nil {
+		uduo.SetUpdatedBy(*s)
+	}
+	return uduo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (uduo *UserDeviceUpdateOne) ClearUpdatedBy() *UserDeviceUpdateOne {
+	uduo.mutation.ClearUpdatedBy()
+	return uduo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uduo *UserDeviceUpdateOne) SetUpdatedAt(t time.Time) *UserDeviceUpdateOne {
+	uduo.mutation.SetUpdatedAt(t)
+	return uduo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uduo *UserDeviceUpdateOne) SetDeletedBy(s string) *UserDeviceUpdateOne {
+	uduo.mutation.SetDeletedBy(s)
+	return uduo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableDeletedBy(s *string) *UserDeviceUpdateOne {
+	if s != nil {
+		uduo.SetDeletedBy(*s)
+	}
+	return uduo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uduo *UserDeviceUpdateOne) ClearDeletedBy() *UserDeviceUpdateOne {
+	uduo.mutation.ClearDeletedBy()
+	return uduo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uduo *UserDeviceUpdateOne) SetDeletedAt(t time.Time) *UserDeviceUpdateOne {
+	uduo.mutation.SetDeletedAt(t)
+	return uduo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableDeletedAt(t *time.Time) *UserDeviceUpdateOne {
+	if t != nil {
+		uduo.SetDeletedAt(*t)
+	}
+	return uduo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uduo *UserDeviceUpdateOne) ClearDeletedAt() *UserDeviceUpdateOne {
+	uduo.mutation.ClearDeletedAt()
+	return uduo
+}
+
 // SetUserID sets the "user_id" field.
 func (uduo *UserDeviceUpdateOne) SetUserID(u uint64) *UserDeviceUpdateOne {
 	uduo.mutation.ResetUserID()
@@ -243,75 +403,15 @@ func (uduo *UserDeviceUpdateOne) AddUserID(u int64) *UserDeviceUpdateOne {
 	return uduo
 }
 
-// SetVersion sets the "version" field.
-func (uduo *UserDeviceUpdateOne) SetVersion(s string) *UserDeviceUpdateOne {
-	uduo.mutation.SetVersion(s)
+// SetAppVersion sets the "app_version" field.
+func (uduo *UserDeviceUpdateOne) SetAppVersion(s string) *UserDeviceUpdateOne {
+	uduo.mutation.SetAppVersion(s)
 	return uduo
 }
 
 // SetPlatform sets the "platform" field.
 func (uduo *UserDeviceUpdateOne) SetPlatform(s string) *UserDeviceUpdateOne {
 	uduo.mutation.SetPlatform(s)
-	return uduo
-}
-
-// SetLatestSkipUpdate sets the "latest_skip_update" field.
-func (uduo *UserDeviceUpdateOne) SetLatestSkipUpdate(t time.Time) *UserDeviceUpdateOne {
-	uduo.mutation.SetLatestSkipUpdate(t)
-	return uduo
-}
-
-// SetNillableLatestSkipUpdate sets the "latest_skip_update" field if the given value is not nil.
-func (uduo *UserDeviceUpdateOne) SetNillableLatestSkipUpdate(t *time.Time) *UserDeviceUpdateOne {
-	if t != nil {
-		uduo.SetLatestSkipUpdate(*t)
-	}
-	return uduo
-}
-
-// ClearLatestSkipUpdate clears the value of the "latest_skip_update" field.
-func (uduo *UserDeviceUpdateOne) ClearLatestSkipUpdate() *UserDeviceUpdateOne {
-	uduo.mutation.ClearLatestSkipUpdate()
-	return uduo
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (uduo *UserDeviceUpdateOne) SetCreatedAt(t time.Time) *UserDeviceUpdateOne {
-	uduo.mutation.SetCreatedAt(t)
-	return uduo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uduo *UserDeviceUpdateOne) SetNillableCreatedAt(t *time.Time) *UserDeviceUpdateOne {
-	if t != nil {
-		uduo.SetCreatedAt(*t)
-	}
-	return uduo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (uduo *UserDeviceUpdateOne) ClearCreatedAt() *UserDeviceUpdateOne {
-	uduo.mutation.ClearCreatedAt()
-	return uduo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uduo *UserDeviceUpdateOne) SetUpdatedAt(t time.Time) *UserDeviceUpdateOne {
-	uduo.mutation.SetUpdatedAt(t)
-	return uduo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uduo *UserDeviceUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserDeviceUpdateOne {
-	if t != nil {
-		uduo.SetUpdatedAt(*t)
-	}
-	return uduo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (uduo *UserDeviceUpdateOne) ClearUpdatedAt() *UserDeviceUpdateOne {
-	uduo.mutation.ClearUpdatedAt()
 	return uduo
 }
 
@@ -355,6 +455,7 @@ func (uduo *UserDeviceUpdateOne) Select(field string, fields ...string) *UserDev
 
 // Save executes the query and returns the updated UserDevice entity.
 func (uduo *UserDeviceUpdateOne) Save(ctx context.Context) (*UserDevice, error) {
+	uduo.defaults()
 	return withHooks(ctx, uduo.sqlSave, uduo.mutation, uduo.hooks)
 }
 
@@ -380,7 +481,28 @@ func (uduo *UserDeviceUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uduo *UserDeviceUpdateOne) defaults() {
+	if _, ok := uduo.mutation.UpdatedAt(); !ok {
+		v := userdevice.UpdateDefaultUpdatedAt()
+		uduo.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uduo *UserDeviceUpdateOne) check() error {
+	if v, ok := uduo.mutation.CreatedBy(); ok {
+		if err := userdevice.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "UserDevice.created_by": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice, err error) {
+	if err := uduo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(userdevice.Table, userdevice.Columns, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeUint64))
 	id, ok := uduo.mutation.ID()
 	if !ok {
@@ -406,35 +528,47 @@ func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice
 			}
 		}
 	}
+	if value, ok := uduo.mutation.Version(); ok {
+		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uduo.mutation.AddedVersion(); ok {
+		_spec.AddField(userdevice.FieldVersion, field.TypeInt64, value)
+	}
+	if value, ok := uduo.mutation.CreatedBy(); ok {
+		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := uduo.mutation.UpdatedBy(); ok {
+		_spec.SetField(userdevice.FieldUpdatedBy, field.TypeString, value)
+	}
+	if uduo.mutation.UpdatedByCleared() {
+		_spec.ClearField(userdevice.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := uduo.mutation.UpdatedAt(); ok {
+		_spec.SetField(userdevice.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uduo.mutation.DeletedBy(); ok {
+		_spec.SetField(userdevice.FieldDeletedBy, field.TypeString, value)
+	}
+	if uduo.mutation.DeletedByCleared() {
+		_spec.ClearField(userdevice.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := uduo.mutation.DeletedAt(); ok {
+		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uduo.mutation.DeletedAtCleared() {
+		_spec.ClearField(userdevice.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := uduo.mutation.UserID(); ok {
 		_spec.SetField(userdevice.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := uduo.mutation.AddedUserID(); ok {
 		_spec.AddField(userdevice.FieldUserID, field.TypeUint64, value)
 	}
-	if value, ok := uduo.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeString, value)
+	if value, ok := uduo.mutation.AppVersion(); ok {
+		_spec.SetField(userdevice.FieldAppVersion, field.TypeString, value)
 	}
 	if value, ok := uduo.mutation.Platform(); ok {
 		_spec.SetField(userdevice.FieldPlatform, field.TypeString, value)
-	}
-	if value, ok := uduo.mutation.LatestSkipUpdate(); ok {
-		_spec.SetField(userdevice.FieldLatestSkipUpdate, field.TypeTime, value)
-	}
-	if uduo.mutation.LatestSkipUpdateCleared() {
-		_spec.ClearField(userdevice.FieldLatestSkipUpdate, field.TypeTime)
-	}
-	if value, ok := uduo.mutation.CreatedAt(); ok {
-		_spec.SetField(userdevice.FieldCreatedAt, field.TypeTime, value)
-	}
-	if uduo.mutation.CreatedAtCleared() {
-		_spec.ClearField(userdevice.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := uduo.mutation.UpdatedAt(); ok {
-		_spec.SetField(userdevice.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if uduo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(userdevice.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := uduo.mutation.DeviceID(); ok {
 		_spec.SetField(userdevice.FieldDeviceID, field.TypeString, value)

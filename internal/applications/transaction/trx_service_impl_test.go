@@ -9,14 +9,14 @@ import (
 	"testing"
 )
 
-func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
+func TestTrxServiceImpl_WithSuccessfulTx(t *testing.T) {
 
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),
 	}
 	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
 
-	// Create a TrxServiceImpl instance with the mock client.
+	// CreateTx a TrxServiceImpl instance with the mock client.
 	trxService := NewTrxServiceImpl(client)
 	ctx := context.Background()
 
@@ -28,7 +28,6 @@ func TestTrxServiceImpl_WithSuccessfullTx(t *testing.T) {
 			SetValue("john@doe.com").
 			SetCreatedBy("john doe").
 			SetUpdatedBy("john doe").
-			SetIsDeleted(false).
 			Save(ctx)
 
 		if err != nil {
@@ -50,7 +49,7 @@ func TestTrxServiceImpl_WithFailedTx(t *testing.T) {
 	}
 	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", opts...)
 
-	// Create a TrxServiceImpl instance with the mock client.
+	// CreateTx a TrxServiceImpl instance with the mock client.
 	trxService := NewTrxServiceImpl(client)
 	ctx := context.Background()
 
@@ -62,7 +61,6 @@ func TestTrxServiceImpl_WithFailedTx(t *testing.T) {
 			SetValue("john@cena.com").
 			SetCreatedBy("john cena").
 			SetUpdatedBy("john cena").
-			SetIsDeleted(false).
 			Save(ctx)
 
 		if err != nil {

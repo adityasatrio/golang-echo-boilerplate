@@ -28,29 +28,24 @@ func (spu *SystemParameterUpdate) Where(ps ...predicate.SystemParameter) *System
 	return spu
 }
 
-// SetKey sets the "key" field.
-func (spu *SystemParameterUpdate) SetKey(s string) *SystemParameterUpdate {
-	spu.mutation.SetKey(s)
+// SetVersion sets the "version" field.
+func (spu *SystemParameterUpdate) SetVersion(i int64) *SystemParameterUpdate {
+	spu.mutation.ResetVersion()
+	spu.mutation.SetVersion(i)
 	return spu
 }
 
-// SetValue sets the "value" field.
-func (spu *SystemParameterUpdate) SetValue(s string) *SystemParameterUpdate {
-	spu.mutation.SetValue(s)
-	return spu
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (spu *SystemParameterUpdate) SetIsDeleted(b bool) *SystemParameterUpdate {
-	spu.mutation.SetIsDeleted(b)
-	return spu
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (spu *SystemParameterUpdate) SetNillableIsDeleted(b *bool) *SystemParameterUpdate {
-	if b != nil {
-		spu.SetIsDeleted(*b)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableVersion(i *int64) *SystemParameterUpdate {
+	if i != nil {
+		spu.SetVersion(*i)
 	}
+	return spu
+}
+
+// AddVersion adds i to the "version" field.
+func (spu *SystemParameterUpdate) AddVersion(i int64) *SystemParameterUpdate {
+	spu.mutation.AddVersion(i)
 	return spu
 }
 
@@ -86,17 +81,55 @@ func (spu *SystemParameterUpdate) SetUpdatedAt(t time.Time) *SystemParameterUpda
 	return spu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (spu *SystemParameterUpdate) SetNillableUpdatedAt(t *time.Time) *SystemParameterUpdate {
-	if t != nil {
-		spu.SetUpdatedAt(*t)
+// SetDeletedBy sets the "deleted_by" field.
+func (spu *SystemParameterUpdate) SetDeletedBy(s string) *SystemParameterUpdate {
+	spu.mutation.SetDeletedBy(s)
+	return spu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableDeletedBy(s *string) *SystemParameterUpdate {
+	if s != nil {
+		spu.SetDeletedBy(*s)
 	}
 	return spu
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (spu *SystemParameterUpdate) ClearUpdatedAt() *SystemParameterUpdate {
-	spu.mutation.ClearUpdatedAt()
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (spu *SystemParameterUpdate) ClearDeletedBy() *SystemParameterUpdate {
+	spu.mutation.ClearDeletedBy()
+	return spu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (spu *SystemParameterUpdate) SetDeletedAt(t time.Time) *SystemParameterUpdate {
+	spu.mutation.SetDeletedAt(t)
+	return spu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableDeletedAt(t *time.Time) *SystemParameterUpdate {
+	if t != nil {
+		spu.SetDeletedAt(*t)
+	}
+	return spu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (spu *SystemParameterUpdate) ClearDeletedAt() *SystemParameterUpdate {
+	spu.mutation.ClearDeletedAt()
+	return spu
+}
+
+// SetKey sets the "key" field.
+func (spu *SystemParameterUpdate) SetKey(s string) *SystemParameterUpdate {
+	spu.mutation.SetKey(s)
+	return spu
+}
+
+// SetValue sets the "value" field.
+func (spu *SystemParameterUpdate) SetValue(s string) *SystemParameterUpdate {
+	spu.mutation.SetValue(s)
 	return spu
 }
 
@@ -107,6 +140,7 @@ func (spu *SystemParameterUpdate) Mutation() *SystemParameterMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (spu *SystemParameterUpdate) Save(ctx context.Context) (int, error) {
+	spu.defaults()
 	return withHooks(ctx, spu.sqlSave, spu.mutation, spu.hooks)
 }
 
@@ -132,8 +166,21 @@ func (spu *SystemParameterUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (spu *SystemParameterUpdate) defaults() {
+	if _, ok := spu.mutation.UpdatedAt(); !ok {
+		v := systemparameter.UpdateDefaultUpdatedAt()
+		spu.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (spu *SystemParameterUpdate) check() error {
+	if v, ok := spu.mutation.CreatedBy(); ok {
+		if err := systemparameter.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
+		}
+	}
 	if v, ok := spu.mutation.Key(); ok {
 		if err := systemparameter.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.key": %w`, err)}
@@ -142,11 +189,6 @@ func (spu *SystemParameterUpdate) check() error {
 	if v, ok := spu.mutation.Value(); ok {
 		if err := systemparameter.ValueValidator(v); err != nil {
 			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.value": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.CreatedBy(); ok {
-		if err := systemparameter.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
 		}
 	}
 	return nil
@@ -164,14 +206,11 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
-	if value, ok := spu.mutation.Key(); ok {
-		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
+	if value, ok := spu.mutation.Version(); ok {
+		_spec.SetField(systemparameter.FieldVersion, field.TypeInt64, value)
 	}
-	if value, ok := spu.mutation.Value(); ok {
-		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
-	}
-	if value, ok := spu.mutation.IsDeleted(); ok {
-		_spec.SetField(systemparameter.FieldIsDeleted, field.TypeBool, value)
+	if value, ok := spu.mutation.AddedVersion(); ok {
+		_spec.AddField(systemparameter.FieldVersion, field.TypeInt64, value)
 	}
 	if value, ok := spu.mutation.CreatedBy(); ok {
 		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)
@@ -185,8 +224,23 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := spu.mutation.UpdatedAt(); ok {
 		_spec.SetField(systemparameter.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if spu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(systemparameter.FieldUpdatedAt, field.TypeTime)
+	if value, ok := spu.mutation.DeletedBy(); ok {
+		_spec.SetField(systemparameter.FieldDeletedBy, field.TypeString, value)
+	}
+	if spu.mutation.DeletedByCleared() {
+		_spec.ClearField(systemparameter.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := spu.mutation.DeletedAt(); ok {
+		_spec.SetField(systemparameter.FieldDeletedAt, field.TypeTime, value)
+	}
+	if spu.mutation.DeletedAtCleared() {
+		_spec.ClearField(systemparameter.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := spu.mutation.Key(); ok {
+		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
+	}
+	if value, ok := spu.mutation.Value(); ok {
+		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, spu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -208,29 +262,24 @@ type SystemParameterUpdateOne struct {
 	mutation *SystemParameterMutation
 }
 
-// SetKey sets the "key" field.
-func (spuo *SystemParameterUpdateOne) SetKey(s string) *SystemParameterUpdateOne {
-	spuo.mutation.SetKey(s)
+// SetVersion sets the "version" field.
+func (spuo *SystemParameterUpdateOne) SetVersion(i int64) *SystemParameterUpdateOne {
+	spuo.mutation.ResetVersion()
+	spuo.mutation.SetVersion(i)
 	return spuo
 }
 
-// SetValue sets the "value" field.
-func (spuo *SystemParameterUpdateOne) SetValue(s string) *SystemParameterUpdateOne {
-	spuo.mutation.SetValue(s)
-	return spuo
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (spuo *SystemParameterUpdateOne) SetIsDeleted(b bool) *SystemParameterUpdateOne {
-	spuo.mutation.SetIsDeleted(b)
-	return spuo
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (spuo *SystemParameterUpdateOne) SetNillableIsDeleted(b *bool) *SystemParameterUpdateOne {
-	if b != nil {
-		spuo.SetIsDeleted(*b)
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableVersion(i *int64) *SystemParameterUpdateOne {
+	if i != nil {
+		spuo.SetVersion(*i)
 	}
+	return spuo
+}
+
+// AddVersion adds i to the "version" field.
+func (spuo *SystemParameterUpdateOne) AddVersion(i int64) *SystemParameterUpdateOne {
+	spuo.mutation.AddVersion(i)
 	return spuo
 }
 
@@ -266,17 +315,55 @@ func (spuo *SystemParameterUpdateOne) SetUpdatedAt(t time.Time) *SystemParameter
 	return spuo
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (spuo *SystemParameterUpdateOne) SetNillableUpdatedAt(t *time.Time) *SystemParameterUpdateOne {
-	if t != nil {
-		spuo.SetUpdatedAt(*t)
+// SetDeletedBy sets the "deleted_by" field.
+func (spuo *SystemParameterUpdateOne) SetDeletedBy(s string) *SystemParameterUpdateOne {
+	spuo.mutation.SetDeletedBy(s)
+	return spuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableDeletedBy(s *string) *SystemParameterUpdateOne {
+	if s != nil {
+		spuo.SetDeletedBy(*s)
 	}
 	return spuo
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (spuo *SystemParameterUpdateOne) ClearUpdatedAt() *SystemParameterUpdateOne {
-	spuo.mutation.ClearUpdatedAt()
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (spuo *SystemParameterUpdateOne) ClearDeletedBy() *SystemParameterUpdateOne {
+	spuo.mutation.ClearDeletedBy()
+	return spuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (spuo *SystemParameterUpdateOne) SetDeletedAt(t time.Time) *SystemParameterUpdateOne {
+	spuo.mutation.SetDeletedAt(t)
+	return spuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableDeletedAt(t *time.Time) *SystemParameterUpdateOne {
+	if t != nil {
+		spuo.SetDeletedAt(*t)
+	}
+	return spuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (spuo *SystemParameterUpdateOne) ClearDeletedAt() *SystemParameterUpdateOne {
+	spuo.mutation.ClearDeletedAt()
+	return spuo
+}
+
+// SetKey sets the "key" field.
+func (spuo *SystemParameterUpdateOne) SetKey(s string) *SystemParameterUpdateOne {
+	spuo.mutation.SetKey(s)
+	return spuo
+}
+
+// SetValue sets the "value" field.
+func (spuo *SystemParameterUpdateOne) SetValue(s string) *SystemParameterUpdateOne {
+	spuo.mutation.SetValue(s)
 	return spuo
 }
 
@@ -300,6 +387,7 @@ func (spuo *SystemParameterUpdateOne) Select(field string, fields ...string) *Sy
 
 // Save executes the query and returns the updated SystemParameter entity.
 func (spuo *SystemParameterUpdateOne) Save(ctx context.Context) (*SystemParameter, error) {
+	spuo.defaults()
 	return withHooks(ctx, spuo.sqlSave, spuo.mutation, spuo.hooks)
 }
 
@@ -325,8 +413,21 @@ func (spuo *SystemParameterUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (spuo *SystemParameterUpdateOne) defaults() {
+	if _, ok := spuo.mutation.UpdatedAt(); !ok {
+		v := systemparameter.UpdateDefaultUpdatedAt()
+		spuo.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (spuo *SystemParameterUpdateOne) check() error {
+	if v, ok := spuo.mutation.CreatedBy(); ok {
+		if err := systemparameter.CreatedByValidator(v); err != nil {
+			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
+		}
+	}
 	if v, ok := spuo.mutation.Key(); ok {
 		if err := systemparameter.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.key": %w`, err)}
@@ -335,11 +436,6 @@ func (spuo *SystemParameterUpdateOne) check() error {
 	if v, ok := spuo.mutation.Value(); ok {
 		if err := systemparameter.ValueValidator(v); err != nil {
 			return &ValidationError{Name: "value", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.value": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.CreatedBy(); ok {
-		if err := systemparameter.CreatedByValidator(v); err != nil {
-			return &ValidationError{Name: "created_by", err: fmt.Errorf(`ent: validator failed for field "SystemParameter.created_by": %w`, err)}
 		}
 	}
 	return nil
@@ -374,14 +470,11 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 			}
 		}
 	}
-	if value, ok := spuo.mutation.Key(); ok {
-		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
+	if value, ok := spuo.mutation.Version(); ok {
+		_spec.SetField(systemparameter.FieldVersion, field.TypeInt64, value)
 	}
-	if value, ok := spuo.mutation.Value(); ok {
-		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
-	}
-	if value, ok := spuo.mutation.IsDeleted(); ok {
-		_spec.SetField(systemparameter.FieldIsDeleted, field.TypeBool, value)
+	if value, ok := spuo.mutation.AddedVersion(); ok {
+		_spec.AddField(systemparameter.FieldVersion, field.TypeInt64, value)
 	}
 	if value, ok := spuo.mutation.CreatedBy(); ok {
 		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)
@@ -395,8 +488,23 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 	if value, ok := spuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(systemparameter.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if spuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(systemparameter.FieldUpdatedAt, field.TypeTime)
+	if value, ok := spuo.mutation.DeletedBy(); ok {
+		_spec.SetField(systemparameter.FieldDeletedBy, field.TypeString, value)
+	}
+	if spuo.mutation.DeletedByCleared() {
+		_spec.ClearField(systemparameter.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := spuo.mutation.DeletedAt(); ok {
+		_spec.SetField(systemparameter.FieldDeletedAt, field.TypeTime, value)
+	}
+	if spuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(systemparameter.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := spuo.mutation.Key(); ok {
+		_spec.SetField(systemparameter.FieldKey, field.TypeString, value)
+	}
+	if value, ok := spuo.mutation.Value(); ok {
+		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
 	_node = &SystemParameter{config: spuo.config}
 	_spec.Assign = _node.assignValues

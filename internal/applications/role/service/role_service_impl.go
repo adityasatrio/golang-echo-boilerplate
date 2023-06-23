@@ -33,12 +33,15 @@ func (s *RoleServiceImpl) Create(ctx context.Context, request dto.RoleRequest) (
 
 func (s *RoleServiceImpl) Update(ctx context.Context, request dto.RoleRequest, id uint64) (*ent.Role, error) {
 
-	roleReq := ent.Role{
-		Name: request.Name,
-		Text: request.Text,
+	existing, err := s.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 
-	roleUpdated, err := s.repository.Update(ctx, roleReq, id)
+	existing.Name = request.Name
+	existing.Text = request.Text
+
+	roleUpdated, err := s.repository.Update(ctx, existing)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
