@@ -1,4 +1,4 @@
-package database
+package migrations
 
 import (
 	"fmt"
@@ -36,5 +36,6 @@ func MigrationConnection() string {
 }
 
 func MigrationPath() string {
-	return "file://database/migration"
+	//return "file://database/migration"
+	return "file://migrations/migration"
 }

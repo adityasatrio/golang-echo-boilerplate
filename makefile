@@ -1,5 +1,7 @@
-.PHONY: clean gen-schema gen-mocks test build run
+.PHONY: clean gen-schema gen-mocks test build migration run
 
+# Directory migration:
+MIGRATE_DIR := migrations/migration
 
 # Build the project
 build:
@@ -15,12 +17,11 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-gen-schema:
+schema-gen:
 	go generate ./ent
 
 # Generate mockery mocks
-# Generate mockery mocks
-gen-mocks:
+mocks-gen:
 	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
 
 confirm:
@@ -46,22 +47,19 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: gen-schema gen-mocks test build run
-
-
-
-.PHONY: migration
-# Directory migration:
-MIGRATE_DIR := database/migration
-
 migration-create:
 	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
 
 migration-up:
-	 go run database/cmd/main.go -type up
+	 go run migrations/cmd/main.go -type up
 
 migration-down:
-	go run database/cmd/main.go -type down -version $(version)
+	go run migrations/cmd/main.go -type down -version $(version)
 
 migration-force:
-	go run database/cmd/main.go -type force -version $(version)
+	go run migrations/cmd/main.go -type force -version $(version)
+
+all: schema-gen mocks-gen test build run
+
+
+

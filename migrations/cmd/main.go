@@ -6,7 +6,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"log"
-	"myapp/database"
+	"myapp/migrations"
 )
 
 type MigrationType string
@@ -20,8 +20,8 @@ const (
 func main() {
 
 	//schema migration & file path:
-	migrationsPath := database.MigrationPath()
-	dbConnString := database.MigrationConnection()
+	migrationsPath := migrations.MigrationPath()
+	dbConnString := migrations.MigrationConnection()
 
 	//this for capture argument:
 	migrationType := flag.String("type", "no-type", "type your migration")
