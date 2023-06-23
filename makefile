@@ -47,3 +47,21 @@ clean: confirm
 	rm -rf ./mocks/*
 
 all: gen-schema gen-mocks test build run
+
+
+
+.PHONY: migration
+# Directory migration:
+MIGRATE_DIR := database/migration
+
+migration-create:
+	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
+
+migration-up:
+	 go run database/cmd/main.go -type up
+
+migration-down:
+	go run database/cmd/main.go -type down -version $(version)
+
+migration-force:
+	go run database/cmd/main.go -type force -version $(version)
