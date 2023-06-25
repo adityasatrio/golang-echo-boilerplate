@@ -1,7 +1,7 @@
-.PHONY: clean gen-schema gen-mocks test build migration run
+.PHONY: clean schema-gen mocks-gen wire-gen test build migration run
 
-# Directory migration:
 MIGRATE_DIR := migrations/migration
+WIRE_DIR := internal/applications
 
 # Build the project
 build:
@@ -17,13 +17,18 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-gen-schema:
+schema-gen:
 	go generate ./ent
 
 # Generate mockery mocks
-# Generate mockery mocks
-gen-mocks:
+mocks-gen:
 	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
+
+wire-gen:
+	@echo "Enter directory: "; \
+	read dir; \
+	echo "$(WIRE_DIR)/$$dir"; \
+	cd $(WIRE_DIR)/$$dir && wire
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
@@ -48,7 +53,7 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: gen-schema gen-mocks test build run
+all: schema-gen mocks-gen wire-gen test build run
 
 migration-create:
 	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
