@@ -17,11 +17,12 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-schema-gen:
+gen-schema:
 	go generate ./ent
 
 # Generate mockery mocks
-mocks-gen:
+# Generate mockery mocks
+gen-mocks:
 	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
 
 confirm:
@@ -47,19 +48,16 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
+all: gen-schema gen-mocks test build run
+
 migration-create:
 	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
 
 migration-up:
-	 go run migrations/cmd/main.go -type up
+	 go run database/cmd/main.go -type up
 
 migration-down:
-	go run migrations/cmd/main.go -type down -version $(version)
+	go run database/cmd/main.go -type down -version $(version)
 
 migration-force:
-	go run migrations/cmd/main.go -type force -version $(version)
-
-all: schema-gen mocks-gen test build run
-
-
-
+	go run database/cmd/main.go -type force -version $(version)

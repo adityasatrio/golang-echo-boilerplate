@@ -9,12 +9,13 @@ import (
 	//"myapp/internal/applications/system_parameter/service"
 )
 
-func (c *SystemParameterController) AddRoutes(e *echo.Echo) {
+func (c *SystemParameterController) AddRoutes(e *echo.Echo, appName string) {
+	group := e.Group(appName + "/system-parameter")
 
-	e.POST("/system-parameter", c.Create)
-	e.PUT("/system-parameter/:id", c.Update)
-	e.DELETE("/system-parameter/:id", c.Delete)
-	e.GET("/system-parameter/:id", c.GetById)
-	e.GET("/system-parameter", c.GetAll)
+	group.POST("", c.Create)
+	group.PUT("/:id", c.Update)
+	group.DELETE("/:id", c.Delete)
+	group.GET("/:id", c.GetById)
+	group.GET("", c.GetAll)
 
 }

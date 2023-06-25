@@ -55,35 +55,35 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">myapp/internal/applications/hello_worlds/controller/hello_worlds_controller.go (100.0%)</option>
+				<option value="file0">myapp/internal/applications/A_templates_directory/controller/template_controller.go (0.0%)</option>
 				
-				<option value="file1">myapp/internal/applications/hello_worlds/controller/hello_worlds_routes.go (0.0%)</option>
+				<option value="file1">myapp/internal/applications/A_templates_directory/controller/template_routes.go (0.0%)</option>
 				
-				<option value="file2">myapp/internal/applications/hello_worlds/repository/hello_world_repository_impl.go (72.7%)</option>
+				<option value="file2">myapp/internal/applications/A_templates_directory/repository/db/template_repository_impl.go (0.0%)</option>
 				
-				<option value="file3">myapp/internal/applications/hello_worlds/service/hello_worlds_service_impl.go (100.0%)</option>
+				<option value="file3">myapp/internal/applications/A_templates_directory/service/template_service_impl.go (0.0%)</option>
 				
-				<option value="file4">myapp/internal/applications/role/repository/role_repository_impl.go (71.0%)</option>
+				<option value="file4">myapp/internal/applications/hello_worlds/controller/hello_worlds_controller.go (100.0%)</option>
 				
-				<option value="file5">myapp/internal/applications/role/service/role_service_impl.go (97.1%)</option>
+				<option value="file5">myapp/internal/applications/hello_worlds/controller/hello_worlds_routes.go (0.0%)</option>
 				
-				<option value="file6">myapp/internal/applications/role_user/repository/role_user_repository_impl.go (68.4%)</option>
+				<option value="file6">myapp/internal/applications/hello_worlds/repository/hello_world_repository_impl.go (72.7%)</option>
 				
-				<option value="file7">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (77.4%)</option>
+				<option value="file7">myapp/internal/applications/hello_worlds/service/hello_worlds_service_impl.go (100.0%)</option>
 				
-				<option value="file8">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
+				<option value="file8">myapp/internal/applications/role/repository/role_repository_impl.go (71.0%)</option>
 				
-				<option value="file9">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (71.4%)</option>
+				<option value="file9">myapp/internal/applications/role/service/role_service_impl.go (97.1%)</option>
 				
-				<option value="file10">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (73.9%)</option>
+				<option value="file10">myapp/internal/applications/role_user/repository/role_user_repository_impl.go (68.4%)</option>
 				
-				<option value="file11">myapp/internal/applications/templates_directory/controller/template_controller.go (0.0%)</option>
+				<option value="file11">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (77.4%)</option>
 				
-				<option value="file12">myapp/internal/applications/templates_directory/controller/template_routes.go (0.0%)</option>
+				<option value="file12">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
 				
-				<option value="file13">myapp/internal/applications/templates_directory/repository/db/template_repository_impl.go (0.0%)</option>
+				<option value="file13">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (71.4%)</option>
 				
-				<option value="file14">myapp/internal/applications/templates_directory/service/template_service_impl.go (0.0%)</option>
+				<option value="file14">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (73.9%)</option>
 				
 				<option value="file15">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
 				
@@ -118,6 +118,120 @@
 		<div id="content">
 		
 		<pre class="file" id="file0" style="display: none">package controller
+
+import (
+        "github.com/labstack/echo/v4"
+        "myapp/internal/applications/A_templates_directory/dto"
+        "myapp/internal/applications/A_templates_directory/service"
+        "myapp/internal/apputils"
+        "myapp/internal/apputils/response"
+)
+
+type TemplateController struct {
+        service service.TemplateService
+}
+
+func NewTemplateController(service service.TemplateService) *TemplateController <span class="cov0" title="0">{
+        return &amp;TemplateController{
+                service: service,
+        }
+}</span>
+
+func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error <span class="cov0" title="0">{
+        //TLDR; controller layer is only to handle input and output from external domain from this application commonly to handle API request and response.
+        //If needed validation logic for request, you can do validation using validators
+        //You are forbidden to put any business logic in this layer
+
+        request := new(dto.ExampleRequest)
+        err := apputils.BindAndValidate(ctx, request)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        //call service
+        <span class="cov0" title="0">serviceResult := "service_result"
+
+        //handle response after get result from service layer
+        var responseDto = new(dto.ExampleResponse)
+        err = apputils.Mapper(&amp;responseDto, serviceResult)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return response.Created(ctx, responseDto)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package controller
+
+import "github.com/labstack/echo/v4"
+
+func (c *TemplateController) AddRoutes(e *echo.Echo) {<span class="cov0" title="0">
+        //All routes belong here
+
+        //e.POST("/template", c.Create)
+        //e.PUT("/template/:id", c.Update)
+        //e.DELETE("/template/:id", c.Delete)
+        //e.GET("/template/:id", c.GetById)
+        //e.GET("/template", c.GetAll)
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package db
+
+import (
+        "context"
+        "myapp/ent"
+)
+
+type TemplateRepositoryImpl struct {
+        dbClient *ent.Client
+}
+
+func NewTemplateRepository(dbClient *ent.Client) *TemplateRepositoryImpl <span class="cov0" title="0">{
+        return &amp;TemplateRepositoryImpl{
+                dbClient: dbClient,
+        }
+}</span>
+
+func (r *TemplateRepositoryImpl) DatabaseAction(ctx context.Context, requestDomain *ent.Pet) (*ent.Pet, error) <span class="cov0" title="0">{
+        //TLDR; this repository layer and functions will consist of your interaction with source of domain data, such as CRUD operation on database.
+        //NO logic business in this layer and NO transactional handling in this repository  layer
+
+        return &amp;ent.Pet{}, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package service
+
+import (
+        "context"
+        "myapp/ent"
+        "myapp/internal/applications/A_templates_directory/dto"
+        "myapp/internal/applications/A_templates_directory/repository/db"
+)
+
+type TemplateServiceImpl struct {
+        repository db.TemplateRepository
+}
+
+func NewTemplateService(repository db.TemplateRepository) *TemplateServiceImpl <span class="cov0" title="0">{
+        return &amp;TemplateServiceImpl{
+                repository: repository,
+        }
+}</span>
+
+func (s *TemplateServiceImpl) LogicFunction(ctx context.Context, request *dto.ExampleRequest) (*ent.Pet, error) <span class="cov0" title="0">{
+        //TLDR; this service layer and functions will consist of your business logic.
+        //The intention is to isolate all related logic with multiple domain activities and communication in service layer
+        //if needed, transactional handling mandatory in this service layer
+
+        //call repository and handle the result
+        return &amp;ent.Pet{}, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -159,7 +273,7 @@ func (controller *HelloWorldsController) Hello(c echo.Context) error <span class
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package controller
+		<pre class="file" id="file5" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -170,12 +284,13 @@ import (
         //"myapp/internal/applications/system_parameter/service"
 )
 
-func (controller *HelloWorldsController) AddRoutes(e *echo.Echo) <span class="cov0" title="0">{
-        e.GET("/hello", controller.Hello)
+func (controller *HelloWorldsController) AddRoutes(e *echo.Echo, appName string) <span class="cov0" title="0">{
+        group := e.Group(appName)
+        group.GET("/hello", controller.Hello)
 }</span>
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package repository
+		<pre class="file" id="file6" style="display: none">package repository
 
 import (
         "context"
@@ -216,7 +331,7 @@ func (repo *HelloWorldsRepositoryImpl) Hello(ctx context.Context, message string
 }
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package service
+		<pre class="file" id="file7" style="display: none">package service
 
 import (
         "context"
@@ -249,7 +364,7 @@ func (s *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, erro
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package repository
+		<pre class="file" id="file8" style="display: none">package repository
 
 import (
         "context"
@@ -354,7 +469,7 @@ func (r *RoleRepositoryImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <s
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package service
+		<pre class="file" id="file9" style="display: none">package service
 
 import (
         "context"
@@ -447,7 +562,7 @@ func (s *RoleServiceImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <span
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package repository
+		<pre class="file" id="file10" style="display: none">package repository
 
 import (
         "context"
@@ -523,7 +638,7 @@ func (r *RoleUserRepositoryImpl) UpdateTx(ctx context.Context, clientTrx *ent.Cl
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package controller
+		<pre class="file" id="file11" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -653,7 +768,7 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error <span class="
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package controller
+		<pre class="file" id="file12" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -664,18 +779,19 @@ import (
         //"myapp/internal/applications/system_parameter/service"
 )
 
-func (c *SystemParameterController) AddRoutes(e *echo.Echo) <span class="cov0" title="0">{
+func (c *SystemParameterController) AddRoutes(e *echo.Echo, appName string) <span class="cov0" title="0">{
+        group := e.Group(appName + "/system-parameter")
 
-        e.POST("/system-parameter", c.Create)
-        e.PUT("/system-parameter/:id", c.Update)
-        e.DELETE("/system-parameter/:id", c.Delete)
-        e.GET("/system-parameter/:id", c.GetById)
-        e.GET("/system-parameter", c.GetAll)
+        group.POST("", c.Create)
+        group.PUT("/:id", c.Update)
+        group.DELETE("/:id", c.Delete)
+        group.GET("/:id", c.GetById)
+        group.GET("", c.GetAll)
 
 }</span>
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package db
+		<pre class="file" id="file13" style="display: none">package db
 
 import (
         "context"
@@ -792,7 +908,7 @@ func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package service
+		<pre class="file" id="file14" style="display: none">package service
 
 import (
         "context"
@@ -904,114 +1020,6 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 
         <span class="cov8" title="1">return result, nil</span>
 }
-</pre>
-		
-		<pre class="file" id="file11" style="display: none">package controller
-
-import (
-        "github.com/labstack/echo/v4"
-        "myapp/internal/applications/templates_directory/dto"
-        "myapp/internal/applications/templates_directory/service"
-        "myapp/internal/apputils"
-        "myapp/internal/apputils/response"
-)
-
-type TemplateController struct {
-        service service.TemplateService
-}
-
-func NewTemplateController(service service.TemplateService) *TemplateController <span class="cov0" title="0">{
-        return &amp;TemplateController{
-                service: service,
-        }
-}</span>
-
-func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error <span class="cov0" title="0">{
-        request := new(dto.ExampleRequest)
-        err := apputils.BindAndValidate(ctx, request)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        //call service
-        <span class="cov0" title="0">serviceResult := "service_result"
-
-        //res
-        var responseDto = new(dto.ExampleResponse)
-        err = apputils.Mapper(&amp;responseDto, serviceResult)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">return response.Created(ctx, responseDto)</span>
-}
-</pre>
-		
-		<pre class="file" id="file12" style="display: none">package controller
-
-import "github.com/labstack/echo/v4"
-
-func (c *TemplateController) AddRoutes(e *echo.Echo) {<span class="cov0" title="0">
-        //e.POST("/template", c.Create)
-        //e.PUT("/template/:id", c.Update)
-        //e.DELETE("/template/:id", c.Delete)
-        //e.GET("/template/:id", c.GetById)
-        //e.GET("/template", c.GetAll)
-}</span>
-</pre>
-		
-		<pre class="file" id="file13" style="display: none">package db
-
-import (
-        "context"
-        "myapp/ent"
-)
-
-type TemplateRepositoryImpl struct {
-        dbClient *ent.Client
-}
-
-func NewTemplateRepository(dbClient *ent.Client) *TemplateRepositoryImpl <span class="cov0" title="0">{
-        return &amp;TemplateRepositoryImpl{
-                dbClient: dbClient,
-        }
-}</span>
-
-func (r *TemplateRepositoryImpl) DatabaseAction(ctx context.Context, requestDomain *ent.Pet) (*ent.Pet, error) <span class="cov0" title="0">{
-        //this repository layer and functions will consist of your interaction with source of data,
-        //like CRUD operation on database. NO logic business in this layer
-        //and NO transactional handling in this repository  layer
-
-        return &amp;ent.Pet{}, nil
-}</pre>
-		
-		<pre class="file" id="file14" style="display: none">package service
-
-import (
-        "context"
-        "myapp/ent"
-        "myapp/internal/applications/templates_directory/dto"
-        "myapp/internal/applications/templates_directory/repository/db"
-)
-
-type TemplateServiceImpl struct {
-        repository db.TemplateRepository
-}
-
-func NewTemplateService(repository db.TemplateRepository) *TemplateServiceImpl <span class="cov0" title="0">{
-        return &amp;TemplateServiceImpl{
-                repository: repository,
-        }
-}</span>
-
-func (s *TemplateServiceImpl) LogicFunction(ctx context.Context, request *dto.ExampleRequest) (*ent.Pet, error) <span class="cov0" title="0">{
-        //this service layer and functions will consist of your business logic,
-        //logic related with related multiple domain activities and communication
-        //if needed, transactional handling mandatory in this service layer
-
-        //call repository and handle the result
-        return &amp;ent.Pet{}, nil
-}</span>
 </pre>
 		
 		<pre class="file" id="file15" style="display: none">package transaction
@@ -1220,13 +1228,14 @@ func (c *UserController) GetAll(ctx echo.Context) error <span class="cov8" title
 
 import "github.com/labstack/echo/v4"
 
-func (c *UserController) AddRoutes(e *echo.Echo) <span class="cov0" title="0">{
+func (c *UserController) AddRoutes(e *echo.Echo, appName string) <span class="cov0" title="0">{
+        group := e.Group(appName + "/user")
 
-        e.POST("/user", c.Create)
-        e.PUT("/user/:id", c.Update)
-        e.DELETE("/user/:id", c.Delete)
-        e.GET("/user/:id", c.GetById)
-        e.GET("/user", c.GetAll)
+        group.POST("", c.Create)
+        group.PUT("/:id", c.Update)
+        group.DELETE("/:id", c.Delete)
+        group.GET("/:id", c.GetById)
+        group.GET("", c.GetAll)
 
 }</span>
 </pre>
