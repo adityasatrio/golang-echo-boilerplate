@@ -77,25 +77,33 @@
 				
 				<option value="file10">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (73.9%)</option>
 				
-				<option value="file11">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
+				<option value="file11">myapp/internal/applications/templates_directory/controller/template_controller.go (0.0%)</option>
 				
-				<option value="file12">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
+				<option value="file12">myapp/internal/applications/templates_directory/controller/template_routes.go (0.0%)</option>
 				
-				<option value="file13">myapp/internal/applications/user/controller/user_controller.go (87.5%)</option>
+				<option value="file13">myapp/internal/applications/templates_directory/repository/db/template_repository_impl.go (0.0%)</option>
 				
-				<option value="file14">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
+				<option value="file14">myapp/internal/applications/templates_directory/service/template_service_impl.go (0.0%)</option>
 				
-				<option value="file15">myapp/internal/applications/user/repository/user_repository_impl.go (71.0%)</option>
+				<option value="file15">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
 				
-				<option value="file16">myapp/internal/applications/user/service/user_service_impl.go (88.9%)</option>
+				<option value="file16">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
 				
-				<option value="file17">myapp/internal/apputils/dto_bind_validation.go (100.0%)</option>
+				<option value="file17">myapp/internal/applications/user/controller/user_controller.go (87.5%)</option>
 				
-				<option value="file18">myapp/internal/apputils/dto_mapper.go (80.0%)</option>
+				<option value="file18">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
 				
-				<option value="file19">myapp/internal/apputils/json_utils.go (100.0%)</option>
+				<option value="file19">myapp/internal/applications/user/repository/user_repository_impl.go (71.0%)</option>
 				
-				<option value="file20">myapp/internal/apputils/response/response_json_builder.go (86.7%)</option>
+				<option value="file20">myapp/internal/applications/user/service/user_service_impl.go (88.9%)</option>
+				
+				<option value="file21">myapp/internal/apputils/dto_bind_validation.go (100.0%)</option>
+				
+				<option value="file22">myapp/internal/apputils/dto_mapper.go (80.0%)</option>
+				
+				<option value="file23">myapp/internal/apputils/json_utils.go (100.0%)</option>
+				
+				<option value="file24">myapp/internal/apputils/response/response_json_builder.go (86.7%)</option>
 				
 				</select>
 			</div>
@@ -898,7 +906,115 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 }
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package transaction
+		<pre class="file" id="file11" style="display: none">package controller
+
+import (
+        "github.com/labstack/echo/v4"
+        "myapp/internal/applications/templates_directory/dto"
+        "myapp/internal/applications/templates_directory/service"
+        "myapp/internal/apputils"
+        "myapp/internal/apputils/response"
+)
+
+type TemplateController struct {
+        service service.TemplateService
+}
+
+func NewTemplateController(service service.TemplateService) *TemplateController <span class="cov0" title="0">{
+        return &amp;TemplateController{
+                service: service,
+        }
+}</span>
+
+func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error <span class="cov0" title="0">{
+        request := new(dto.ExampleRequest)
+        err := apputils.BindAndValidate(ctx, request)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        //call service
+        <span class="cov0" title="0">serviceResult := "service_result"
+
+        //res
+        var responseDto = new(dto.ExampleResponse)
+        err = apputils.Mapper(&amp;responseDto, serviceResult)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return response.Created(ctx, responseDto)</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package controller
+
+import "github.com/labstack/echo/v4"
+
+func (c *TemplateController) AddRoutes(e *echo.Echo) {<span class="cov0" title="0">
+        //e.POST("/template", c.Create)
+        //e.PUT("/template/:id", c.Update)
+        //e.DELETE("/template/:id", c.Delete)
+        //e.GET("/template/:id", c.GetById)
+        //e.GET("/template", c.GetAll)
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package db
+
+import (
+        "context"
+        "myapp/ent"
+)
+
+type TemplateRepositoryImpl struct {
+        dbClient *ent.Client
+}
+
+func NewTemplateRepository(dbClient *ent.Client) *TemplateRepositoryImpl <span class="cov0" title="0">{
+        return &amp;TemplateRepositoryImpl{
+                dbClient: dbClient,
+        }
+}</span>
+
+func (r *TemplateRepositoryImpl) DatabaseAction(ctx context.Context, requestDomain *ent.Pet) (*ent.Pet, error) <span class="cov0" title="0">{
+        //this repository layer and functions will consist of your interaction with source of data,
+        //like CRUD operation on database. NO logic business in this layer
+        //and NO transactional handling in this repository  layer
+
+        return &amp;ent.Pet{}, nil
+}</pre>
+		
+		<pre class="file" id="file14" style="display: none">package service
+
+import (
+        "context"
+        "myapp/ent"
+        "myapp/internal/applications/templates_directory/dto"
+        "myapp/internal/applications/templates_directory/repository/db"
+)
+
+type TemplateServiceImpl struct {
+        repository db.TemplateRepository
+}
+
+func NewTemplateService(repository db.TemplateRepository) *TemplateServiceImpl <span class="cov0" title="0">{
+        return &amp;TemplateServiceImpl{
+                repository: repository,
+        }
+}</span>
+
+func (s *TemplateServiceImpl) LogicFunction(ctx context.Context, request *dto.ExampleRequest) (*ent.Pet, error) <span class="cov0" title="0">{
+        //this service layer and functions will consist of your business logic,
+        //logic related with related multiple domain activities and communication
+        //if needed, transactional handling mandatory in this service layer
+
+        //call repository and handle the result
+        return &amp;ent.Pet{}, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package transaction
 
 import (
         "context"
@@ -941,7 +1057,7 @@ func (r *TrxServiceImpl) WithTx(ctx context.Context, fn func(tx *ent.Tx) error) 
 }
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">// Code generated by Wire. DO NOT EDIT.
+		<pre class="file" id="file16" style="display: none">// Code generated by Wire. DO NOT EDIT.
 
 //go:generate go run github.com/google/wire/cmd/wire
 //go:build !wireinject
@@ -968,7 +1084,7 @@ var provider = wire.NewSet(
 )
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package controller
+		<pre class="file" id="file17" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -1100,7 +1216,7 @@ func (c *UserController) GetAll(ctx echo.Context) error <span class="cov8" title
 }
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package controller
+		<pre class="file" id="file18" style="display: none">package controller
 
 import "github.com/labstack/echo/v4"
 
@@ -1115,7 +1231,7 @@ func (c *UserController) AddRoutes(e *echo.Echo) <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file15" style="display: none">package repository
+		<pre class="file" id="file19" style="display: none">package repository
 
 import (
         "context"
@@ -1235,7 +1351,7 @@ func (r *UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) <s
 }
 </pre>
 		
-		<pre class="file" id="file16" style="display: none">package service
+		<pre class="file" id="file20" style="display: none">package service
 
 import (
         "context"
@@ -1382,7 +1498,7 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) <span
 }
 </pre>
 		
-		<pre class="file" id="file17" style="display: none">package apputils
+		<pre class="file" id="file21" style="display: none">package apputils
 
 import "github.com/labstack/echo/v4"
 
@@ -1399,7 +1515,7 @@ func BindAndValidate(ctx echo.Context, i interface{}) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file18" style="display: none">// Package apputils wrapper for dtoutils https://github.com/dranikpg/dto-mapper
+		<pre class="file" id="file22" style="display: none">// Package apputils wrapper for dtoutils https://github.com/dranikpg/dto-mapper
 
 package apputils
 
@@ -1423,7 +1539,7 @@ func MapAndAssign(source interface{}, target interface{}) (interface{}, error) <
 }
 </pre>
 		
-		<pre class="file" id="file19" style="display: none">package apputils
+		<pre class="file" id="file23" style="display: none">package apputils
 
 import (
         "errors"
@@ -1481,7 +1597,7 @@ func GetResult(json string, path string) (gjson.Result, error) <span class="cov8
 }
 </pre>
 		
-		<pre class="file" id="file20" style="display: none">package response
+		<pre class="file" id="file24" style="display: none">package response
 
 import (
         "errors"
