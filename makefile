@@ -27,7 +27,7 @@ mocks-gen:
 wire-gen:
 	@echo "Enter directory: "; \
 	read dir; \
-	echo "$(WIRE_DIR)/$$dir"; \
+	echo "Accessing directory and wire all DI $(WIRE_DIR)/$$dir"; \
 	cd $(WIRE_DIR)/$$dir && wire
 
 confirm:
