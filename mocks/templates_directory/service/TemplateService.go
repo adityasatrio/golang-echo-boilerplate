@@ -5,7 +5,7 @@ package mock_service
 import (
 	context "context"
 	ent "myapp/ent"
-	dto "myapp/internal/applications/templates_directory/dto"
+	dto "myapp/internal/applications/A_templates_directory/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"myapp/ent"
-	"myapp/internal/applications/templates_directory/dto"
+	"myapp/internal/applications/A_templates_directory/dto"
 )
 
 type (

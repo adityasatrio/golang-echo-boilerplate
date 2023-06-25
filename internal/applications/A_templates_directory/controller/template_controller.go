@@ -2,8 +2,8 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"myapp/internal/applications/templates_directory/dto"
-	"myapp/internal/applications/templates_directory/service"
+	"myapp/internal/applications/A_templates_directory/dto"
+	"myapp/internal/applications/A_templates_directory/service"
 	"myapp/internal/apputils"
 	"myapp/internal/apputils/response"
 )
@@ -19,8 +19,9 @@ func NewTemplateController(service service.TemplateService) *TemplateController 
 }
 
 func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
-	//controller layer is only to handle request and response, you can do validate your request using validators
-	// validation logic if needed. You are forbidden to put any business logic in this layer
+	//TLDR; controller layer is only to handle input and output from external domain from this application commonly to handle API request and response.
+	//If needed validation logic for request, you can do validation using validators
+	//You are forbidden to put any business logic in this layer
 
 	request := new(dto.ExampleRequest)
 	err := apputils.BindAndValidate(ctx, request)
