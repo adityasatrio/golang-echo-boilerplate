@@ -108,7 +108,7 @@ generate mock file for all interface in domains
 
 ### Migration
 generate migration, up, down and force
-1. Run the command go get -u github.com/golang-migrate/migrate to download and install the migration library.
+1. Run the command `go get -u github.com/golang-migrate/migrate` to download and install the migration library.
 2. Run the command for migration creation, this will create the migration file version
 ```
 make migration-create name={name_migration}

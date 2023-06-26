@@ -2,12 +2,13 @@ package controller
 
 import "github.com/labstack/echo/v4"
 
-func (c *UserController) AddRoutes(e *echo.Echo) {
+func (c *UserController) AddRoutes(e *echo.Echo, appName string) {
+	group := e.Group(appName + "/user")
 
-	e.POST("/user", c.Create)
-	e.PUT("/user/:id", c.Update)
-	e.DELETE("/user/:id", c.Delete)
-	e.GET("/user/:id", c.GetById)
-	e.GET("/user", c.GetAll)
+	group.POST("", c.Create)
+	group.PUT("/:id", c.Update)
+	group.DELETE("/:id", c.Delete)
+	group.GET("/:id", c.GetById)
+	group.GET("", c.GetAll)
 
 }
