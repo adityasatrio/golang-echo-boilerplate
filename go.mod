@@ -15,10 +15,12 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.2
+
 )
 
 require (
 	github.com/dranikpg/dto-mapper v0.1.1
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/tidwall/gjson v1.14.4
 )
@@ -32,7 +34,6 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

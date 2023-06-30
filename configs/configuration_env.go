@@ -36,6 +36,7 @@ func SetupConfigEnv(e *echo.Echo) {
 
 func setDefaultKeys() {
 	viper.SetDefault("application.port", 8080)
+	viper.SetDefault("application.health.url", "/health")
 
 	host := []string{"localhost", "https://labstack.com", "https://labstack.net"}
 	viper.SetDefault("application.cors.allowedHost", host)

@@ -12,3 +12,9 @@ db.configs:
   port: 3306
   database: test_ent
 
+outbound:
+  quotes:
+    get-url: https://programming-quotesapi.vercel.app/api/random
+    post-url: https://en8trqq30hty3.x.pipedream.net/
+
+

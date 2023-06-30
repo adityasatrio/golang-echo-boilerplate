@@ -105,7 +105,7 @@ func TestUserController_Create(t *testing.T) {
 
 			if userMock.scenario {
 
-				// Check the http response:
+				// Check the outbound response:
 				assert.NoError(t, err)
 				assert.Equal(t, http.StatusCreated, res.Code)
 
@@ -125,7 +125,7 @@ func TestUserController_Create(t *testing.T) {
 
 			} else {
 
-				// Check the http response:
+				// Check the outbound response:
 				assert.Error(t, err)
 				assert.Equal(t, http.StatusOK, res.Code)
 
@@ -214,7 +214,7 @@ func TestUserController_Update(t *testing.T) {
 
 		err := controller.Update(c)
 
-		// Check the http response:
+		// Check the outbound response:
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
@@ -324,7 +324,7 @@ func TestUserController_Delete(t *testing.T) {
 		c.SetParamValues("1")
 		err := controller.Delete(c)
 
-		// Check the http response:
+		// Check the outbound response:
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
@@ -407,7 +407,7 @@ func TestUserController_GetById(t *testing.T) {
 
 		err := controller.GetById(c)
 
-		// Check the http response:
+		// Check the outbound response:
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
@@ -497,7 +497,7 @@ func TestUserController_GetAll(t *testing.T) {
 		c := e.NewContext(req, res)
 		err := controller.GetAll(c)
 
-		// Check the http response:
+		// Check the outbound response:
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
