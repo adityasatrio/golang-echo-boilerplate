@@ -17,6 +17,7 @@ func TestSystemParameterServiceImpl_Create(t *testing.T) {
 	}
 
 	mockRepo := new(mock_db.SystemParameterRepository)
+	mockCache := new
 	service := NewSystemParameterService(mockRepo)
 
 	ctx := context.Background()

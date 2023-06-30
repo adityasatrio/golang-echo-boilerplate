@@ -7,13 +7,13 @@ import (
 	"github.com/spf13/viper"
 	"myapp/configs"
 	"myapp/configs/database"
+	"myapp/configs/redis"
 	"myapp/configs/validator"
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest_api"
 	"myapp/middleware"
 	"net/http"
 	"os"
-	"os/signal"
 	"time"
 )
 
@@ -39,8 +39,11 @@ func main() {
 		}
 	}(dbConnection)
 
+	//configuration for redis client:
+	redisConnection := redis.NewRedisClient()
+
 	//setup router
-	restApi.SetupRouteHandler(e, dbConnection)
+	restApi.SetupRouteHandler(e, dbConnection, redisConnection)
 
 	port := viper.GetString("application.port")
 	// Start server
@@ -54,7 +57,7 @@ func main() {
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
+	//signal.Notify(quit, os.Interrupt)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

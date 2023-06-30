@@ -49,9 +49,9 @@ func setDefaultKeys() {
 	viper.SetDefault("cache.configs.ristretto.numCounters", 1000)
 	viper.SetDefault("cache.configs.ristretto.maxCost", 100)
 
-	viper.SetDefault("cache.configs.redis.username", "root")
-	viper.SetDefault("cache.configs.redis.password", "password")
-	viper.SetDefault("cache.configs.redis.DB", 0)
+	// viper.SetDefault("cache.configs.redis.username", "root")
+	// viper.SetDefault("cache.configs.redis.password", "password")
+	viper.SetDefault("cache.configs.redis.db", 0)
 	viper.SetDefault("cache.configs.redis.poolSize", 10)
 
 	viper.SetDefault("cache.configs.redis.host", "127.0.0.1")

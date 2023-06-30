@@ -7,8 +7,18 @@ application:
 
 db.configs:
   username: root
-  password:
+  password: root
   host: localhost
   port: 3306
   database: test_ent
+
+cache:
+  configs:
+    redis:
+      host: localhost
+      port: 6379
+      username:
+      password:
+      db: 0
+      poolSize: 10
 
