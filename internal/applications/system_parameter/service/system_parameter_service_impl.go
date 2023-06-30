@@ -103,6 +103,11 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
+	_, err = s.cache.Delete(ctx, globalutils.CacheKeySysParamWithId(id))
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+	}
+
 	return deleted, nil
 }
 
