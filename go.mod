@@ -24,12 +24,13 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.18
 	github.com/tidwall/gjson v1.14.4
 	github.com/vmihailenco/msgpack/v4 v4.3.12
-	github.com/zclconf/go-cty v1.8.0
 )
 
 require (
 	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
+	github.com/alicebob/gopher-json v0.0.0-20230218143504-906a9b012302 // indirect
+	github.com/alicebob/miniredis v2.5.0+incompatible // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -39,6 +40,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
@@ -65,6 +67,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/tagparser v0.1.1 // indirect
+	github.com/yuin/gopher-lua v1.1.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
