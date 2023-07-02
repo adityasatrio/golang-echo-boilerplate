@@ -31,7 +31,7 @@ func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Clie
 		NewSystemParameterController(SystemParameterService).
 		AddRoutes(e, appName)
 
-	UserService := user.InitializedUserService(connDb)
+	UserService := user.InitializedUserService(connDb, redisClient)
 	userController.
 		NewUserController(UserService).
 		AddRoutes(e, appName)

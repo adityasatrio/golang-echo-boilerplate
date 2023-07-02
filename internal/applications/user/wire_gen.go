@@ -7,8 +7,10 @@
 package user
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"myapp/ent"
+	"myapp/internal/applications/cache"
 	repository2 "myapp/internal/applications/role/repository"
 	repository3 "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
@@ -18,15 +20,16 @@ import (
 
 // Injectors from user_injector.go:
 
-func InitializedUserService(dbClient *ent.Client) *service.UserServiceImpl {
+func InitializedUserService(dbClient *ent.Client, redisClient *redis.Client) *service.UserServiceImpl {
 	userRepositoryImpl := repository.NewUserRepositoryImpl(dbClient)
 	roleRepositoryImpl := repository2.NewRoleRepositoryImpl(dbClient)
 	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl(dbClient)
 	trxServiceImpl := transaction.NewTrxServiceImpl(dbClient)
-	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl)
+	cachingServiceImpl := cache.NewCachingServiceImpl(redisClient)
+	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl, cachingServiceImpl)
 	return userServiceImpl
 }
 
 // user_injector.go:
 
-var providerUser = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, transaction.NewTrxServiceImpl, service.NewUserServiceImpl, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
+var providerUser = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, transaction.NewTrxServiceImpl, service.NewUserServiceImpl, cache.NewCachingServiceImpl, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
