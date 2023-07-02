@@ -13,7 +13,7 @@ import (
 	mock_repository3 "myapp/mocks/role_user/repository"
 	mock_transaction "myapp/mocks/transaction"
 	mock_repository2 "myapp/mocks/user/repository"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"testing"
 	"time"
 )
@@ -101,7 +101,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 		},
 	}
 
-	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+	_, txClient, ctx := test.DbConnectionTx(t)
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
@@ -166,7 +166,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 	}
 
 	defer func() {
-		test_helper.TestDbConnectionCloseTx(txClient)
+		test.DbConnectionCloseTx(txClient)
 	}()
 }
 
@@ -178,7 +178,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 		Password: "12345_update",
 	}
 
-	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+	_, txClient, ctx := test.DbConnectionTx(t)
 
 	id := uint64(123000)
 	userExisting := getUserMock(uint64(123000), "User", "user@email.com", "12345")
@@ -216,7 +216,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 	assert.Equal(t, requestUpdate.Password, result.Password)
 
 	defer func() {
-		test_helper.TestDbConnectionCloseTx(txClient)
+		test.DbConnectionCloseTx(txClient)
 	}()
 }
 
@@ -228,7 +228,7 @@ func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
 		Password: "12345_update",
 	}
 
-	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+	_, txClient, ctx := test.DbConnectionTx(t)
 
 	id := uint64(123002)
 	userExisting := getUserMock(uint64(123002), "User2", "user2@email.com", "12345")
@@ -257,7 +257,7 @@ func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
 	assert.Nil(t, result)
 
 	defer func() {
-		test_helper.TestDbConnectionCloseTx(txClient)
+		test.DbConnectionCloseTx(txClient)
 	}()
 
 }
@@ -270,7 +270,7 @@ func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
 		Password: "12345_update",
 	}
 
-	_, txClient, ctx := test_helper.TestDbConnectionTx(t)
+	_, txClient, ctx := test.DbConnectionTx(t)
 
 	id := uint64(123003)
 	userExisting := getUserMock(id, "User3", "user3@email.com", "12345")
@@ -304,7 +304,7 @@ func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
 	assert.Nil(t, result)
 
 	defer func() {
-		test_helper.TestDbConnectionCloseTx(txClient)
+		test.DbConnectionCloseTx(txClient)
 	}()
 }
 

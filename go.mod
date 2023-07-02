@@ -22,6 +22,7 @@ require (
 	github.com/dranikpg/dto-mapper v0.1.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
+	github.com/jarcoal/httpmock v1.3.0
 	github.com/tidwall/gjson v1.14.4
 )
 

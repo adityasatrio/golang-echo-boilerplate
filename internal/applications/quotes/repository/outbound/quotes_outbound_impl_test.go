@@ -1,0 +1,173 @@
+package outbound
+
+import (
+	"context"
+	"errors"
+	"github.com/go-resty/resty/v2"
+	"github.com/jarcoal/httpmock"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
+	"myapp/internal/applications/quotes/dto"
+	"myapp/test"
+	"testing"
+)
+
+func TestGetQuotes(t *testing.T) {
+	client := resty.New()
+	ctx := context.Background()
+	quoteOutboundImpl := &QuoteOutboundImpl{
+		ClientApi: client,
+	}
+
+	httpmock.ActivateNonDefault(client.GetClient())
+	defer httpmock.DeactivateAndReset()
+
+	viper.Set("outbound.quotes.get-url", "http://test-url")
+
+	tests := []struct {
+		name             string
+		mockStatusCode   int
+		mockBodyResponse string
+		expectedResp     *dto.QuoteApiResponse
+	}{
+		{
+			name:             "Error in HTTP GET request",
+			mockStatusCode:   0,
+			mockBodyResponse: "",
+		},
+		{
+			name:             "Non-200 status code",
+			mockStatusCode:   404,
+			mockBodyResponse: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.RegisterResponder("GET", "http://test-url",
+				httpmock.NewErrorResponder(errors.New("request error")))
+
+			resp, err := quoteOutboundImpl.GetQuotes(ctx)
+
+			assert.Error(t, err)
+			assert.Equal(t, &dto.QuoteApiResponse{}, resp)
+		})
+	}
+}
+
+func TestGetQuotes_dtoResponse(t *testing.T) {
+	client := resty.New()
+	ctx := context.Background()
+	quoteOutboundImpl := &QuoteOutboundImpl{
+		ClientApi: client,
+	}
+
+	httpmock.ActivateNonDefault(client.GetClient())
+	defer httpmock.DeactivateAndReset()
+
+	viper.Set("outbound.quotes.get-url", "http://test-url")
+
+	tests := []struct {
+		name             string
+		mockStatusCode   int
+		mockBodyResponse string
+		expectedResp     *dto.QuoteApiResponse
+	}{
+		{
+			name:             "Successful GET request",
+			mockStatusCode:   200,
+			mockBodyResponse: `{"author": "test response", "quote": "test response"}`,
+			expectedResp: &dto.QuoteApiResponse{
+				Author: "test response",
+				Quote:  "test response",
+			},
+		},
+		{
+			name:             "Failed GET request",
+			mockStatusCode:   500,
+			mockBodyResponse: "",
+			expectedResp:     &dto.QuoteApiResponse{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.RegisterResponder("GET", "http://test-url",
+				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse))
+
+			resp, err := quoteOutboundImpl.GetQuotes(ctx)
+
+			if tt.mockStatusCode != 200 {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.Equal(t, tt.expectedResp, resp)
+		})
+	}
+}
+
+func TestPostQuotes_dtoResponse(t *testing.T) {
+	client := resty.New()
+	ctx := context.Background()
+	quoteOutboundImpl := &QuoteOutboundImpl{
+		ClientApi: client,
+	}
+
+	httpmock.ActivateNonDefault(client.GetClient())
+	defer httpmock.DeactivateAndReset()
+
+	viper.Set("outbound.quotes.post-url", "http://test-url")
+
+	tests := []struct {
+		name             string
+		mockRequest      dto.QuoteApiRequest
+		mockStatusCode   int
+		mockBodyResponse string
+		expectedResp     *dto.QuoteApiResponse
+	}{
+		{
+			name: "Successful POST request",
+			mockRequest: dto.QuoteApiRequest{
+				Name:   "test response",
+				Author: "test response",
+				Quote:  "test response",
+			},
+			mockStatusCode:   200,
+			mockBodyResponse: `{"author": "test response", "quote": "test response"}`,
+			expectedResp: &dto.QuoteApiResponse{
+				Author: "test response",
+				Quote:  "test response",
+			},
+		},
+		{
+			name: "Failures POST request",
+			mockRequest: dto.QuoteApiRequest{
+				Name:   "test response Failures",
+				Author: "test response Failures",
+				Quote:  "test response Failures",
+			},
+			mockStatusCode:   500,
+			mockBodyResponse: "",
+			expectedResp:     &dto.QuoteApiResponse{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.RegisterResponder("POST", "http://test-url",
+				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse))
+
+			resp, err := quoteOutboundImpl.PostQuotes(ctx, tt.mockRequest)
+
+			if tt.mockStatusCode != 200 {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.Equal(t, tt.expectedResp, resp)
+		})
+	}
+}

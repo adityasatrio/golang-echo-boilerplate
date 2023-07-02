@@ -34,8 +34,9 @@ func NewQuoteOutboundImpl(clientApi *resty.Client) *QuoteOutboundImpl {
 	}
 }
 
-func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, reqBody dto.QuoteApiRequest) (*dto.QuoteApiResponse, error) {
+func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context) (*dto.QuoteApiResponse, error) {
 	headers := map[string]string{
+		"Content-Type":    "application/json",
 		"x-custom-header": "custom value",
 	}
 
@@ -48,11 +49,12 @@ func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, reqBody dto.QuoteApiR
 	response := &dto.QuoteApiResponse{}
 	resp, err := o.ClientApi.R().
 		SetResult(response).
-		//SetContext(ctx).
+		SetContext(ctx).
 		SetHeaders(headers).
 		SetQueryParams(queryParameter).
 		Get(hostQuoteUrl)
 
+	fmt.Printf("Response body: %s\n", resp.String())
 	if err != nil {
 		log.Errorf("error http libs ", err)
 		return response, err
@@ -69,21 +71,17 @@ func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, reqBody dto.QuoteApiR
 
 func (o *QuoteOutboundImpl) PostQuotes(ctx context.Context, reqBody dto.QuoteApiRequest) (*dto.QuoteApiResponse, error) {
 	headers := map[string]string{
+		"Content-Type":    "application/json",
 		"x-custom-header": "custom value",
 	}
 
-	queryParameter := map[string]string{
-		"sampleInt":    fmt.Sprintf("%d", 1),
-		"sampleString": fmt.Sprintf("%s", "string"),
-	}
-
 	hostQuoteUrl := viper.GetString("outbound.quotes.post-url")
+
 	response := &dto.QuoteApiResponse{}
 	resp, err := o.ClientApi.R().
 		SetResult(response).
-		//SetContext(ctx).
+		SetContext(ctx).
 		SetHeaders(headers).
-		SetQueryParams(queryParameter).
 		SetBody(reqBody).
 		Post(hostQuoteUrl)
 

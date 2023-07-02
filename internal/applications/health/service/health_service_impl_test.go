@@ -1,9 +1,9 @@
 package service
 
 import (
+	"context"
 	"github.com/stretchr/testify/assert"
 	mock_repository "myapp/mocks/health/repository"
-	"myapp/test/test_helper"
 	"testing"
 )
 
@@ -22,7 +22,7 @@ func TestNewHelloWorldsService(t *testing.T) {
 
 func TestHello(t *testing.T) {
 
-	ctx := test_helper.NewServiceCtx()
+	ctx := context.Background()
 
 	healthCheckResult := map[string]string{}
 	healthCheckResult["final_msg"] = "hello from controller layer hello from service layer hello from repository layer "

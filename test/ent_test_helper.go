@@ -1,4 +1,4 @@
-package test_helper
+package test
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestDbConnection(t *testing.T) (newClient *ent.Client, newContext context.Context) {
+func DbConnection(t *testing.T) (newClient *ent.Client, newContext context.Context) {
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),
 	}
@@ -23,9 +23,9 @@ func TestDbConnection(t *testing.T) (newClient *ent.Client, newContext context.C
 	return client, ctx
 }
 
-func TestDbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.Tx, newContext context.Context) {
+func DbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.Tx, newContext context.Context) {
 
-	client, ctx := TestDbConnection(t)
+	client, ctx := DbConnection(t)
 	txClient, err := client.Tx(ctx)
 
 	require.NoError(t, err)
@@ -34,7 +34,7 @@ func TestDbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.T
 	return client, txClient, ctx
 }
 
-func TestDbConnectionClose(client *ent.Client) {
+func DbConnectionClose(client *ent.Client) {
 	defer func(client *ent.Client) {
 		err := client.Close()
 		if err != nil {
@@ -43,7 +43,7 @@ func TestDbConnectionClose(client *ent.Client) {
 	}(client)
 }
 
-func TestDbConnectionCloseTx(transaction *ent.Tx) {
+func DbConnectionCloseTx(transaction *ent.Tx) {
 	defer func(transaction *ent.Tx) {
 		err := transaction.Client().Close()
 		if err != nil {

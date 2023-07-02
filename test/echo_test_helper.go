@@ -1,4 +1,4 @@
-package test_helper
+package test
 
 import (
 	"github.com/labstack/echo/v4"

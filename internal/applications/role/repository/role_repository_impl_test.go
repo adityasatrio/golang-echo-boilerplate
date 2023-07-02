@@ -3,14 +3,14 @@ package repository
 import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"testing"
 	"time"
 )
 
 func TestRoleRepositoryImpl_Create(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -28,13 +28,13 @@ func TestRoleRepositoryImpl_Create(t *testing.T) {
 	assert.Equal(t, dummyRole.Text, result.Text)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestRoleRepositoryImpl_Update(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -60,13 +60,13 @@ func TestRoleRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, "head heart wallets updated", resultUpdated.Text)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestRoleRepositoryImpl_Delete(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -87,13 +87,13 @@ func TestRoleRepositoryImpl_Delete(t *testing.T) {
 	assert.Nil(t, resultUpdated)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestRoleRepositoryImpl_SoftDelete(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -116,13 +116,13 @@ func TestRoleRepositoryImpl_SoftDelete(t *testing.T) {
 	assert.NotNil(t, resultDeleted.DeletedAt)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestRoleRepositoryImpl_GetId(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -144,13 +144,13 @@ func TestRoleRepositoryImpl_GetId(t *testing.T) {
 	assert.Equal(t, resultGetId.ID, result.ID)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestRoleRepositoryImpl_GetAll(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 	roleRepo := NewRoleRepositoryImpl(client)
 
 	dummyRole := ent.Role{
@@ -192,7 +192,7 @@ func TestRoleRepositoryImpl_GetAll(t *testing.T) {
 	assert.NotNil(t, result2.ID)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 
 }

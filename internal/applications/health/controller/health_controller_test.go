@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/internal/apputils"
 	mock_service "myapp/mocks/health/service"
+	"myapp/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -24,7 +25,7 @@ func TestNewHelloWorldsController(t *testing.T) {
 
 func TestHealth(t *testing.T) {
 
-	e := echo.New()
+	e := test.InitEchoTest(t)
 
 	request := httptest.NewRequest(http.MethodGet, "/health", nil)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)

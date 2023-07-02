@@ -3,14 +3,14 @@ package repository
 import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"testing"
 	"time"
 )
 
 func TestRoleUserRepositoryImpl_GetByUserIdAndRoleId(t *testing.T) {
 
-	clientTx, _, ctx := test_helper.TestDbConnectionTx(t)
+	clientTx, _, ctx := test.DbConnectionTx(t)
 	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
@@ -36,14 +36,14 @@ func TestRoleUserRepositoryImpl_GetByUserIdAndRoleId(t *testing.T) {
 	assert.Equal(t, result.CreatedBy, getResult.CreatedBy)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(clientTx)
+		test.DbConnectionClose(clientTx)
 	})
 
 }
 
 func TestRoleUserRepositoryImpl_CreateTx(t *testing.T) {
 
-	clientTx, _, ctx := test_helper.TestDbConnectionTx(t)
+	clientTx, _, ctx := test.DbConnectionTx(t)
 	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
@@ -61,14 +61,14 @@ func TestRoleUserRepositoryImpl_CreateTx(t *testing.T) {
 	assert.Equal(t, dummyRoleUser.CreatedBy, result.CreatedBy)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(clientTx)
+		test.DbConnectionClose(clientTx)
 	})
 
 }
 
 func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 
-	clientTx, _, ctx := test_helper.TestDbConnectionTx(t)
+	clientTx, _, ctx := test.DbConnectionTx(t)
 	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
@@ -95,7 +95,7 @@ func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, uint64(4), resultUpdated.RoleID)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(clientTx)
+		test.DbConnectionClose(clientTx)
 	})
 
 }

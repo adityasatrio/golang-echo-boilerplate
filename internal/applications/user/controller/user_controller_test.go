@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"myapp/configs/validator"
 	"myapp/ent"
@@ -10,6 +9,7 @@ import (
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/apputils"
 	mock_service "myapp/mocks/user/service"
+	"myapp/test"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -90,7 +90,7 @@ func TestUserController_Create(t *testing.T) {
 
 			userService := new(mock_service.UserService)
 			controller := NewUserController(userService)
-			e := echo.New()
+			e := test.InitEchoTest(t)
 			validator.SetupValidator(e)
 
 			req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userMock.reqBodyStrJson))
@@ -148,7 +148,7 @@ func TestUserController_Create(t *testing.T) {
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
 
-		e := echo.New()
+		e := test.InitEchoTest(t)
 		validator.SetupValidator(e)
 		validator.SetupGlobalHttpUnhandleErrors(e)
 
@@ -196,8 +196,7 @@ func TestUserController_Update(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
@@ -231,8 +230,7 @@ func TestUserController_Update(t *testing.T) {
 	t.Run("Update_failed_on_service", func(t *testing.T) {
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		// CreateTx a request.
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "password": "Password123!", "role_id" : 1}`
@@ -265,8 +263,7 @@ func TestUserController_Update(t *testing.T) {
 	t.Run("Update_failed_dto_validation", func(t *testing.T) {
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		reqBody := `{"name": "testing name", "email": "testing@email.id", "role_id" : 1}`
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(reqBody))
@@ -296,8 +293,7 @@ func TestUserController_Delete(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
@@ -346,8 +342,7 @@ func TestUserController_Delete(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		req := httptest.NewRequest(http.MethodPut, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
@@ -383,8 +378,7 @@ func TestUserController_GetById(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
@@ -426,8 +420,7 @@ func TestUserController_GetById(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		req := httptest.NewRequest(http.MethodGet, "/users/1", strings.NewReader(""))
 		req.Header.Set("Content-Type", "application/json")
@@ -462,8 +455,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))
@@ -525,8 +517,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 		userService := new(mock_service.UserService)
 		controller := NewUserController(userService)
-		e := echo.New()
-		validator.SetupValidator(e)
+		e := test.InitEchoTest(t)
 
 		// CreateTx a request.
 		req := httptest.NewRequest(http.MethodGet, "/users", strings.NewReader(""))

@@ -7,7 +7,7 @@ import (
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/apputils"
 	mock_service "myapp/mocks/system_parameter/service"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -16,7 +16,7 @@ import (
 
 func TestSystemParameterController_Create(t *testing.T) {
 
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// Create a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
@@ -54,7 +54,7 @@ func TestSystemParameterController_Create(t *testing.T) {
 
 func TestSystemParameterController_Update(t *testing.T) {
 
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
@@ -90,7 +90,7 @@ func TestSystemParameterController_Update(t *testing.T) {
 }
 
 func TestSystemParameterController_Delete(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
 	req := httptest.NewRequest(http.MethodDelete, "/1", nil)
@@ -119,7 +119,7 @@ func TestSystemParameterController_Delete(t *testing.T) {
 }
 
 func TestSystemParameterController_GetByID(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
 	req := httptest.NewRequest(http.MethodGet, "/1", nil)
@@ -148,7 +148,7 @@ func TestSystemParameterController_GetByID(t *testing.T) {
 }
 
 func TestSystemParameterController_GetAll(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
 	req := httptest.NewRequest(http.MethodGet, "/", nil)

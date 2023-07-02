@@ -1,12 +1,12 @@
 package dto
 
 type QuoteApiResponse struct {
-	author string `json:"author,omitempty"`
-	quote  string `json:"quote,omitempty"`
+	Author string `json:"author,omitempty"`
+	Quote  string `json:"quote,omitempty"`
 }
 
 type QuoteApiRequest struct {
-	name   string `json:"name,omitempty"`
-	author string `json:"author,omitempty"`
-	quote  string `json:"quote,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Author string `json:"author,omitempty"`
+	Quote  string `json:"quote,omitempty"`
 }
