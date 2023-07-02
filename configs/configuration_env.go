@@ -37,6 +37,7 @@ func SetupConfigEnv(e *echo.Echo) {
 func setDefaultKeys() {
 	viper.SetDefault("application.port", 8080)
 	viper.SetDefault("application.health.url", "/health")
+	viper.SetDefault("application.mode", "dev")
 
 	host := []string{"localhost", "https://labstack.com", "https://labstack.net"}
 	viper.SetDefault("application.cors.allowedHost", host)
@@ -57,6 +58,9 @@ func setDefaultKeys() {
 
 	viper.SetDefault("cache.configs.redis.host", "127.0.0.1")
 	viper.SetDefault("cache.configs.redis.port", 6379)
+
+	viper.SetDefault("db.configs.maxIdleConn", 5)
+	viper.SetDefault("db.configs.maxOpenConn", 10)
 
 	log.Infof("initialized default configs value : success", viper.AllSettings())
 

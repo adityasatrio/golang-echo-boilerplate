@@ -30,12 +30,21 @@ func NewSqlEntClient() *ent.Client {
 		log.Fatalf("failed opening connection to DB: %v", err)
 	}
 
-	db.SetMaxIdleConns(10)
-	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(viper.GetInt("db.configs.maxIdleConn"))
+	db.SetMaxOpenConns(viper.GetInt("db.configs.maxOpenConn"))
 	db.SetConnMaxLifetime(time.Hour)
 
 	drv := entSql.OpenDB("mysql", db)
-	client := ent.NewClient(ent.Driver(drv))
+
+	var client = &ent.Client{}
+	appMode := viper.GetString("application.mode")
+	if appMode == "prod" {
+		log.Info("initialized database x sqlDb x orm ent : DEV")
+		client = ent.NewClient(ent.Driver(drv))
+	} else {
+		log.Info("initialized database x sqlDb x orm ent : PROD")
+		client = ent.NewClient(ent.Driver(drv), ent.Debug())
+	}
 
 	if drv == nil || client == nil {
 		log.Fatalf("failed opening connection to DB : driver or DB new client is null")
@@ -50,10 +59,6 @@ func NewSqlEntClient() *ent.Client {
 		log.Printf("err : %s\n", err)
 	}
 
-	//from docs define close on this function, but will impact cant create DB session on repository
-	//defer client.Close()
-
-	//result := Client{Connection: *client}
 	log.Info("initialized database x sqlDb x orm ent : success")
 	return client
 }
