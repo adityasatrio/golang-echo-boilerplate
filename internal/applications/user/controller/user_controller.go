@@ -5,7 +5,6 @@ import (
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/applications/user/service"
 	"myapp/internal/apputils"
-	"myapp/internal/apputils/response"
 	"strconv"
 )
 
@@ -36,7 +35,7 @@ func (c *UserController) Create(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Created(ctx, responseDto)
+	return apputils.Created(ctx, responseDto)
 }
 
 func (c *UserController) Update(ctx echo.Context) error {
@@ -63,7 +62,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) Delete(ctx echo.Context) error {
@@ -85,7 +84,7 @@ func (c *UserController) Delete(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) GetById(ctx echo.Context) error {
@@ -107,7 +106,7 @@ func (c *UserController) GetById(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *UserController) GetAll(ctx echo.Context) error {
@@ -126,5 +125,5 @@ func (c *UserController) GetAll(ctx echo.Context) error {
 		responseDtos = append(responseDtos, responseDto)
 	}
 
-	return response.Success(ctx, results)
+	return apputils.Success(ctx, results)
 }

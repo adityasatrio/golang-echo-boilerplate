@@ -5,7 +5,6 @@ import (
 	"myapp/internal/applications/A_templates_directory/dto"
 	"myapp/internal/applications/A_templates_directory/service"
 	"myapp/internal/apputils"
-	"myapp/internal/apputils/response"
 )
 
 type TemplateController struct {
@@ -39,5 +38,5 @@ func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Created(ctx, responseDto)
+	return apputils.Created(ctx, responseDto)
 }

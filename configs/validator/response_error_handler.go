@@ -3,7 +3,7 @@ package validator
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"myapp/internal/apputils/response"
+	"myapp/internal/apputils"
 )
 
 func SetupGlobalHttpUnhandleErrors(e *echo.Echo) {
@@ -17,12 +17,12 @@ func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 		if !ok {
 
 			errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
-			_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
+			_ = apputils.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
 			return
 		}
 
 		errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
-		_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
+		_ = apputils.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
 		return
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/service"
 	"myapp/internal/apputils"
-	"myapp/internal/apputils/response"
 	"strconv"
 )
 
@@ -37,7 +36,7 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Created(ctx, responseDto)
+	return apputils.Created(ctx, responseDto)
 }
 
 func (c *SystemParameterController) Update(ctx echo.Context) error {
@@ -61,7 +60,7 @@ func (c *SystemParameterController) Update(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) Delete(ctx echo.Context) error {
@@ -83,7 +82,7 @@ func (c *SystemParameterController) Delete(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) GetById(ctx echo.Context) error {
@@ -105,7 +104,7 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error {
 		return err
 	}
 
-	return response.Success(ctx, responseDto)
+	return apputils.Success(ctx, responseDto)
 }
 
 func (c *SystemParameterController) GetAll(ctx echo.Context) error {
@@ -124,5 +123,5 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error {
 		responseDtos = append(responseDtos, responseDto)
 	}
 
-	return response.Success(ctx, responseDtos)
+	return apputils.Success(ctx, responseDtos)
 }

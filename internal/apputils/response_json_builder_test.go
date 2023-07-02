@@ -1,10 +1,9 @@
-package response
+package apputils
 
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/internal/apputils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -73,16 +72,16 @@ func TestCreated(t *testing.T) {
 		t.Errorf("Expected status code %d, but got %d", http.StatusCreated, rec.Code)
 	}
 
-	codeJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "code")
+	codeJson, _ := GetFieldBytes(rec.Body.Bytes(), "code")
 	assert.Equal(t, float64(201), codeJson)
 
-	messageJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "message")
+	messageJson, _ := GetFieldBytes(rec.Body.Bytes(), "message")
 	assert.Equal(t, "Created", messageJson)
 
-	dataIdJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.id")
+	dataIdJson, _ := GetFieldBytes(rec.Body.Bytes(), "data.id")
 	assert.Equal(t, float64(1), dataIdJson)
 
-	dataNameJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.name")
+	dataNameJson, _ := GetFieldBytes(rec.Body.Bytes(), "data.name")
 	assert.Equal(t, "John Doe", dataNameJson)
 
 }
@@ -108,16 +107,16 @@ func TestSuccess(t *testing.T) {
 		t.Errorf("Expected status code %d, but got %d", http.StatusOK, rec.Code)
 	}
 
-	codeJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "code")
+	codeJson, _ := GetFieldBytes(rec.Body.Bytes(), "code")
 	assert.Equal(t, float64(200), codeJson)
 
-	messageJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "message")
+	messageJson, _ := GetFieldBytes(rec.Body.Bytes(), "message")
 	assert.Equal(t, "OK", messageJson)
 
-	dataIdJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.id")
+	dataIdJson, _ := GetFieldBytes(rec.Body.Bytes(), "data.id")
 	assert.Equal(t, float64(1), dataIdJson)
 
-	dataNameJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.name")
+	dataNameJson, _ := GetFieldBytes(rec.Body.Bytes(), "data.name")
 	assert.Equal(t, "John Doe", dataNameJson)
 }
 
@@ -140,13 +139,13 @@ func TestError(t *testing.T) {
 		t.Errorf("Expected status code %d, but got %d", httpCode, rec.Code)
 	}
 
-	codeJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "code")
+	codeJson, _ := GetFieldBytes(rec.Body.Bytes(), "code")
 	assert.Equal(t, float64(500), codeJson)
 
-	messageJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "message")
+	messageJson, _ := GetFieldBytes(rec.Body.Bytes(), "message")
 	assert.Equal(t, "Internal Server Error", messageJson)
 
-	errorJson, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "error")
+	errorJson, _ := GetFieldBytes(rec.Body.Bytes(), "error")
 	assert.Equal(t, "some error occurred", errorJson)
 
 }
