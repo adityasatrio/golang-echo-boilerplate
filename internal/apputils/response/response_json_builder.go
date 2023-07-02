@@ -1,4 +1,4 @@
-package apputils
+package response
 
 import (
 	"errors"

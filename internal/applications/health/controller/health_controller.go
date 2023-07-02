@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/internal/applications/health/dto"
 	"myapp/internal/applications/health/service"
-	"myapp/internal/apputils"
+	"myapp/internal/apputils/response"
 	"time"
 )
 
@@ -47,5 +47,5 @@ func (controller *HealthController) Health(c echo.Context) error {
 		},
 	}
 
-	return apputils.Success(c, responseDto)
+	return response.Success(c, responseDto)
 }
