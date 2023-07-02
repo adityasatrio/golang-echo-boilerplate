@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"myapp/internal/applications/quotes/dto"
-	middleware "myapp/internal/apputils/http"
+	"myapp/middleware"
 	"net/http"
 	"time"
 )

@@ -1,4 +1,4 @@
-package resty_middleware
+package middleware
 
 import (
 	"github.com/go-resty/resty/v2"

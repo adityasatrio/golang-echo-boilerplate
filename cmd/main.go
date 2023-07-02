@@ -9,7 +9,7 @@ import (
 	"myapp/configs/database"
 	"myapp/configs/validator"
 	"myapp/ent"
-	restApi "myapp/internal/adapter/rest_api"
+	restApi "myapp/internal/adapter/rest"
 	"myapp/middleware"
 	"net/http"
 	"os"
