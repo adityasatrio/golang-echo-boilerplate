@@ -9,6 +9,7 @@ const (
 	ApplicationName = "echo-boilerplate"
 	Separator       = ":"
 	SystemParameter = "system-parameter"
+	User            = "user"
 )
 
 func CacheKeySysParamWithId(id int) string {
@@ -17,4 +18,12 @@ func CacheKeySysParamWithId(id int) string {
 
 func CacheKeySysParams() string {
 	return strings.Join([]string{ApplicationName, SystemParameter, "list"}, Separator)
+}
+
+func CacheKeyUserWithId(id uint64) string {
+	return strings.Join([]string{ApplicationName, User, strconv.FormatUint(id, 10)}, Separator)
+}
+
+func CacheKeyUsers() string {
+	return strings.Join([]string{ApplicationName, User, "list"}, Separator)
 }

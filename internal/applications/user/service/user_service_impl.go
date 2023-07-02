@@ -2,14 +2,18 @@ package service
 
 import (
 	"context"
+	"github.com/go-redis/redis/v8"
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
+	"myapp/globalutils"
+	"myapp/internal/applications/cache"
 	roleRepository "myapp/internal/applications/role/repository"
 	roleUserRepository "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
 	userRepository "myapp/internal/applications/user/repository"
+	"time"
 )
 
 type UserServiceImpl struct {
@@ -17,10 +21,11 @@ type UserServiceImpl struct {
 	roleRepository     roleRepository.RoleRepository
 	roleUserRepository roleUserRepository.RoleUserRepository
 	transaction        transaction.TrxService
+	cache              cache.CachingService
 }
 
-func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
-	return &UserServiceImpl{userRepository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
+func NewUserServiceImpl(userRepository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService, cache cache.CachingService) *UserServiceImpl {
+	return &UserServiceImpl{userRepository: userRepository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction, cache: cache}
 }
 
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
@@ -35,6 +40,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			Email:    request.Email,
 			Password: request.Password,
 			Avatar:   "",
+			RoleID:   request.RoleId,
 		}
 
 		//save user:
@@ -54,6 +60,11 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		_, errRoleUser := s.roleUserRepository.CreateTx(ctx, tx.Client(), roleUserRequest)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
+		}
+
+		_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(userNew.ID), userNew, time.Hour*3)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 		}
 
 		return nil
@@ -105,7 +116,14 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 		}
 
+		//set value to userUpdated for return value:
 		userUpdated = userResult
+
+		_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(id), userUpdated, time.Hour*3)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		}
+
 		return nil
 
 	}); err != nil {
@@ -123,22 +141,58 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
+	_, err = s.cache.Delete(ctx, globalutils.CacheKeyUserWithId(id))
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+	}
+
 	return data, nil
 }
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
+
+	userCache, err := s.cache.Get(ctx, globalutils.CacheKeyUserWithId(id), &ent.User{})
+	if err != nil && err != redis.Nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+	}
+
+	if userCache != nil {
+		return userCache.(*ent.User), nil
+	}
+
 	result, err := s.userRepository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+	}
+
+	_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(id), result, time.Hour*3)
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
 
 	return result, nil
 }
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
+
+	userCache, err := s.cache.Get(ctx, globalutils.CacheKeyUsers(), &[]*ent.User{})
+	if err != nil && err != redis.Nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+	}
+
+	if userCache != nil {
+		userResult := append([]*ent.User(nil), *userCache.(*[]*ent.User)...)
+		return userResult, err
+	}
+
 	result, err := s.userRepository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+	}
+
+	_, err = s.cache.Create(ctx, globalutils.CacheKeyUsers(), &result, time.Hour*3)
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
 
 	return result, nil
