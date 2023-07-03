@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/internal/applications/health/dto"
 	"myapp/internal/applications/health/service"
-	"myapp/internal/apputils/response"
+	"myapp/internal/helper/response"
 	"time"
 )
 

@@ -1,4 +1,4 @@
-package apputils
+package helper
 
 import "github.com/labstack/echo/v4"
 

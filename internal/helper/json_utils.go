@@ -1,4 +1,4 @@
-package apputils
+package helper
 
 import (
 	"errors"

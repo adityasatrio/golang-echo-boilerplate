@@ -1,4 +1,4 @@
-package apputils
+package helper
 
 import (
 	"github.com/stretchr/testify/assert"

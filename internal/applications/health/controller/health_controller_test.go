@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"myapp/internal/apputils"
+	"myapp/internal/helper"
 	mock_service "myapp/mocks/health/service"
 	"myapp/test"
 	"net/http"
@@ -50,7 +50,7 @@ func TestHealth(t *testing.T) {
 	if assert.NoError(t, controller.Health(c)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 
-		dataKey, _ := apputils.GetFieldBytes(recorder.Body.Bytes(), "data.status")
+		dataKey, _ := helper.GetFieldBytes(recorder.Body.Bytes(), "data.status")
 		assert.Equal(t, "UP", dataKey)
 
 	}

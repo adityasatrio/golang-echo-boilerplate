@@ -1,4 +1,4 @@
-package apputils
+package helper
 
 import (
 	validator2 "github.com/go-playground/validator/v10"

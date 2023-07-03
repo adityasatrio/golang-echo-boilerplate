@@ -1,6 +1,6 @@
-// Package apputils wrapper for dtoutils https://github.com/dranikpg/dto-mapper
+// Package helper wrapper for dtoutils https://github.com/dranikpg/dto-mapper
 
-package apputils
+package helper
 
 import (
 	"github.com/dranikpg/dto-mapper"

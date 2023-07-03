@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestTemplateRepositoryImpl_Create(t *testing.T) {
+func TestTemplateOutboundImpl_Create(t *testing.T) {
 
 	if assert.NoError(t, nil) {
 		dataValue := "true"

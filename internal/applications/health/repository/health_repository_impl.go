@@ -16,7 +16,7 @@ func NewHealthRepository(dbConn *ent.Client) *HealthRepositoryImpl {
 	}
 }
 
-func (repo *HealthRepositoryImpl) Health(ctx context.Context, message string, queryFlag string) (map[string]string, error) {
+func (r *HealthRepositoryImpl) Health(ctx context.Context, message string, queryFlag string) (map[string]string, error) {
 
 	healthCheck := map[string]string{}
 	if ctx != nil {
@@ -25,8 +25,8 @@ func (repo *HealthRepositoryImpl) Health(ctx context.Context, message string, qu
 		healthCheck["ctx_name"] = "echo"
 	}
 
-	if repo.client != nil {
-		log.Info("client db debug", repo.client.Debug())
+	if r.client != nil {
+		log.Info("client db debug", r.client.Debug())
 		healthCheck["db_status"] = "UP"
 		healthCheck["db_name"] = "mysql"
 	}

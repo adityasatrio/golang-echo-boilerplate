@@ -1,0 +1,1 @@
+# This package is for helper / function for use on core domain logic or operation

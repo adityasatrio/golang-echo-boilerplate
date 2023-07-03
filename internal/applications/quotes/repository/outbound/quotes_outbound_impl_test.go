@@ -26,17 +26,20 @@ func TestGetQuotes(t *testing.T) {
 
 	tests := []struct {
 		name             string
+		queryParameter   map[string]string
 		mockStatusCode   int
 		mockBodyResponse string
 		expectedResp     *dto.QuoteApiResponse
 	}{
 		{
 			name:             "Error in HTTP GET request",
+			queryParameter:   map[string]string{"query1": "value1", "query2": "value2"},
 			mockStatusCode:   0,
 			mockBodyResponse: "",
 		},
 		{
 			name:             "Non-200 status code",
+			queryParameter:   map[string]string{"query1": "value1", "query2": "value2"},
 			mockStatusCode:   404,
 			mockBodyResponse: "",
 		},
@@ -47,7 +50,7 @@ func TestGetQuotes(t *testing.T) {
 			httpmock.RegisterResponder("GET", "http://test-url",
 				httpmock.NewErrorResponder(errors.New("request error")))
 
-			resp, err := quoteOutboundImpl.GetQuotes(ctx)
+			resp, err := quoteOutboundImpl.GetQuotes(ctx, tt.queryParameter)
 
 			assert.Error(t, err)
 			assert.Equal(t, &dto.QuoteApiResponse{}, resp)
@@ -69,12 +72,14 @@ func TestGetQuotes_dtoResponse(t *testing.T) {
 
 	tests := []struct {
 		name             string
+		queryParameter   map[string]string
 		mockStatusCode   int
 		mockBodyResponse string
 		expectedResp     *dto.QuoteApiResponse
 	}{
 		{
 			name:             "Successful GET request",
+			queryParameter:   map[string]string{"query1": "value1", "query2": "value2"},
 			mockStatusCode:   200,
 			mockBodyResponse: `{"author": "test response", "quote": "test response"}`,
 			expectedResp: &dto.QuoteApiResponse{
@@ -84,6 +89,7 @@ func TestGetQuotes_dtoResponse(t *testing.T) {
 		},
 		{
 			name:             "Failed GET request",
+			queryParameter:   map[string]string{"query1": "value1", "query2": "value2"},
 			mockStatusCode:   500,
 			mockBodyResponse: "",
 			expectedResp:     &dto.QuoteApiResponse{},
@@ -95,7 +101,7 @@ func TestGetQuotes_dtoResponse(t *testing.T) {
 			httpmock.RegisterResponder("GET", "http://test-url",
 				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse))
 
-			resp, err := quoteOutboundImpl.GetQuotes(ctx)
+			resp, err := quoteOutboundImpl.GetQuotes(ctx, tt.queryParameter)
 
 			if tt.mockStatusCode != 200 {
 				assert.Error(t, err)

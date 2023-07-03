@@ -7,6 +7,8 @@ import (
 	helloController "myapp/internal/applications/health/controller"
 	"myapp/internal/applications/health/repository"
 	"myapp/internal/applications/health/service"
+	quotes "myapp/internal/applications/quotes"
+	quotesController "myapp/internal/applications/quotes/controller"
 	"myapp/internal/applications/system_parameter"
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
 	"myapp/internal/applications/user"
@@ -25,14 +27,18 @@ func SetupRouteHandler(e *echo.Echo, connDb *ent.Client) {
 		AddRoutes(e, appName)
 
 	//injection using code gen - google wire
-	SystemParameterService := system_parameter.InitializedSystemParameterService(connDb)
+	systemParameterService := system_parameter.InitializedSystemParameterService(connDb)
 	systemParameterController.
-		NewSystemParameterController(SystemParameterService).
+		NewSystemParameterController(systemParameterService).
 		AddRoutes(e, appName)
 
-	UserService := user.InitializedUserService(connDb)
+	userService := user.InitializedUserService(connDb)
 	userController.
-		NewUserController(UserService).
+		NewUserController(userService).
 		AddRoutes(e, appName)
 
+	quotesService := quotes.InitializedQuotesService()
+	quotesController.
+		NewQuotesController(quotesService).
+		AddRoutes(e, appName)
 }

@@ -15,7 +15,7 @@ func MapperErrorCode(err error) (errHttpCode int, errBusinessCode int, errMessag
 		errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
 		errorLogic := exceptions.BusinessLogicReason(errorCode)
 
-		return errorLogic.HttpCode, errorLogic.ErrBusinessCode, errorLogic.Message, nil
+		return errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil
 	}
 
 	errorMessage := err.Error()

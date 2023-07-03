@@ -7,7 +7,7 @@ import (
 	"myapp/ent"
 	"myapp/exceptions"
 	"myapp/internal/applications/user/dto"
-	"myapp/internal/apputils"
+	"myapp/internal/helper"
 	mock_service "myapp/mocks/user/service"
 	"myapp/test"
 	"net/http"
@@ -114,13 +114,13 @@ func TestUserController_Create(t *testing.T) {
 				//assert.NotNil(t, msg)
 				//assert.NotNil(t, errCode)
 
-				resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+				resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 				assert.Equal(t, "testing name", resName)
 
-				resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+				resEmail, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.email")
 				assert.Equal(t, "testing@email.id", resEmail)
 
-				resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+				resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
 				assert.Equal(t, "Password123!", resPassword)
 
 			} else {
@@ -129,13 +129,13 @@ func TestUserController_Create(t *testing.T) {
 				assert.Error(t, err)
 				assert.Equal(t, http.StatusOK, res.Code)
 
-				resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+				resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 				assert.Nil(t, resName)
 
-				resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+				resEmail, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.email")
 				assert.Nil(t, resEmail)
 
-				resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.Password")
+				resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.Password")
 				assert.Nil(t, resPassword)
 
 			}
@@ -217,13 +217,13 @@ func TestUserController_Update(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
-		resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+		resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 		assert.Equal(t, "testing name", resName)
 
-		resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+		resEmail, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.email")
 		assert.Equal(t, "testing@email.id", resEmail)
 
-		resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
 		assert.Equal(t, "Password123!", resPassword)
 	})
 
@@ -238,7 +238,7 @@ func TestUserController_Update(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		errorMessage := errors.New("update data failed")
-		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10004, errorMessage)
+		errEx := exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, errorMessage)
 
 		userService.On("Update", req.Context(), uint64(1), &reqBodyJson).Return(nil, errEx)
 
@@ -254,7 +254,7 @@ func TestUserController_Update(t *testing.T) {
 
 		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
 		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
-		assert.Equal(t, exceptions.EBL10004, errBusinessCode)
+		assert.Equal(t, exceptions.DataUpdateFailed, errBusinessCode)
 		assert.Equal(t, "update data failed", errMsg)
 		assert.Nil(t, errOut)
 
@@ -324,16 +324,16 @@ func TestUserController_Delete(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
-		resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+		resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 		assert.Equal(t, "testing name", resName)
 
-		resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+		resEmail, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.email")
 		assert.Equal(t, "testing@email.id", resEmail)
 
-		resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
 		assert.Equal(t, "Password123!", resPassword)
 
-		deletedAt, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.deleted_at")
+		deletedAt, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.deleted_at")
 		assert.NotNil(t, deletedAt)
 
 	})
@@ -348,7 +348,7 @@ func TestUserController_Delete(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		errorMessage := errors.New("delete data failed")
-		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10005, errorMessage)
+		errEx := exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, errorMessage)
 
 		userService.On("Delete", req.Context(), uint64(1)).Return(nil, errEx)
 
@@ -364,7 +364,7 @@ func TestUserController_Delete(t *testing.T) {
 
 		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
 		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
-		assert.Equal(t, exceptions.EBL10005, errBusinessCode)
+		assert.Equal(t, exceptions.DataDeleteFailed, errBusinessCode)
 		assert.Equal(t, "delete data failed", errMsg)
 		assert.Nil(t, errOut)
 
@@ -405,13 +405,13 @@ func TestUserController_GetById(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
-		resName, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.name")
+		resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 		assert.Equal(t, "testing name", resName)
 
-		resEmail, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.email")
+		resEmail, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.email")
 		assert.Equal(t, "testing@email.id", resEmail)
 
-		resPassword, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.password")
+		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
 		assert.Equal(t, "Password123!", resPassword)
 
 	})
@@ -426,7 +426,7 @@ func TestUserController_GetById(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		errorMessage := errors.New("get data failed")
-		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10006, errorMessage)
+		errEx := exceptions.NewBusinessLogicError(exceptions.DataGetFailed, errorMessage)
 
 		userService.On("GetById", req.Context(), uint64(1)).Return(nil, errEx)
 
@@ -442,7 +442,7 @@ func TestUserController_GetById(t *testing.T) {
 
 		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
 		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
-		assert.Equal(t, exceptions.EBL10006, errBusinessCode)
+		assert.Equal(t, exceptions.DataGetFailed, errBusinessCode)
 		assert.Equal(t, "get data failed", errMsg)
 		assert.Nil(t, errOut)
 
@@ -493,22 +493,22 @@ func TestUserController_GetAll(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.Code)
 
-		resName1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.name")
+		resName1, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.0.name")
 		assert.Equal(t, "testing name 1", resName1)
 
-		resName2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.name")
+		resName2, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.1.name")
 		assert.Equal(t, "testing name 2", resName2)
 
-		resEmail1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.email")
+		resEmail1, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.0.email")
 		assert.Equal(t, "testing1@email.id", resEmail1)
 
-		resEmail2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.email")
+		resEmail2, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.1.email")
 		assert.Equal(t, "testing2@email.id", resEmail2)
 
-		resPassword1, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.0.password")
+		resPassword1, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.0.password")
 		assert.Equal(t, "Password123!", resPassword1)
 
-		resPassword2, _ := apputils.GetFieldBytes(res.Body.Bytes(), "data.1.password")
+		resPassword2, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.1.password")
 		assert.Equal(t, "Password123!", resPassword2)
 
 	})
@@ -524,7 +524,7 @@ func TestUserController_GetAll(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 
 		errorMessage := errors.New("get data failed")
-		errEx := exceptions.NewBusinessLogicError(exceptions.EBL10006, errorMessage)
+		errEx := exceptions.NewBusinessLogicError(exceptions.DataGetFailed, errorMessage)
 
 		userService.On("GetAll", req.Context()).Return(nil, errEx)
 
@@ -537,7 +537,7 @@ func TestUserController_GetAll(t *testing.T) {
 
 		errHttpCode, errBusinessCode, errMsg, errOut := validator.MapperErrorCode(err)
 		assert.Equal(t, http.StatusUnprocessableEntity, errHttpCode)
-		assert.Equal(t, exceptions.EBL10006, errBusinessCode)
+		assert.Equal(t, exceptions.DataGetFailed, errBusinessCode)
 		assert.Equal(t, "get data failed", errMsg)
 		assert.Nil(t, errOut)
 
