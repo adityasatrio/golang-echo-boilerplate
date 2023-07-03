@@ -3,6 +3,7 @@ package cache
 import (
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
+	"myapp/configs"
 	"time"
 )
 
@@ -19,6 +20,7 @@ func CachingLongPeriod() time.Duration {
 }
 
 func convertStringToDuration(ttl string) time.Duration {
+	configs.BuildConfigEnv()
 	duration, err := time.ParseDuration(viper.GetString(ttl))
 	if err != nil {
 		log.Errorf("failed parsing duration", err)
