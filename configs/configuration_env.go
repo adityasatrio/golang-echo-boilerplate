@@ -34,6 +34,18 @@ func SetupConfigEnv(e *echo.Echo) {
 	log.Infof("initialized WatchConfig(): success", fileConfigPath+"/"+fileConfigName+"."+fileConfigType)
 }
 
+func BuildConfigEnv() {
+	viper.AddConfigPath(fileConfigPath)
+	viper.SetConfigType(fileConfigType)
+	viper.SetConfigName(fileConfigName)
+
+	setDefaultKeys()
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Errorf("initialized configs viper got error", err)
+	}
+}
+
 func setDefaultKeys() {
 	viper.SetDefault("application.port", 8080)
 
