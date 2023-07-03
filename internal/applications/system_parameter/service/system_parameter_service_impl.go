@@ -2,14 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"myapp/ent"
 	"myapp/exceptions"
-	"myapp/globalutils"
 	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository/db"
-	"time"
 )
 
 type SystemParameterServiceImpl struct {
@@ -37,7 +34,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeySysParamWithId(result.ID), result, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
@@ -65,7 +62,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeySysParamWithId(updated.ID), updated, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -84,7 +81,7 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
-	_, err = s.cache.Delete(ctx, globalutils.CacheKeySysParamWithId(id))
+	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -103,7 +100,7 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
-	_, err = s.cache.Delete(ctx, globalutils.CacheKeySysParamWithId(id))
+	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -113,8 +110,8 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 
-	systemParameterCache, err := s.cache.Get(ctx, globalutils.CacheKeySysParamWithId(id), &ent.SystemParameter{})
-	if err != nil && err != redis.Nil {
+	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParamWithId(id), &ent.SystemParameter{})
+	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
 
@@ -127,7 +124,7 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeySysParamWithId(id), result, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(id), result, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -138,8 +135,8 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
 
-	systemParameterCache, err := s.cache.Get(ctx, globalutils.CacheKeySysParams(), &[]*ent.SystemParameter{})
-	if err != nil && err != redis.Nil {
+	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParams(), &[]*ent.SystemParameter{})
+	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
 	}
 
@@ -153,7 +150,7 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeySysParams(), &result, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}

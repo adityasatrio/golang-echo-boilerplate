@@ -14,6 +14,7 @@ import (
 	"myapp/middleware"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 )
 
@@ -31,7 +32,8 @@ func main() {
 	database.SetupHooks(dbConnection)
 
 	log.Info("initialized database configuration=", dbConnection)
-	//from docs define close on this function, but will impact cant create DB session on repository
+
+	//from docs define close on this function, but will impact cant create DB session on repository:
 	defer func(dbConnection *ent.Client) {
 		err := dbConnection.Close()
 		if err != nil {
@@ -41,6 +43,14 @@ func main() {
 
 	//configuration for redis client:
 	redisConnection := redis.NewRedisClient()
+
+	//configuration for redis client, for close connection:
+	defer func() {
+		err := redisConnection.Close()
+		if err != nil {
+			log.Fatalf("Error closing Redis connection:", err)
+		}
+	}()
 
 	//setup router
 	restApi.SetupRouteHandler(e, dbConnection, redisConnection)
@@ -57,7 +67,7 @@ func main() {
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	//signal.Notify(quit, os.Interrupt)
+	signal.Notify(quit, os.Interrupt)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

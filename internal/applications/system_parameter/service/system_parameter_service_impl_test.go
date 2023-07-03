@@ -4,12 +4,11 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/globalutils"
+	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/dto"
 	mock_cache "myapp/mocks/cache"
 	mock_db "myapp/mocks/system_parameter/repository/db"
 	"testing"
-	"time"
 )
 
 func TestSystemParameterServiceImpl_Create(t *testing.T) {
@@ -36,7 +35,7 @@ func TestSystemParameterServiceImpl_Create(t *testing.T) {
 	mockRepo.On("Create", ctx, &createSystemParameter).
 		Return(&createSystemParameter, nil)
 
-	mockCache.On("Create", ctx, globalutils.CacheKeySysParamWithId(createSystemParameter.ID), &createSystemParameter, time.Hour*3).
+	mockCache.On("Create", ctx, CacheKeySysParamWithId(createSystemParameter.ID), &createSystemParameter, cache.CachingShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.Create(ctx, &createRequest)
@@ -67,12 +66,12 @@ func TestSystemParameterServiceImpl_Update(t *testing.T) {
 
 	mockRepo.On("GetByKey", ctx, createSystemParameter.Key).Return(nil, nil)
 
-	mockCache.On("Get", ctx, globalutils.CacheKeySysParamWithId(createSystemParameter.ID), &ent.SystemParameter{}).
+	mockCache.On("Get", ctx, CacheKeySysParamWithId(createSystemParameter.ID), &ent.SystemParameter{}).
 		Return(nil, nil)
 
 	mockRepo.On("GetById", ctx, 1).Return(&createSystemParameter, nil)
 
-	mockCache.On("Create", ctx, globalutils.CacheKeySysParamWithId(createSystemParameter.ID), &createSystemParameter, time.Hour*3).
+	mockCache.On("Create", ctx, CacheKeySysParamWithId(createSystemParameter.ID), &createSystemParameter, cache.CachingShortPeriod()).
 		Return(true, nil)
 
 	mockRepo.On("Update", ctx, &createSystemParameter).Return(&createSystemParameter, nil)
@@ -99,7 +98,7 @@ func TestSystemParameterServiceImpl_Delete(t *testing.T) {
 	ctx := context.Background()
 	mockRepo.On("GetById", ctx, deleteSystemParameter.ID).Return(&deleteSystemParameter, nil)
 	mockRepo.On("Delete", ctx, deleteSystemParameter.ID).Return(nil, nil)
-	mockCache.On("Delete", ctx, globalutils.CacheKeySysParamWithId(deleteSystemParameter.ID)).
+	mockCache.On("Delete", ctx, CacheKeySysParamWithId(deleteSystemParameter.ID)).
 		Return(true, nil)
 
 	result, err := service.Delete(ctx, deleteSystemParameter.ID)
@@ -122,7 +121,7 @@ func TestSystemParameterServiceImpl_SoftDelete(t *testing.T) {
 	ctx := context.Background()
 	mockRepo.On("GetById", ctx, deleteSystemParameter.ID).Return(&deleteSystemParameter, nil)
 	mockRepo.On("SoftDelete", ctx, deleteSystemParameter.ID).Return(&deleteSystemParameter, nil)
-	mockCache.On("Delete", ctx, globalutils.CacheKeySysParamWithId(deleteSystemParameter.ID)).
+	mockCache.On("Delete", ctx, CacheKeySysParamWithId(deleteSystemParameter.ID)).
 		Return(true, nil)
 
 	result, err := service.SoftDelete(ctx, deleteSystemParameter.ID)
@@ -143,12 +142,12 @@ func TestSystemParameterServiceImpl_GetById(t *testing.T) {
 	service := NewSystemParameterService(mockRepo, mockCache)
 
 	ctx := context.Background()
-	mockCache.On("Get", ctx, globalutils.CacheKeySysParamWithId(getSystemParameter.ID), &ent.SystemParameter{}).
+	mockCache.On("Get", ctx, CacheKeySysParamWithId(getSystemParameter.ID), &ent.SystemParameter{}).
 		Return(nil, nil)
 
 	mockRepo.On("GetById", ctx, getSystemParameter.ID).Return(&getSystemParameter, nil)
 
-	mockCache.On("Create", ctx, globalutils.CacheKeySysParamWithId(getSystemParameter.ID), &getSystemParameter, time.Hour*3).
+	mockCache.On("Create", ctx, CacheKeySysParamWithId(getSystemParameter.ID), &getSystemParameter, cache.CachingShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.GetById(ctx, getSystemParameter.ID)
@@ -173,10 +172,10 @@ func TestSystemParameterServiceImpl_GetAll(t *testing.T) {
 
 	ctx := context.Background()
 
-	mockCache.On("Get", ctx, globalutils.CacheKeySysParams(), &[]*ent.SystemParameter{}).
+	mockCache.On("Get", ctx, CacheKeySysParams(), &[]*ent.SystemParameter{}).
 		Return(nil, nil)
 	mockRepo.On("GetAll", ctx).Return(mockList, nil)
-	mockCache.On("Create", ctx, globalutils.CacheKeySysParams(), &mockList, time.Hour*3).
+	mockCache.On("Create", ctx, CacheKeySysParams(), &mockList, cache.CachingShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.GetAll(ctx)

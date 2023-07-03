@@ -1,15 +1,15 @@
-package globalutils
+package service
 
 import (
+	"github.com/spf13/viper"
 	"strconv"
 	"strings"
 )
 
-const (
-	ApplicationName = "echo-boilerplate"
+var (
+	ApplicationName = viper.GetString("application.name")
 	Separator       = ":"
 	SystemParameter = "system-parameter"
-	User            = "user"
 )
 
 func CacheKeySysParamWithId(id int) string {
@@ -18,12 +18,4 @@ func CacheKeySysParamWithId(id int) string {
 
 func CacheKeySysParams() string {
 	return strings.Join([]string{ApplicationName, SystemParameter, "list"}, Separator)
-}
-
-func CacheKeyUserWithId(id uint64) string {
-	return strings.Join([]string{ApplicationName, User, strconv.FormatUint(id, 10)}, Separator)
-}
-
-func CacheKeyUsers() string {
-	return strings.Join([]string{ApplicationName, User, "list"}, Separator)
 }

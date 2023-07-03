@@ -2,9 +2,8 @@ package cache
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/pierrec/lz4/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/vmihailenco/msgpack/v4"
 	"time"
 )
@@ -21,16 +20,21 @@ func (c *CachingServiceImpl) Create(ctx context.Context, key string, data interf
 
 	serializedData, err := msgpack.Marshal(&data)
 	if err != nil {
-		fmt.Println("Failed for marshaling data:", err)
+
+		if err == redis.Nil {
+			return false, nil
+		}
+
+		log.Errorf("Failed for marshaling data:", err)
 		return false, err
 	}
 
 	//compress data:
-	compressedData, err := compressData(serializedData)
+	compressedData, err := CompressData(serializedData)
 
 	err = c.redisClient.Set(ctx, key, compressedData, expiration).Err()
 	if err != nil {
-		fmt.Println("Failed save data on Redis:", err)
+		log.Errorf("Failed save data on Redis:", err)
 	}
 
 	return true, nil
@@ -40,16 +44,21 @@ func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface
 
 	redisData, err := c.redisClient.Get(ctx, key).Bytes()
 	if err != nil {
-		fmt.Println("Failed get data from Redis:", err)
+
+		if err == redis.Nil {
+			return nil, nil
+		}
+
+		log.Errorf("Failed get data from Redis:", err)
 		return nil, err
 	}
 
 	//decompress data:
-	decompressedData, err := decompressData(redisData, len(redisData))
+	decompressedData, err := DecompressData(redisData, len(redisData))
 
 	err = msgpack.Unmarshal(decompressedData, data)
 	if err != nil {
-		fmt.Println("Failed for unMarshaling data:", err)
+		log.Errorf("Failed for unMarshaling data:", err)
 		return nil, err
 	}
 
@@ -59,32 +68,9 @@ func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface
 func (c *CachingServiceImpl) Delete(ctx context.Context, key string) (bool, error) {
 	_, err := c.redisClient.Del(ctx, key).Result()
 	if err != nil {
-		fmt.Println("Failed for delete data on redis:", err)
+		log.Errorf("Failed for delete data on redis:", err)
 		return false, err
 	}
 
 	return true, nil
-}
-
-// this method for compress data with LZ4:
-func compressData(data []byte) ([]byte, error) {
-	compressedSize := lz4.CompressBlockBound(len(data))
-	compressedData := make([]byte, compressedSize)
-	compressedSize, err := lz4.CompressBlock(data, compressedData, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return compressedData[:compressedSize], nil
-}
-
-// this method for decompress data from LZ4:
-func decompressData(compressedData []byte, originalSize int) ([]byte, error) {
-	decompressedData := make([]byte, originalSize*10)
-	_, err := lz4.UncompressBlock(compressedData, decompressedData)
-	if err != nil {
-		return nil, err
-	}
-
-	return decompressedData, nil
 }

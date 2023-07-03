@@ -2,18 +2,15 @@ package service
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
-	"myapp/globalutils"
 	"myapp/internal/applications/cache"
 	roleRepository "myapp/internal/applications/role/repository"
 	roleUserRepository "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
 	userRepository "myapp/internal/applications/user/repository"
-	"time"
 )
 
 type UserServiceImpl struct {
@@ -62,7 +59,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
 
-		_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(userNew.ID), userNew, time.Hour*3)
+		_, err = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 		}
@@ -119,7 +116,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		//set value to userUpdated for return value:
 		userUpdated = userResult
 
-		_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(id), userUpdated, time.Hour*3)
+		_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 		}
@@ -141,7 +138,7 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
-	_, err = s.cache.Delete(ctx, globalutils.CacheKeyUserWithId(id))
+	_, err = s.cache.Delete(ctx, CacheKeyUserWithId(id))
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -151,8 +148,8 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
 
-	userCache, err := s.cache.Get(ctx, globalutils.CacheKeyUserWithId(id), &ent.User{})
-	if err != nil && err != redis.Nil {
+	userCache, err := s.cache.Get(ctx, CacheKeyUserWithId(id), &ent.User{})
+	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
 
@@ -165,7 +162,7 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeyUserWithId(id), result, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
@@ -175,8 +172,8 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 
-	userCache, err := s.cache.Get(ctx, globalutils.CacheKeyUsers(), &[]*ent.User{})
-	if err != nil && err != redis.Nil {
+	userCache, err := s.cache.Get(ctx, CacheKeyUsers(), &[]*ent.User{})
+	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}
 
@@ -190,7 +187,7 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
 	}
 
-	_, err = s.cache.Create(ctx, globalutils.CacheKeyUsers(), &result, time.Hour*3)
+	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, cache.CachingShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
 	}

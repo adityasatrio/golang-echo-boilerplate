@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
-	"myapp/globalutils"
+	"myapp/internal/applications/cache"
 	"myapp/internal/applications/user/dto"
 	mock_cache "myapp/mocks/cache"
 	mock_repository "myapp/mocks/role/repository"
@@ -135,7 +135,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Return(&userMock.roleRequest, nil)
 
-				mockCache.On("Create", ctx, globalutils.CacheKeyUserWithId(userMock.userServiceReturn.ID), &userMock.userServiceReturn, time.Hour*3).
+				mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.userServiceReturn.ID), &userMock.userServiceReturn, cache.CachingShortPeriod()).
 					Return(true, nil)
 
 				result, err := service.Create(ctx, &userMock.request)
@@ -215,7 +215,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 	userRoleExisting.RoleID = uint64(1)
 	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting).Return(&userRoleUpdated, nil)
 
-	mockCache.On("Create", ctx, globalutils.CacheKeyUserWithId(userExisting.ID), &userExisting, time.Hour*3).
+	mockCache.On("Create", ctx, CacheKeyUserWithId(userExisting.ID), &userExisting, cache.CachingShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.Update(ctx, id, &requestUpdate)
@@ -322,7 +322,7 @@ func TestUserServiceImpl_Delete(t *testing.T) {
 	userMock := getUserMock(uint64(123000), "User-1", "user1@email.com", "12345")
 	t.Run("Delete_success", func(t *testing.T) {
 		mockUserRepository.On("SoftDelete", ctx, uint64(123000)).Return(&userMock, nil).Once()
-		mockCache.On("Delete", ctx, globalutils.CacheKeyUserWithId(uint64(123000))).
+		mockCache.On("Delete", ctx, CacheKeyUserWithId(uint64(123000))).
 			Return(true, nil)
 		result, err := service.Delete(context.Background(), userMock.ID)
 		assert.NoError(t, err)
@@ -361,10 +361,10 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 	//table test:
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
-			mockCache.On("Get", ctx, globalutils.CacheKeyUserWithId(userMock.id), &ent.User{}).
+			mockCache.On("Get", ctx, CacheKeyUserWithId(userMock.id), &ent.User{}).
 				Return(nil, nil)
 			mockUserRepository.On("GetById", ctx, uint64(10)).Return(&userMock.expected, nil).Once()
-			mockCache.On("Create", ctx, globalutils.CacheKeyUserWithId(userMock.id), &userMock.expected, time.Hour*3).
+			mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.id), &userMock.expected, cache.CachingShortPeriod()).
 				Return(true, nil)
 			result, err := service.GetById(ctx, userMock.id)
 			assert.NoError(t, err)
@@ -375,7 +375,7 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 	//subtest failed:
 	t.Run("GetById_failed", func(t *testing.T) {
 		errorMessage := errors.New("failed got user")
-		mockCache.On("Get", ctx, globalutils.CacheKeyUserWithId(uint64(10)), &ent.User{}).
+		mockCache.On("Get", ctx, CacheKeyUserWithId(uint64(10)), &ent.User{}).
 			Return(nil, nil)
 		mockUserRepository.On("GetById", ctx, uint64(10)).Return(nil, errorMessage).Once()
 		result, err := service.GetById(ctx, uint64(10))
@@ -394,10 +394,10 @@ func TestUserServiceImpl_GetAll(t *testing.T) {
 		mockListUser := make([]*ent.User, 0)
 		mockListUser = append(mockListUser, &user)
 
-		mockCache.On("Get", ctx, globalutils.CacheKeyUsers(), &[]*ent.User{}).
+		mockCache.On("Get", ctx, CacheKeyUsers(), &[]*ent.User{}).
 			Return(nil, nil)
 		mockUserRepository.On("GetAll", ctx).Return(mockListUser, nil).Once()
-		mockCache.On("Create", ctx, globalutils.CacheKeyUsers(), &mockListUser, time.Hour*3).
+		mockCache.On("Create", ctx, CacheKeyUsers(), &mockListUser, cache.CachingShortPeriod()).
 			Return(true, nil)
 		result, err := service.GetAll(ctx)
 		assert.NoError(t, err)
@@ -407,7 +407,7 @@ func TestUserServiceImpl_GetAll(t *testing.T) {
 	//subtest failed:
 	t.Run("GetAll_failed", func(t *testing.T) {
 		errorMessage := errors.New("failed get all user")
-		mockCache.On("Get", ctx, globalutils.CacheKeyUsers(), &[]*ent.User{}).
+		mockCache.On("Get", ctx, CacheKeyUsers(), &[]*ent.User{}).
 			Return(nil, nil)
 		mockUserRepository.On("GetAll", ctx).Return(nil, errorMessage).Once()
 		result, err := service.GetAll(ctx)
