@@ -20,7 +20,7 @@ func TestSystemParameterController_Create(t *testing.T) {
 
 	// Create a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(data))
+	req := httptest.NewRequest(http.MethodPost, "/system-parameter", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -58,7 +58,7 @@ func TestSystemParameterController_Update(t *testing.T) {
 
 	// CreateTx a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
-	req := httptest.NewRequest(http.MethodPut, "/1", strings.NewReader(data))
+	req := httptest.NewRequest(http.MethodPut, "/system-parameter/1", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -93,7 +93,7 @@ func TestSystemParameterController_Delete(t *testing.T) {
 	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodDelete, "/1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/system-parameter/1", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -122,7 +122,7 @@ func TestSystemParameterController_GetByID(t *testing.T) {
 	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodGet, "/1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/system-parameter/1", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -134,7 +134,7 @@ func TestSystemParameterController_GetByID(t *testing.T) {
 	// Initialize a new controller
 	controller := NewSystemParameterController(mockService)
 
-	// Test Delete function
+	// Test function
 	mockService.On("GetById", req.Context(), 1).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.GetById(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -151,7 +151,7 @@ func TestSystemParameterController_GetAll(t *testing.T) {
 	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/system-parameter", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	//c.SetParamNames("id")

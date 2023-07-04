@@ -11,7 +11,7 @@ import (
 func TestRoleRepositoryImpl_Create(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		ID:        0,
@@ -35,7 +35,7 @@ func TestRoleRepositoryImpl_Create(t *testing.T) {
 func TestRoleRepositoryImpl_Update(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		Name:      "john doe",
@@ -67,7 +67,7 @@ func TestRoleRepositoryImpl_Update(t *testing.T) {
 func TestRoleRepositoryImpl_Delete(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		Name:      "john doe",
@@ -94,7 +94,7 @@ func TestRoleRepositoryImpl_Delete(t *testing.T) {
 func TestRoleRepositoryImpl_SoftDelete(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		Name:      "john doe",
@@ -123,7 +123,7 @@ func TestRoleRepositoryImpl_SoftDelete(t *testing.T) {
 func TestRoleRepositoryImpl_GetId(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		Name:      "john doe",
@@ -151,7 +151,7 @@ func TestRoleRepositoryImpl_GetId(t *testing.T) {
 func TestRoleRepositoryImpl_GetAll(t *testing.T) {
 
 	client, ctx := test.DbConnection(t)
-	roleRepo := NewRoleRepositoryImpl(client)
+	roleRepo := NewRoleRepository(client)
 
 	dummyRole := ent.Role{
 		Name:      "john doe",

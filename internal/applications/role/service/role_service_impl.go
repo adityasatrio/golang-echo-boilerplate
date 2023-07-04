@@ -12,7 +12,7 @@ type RoleServiceImpl struct {
 	repository repository.RoleRepository
 }
 
-func NewRoleServiceImpl(repository repository.RoleRepository) *RoleServiceImpl {
+func NewRoleService(repository repository.RoleRepository) *RoleServiceImpl {
 	return &RoleServiceImpl{repository: repository}
 }
 

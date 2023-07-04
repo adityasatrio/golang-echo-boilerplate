@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -31,7 +32,6 @@ func main() {
 	database.SetupHooks(dbConnection)
 
 	log.Info("initialized database configuration=", dbConnection)
-	//from docs define close on this function, but will impact cant create DB session on repository
 	defer func(dbConnection *ent.Client) {
 		err := dbConnection.Close()
 		if err != nil {
@@ -54,7 +54,8 @@ func main() {
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
+	//signal.Notify(quit, os.Interrupt)
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM) //not tested
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

@@ -19,7 +19,7 @@ type UserServiceImpl struct {
 	transaction        transaction.TrxService
 }
 
-func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
+func NewUserService(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
 	return &UserServiceImpl{userRepository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
 }
 

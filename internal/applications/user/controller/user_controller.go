@@ -21,7 +21,6 @@ func (c *UserController) Create(ctx echo.Context) error {
 	request := new(dto.UserRequest)
 	err := helper.BindAndValidate(ctx, request)
 	if err != nil {
-		//return helper.BadRequest(ctx, err)
 		return err
 	}
 

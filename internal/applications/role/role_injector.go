@@ -12,9 +12,9 @@ import (
 )
 
 var provider = wire.NewSet(
-	repository.NewRoleRepositoryImpl,
-	service.NewRoleServiceImpl,
-	transaction.NewTrxServiceImpl,
+	repository.NewRoleRepository,
+	service.NewRoleService,
+	transaction.NewTrxService,
 	wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)),
 	wire.Bind(new(repository.RoleRepository), new(*repository.RoleRepositoryImpl)),
 	wire.Bind(new(service.RoleService), new(*service.RoleServiceImpl)),

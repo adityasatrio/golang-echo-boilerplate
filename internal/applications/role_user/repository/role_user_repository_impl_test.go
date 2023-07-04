@@ -11,7 +11,7 @@ import (
 func TestRoleUserRepositoryImpl_GetByUserIdAndRoleId(t *testing.T) {
 
 	clientTx, _, ctx := test.DbConnectionTx(t)
-	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
+	userRoleRepo := NewRoleUserRepository(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
 		ID:        1,
@@ -44,7 +44,7 @@ func TestRoleUserRepositoryImpl_GetByUserIdAndRoleId(t *testing.T) {
 func TestRoleUserRepositoryImpl_CreateTx(t *testing.T) {
 
 	clientTx, _, ctx := test.DbConnectionTx(t)
-	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
+	userRoleRepo := NewRoleUserRepository(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
 		UserID:    2,
@@ -69,7 +69,7 @@ func TestRoleUserRepositoryImpl_CreateTx(t *testing.T) {
 func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 
 	clientTx, _, ctx := test.DbConnectionTx(t)
-	userRoleRepo := NewRoleUserRepositoryImpl(clientTx)
+	userRoleRepo := NewRoleUserRepository(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
 		UserID:    3,

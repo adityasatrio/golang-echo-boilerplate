@@ -23,7 +23,7 @@ var mockRoleRepository = new(mock_repository.RoleRepository)
 var mockRoleUserRepository = new(mock_repository3.RoleUserRepository)
 var mockTransaction = new(mock_transaction.TrxService)
 
-var service = NewUserServiceImpl(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
+var service = NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{

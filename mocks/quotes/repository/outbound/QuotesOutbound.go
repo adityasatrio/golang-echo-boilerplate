@@ -14,25 +14,25 @@ type QuotesOutbound struct {
 	mock.Mock
 }
 
-// GetQuotes provides a mock function with given fields: ctx, reqBody
-func (_m *QuotesOutbound) GetQuotes(ctx context.Context, reqBody dto.QuoteApiRequest) (*dto.QuoteApiResponse, error) {
-	ret := _m.Called(ctx, reqBody)
+// GetQuotes provides a mock function with given fields: ctx, queryParameter
+func (_m *QuotesOutbound) GetQuotes(ctx context.Context, queryParameter map[string]string) (*dto.QuoteApiResponse, error) {
+	ret := _m.Called(ctx, queryParameter)
 
 	var r0 *dto.QuoteApiResponse
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, dto.QuoteApiRequest) (*dto.QuoteApiResponse, error)); ok {
-		return rf(ctx, reqBody)
+	if rf, ok := ret.Get(0).(func(context.Context, map[string]string) (*dto.QuoteApiResponse, error)); ok {
+		return rf(ctx, queryParameter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, dto.QuoteApiRequest) *dto.QuoteApiResponse); ok {
-		r0 = rf(ctx, reqBody)
+	if rf, ok := ret.Get(0).(func(context.Context, map[string]string) *dto.QuoteApiResponse); ok {
+		r0 = rf(ctx, queryParameter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dto.QuoteApiResponse)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, dto.QuoteApiRequest) error); ok {
-		r1 = rf(ctx, reqBody)
+	if rf, ok := ret.Get(1).(func(context.Context, map[string]string) error); ok {
+		r1 = rf(ctx, queryParameter)
 	} else {
 		r1 = ret.Error(1)
 	}

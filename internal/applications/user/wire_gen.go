@@ -19,14 +19,14 @@ import (
 // Injectors from user_injector.go:
 
 func InitializedUserService(dbClient *ent.Client) *service.UserServiceImpl {
-	userRepositoryImpl := repository.NewUserRepositoryImpl(dbClient)
-	roleRepositoryImpl := repository2.NewRoleRepositoryImpl(dbClient)
-	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl(dbClient)
-	trxServiceImpl := transaction.NewTrxServiceImpl(dbClient)
-	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl)
+	userRepositoryImpl := repository.NewUserRepository(dbClient)
+	roleRepositoryImpl := repository2.NewRoleRepository(dbClient)
+	roleUserRepositoryImpl := repository3.NewRoleUserRepository(dbClient)
+	trxServiceImpl := transaction.NewTrxService(dbClient)
+	userServiceImpl := service.NewUserService(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl)
 	return userServiceImpl
 }
 
 // user_injector.go:
 
-var providerUser = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, transaction.NewTrxServiceImpl, service.NewUserServiceImpl, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
+var providerUser = wire.NewSet(repository.NewUserRepository, repository2.NewRoleRepository, repository3.NewRoleUserRepository, transaction.NewTrxService, service.NewUserService, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))

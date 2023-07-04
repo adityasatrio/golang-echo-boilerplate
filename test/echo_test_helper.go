@@ -9,6 +9,7 @@ import (
 func InitEchoTest(*testing.T) *echo.Echo {
 	e := echo.New()
 	validator.SetupValidator(e)
+	validator.SetupGlobalHttpUnhandleErrors(e)
 
 	return e
 }

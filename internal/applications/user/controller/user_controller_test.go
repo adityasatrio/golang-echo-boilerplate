@@ -91,7 +91,6 @@ func TestUserController_Create(t *testing.T) {
 			userService := new(mock_service.UserService)
 			controller := NewUserController(userService)
 			e := test.InitEchoTest(t)
-			validator.SetupValidator(e)
 
 			req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userMock.reqBodyStrJson))
 			req.Header.Set("Content-Type", "application/json")
@@ -108,11 +107,6 @@ func TestUserController_Create(t *testing.T) {
 				// Check the outbound response:
 				assert.NoError(t, err)
 				assert.Equal(t, http.StatusCreated, res.Code)
-
-				//code, msg, errCode := validator.MapperErrorCode(err)
-				//assert.Equal(t, 400, code)
-				//assert.NotNil(t, msg)
-				//assert.NotNil(t, errCode)
 
 				resName, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.name")
 				assert.Equal(t, "testing name", resName)
@@ -149,8 +143,6 @@ func TestUserController_Create(t *testing.T) {
 		controller := NewUserController(userService)
 
 		e := test.InitEchoTest(t)
-		validator.SetupValidator(e)
-		validator.SetupGlobalHttpUnhandleErrors(e)
 
 		reqBody := `{"name": "testing name", "email": "invalid_email", "password": "password"}`
 		req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))

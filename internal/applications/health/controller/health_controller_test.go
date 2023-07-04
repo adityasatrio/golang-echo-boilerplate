@@ -27,7 +27,7 @@ func TestHealth(t *testing.T) {
 
 	e := test.InitEchoTest(t)
 
-	request := httptest.NewRequest(http.MethodGet, "/health", nil)
+	request := httptest.NewRequest(http.MethodGet, "/echo-boilerplate/health", nil)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	recorder := httptest.NewRecorder()

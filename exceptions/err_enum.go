@@ -9,6 +9,7 @@ type ErrorLogic struct {
 	Message  string
 }
 
+// refer to for best practice: https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
 const (
 	DataAlreadyExist = 10001
 	DataNotFound     = 10002
@@ -26,7 +27,7 @@ var businessLogicReason = map[int]ErrorLogic{
 	DataUpdateFailed: {ErrCode: DataUpdateFailed, HttpCode: http.StatusUnprocessableEntity, Message: "update data failed"},
 	DataDeleteFailed: {ErrCode: DataDeleteFailed, HttpCode: http.StatusUnprocessableEntity, Message: "delete data failed"},
 	DataGetFailed:    {ErrCode: DataGetFailed, HttpCode: http.StatusUnprocessableEntity, Message: "get data failed"},
-	//OtherError:         {ErrCode: EBL10007, HttpCode: http.StatusInternalServerError, Message: "your explanation of error EBL = error business logic"},
+	//OtherError:         {ErrCode: ABC, HttpCode: http.StatusInternalServerError, Message: "your explanation of error EBL = error business logic"},
 }
 
 func BusinessLogicReason(code int) ErrorLogic {
