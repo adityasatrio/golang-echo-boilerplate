@@ -19,11 +19,11 @@ import (
 
 func InitializedSystemParameterService(dbClient *ent.Client, redisClient *redis.Client) *service.SystemParameterServiceImpl {
 	systemParameterRepositoryImpl := db.NewSystemParameterRepository(dbClient)
-	cachingServiceImpl := cache.NewCachingServiceImpl(redisClient)
+	cachingServiceImpl := cache.NewCachingService(redisClient)
 	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl, cachingServiceImpl)
 	return systemParameterServiceImpl
 }
 
 // system_parameter_injector.go:
 
-var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, cache.NewCachingServiceImpl, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)))
+var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, cache.NewCachingService, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)))

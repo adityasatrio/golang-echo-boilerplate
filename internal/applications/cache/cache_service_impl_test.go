@@ -25,7 +25,7 @@ func TestCachingServiceImpl(t *testing.T) {
 	})
 
 	// Create a CachingServiceImpl instance with Redis client:
-	cachingService := NewCachingServiceImpl(redisClient)
+	cachingService := NewCachingService(redisClient)
 
 	// Data to be stored and retrieved from cache:
 	data := "Hello, world!"

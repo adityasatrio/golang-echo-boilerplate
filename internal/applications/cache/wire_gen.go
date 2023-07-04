@@ -14,12 +14,12 @@ import (
 // Injectors from caching_service_injector.go:
 
 func InitializedCachingServiceImpl(redisClient *redis.Client) *CachingServiceImpl {
-	cachingServiceImpl := NewCachingServiceImpl(redisClient)
+	cachingServiceImpl := NewCachingService(redisClient)
 	return cachingServiceImpl
 }
 
 // caching_service_injector.go:
 
 var provider = wire.NewSet(
-	NewCachingServiceImpl, wire.Bind(new(CachingService), new(*CachingServiceImpl)),
+	NewCachingService, wire.Bind(new(CachingService), new(*CachingServiceImpl)),
 )

@@ -15,7 +15,7 @@ import (
 var providerSetSystemParameter = wire.NewSet(
 	db.NewSystemParameterRepository,
 	service.NewSystemParameterService,
-	cache.NewCachingServiceImpl,
+	cache.NewCachingService,
 	wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)),
 	wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)),
 	wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)),

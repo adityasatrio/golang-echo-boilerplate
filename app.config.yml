@@ -22,7 +22,7 @@ cache:
       db: 0
       poolSize: 10
   ttl:
-    short-period: 3 hour
-    medium-period:  = 24 hour
-    long-period: 3 day
+    short-period: 3h
+    medium-period: 24h
+    long-period: 3d
 

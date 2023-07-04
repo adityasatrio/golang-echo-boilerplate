@@ -9,7 +9,7 @@ import (
 )
 
 var provider = wire.NewSet(
-	NewCachingServiceImpl,
+	NewCachingService,
 	wire.Bind(new(CachingService), new(*CachingServiceImpl)),
 )
 

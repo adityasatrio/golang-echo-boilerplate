@@ -25,11 +25,11 @@ func InitializedUserService(dbClient *ent.Client, redisClient *redis.Client) *se
 	roleRepositoryImpl := repository2.NewRoleRepositoryImpl(dbClient)
 	roleUserRepositoryImpl := repository3.NewRoleUserRepositoryImpl(dbClient)
 	trxServiceImpl := transaction.NewTrxServiceImpl(dbClient)
-	cachingServiceImpl := cache.NewCachingServiceImpl(redisClient)
+	cachingServiceImpl := cache.NewCachingService(redisClient)
 	userServiceImpl := service.NewUserServiceImpl(userRepositoryImpl, roleRepositoryImpl, roleUserRepositoryImpl, trxServiceImpl, cachingServiceImpl)
 	return userServiceImpl
 }
 
 // user_injector.go:
 
-var providerUser = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, transaction.NewTrxServiceImpl, service.NewUserServiceImpl, cache.NewCachingServiceImpl, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))
+var providerUser = wire.NewSet(repository.NewUserRepositoryImpl, repository2.NewRoleRepositoryImpl, repository3.NewRoleUserRepositoryImpl, transaction.NewTrxServiceImpl, service.NewUserServiceImpl, cache.NewCachingService, wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)), wire.Bind(new(repository2.RoleRepository), new(*repository2.RoleRepositoryImpl)), wire.Bind(new(repository3.RoleUserRepository), new(*repository3.RoleUserRepositoryImpl)), wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.UserService), new(*service.UserServiceImpl)))

@@ -2,26 +2,24 @@ package cache
 
 import (
 	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
 	"myapp/configs"
 	"time"
 )
 
 func CachingShortPeriod() time.Duration {
-	return convertStringToDuration("cache.ttl.short-period")
+	return convertStringToDuration(configs.TtlShortPeriod)
 }
 
 func CachingMediumPeriod() time.Duration {
-	return convertStringToDuration("cache.ttl.medium-period")
+	return convertStringToDuration(configs.TtlMediumPeriod)
 }
 
 func CachingLongPeriod() time.Duration {
-	return convertStringToDuration("cache.ttl.long-period")
+	return convertStringToDuration(configs.TtlLongPeriod)
 }
 
 func convertStringToDuration(ttl string) time.Duration {
-	configs.BuildConfigEnv()
-	duration, err := time.ParseDuration(viper.GetString(ttl))
+	duration, err := time.ParseDuration(ttl)
 	if err != nil {
 		log.Errorf("failed parsing duration", err)
 		return time.Hour

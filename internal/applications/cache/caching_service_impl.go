@@ -12,7 +12,7 @@ type CachingServiceImpl struct {
 	redisClient *redis.Client
 }
 
-func NewCachingServiceImpl(redisClient *redis.Client) *CachingServiceImpl {
+func NewCachingService(redisClient *redis.Client) *CachingServiceImpl {
 	return &CachingServiceImpl{redisClient: redisClient}
 }
 
