@@ -53,7 +53,7 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: schema-gen mocks-gen wire-gen test build run
+all: schema-gen mocks-gen test build run
 
 migration-create:
 	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)

@@ -63,47 +63,59 @@
 				
 				<option value="file3">myapp/internal/applications/A_templates_directory/service/template_service_impl.go (0.0%)</option>
 				
-				<option value="file4">myapp/internal/applications/hello_worlds/controller/hello_worlds_controller.go (100.0%)</option>
+				<option value="file4">myapp/internal/applications/cache/cache_duration.go (0.0%)</option>
 				
-				<option value="file5">myapp/internal/applications/hello_worlds/controller/hello_worlds_routes.go (0.0%)</option>
+				<option value="file5">myapp/internal/applications/cache/caching_service_impl.go (55.2%)</option>
 				
-				<option value="file6">myapp/internal/applications/hello_worlds/repository/hello_world_repository_impl.go (72.7%)</option>
+				<option value="file6">myapp/internal/applications/cache/lz4_compressor.go (81.8%)</option>
 				
-				<option value="file7">myapp/internal/applications/hello_worlds/service/hello_worlds_service_impl.go (100.0%)</option>
+				<option value="file7">myapp/internal/applications/cache/wire_gen.go (0.0%)</option>
 				
-				<option value="file8">myapp/internal/applications/role/repository/role_repository_impl.go (71.0%)</option>
+				<option value="file8">myapp/internal/applications/hello_worlds/controller/hello_worlds_controller.go (100.0%)</option>
 				
-				<option value="file9">myapp/internal/applications/role/service/role_service_impl.go (97.1%)</option>
+				<option value="file9">myapp/internal/applications/hello_worlds/controller/hello_worlds_routes.go (0.0%)</option>
 				
-				<option value="file10">myapp/internal/applications/role_user/repository/role_user_repository_impl.go (68.4%)</option>
+				<option value="file10">myapp/internal/applications/hello_worlds/repository/hello_world_repository_impl.go (72.7%)</option>
 				
-				<option value="file11">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (77.4%)</option>
+				<option value="file11">myapp/internal/applications/hello_worlds/service/hello_worlds_service_impl.go (100.0%)</option>
 				
-				<option value="file12">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
+				<option value="file12">myapp/internal/applications/role/repository/role_repository_impl.go (71.0%)</option>
 				
-				<option value="file13">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (71.4%)</option>
+				<option value="file13">myapp/internal/applications/role/service/role_service_impl.go (97.1%)</option>
 				
-				<option value="file14">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (73.9%)</option>
+				<option value="file14">myapp/internal/applications/role_user/repository/role_user_repository_impl.go (68.4%)</option>
 				
-				<option value="file15">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
+				<option value="file15">myapp/internal/applications/system_parameter/controller/system_parameter_controller.go (77.4%)</option>
 				
-				<option value="file16">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
+				<option value="file16">myapp/internal/applications/system_parameter/controller/system_parameter_routes.go (0.0%)</option>
 				
-				<option value="file17">myapp/internal/applications/user/controller/user_controller.go (87.5%)</option>
+				<option value="file17">myapp/internal/applications/system_parameter/repository/db/system_parameter_repository_impl.go (71.4%)</option>
 				
-				<option value="file18">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
+				<option value="file18">myapp/internal/applications/system_parameter/service/system_parameter_cache_key.go (100.0%)</option>
 				
-				<option value="file19">myapp/internal/applications/user/repository/user_repository_impl.go (71.0%)</option>
+				<option value="file19">myapp/internal/applications/system_parameter/service/system_parameter_service_impl.go (71.2%)</option>
 				
-				<option value="file20">myapp/internal/applications/user/service/user_service_impl.go (88.9%)</option>
+				<option value="file20">myapp/internal/applications/transaction/trx_service_impl.go (58.8%)</option>
 				
-				<option value="file21">myapp/internal/apputils/dto_bind_validation.go (100.0%)</option>
+				<option value="file21">myapp/internal/applications/transaction/wire_gen.go (0.0%)</option>
 				
-				<option value="file22">myapp/internal/apputils/dto_mapper.go (80.0%)</option>
+				<option value="file22">myapp/internal/applications/user/controller/user_controller.go (87.5%)</option>
 				
-				<option value="file23">myapp/internal/apputils/json_utils.go (100.0%)</option>
+				<option value="file23">myapp/internal/applications/user/controller/user_routes.go (0.0%)</option>
 				
-				<option value="file24">myapp/internal/apputils/response/response_json_builder.go (86.7%)</option>
+				<option value="file24">myapp/internal/applications/user/repository/user_repository_impl.go (71.0%)</option>
+				
+				<option value="file25">myapp/internal/applications/user/service/user_cache_key.go (100.0%)</option>
+				
+				<option value="file26">myapp/internal/applications/user/service/user_service_impl.go (83.3%)</option>
+				
+				<option value="file27">myapp/internal/apputils/dto_bind_validation.go (100.0%)</option>
+				
+				<option value="file28">myapp/internal/apputils/dto_mapper.go (80.0%)</option>
+				
+				<option value="file29">myapp/internal/apputils/json_utils.go (100.0%)</option>
+				
+				<option value="file30">myapp/internal/apputils/response/response_json_builder.go (86.7%)</option>
 				
 				</select>
 			</div>
@@ -231,7 +243,171 @@ func (s *TemplateServiceImpl) LogicFunction(ctx context.Context, request *dto.Ex
 }</span>
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package controller
+		<pre class="file" id="file4" style="display: none">package cache
+
+import (
+        "github.com/labstack/gommon/log"
+        "myapp/configs"
+        "time"
+)
+
+func CachingShortPeriod() time.Duration <span class="cov0" title="0">{
+        return convertStringToDuration(configs.TtlShortPeriod)
+}</span>
+
+func CachingMediumPeriod() time.Duration <span class="cov0" title="0">{
+        return convertStringToDuration(configs.TtlMediumPeriod)
+}</span>
+
+func CachingLongPeriod() time.Duration <span class="cov0" title="0">{
+        return convertStringToDuration(configs.TtlLongPeriod)
+}</span>
+
+func convertStringToDuration(ttl string) time.Duration <span class="cov0" title="0">{
+        duration, err := time.ParseDuration(ttl)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Errorf("failed parsing duration", err)
+                return time.Hour
+        }</span>
+
+        <span class="cov0" title="0">return duration</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package cache
+
+import (
+        "context"
+        "github.com/go-redis/redis/v8"
+        "github.com/labstack/gommon/log"
+        "github.com/vmihailenco/msgpack/v4"
+        "time"
+)
+
+type CachingServiceImpl struct {
+        redisClient *redis.Client
+}
+
+func NewCachingService(redisClient *redis.Client) *CachingServiceImpl <span class="cov8" title="1">{
+        return &amp;CachingServiceImpl{redisClient: redisClient}
+}</span>
+
+func (c *CachingServiceImpl) Create(ctx context.Context, key string, data interface{}, expiration time.Duration) (bool, error) <span class="cov8" title="1">{
+
+        serializedData, err := msgpack.Marshal(&amp;data)
+        if err != nil </span><span class="cov0" title="0">{
+
+                if err == redis.Nil </span><span class="cov0" title="0">{
+                        return false, nil
+                }</span>
+
+                <span class="cov0" title="0">log.Errorf("Failed for marshaling data:", err)
+                return false, err</span>
+        }
+
+        //compress data:
+        <span class="cov8" title="1">compressedData, err := CompressData(serializedData)
+
+        err = c.redisClient.Set(ctx, key, compressedData, expiration).Err()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Errorf("Failed save data on Redis:", err)
+        }</span>
+
+        <span class="cov8" title="1">return true, nil</span>
+}
+
+func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface{}) (interface{}, error) <span class="cov8" title="1">{
+
+        redisData, err := c.redisClient.Get(ctx, key).Bytes()
+        if err != nil </span><span class="cov0" title="0">{
+
+                if err == redis.Nil </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+
+                <span class="cov0" title="0">log.Errorf("Failed get data from Redis:", err)
+                return nil, err</span>
+        }
+
+        //decompress data:
+        <span class="cov8" title="1">decompressedData, err := DecompressData(redisData, len(redisData))
+
+        err = msgpack.Unmarshal(decompressedData, data)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Errorf("Failed for unMarshaling data:", err)
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (c *CachingServiceImpl) Delete(ctx context.Context, key string) (bool, error) <span class="cov8" title="1">{
+        _, err := c.redisClient.Del(ctx, key).Result()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Errorf("Failed for delete data on redis:", err)
+                return false, err
+        }</span>
+
+        <span class="cov8" title="1">return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package cache
+
+import "github.com/pierrec/lz4/v4"
+
+// CompressData this method for compress data with LZ4:
+func CompressData(data []byte) ([]byte, error) <span class="cov8" title="1">{
+        compressedSize := lz4.CompressBlockBound(len(data))
+        compressedData := make([]byte, compressedSize)
+        compressedSize, err := lz4.CompressBlock(data, compressedData, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return compressedData[:compressedSize], nil</span>
+}
+
+// DecompressData this method for decompress data from LZ4:
+func DecompressData(compressedData []byte, originalSize int) ([]byte, error) <span class="cov8" title="1">{
+        decompressedData := make([]byte, originalSize*10)
+        _, err := lz4.UncompressBlock(compressedData, decompressedData)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return decompressedData, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">// Code generated by Wire. DO NOT EDIT.
+
+//go:generate go run github.com/google/wire/cmd/wire
+//go:build !wireinject
+// +build !wireinject
+
+package cache
+
+import (
+        "github.com/go-redis/redis/v8"
+        "github.com/google/wire"
+)
+
+// Injectors from caching_service_injector.go:
+
+func InitializedCachingServiceImpl(redisClient *redis.Client) *CachingServiceImpl <span class="cov0" title="0">{
+        cachingServiceImpl := NewCachingService(redisClient)
+        return cachingServiceImpl
+}</span>
+
+// caching_service_injector.go:
+
+var provider = wire.NewSet(
+        NewCachingService, wire.Bind(new(CachingService), new(*CachingServiceImpl)),
+)
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -273,7 +449,7 @@ func (controller *HelloWorldsController) Hello(c echo.Context) error <span class
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package controller
+		<pre class="file" id="file9" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -290,7 +466,7 @@ func (controller *HelloWorldsController) AddRoutes(e *echo.Echo, appName string)
 }</span>
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package repository
+		<pre class="file" id="file10" style="display: none">package repository
 
 import (
         "context"
@@ -331,7 +507,7 @@ func (repo *HelloWorldsRepositoryImpl) Hello(ctx context.Context, message string
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package service
+		<pre class="file" id="file11" style="display: none">package service
 
 import (
         "context"
@@ -364,7 +540,7 @@ func (s *HelloWorldsServiceImpl) Hello(ctx context.Context, message string, erro
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package repository
+		<pre class="file" id="file12" style="display: none">package repository
 
 import (
         "context"
@@ -469,7 +645,7 @@ func (r *RoleRepositoryImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <s
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package service
+		<pre class="file" id="file13" style="display: none">package service
 
 import (
         "context"
@@ -562,7 +738,7 @@ func (s *RoleServiceImpl) GetAll(ctx context.Context) ([]*ent.Role, error) <span
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package repository
+		<pre class="file" id="file14" style="display: none">package repository
 
 import (
         "context"
@@ -613,7 +789,7 @@ func (r *RoleUserRepositoryImpl) CreateTx(ctx context.Context, clientTrx *ent.Cl
 
 func (r *RoleUserRepositoryImpl) UpdateTx(ctx context.Context, clientTrx *ent.Client, updateRoleUser *ent.RoleUser) (*ent.RoleUser, error) <span class="cov8" title="1">{
         affected, err := clientTrx.RoleUser.
-                Update().Where(roleuser.UserID(updateRoleUser.ID), roleuser.Version(updateRoleUser.Version)).
+                Update().Where(roleuser.UserID(updateRoleUser.UserID), roleuser.Version(updateRoleUser.Version)).
                 SetUserID(updateRoleUser.UserID).
                 SetRoleID(updateRoleUser.RoleID).
                 SetUpdatedAt(time.Now()).
@@ -638,7 +814,7 @@ func (r *RoleUserRepositoryImpl) UpdateTx(ctx context.Context, clientTrx *ent.Cl
 }
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package controller
+		<pre class="file" id="file15" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -768,7 +944,7 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error <span class="
 }
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package controller
+		<pre class="file" id="file16" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -791,7 +967,7 @@ func (c *SystemParameterController) AddRoutes(e *echo.Echo, appName string) <spa
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package db
+		<pre class="file" id="file17" style="display: none">package db
 
 import (
         "context"
@@ -908,24 +1084,46 @@ func (r *SystemParameterRepositoryImpl) GetByKey(ctx context.Context, key string
 }
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package service
+		<pre class="file" id="file18" style="display: none">package service
+
+import (
+        "myapp/configs"
+        "strconv"
+        "strings"
+)
+
+const (
+        Separator       = ":"
+        SystemParameter = "system-parameter"
+)
+
+func CacheKeySysParamWithId(id int) string <span class="cov8" title="1">{
+        return strings.Join([]string{configs.ApplicationName, SystemParameter, strconv.Itoa(id)}, Separator)
+}</span>
+
+func CacheKeySysParams() string <span class="cov8" title="1">{
+        return strings.Join([]string{configs.ApplicationName, SystemParameter, "list"}, Separator)
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package service
 
 import (
         "context"
         "myapp/ent"
         "myapp/exceptions"
+        "myapp/internal/applications/cache"
         "myapp/internal/applications/system_parameter/dto"
         "myapp/internal/applications/system_parameter/repository/db"
 )
 
 type SystemParameterServiceImpl struct {
         repository db.SystemParameterRepository
+        cache      cache.CachingService
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository) *SystemParameterServiceImpl <span class="cov8" title="1">{
-        return &amp;SystemParameterServiceImpl{
-                repository: repository,
-        }
+func NewSystemParameterService(repository db.SystemParameterRepository, cache cache.CachingService) *SystemParameterServiceImpl <span class="cov8" title="1">{
+        return &amp;SystemParameterServiceImpl{repository: repository, cache: cache}
 }</span>
 
 func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.SystemParameter, error) <span class="cov8" title="1">{
@@ -944,17 +1142,20 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
         }</span>
 
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                //don't throw exception if create redis failed:
+                return result, nil
+        }</span>
+
         <span class="cov8" title="1">return result, nil</span>
 }
 
 func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) <span class="cov8" title="1">{
 
-        existKey, err := s.repository.GetByKey(ctx, update.Key)
-        if existKey != nil </span><span class="cov0" title="0">{
-                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
-        }</span>
+        _, err := s.repository.GetByKey(ctx, update.Key)
 
-        <span class="cov8" title="1">existId, err := s.repository.GetById(ctx, id)
+        existId, err := s.GetById(ctx, id)
         if err != nil || existId == nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
         }</span>
@@ -967,12 +1168,13 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
         }</span>
 
-        <span class="cov8" title="1">latestUpdated, err := s.repository.GetById(ctx, updated.ID)
-        if err != nil || existId == nil </span><span class="cov0" title="0">{
-                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                //don't throw exception if create redis failed:
+                return updated, nil
         }</span>
 
-        <span class="cov8" title="1">return latestUpdated, nil</span>
+        <span class="cov8" title="1">return updated, nil</span>
 }
 
 func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
@@ -984,6 +1186,11 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
         <span class="cov8" title="1">_, err = s.repository.Delete(ctx, exist.ID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+        if err != nil </span><span class="cov0" title="0">{
+                return exist, nil
         }</span>
 
         <span class="cov8" title="1">return exist, nil</span>
@@ -1000,29 +1207,60 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
         }</span>
 
+        <span class="cov8" title="1">_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+        if err != nil </span><span class="cov0" title="0">{
+                return deleted, nil
+        }</span>
+
         <span class="cov8" title="1">return deleted, nil</span>
 }
 
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) <span class="cov8" title="1">{
-        result, err := s.repository.GetById(ctx, id)
+
+        systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParamWithId(id), &amp;ent.SystemParameter{})
+
+        if systemParameterCache != nil </span><span class="cov0" title="0">{
+                return systemParameterCache.(*ent.SystemParameter), nil
+        }</span>
+
+        <span class="cov8" title="1">result, err := s.repository.GetById(ctx, id)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
         }</span>
 
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeySysParamWithId(id), result, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+        }</span>
+
         <span class="cov8" title="1">return result, nil</span>
+
 }
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) <span class="cov8" title="1">{
-        result, err := s.repository.GetAll(ctx)
+
+        systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParams(), &amp;[]*ent.SystemParameter{})
+
+        if systemParameterCache != nil </span><span class="cov0" title="0">{
+                systemParameterResult := append([]*ent.SystemParameter(nil), *systemParameterCache.(*[]*ent.SystemParameter)...)
+                return systemParameterResult, err
+        }</span>
+
+        <span class="cov8" title="1">result, err := s.repository.GetAll(ctx)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeySysParams(), &amp;result, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                return result, nil
         }</span>
 
         <span class="cov8" title="1">return result, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file15" style="display: none">package transaction
+		<pre class="file" id="file20" style="display: none">package transaction
 
 import (
         "context"
@@ -1065,7 +1303,7 @@ func (r *TrxServiceImpl) WithTx(ctx context.Context, fn func(tx *ent.Tx) error) 
 }
 </pre>
 		
-		<pre class="file" id="file16" style="display: none">// Code generated by Wire. DO NOT EDIT.
+		<pre class="file" id="file21" style="display: none">// Code generated by Wire. DO NOT EDIT.
 
 //go:generate go run github.com/google/wire/cmd/wire
 //go:build !wireinject
@@ -1092,7 +1330,7 @@ var provider = wire.NewSet(
 )
 </pre>
 		
-		<pre class="file" id="file17" style="display: none">package controller
+		<pre class="file" id="file22" style="display: none">package controller
 
 import (
         "github.com/labstack/echo/v4"
@@ -1224,7 +1462,7 @@ func (c *UserController) GetAll(ctx echo.Context) error <span class="cov8" title
 }
 </pre>
 		
-		<pre class="file" id="file18" style="display: none">package controller
+		<pre class="file" id="file23" style="display: none">package controller
 
 import "github.com/labstack/echo/v4"
 
@@ -1240,7 +1478,7 @@ func (c *UserController) AddRoutes(e *echo.Echo, appName string) <span class="co
 }</span>
 </pre>
 		
-		<pre class="file" id="file19" style="display: none">package repository
+		<pre class="file" id="file24" style="display: none">package repository
 
 import (
         "context"
@@ -1360,13 +1598,36 @@ func (r *UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) <s
 }
 </pre>
 		
-		<pre class="file" id="file20" style="display: none">package service
+		<pre class="file" id="file25" style="display: none">package service
+
+import (
+        "myapp/configs"
+        "strconv"
+        "strings"
+)
+
+const (
+        Separator = ":"
+        User      = "user"
+)
+
+func CacheKeyUserWithId(id uint64) string <span class="cov8" title="1">{
+        return strings.Join([]string{configs.ApplicationName, User, strconv.FormatUint(id, 10)}, Separator)
+}</span>
+
+func CacheKeyUsers() string <span class="cov8" title="1">{
+        return strings.Join([]string{configs.ApplicationName, User, "list"}, Separator)
+}</span>
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package service
 
 import (
         "context"
         "github.com/labstack/gommon/log"
         "myapp/ent"
         "myapp/exceptions"
+        "myapp/internal/applications/cache"
         roleRepository "myapp/internal/applications/role/repository"
         roleUserRepository "myapp/internal/applications/role_user/repository"
         "myapp/internal/applications/transaction"
@@ -1379,10 +1640,11 @@ type UserServiceImpl struct {
         roleRepository     roleRepository.RoleRepository
         roleUserRepository roleUserRepository.RoleUserRepository
         transaction        transaction.TrxService
+        cache              cache.CachingService
 }
 
-func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl <span class="cov8" title="1">{
-        return &amp;UserServiceImpl{userRepository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
+func NewUserServiceImpl(userRepository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService, cache cache.CachingService) *UserServiceImpl <span class="cov8" title="1">{
+        return &amp;UserServiceImpl{userRepository: userRepository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction, cache: cache}
 }</span>
 
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) <span class="cov8" title="1">{
@@ -1397,6 +1659,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
                         Email:    request.Email,
                         Password: request.Password,
                         Avatar:   "",
+                        RoleID:   request.RoleId,
                 }
 
                 //save user:
@@ -1418,7 +1681,10 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
                         return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
                 }</span>
 
-                <span class="cov8" title="1">return nil</span>
+                //create cache, don't throw exception if failed:
+                <span class="cov8" title="1">_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
+
+                return nil</span>
 
         }); err != nil <span class="cov8" title="1">{
                 //add rollback logic here
@@ -1467,7 +1733,12 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
                         return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
                 }</span>
 
+                //set value to userUpdated for return value:
                 <span class="cov8" title="1">userUpdated = userResult
+
+                //create cache, don't throw exception if failed:
+                _, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
+
                 return nil</span>
 
         }); err != nil <span class="cov8" title="1">{
@@ -1485,29 +1756,59 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
         }</span>
 
+        <span class="cov8" title="1">_, err = s.cache.Delete(ctx, CacheKeyUserWithId(id))
+        if err != nil </span><span class="cov0" title="0">{
+                return data, nil
+        }</span>
+
         <span class="cov8" title="1">return data, nil</span>
 }
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) <span class="cov8" title="1">{
-        result, err := s.userRepository.GetById(ctx, id)
+
+        userCache, err := s.cache.Get(ctx, CacheKeyUserWithId(id), &amp;ent.User{})
+
+        if userCache != nil </span><span class="cov0" title="0">{
+                return userCache.(*ent.User), nil
+        }</span>
+
+        <span class="cov8" title="1">result, err := s.userRepository.GetById(ctx, id)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                return result, nil
         }</span>
 
         <span class="cov8" title="1">return result, nil</span>
 }
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) <span class="cov8" title="1">{
-        result, err := s.userRepository.GetAll(ctx)
+
+        userCache, err := s.cache.Get(ctx, CacheKeyUsers(), &amp;[]*ent.User{})
+
+        if userCache != nil </span><span class="cov0" title="0">{
+                userResult := append([]*ent.User(nil), *userCache.(*[]*ent.User)...)
+                return userResult, err
+        }</span>
+
+        <span class="cov8" title="1">result, err := s.userRepository.GetAll(ctx)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.cache.Create(ctx, CacheKeyUsers(), &amp;result, cache.CachingShortPeriod())
+        if err != nil </span><span class="cov0" title="0">{
+                return result, nil
         }</span>
 
         <span class="cov8" title="1">return result, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file21" style="display: none">package apputils
+		<pre class="file" id="file27" style="display: none">package apputils
 
 import "github.com/labstack/echo/v4"
 
@@ -1524,7 +1825,7 @@ func BindAndValidate(ctx echo.Context, i interface{}) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file22" style="display: none">// Package apputils wrapper for dtoutils https://github.com/dranikpg/dto-mapper
+		<pre class="file" id="file28" style="display: none">// Package apputils wrapper for dtoutils https://github.com/dranikpg/dto-mapper
 
 package apputils
 
@@ -1548,7 +1849,7 @@ func MapAndAssign(source interface{}, target interface{}) (interface{}, error) <
 }
 </pre>
 		
-		<pre class="file" id="file23" style="display: none">package apputils
+		<pre class="file" id="file29" style="display: none">package apputils
 
 import (
         "errors"
@@ -1606,7 +1907,7 @@ func GetResult(json string, path string) (gjson.Result, error) <span class="cov8
 }
 </pre>
 		
-		<pre class="file" id="file24" style="display: none">package response
+		<pre class="file" id="file30" style="display: none">package response
 
 import (
         "errors"
