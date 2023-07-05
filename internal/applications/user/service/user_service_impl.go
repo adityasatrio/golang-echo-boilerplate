@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
+	"myapp/internal/applications/cache"
 	roleRepository "myapp/internal/applications/role/repository"
 	roleUserRepository "myapp/internal/applications/role_user/repository"
 	"myapp/internal/applications/transaction"
@@ -17,10 +18,11 @@ type UserServiceImpl struct {
 	roleRepository     roleRepository.RoleRepository
 	roleUserRepository roleUserRepository.RoleUserRepository
 	transaction        transaction.TrxService
+	cache              cache.CachingService
 }
 
-func NewUserServiceImpl(repository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService) *UserServiceImpl {
-	return &UserServiceImpl{userRepository: repository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction}
+func NewUserServiceImpl(userRepository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService, cache cache.CachingService) *UserServiceImpl {
+	return &UserServiceImpl{userRepository: userRepository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction, cache: cache}
 }
 
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
@@ -35,6 +37,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			Email:    request.Email,
 			Password: request.Password,
 			Avatar:   "",
+			RoleID:   request.RoleId,
 		}
 
 		//save user:
@@ -55,6 +58,9 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
+
+		//create cache, don't throw exception if failed:
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
 
 		return nil
 
@@ -105,7 +111,12 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			return exceptions.NewBusinessLogicError(exceptions.EBL10004, err)
 		}
 
+		//set value to userUpdated for return value:
 		userUpdated = userResult
+
+		//create cache, don't throw exception if failed:
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
+
 		return nil
 
 	}); err != nil {
@@ -123,22 +134,52 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10005, err)
 	}
 
+	_, err = s.cache.Delete(ctx, CacheKeyUserWithId(id))
+	if err != nil {
+		return data, nil
+	}
+
 	return data, nil
 }
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
+
+	userCache, err := s.cache.Get(ctx, CacheKeyUserWithId(id), &ent.User{})
+
+	if userCache != nil {
+		return userCache.(*ent.User), nil
+	}
+
 	result, err := s.userRepository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+	}
+
+	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, cache.CachingShortPeriod())
+	if err != nil {
+		return result, nil
 	}
 
 	return result, nil
 }
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
+
+	userCache, err := s.cache.Get(ctx, CacheKeyUsers(), &[]*ent.User{})
+
+	if userCache != nil {
+		userResult := append([]*ent.User(nil), *userCache.(*[]*ent.User)...)
+		return userResult, err
+	}
+
 	result, err := s.userRepository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+	}
+
+	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, cache.CachingShortPeriod())
+	if err != nil {
+		return result, nil
 	}
 
 	return result, nil

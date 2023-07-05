@@ -9,6 +9,7 @@ import (
 	//"myapp/internal/applications/system_parameter/service"
 )
 
-func (controller *HelloWorldsController) AddRoutes(e *echo.Echo) {
-	e.GET("/hello", controller.Hello)
+func (controller *HelloWorldsController) AddRoutes(e *echo.Echo, appName string) {
+	group := e.Group(appName)
+	group.GET("/hello", controller.Hello)
 }

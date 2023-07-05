@@ -1,13 +1,28 @@
 application:
+  name: echo-boilerplate
   version: 0.0.1
-  port: 8080
+  port: 8888
   cors:
     allowedHost: localhost, https://labstack.com, https://labstack.net
 
 db.configs:
   username: root
-  password:
+  password: root
   host: localhost
   port: 3306
   database: test_ent
+
+cache:
+  configs:
+    redis:
+      host: localhost
+      port: 6379
+      username:
+      password:
+      db: 0
+      poolSize: 10
+  ttl:
+    short-period: 3h
+    medium-period: 24h
+    long-period: 3d
 

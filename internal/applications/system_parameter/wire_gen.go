@@ -7,20 +7,23 @@
 package system_parameter
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"myapp/ent"
+	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/repository/db"
 	"myapp/internal/applications/system_parameter/service"
 )
 
 // Injectors from system_parameter_injector.go:
 
-func InitializedSystemParameterService(dbClient *ent.Client) *service.SystemParameterServiceImpl {
+func InitializedSystemParameterService(dbClient *ent.Client, redisClient *redis.Client) *service.SystemParameterServiceImpl {
 	systemParameterRepositoryImpl := db.NewSystemParameterRepository(dbClient)
-	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl)
+	cachingServiceImpl := cache.NewCachingService(redisClient)
+	systemParameterServiceImpl := service.NewSystemParameterService(systemParameterRepositoryImpl, cachingServiceImpl)
 	return systemParameterServiceImpl
 }
 
 // system_parameter_injector.go:
 
-var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)))
+var providerSetSystemParameter = wire.NewSet(db.NewSystemParameterRepository, service.NewSystemParameterService, cache.NewCachingService, wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)), wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)), wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)))

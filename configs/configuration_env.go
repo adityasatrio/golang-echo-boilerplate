@@ -8,15 +8,15 @@ import (
 )
 
 const (
-	fileConfigName = "app.config"
-	fileConfigPath = "."
-	fileConfigType = "yml"
+	FileConfigName = "app.config"
+	FileConfigPath = "."
+	FileConfigType = "yml"
 )
 
 func SetupConfigEnv(e *echo.Echo) {
-	viper.AddConfigPath(fileConfigPath)
-	viper.SetConfigType(fileConfigType)
-	viper.SetConfigName(fileConfigName)
+	viper.AddConfigPath(FileConfigPath)
+	viper.SetConfigType(FileConfigType)
+	viper.SetConfigName(FileConfigName)
 
 	setDefaultKeys()
 	err := viper.ReadInConfig()
@@ -25,13 +25,16 @@ func SetupConfigEnv(e *echo.Echo) {
 		panic(e)
 	}
 
-	log.Infof("initialized configs viper: success", fileConfigPath+"/"+fileConfigName+"."+fileConfigType)
+	log.Infof("initialized configs viper: success", FileConfigPath+"/"+FileConfigName+"."+FileConfigType)
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		log.Infof("Config file changed:", e.Name)
 	})
 	viper.WatchConfig()
-	log.Infof("initialized WatchConfig(): success", fileConfigPath+"/"+fileConfigName+"."+fileConfigType)
+	log.Infof("initialized WatchConfig(): success", FileConfigPath+"/"+FileConfigName+"."+FileConfigType)
+
+	//set value for global variable, when value in app.config:
+	InitGlobalVariable()
 }
 
 func setDefaultKeys() {
@@ -49,14 +52,17 @@ func setDefaultKeys() {
 	viper.SetDefault("cache.configs.ristretto.numCounters", 1000)
 	viper.SetDefault("cache.configs.ristretto.maxCost", 100)
 
-	viper.SetDefault("cache.configs.redis.username", "root")
-	viper.SetDefault("cache.configs.redis.password", "password")
-	viper.SetDefault("cache.configs.redis.DB", 0)
+	// viper.SetDefault("cache.configs.redis.username", "root")
+	// viper.SetDefault("cache.configs.redis.password", "password")
+	viper.SetDefault("cache.configs.redis.db", 0)
 	viper.SetDefault("cache.configs.redis.poolSize", 10)
 
 	viper.SetDefault("cache.configs.redis.host", "127.0.0.1")
 	viper.SetDefault("cache.configs.redis.port", 6379)
 
-	log.Infof("initialized default configs value : success", viper.AllSettings())
+	viper.SetDefault("cache.ttl.short-period", "3h")
+	viper.SetDefault("cache.ttl.medium-period", "24h")
+	viper.SetDefault("cache.ttl.long-period", "3d")
 
+	log.Infof("initialized default configs value : success", viper.AllSettings())
 }
