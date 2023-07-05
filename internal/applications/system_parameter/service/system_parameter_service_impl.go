@@ -36,7 +36,8 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 
 	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, cache.CachingShortPeriod())
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10006, err)
+		//don't throw exception if create redis failed:
+		return result, nil
 	}
 
 	return result, nil
@@ -44,10 +45,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 
 func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) {
 
-	existKey, err := s.repository.GetByKey(ctx, update.Key)
-	if existKey != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10001, err)
-	}
+	_, err := s.repository.GetByKey(ctx, update.Key)
 
 	existId, err := s.GetById(ctx, id)
 	if err != nil || existId == nil {
@@ -64,7 +62,8 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 
 	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, cache.CachingShortPeriod())
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		//don't throw exception if create redis failed:
+		return updated, nil
 	}
 
 	return updated, nil
@@ -83,7 +82,7 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 
 	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return exist, nil
 	}
 
 	return exist, nil
@@ -102,7 +101,7 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 
 	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return deleted, nil
 	}
 
 	return deleted, nil
@@ -111,9 +110,6 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 
 	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParamWithId(id), &ent.SystemParameter{})
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
-	}
 
 	if systemParameterCache != nil {
 		return systemParameterCache.(*ent.SystemParameter), nil
@@ -136,9 +132,6 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
 
 	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParams(), &[]*ent.SystemParameter{})
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10002, err)
-	}
 
 	if systemParameterCache != nil {
 		systemParameterResult := append([]*ent.SystemParameter(nil), *systemParameterCache.(*[]*ent.SystemParameter)...)
@@ -152,7 +145,7 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 
 	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, cache.CachingShortPeriod())
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return result, nil
 	}
 
 	return result, nil

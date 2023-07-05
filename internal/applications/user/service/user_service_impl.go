@@ -59,10 +59,8 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			return exceptions.NewBusinessLogicError(exceptions.EBL10003, err)
 		}
 
-		_, err = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
-		if err != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
-		}
+		//create cache, don't throw exception if failed:
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
 
 		return nil
 
@@ -116,10 +114,8 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		//set value to userUpdated for return value:
 		userUpdated = userResult
 
-		_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
-		if err != nil {
-			return exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
-		}
+		//create cache, don't throw exception if failed:
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
 
 		return nil
 
@@ -140,7 +136,7 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 
 	_, err = s.cache.Delete(ctx, CacheKeyUserWithId(id))
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return data, nil
 	}
 
 	return data, nil
@@ -149,9 +145,6 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
 
 	userCache, err := s.cache.Get(ctx, CacheKeyUserWithId(id), &ent.User{})
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
-	}
 
 	if userCache != nil {
 		return userCache.(*ent.User), nil
@@ -164,7 +157,7 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 
 	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, cache.CachingShortPeriod())
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return result, nil
 	}
 
 	return result, nil
@@ -173,9 +166,6 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 
 	userCache, err := s.cache.Get(ctx, CacheKeyUsers(), &[]*ent.User{})
-	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
-	}
 
 	if userCache != nil {
 		userResult := append([]*ent.User(nil), *userCache.(*[]*ent.User)...)
@@ -189,7 +179,7 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 
 	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, cache.CachingShortPeriod())
 	if err != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.EBL10007, err)
+		return result, nil
 	}
 
 	return result, nil
