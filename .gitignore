@@ -42,3 +42,6 @@ vendor/*
 
 # Go workspace file
 go.work
+
+# OpenAPI Files
+.swagger/*
