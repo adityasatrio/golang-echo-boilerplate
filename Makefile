@@ -3,6 +3,10 @@
 MIGRATE_DIR := migrations/migration
 WIRE_DIR := internal/applications
 
+OPENAPI_ENTRY_POINT := cmd/main.go
+OPENAPI_OUTPUT_DIR := .swagger
+OPENAPI_OUTPUT_TYPE := yaml
+
 # Build the project
 build:
 	go build -o main cmd/main.go
@@ -29,6 +33,10 @@ wire-gen:
 	read dir; \
 	echo "Accessing directory and wire all DI $(WIRE_DIR)/$$dir"; \
 	cd $(WIRE_DIR)/$$dir && wire
+
+# Generate OpenAPI Docs
+docs-gen:
+	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR) -ot $(OPENAPI_OUTPUT_TYPE)
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
