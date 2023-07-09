@@ -17,6 +17,18 @@ func NewUserController(service service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
+// CreateUser godoc
+//
+//	@summary		Create new user
+//	@description	Create new user
+//	@tags			user
+//	@accept			json
+//	@produce		json
+//	@param			body	body		dto.UserRequest	true	"Create User DTO"
+//	@success		201		{object}	response.Body{data=dto.UserResponse}
+//	@failure		422		{object}	response.Body
+//	@failure		500		{object}	response.Body
+//	@router			/user [post]
 func (c *UserController) Create(ctx echo.Context) error {
 	request := new(dto.UserRequest)
 	err := apputils.BindAndValidate(ctx, request)
@@ -39,6 +51,20 @@ func (c *UserController) Create(ctx echo.Context) error {
 	return response.Created(ctx, responseDto)
 }
 
+// UpdateUser godoc
+//
+//	@summary		Update a user
+//	@description	Update a user
+//	@tags			user
+//	@accept			json
+//	@produce		json
+//	@param			id		path		int				true	"User's ID"
+//	@param			body	body		dto.UserRequest	true	"Update User DTO"
+//	@success		200		{object}	response.Body{data=dto.UserResponse}
+//	@failure		404		{object}	response.Body
+//	@failure		422		{object}	response.Body
+//	@failure		500		{object}	response.Body
+//	@router			/user/{id} [put]
 func (c *UserController) Update(ctx echo.Context) error {
 	request := new(dto.UserRequest)
 	err := apputils.BindAndValidate(ctx, request)
@@ -66,6 +92,18 @@ func (c *UserController) Update(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// DeleteUser godoc
+//
+//	@summary		Delete a user
+//	@description	Delete a user
+//	@tags			user
+//	@accept			json
+//	@produce		json
+//	@param			id	path		int	true	"User's ID"
+//	@success		200	{object}	response.Body{data=dto.UserResponse}
+//	@failure		422	{object}	response.Body
+//	@failure		500	{object}	response.Body
+//	@router			/user/{id} [delete]
 func (c *UserController) Delete(ctx echo.Context) error {
 
 	idString := ctx.Param("id")
@@ -88,6 +126,18 @@ func (c *UserController) Delete(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// GetUserById godoc
+//
+//	@summary		Get a user by id
+//	@description	Get a user by id
+//	@tags			user
+//	@accept			json
+//	@produce		json
+//	@param			id	path		int	true	"User's ID"
+//	@success		200	{object}	response.Body{data=dto.UserResponse}
+//	@failure		422	{object}	response.Body
+//	@failure		500	{object}	response.Body
+//	@router			/user/{id} [get]
 func (c *UserController) GetById(ctx echo.Context) error {
 
 	idString := ctx.Param("id")
@@ -110,6 +160,17 @@ func (c *UserController) GetById(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// GetAllUsers godoc
+//
+//	@summary		Get all users
+//	@description	Get all users
+//	@tags			user
+//	@accept			json
+//	@produce		json
+//	@success		200	{object}	response.Body{data=[]dto.UserResponse}
+//	@failure		422	{object}	response.Body
+//	@failure		500	{object}	response.Body
+//	@router			/user [get]
 func (c *UserController) GetAll(ctx echo.Context) error {
 	results, err := c.service.GetAll(ctx.Request().Context())
 	if err != nil {
