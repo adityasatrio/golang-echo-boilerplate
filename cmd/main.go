@@ -18,6 +18,14 @@ import (
 	"time"
 )
 
+//	@title			Echo Boilerplate Service
+//	@version		0.0.1
+//	@description	Please welcome a holy high-speed and high-performance Echo service!
+
+//	@contact.url	https://github.com/adityasatrio/golang-echo-boilerplate
+
+//	@host		localhost:8888
+//	@basePath	/echo-boilerplate
 func main() {
 	e := echo.New()
 
