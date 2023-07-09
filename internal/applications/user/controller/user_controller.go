@@ -25,9 +25,9 @@ func NewUserController(service service.UserService) *UserController {
 //	@accept			json
 //	@produce		json
 //	@param			body	body		dto.UserRequest	true	"Create User DTO"
-//	@success		201		{object}	response.Body{data=dto.UserResponse}
-//	@failure		422		{object}	response.Body
-//	@failure		500		{object}	response.Body
+//	@success		201		{object}	response.body{data=dto.UserResponse}
+//	@failure		422		{object}	response.body
+//	@failure		500		{object}	response.body
 //	@router			/user [post]
 func (c *UserController) Create(ctx echo.Context) error {
 	request := new(dto.UserRequest)
@@ -60,10 +60,10 @@ func (c *UserController) Create(ctx echo.Context) error {
 //	@produce		json
 //	@param			id		path		int				true	"User's ID"
 //	@param			body	body		dto.UserRequest	true	"Update User DTO"
-//	@success		200		{object}	response.Body{data=dto.UserResponse}
-//	@failure		404		{object}	response.Body
-//	@failure		422		{object}	response.Body
-//	@failure		500		{object}	response.Body
+//	@success		200		{object}	response.body{data=dto.UserResponse}
+//	@failure		404		{object}	response.body
+//	@failure		422		{object}	response.body
+//	@failure		500		{object}	response.body
 //	@router			/user/{id} [put]
 func (c *UserController) Update(ctx echo.Context) error {
 	request := new(dto.UserRequest)
@@ -100,9 +100,9 @@ func (c *UserController) Update(ctx echo.Context) error {
 //	@accept			json
 //	@produce		json
 //	@param			id	path		int	true	"User's ID"
-//	@success		200	{object}	response.Body{data=dto.UserResponse}
-//	@failure		422	{object}	response.Body
-//	@failure		500	{object}	response.Body
+//	@success		200	{object}	response.body{data=dto.UserResponse}
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
 //	@router			/user/{id} [delete]
 func (c *UserController) Delete(ctx echo.Context) error {
 
@@ -134,9 +134,9 @@ func (c *UserController) Delete(ctx echo.Context) error {
 //	@accept			json
 //	@produce		json
 //	@param			id	path		int	true	"User's ID"
-//	@success		200	{object}	response.Body{data=dto.UserResponse}
-//	@failure		422	{object}	response.Body
-//	@failure		500	{object}	response.Body
+//	@success		200	{object}	response.body{data=dto.UserResponse}
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
 //	@router			/user/{id} [get]
 func (c *UserController) GetById(ctx echo.Context) error {
 
@@ -167,9 +167,9 @@ func (c *UserController) GetById(ctx echo.Context) error {
 //	@tags			user
 //	@accept			json
 //	@produce		json
-//	@success		200	{object}	response.Body{data=[]dto.UserResponse}
-//	@failure		422	{object}	response.Body
-//	@failure		500	{object}	response.Body
+//	@success		200	{object}	response.body{data=[]dto.UserResponse}
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
 //	@router			/user [get]
 func (c *UserController) GetAll(ctx echo.Context) error {
 	results, err := c.service.GetAll(ctx.Request().Context())
