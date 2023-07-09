@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type body struct {
+type Body struct {
 	ErrorCode  int         `json:"code"`
 	Message    string      `json:"message"`
 	Data       interface{} `json:"data"`
@@ -18,7 +18,7 @@ type body struct {
 func Base(ctx echo.Context, httpCode int, errorCode int, message string, data interface{}, err error) error {
 
 	date := time.Now().Format(time.RFC1123)
-	bodyResponse := body{
+	bodyResponse := Body{
 		ErrorCode:  errorCode,
 		Message:    message,
 		ServerTime: date,
