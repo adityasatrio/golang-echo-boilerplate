@@ -21,7 +21,9 @@ require (
 	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/dranikpg/dto-mapper v0.1.1
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
+	github.com/jarcoal/httpmock v1.3.0
 	github.com/pierrec/lz4/v4 v4.1.18
 	github.com/tidwall/gjson v1.14.4
 	github.com/vmihailenco/msgpack/v4 v4.3.12

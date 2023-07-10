@@ -8,15 +8,15 @@ import (
 )
 
 const (
-	FileConfigName = "app.config"
-	FileConfigPath = "."
-	FileConfigType = "yml"
+	fileConfigName = "app.config"
+	fileConfigPath = "."
+	fileConfigType = "yml"
 )
 
 func SetupConfigEnv(e *echo.Echo) {
-	viper.AddConfigPath(FileConfigPath)
-	viper.SetConfigType(FileConfigType)
-	viper.SetConfigName(FileConfigName)
+	viper.AddConfigPath(fileConfigPath)
+	viper.SetConfigType(fileConfigType)
+	viper.SetConfigName(fileConfigName)
 
 	setDefaultKeys()
 	err := viper.ReadInConfig()
@@ -25,20 +25,23 @@ func SetupConfigEnv(e *echo.Echo) {
 		panic(e)
 	}
 
-	log.Infof("initialized configs viper: success", FileConfigPath+"/"+FileConfigName+"."+FileConfigType)
+	log.Infof("initialized configs viper: success", fileConfigPath+"/"+fileConfigName+"."+fileConfigType)
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		log.Infof("Config file changed:", e.Name)
 	})
 	viper.WatchConfig()
-	log.Infof("initialized WatchConfig(): success", FileConfigPath+"/"+FileConfigName+"."+FileConfigType)
+	log.Infof("initialized WatchConfig(): success", fileConfigPath+"/"+fileConfigName+"."+fileConfigType)
 
 	//set value for global variable, when value in app.config:
 	InitGlobalVariable()
+
 }
 
 func setDefaultKeys() {
 	viper.SetDefault("application.port", 8080)
+	viper.SetDefault("application.health.url", "/health")
+	viper.SetDefault("application.mode", "dev")
 
 	host := []string{"localhost", "https://labstack.com", "https://labstack.net"}
 	viper.SetDefault("application.cors.allowedHost", host)
@@ -63,6 +66,9 @@ func setDefaultKeys() {
 	viper.SetDefault("cache.ttl.short-period", "3h")
 	viper.SetDefault("cache.ttl.medium-period", "24h")
 	viper.SetDefault("cache.ttl.long-period", "3d")
+
+	viper.SetDefault("db.configs.maxIdleConn", 5)
+	viper.SetDefault("db.configs.maxOpenConn", 10)
 
 	log.Infof("initialized default configs value : success", viper.AllSettings())
 }
