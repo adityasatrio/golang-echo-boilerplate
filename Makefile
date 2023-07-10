@@ -35,7 +35,7 @@ wire-gen:
 	cd $(WIRE_DIR)/$$dir && wire
 
 # Generate OpenAPI Docs
-docs-gen:
+docs:
 	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR) -ot $(OPENAPI_OUTPUT_TYPE)
 
 confirm:
