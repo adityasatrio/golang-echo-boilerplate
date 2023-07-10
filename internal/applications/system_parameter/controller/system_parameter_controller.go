@@ -19,6 +19,18 @@ func NewSystemParameterController(service service.SystemParameterService) *Syste
 	}
 }
 
+// Create is controller to create new system parameter.
+//
+//	@summary		Create new system parameter
+//	@description	Create new system parameter
+//	@tags			system parameter
+//	@accept			json
+//	@produce		json
+//	@param			body	body		dto.SystemParameterCreateRequest	true	"Create System Parameter DTO"
+//	@success		201		{object}	response.body{data=dto.SystemParameterResponse}
+//	@failure		422		{object}	response.body
+//	@failure		500		{object}	response.body
+//	@router			/system-parameter [post]
 func (c *SystemParameterController) Create(ctx echo.Context) error {
 	request := new(dto.SystemParameterCreateRequest)
 	err := apputils.BindAndValidate(ctx, request)
@@ -40,6 +52,20 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 	return response.Created(ctx, responseDto)
 }
 
+// Update is controller to update existing system parameter.
+//
+//	@summary		Update a system parameter
+//	@description	Update a system parameter
+//	@tags			system parameter
+//	@accept			json
+//	@produce		json
+//	@param			id		path		int									true	"Existing system parameter ID"
+//	@param			body	body		dto.SystemParameterUpdateRequest	true	"Update System Parameter DTO"
+//	@success		200		{object}	response.body{data=dto.SystemParameterResponse}
+//	@failure		404		{object}	response.body
+//	@failure		422		{object}	response.body
+//	@failure		500		{object}	response.body
+//	@router			/system-parameter/{id} [put]
 func (c *SystemParameterController) Update(ctx echo.Context) error {
 	request := new(dto.SystemParameterUpdateRequest)
 	err := apputils.BindAndValidate(ctx, request)
@@ -64,6 +90,19 @@ func (c *SystemParameterController) Update(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// Delete is controller to delete existing system parameter.
+//
+//	@summary		Delete a system parameter
+//	@description	Delete a system parameter
+//	@tags			system parameter
+//	@accept			json
+//	@produce		json
+//	@param			id	path		int	true	"Existing system parameter ID"
+//	@success		200	{object}	response.body{data=dto.SystemParameterResponse}
+//	@failure		404	{object}	response.body
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
+//	@router			/system-parameter/{id} [delete]
 func (c *SystemParameterController) Delete(ctx echo.Context) error {
 
 	idString := ctx.Param("id")
@@ -86,6 +125,19 @@ func (c *SystemParameterController) Delete(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// GetById is controller to get system parameter by its id.
+//
+//	@summary		Get a system parameter by id
+//	@description	Get a system parameter by id
+//	@tags			system parameter
+//	@accept			json
+//	@produce		json
+//	@param			id	path		int	true	"Existing system parameter ID"
+//	@success		200	{object}	response.body{data=dto.SystemParameterResponse}
+//	@failure		404	{object}	response.body
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
+//	@router			/system-parameter/{id} [get]
 func (c *SystemParameterController) GetById(ctx echo.Context) error {
 
 	idString := ctx.Param("id")
@@ -108,6 +160,17 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
+// GetAll is controller to get all system parameters.
+//
+//	@summary		Get all system parameters
+//	@description	Get all system parameters
+//	@tags			system parameter
+//	@accept			json
+//	@produce		json
+//	@success		200	{object}	response.body{data=[]dto.SystemParameterResponse}
+//	@failure		422	{object}	response.body
+//	@failure		500	{object}	response.body
+//	@router			/system-parameter [get]
 func (c *SystemParameterController) GetAll(ctx echo.Context) error {
 	results, err := c.service.GetAll(ctx.Request().Context())
 	if err != nil {
