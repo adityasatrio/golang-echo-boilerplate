@@ -1,4 +1,4 @@
-package migrations
+package database
 
 import (
 	"fmt"
@@ -24,11 +24,11 @@ func MigrationConnection() string {
 	}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		viper.GetString("db.configs.username"),
-		viper.GetString("db.configs.password"),
-		viper.GetString("db.configs.host"),
-		viper.GetString("db.configs.port"),
-		viper.GetString("db.configs.database"))
+		viper.GetString("db.config.username"),
+		viper.GetString("db.config.password"),
+		viper.GetString("db.config.host"),
+		viper.GetString("db.config.port"),
+		viper.GetString("db.config.database"))
 
 	log.Println("DSN=", dsn)
 
@@ -36,6 +36,5 @@ func MigrationConnection() string {
 }
 
 func MigrationPath() string {
-	//return "file://database/migration"
-	return "file://migrations/migration"
+	return "file://database/migration"
 }

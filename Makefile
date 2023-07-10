@@ -31,9 +31,9 @@ wire:
 	cd $(WIRE_DIR)/$$dir && wire
 
 confirm:
-	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
+	@read -p "$(shell echo -e '\033[0;31m') Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
 	if [ "$$choice" != "Y" ]; then \
-		echo "$(shell echo -e '\033[0;31m')Terminating the clean-up process.$(shell output sgr0)"; \
+		echo "$(shell echo -e '\033[0;31m') Terminating the clean-up process.$(shell output sgr0)"; \
     	exit 1; \
     fi
 

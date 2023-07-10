@@ -72,6 +72,7 @@ func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 	userRoleRepo := NewRoleUserRepository(clientTx)
 
 	dummyRoleUser := ent.RoleUser{
+		ID:        100,
 		UserID:    3,
 		RoleID:    3,
 		CreatedBy: "user",
@@ -85,13 +86,13 @@ func TestRoleUserRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, dummyRoleUser.RoleID, result.RoleID)
 	assert.Equal(t, dummyRoleUser.CreatedBy, result.CreatedBy)
 
-	result.UserID = 4
+	result.UserID = 3
 	result.RoleID = 4
 
 	resultUpdated, err := userRoleRepo.UpdateTx(ctx, clientTx, result)
 	assert.NoError(t, err)
 	assert.Equal(t, result.ID, resultUpdated.ID)
-	assert.Equal(t, uint64(4), resultUpdated.UserID)
+	assert.Equal(t, uint64(3), resultUpdated.UserID)
 	assert.Equal(t, uint64(4), resultUpdated.RoleID)
 
 	t.Cleanup(func() {

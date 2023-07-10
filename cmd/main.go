@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"myapp/configs"
 	"myapp/configs/database"
+	"myapp/configs/redis"
 	"myapp/configs/validator"
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest"
@@ -32,6 +33,8 @@ func main() {
 	database.SetupHooks(dbConnection)
 
 	log.Info("initialized database configuration=", dbConnection)
+
+	//from docs define close on this function, but will impact cant create DB session on repository:
 	defer func(dbConnection *ent.Client) {
 		err := dbConnection.Close()
 		if err != nil {
@@ -39,8 +42,19 @@ func main() {
 		}
 	}(dbConnection)
 
+	//configuration for redis client:
+	redisConnection := redis.NewRedisClient()
+
+	//configuration for redis client, for close connection:
+	defer func() {
+		err := redisConnection.Close()
+		if err != nil {
+			log.Fatalf("Error closing Redis connection:", err)
+		}
+	}()
+
 	//setup router
-	restApi.SetupRouteHandler(e, dbConnection)
+	restApi.SetupRouteHandler(e, dbConnection, redisConnection)
 
 	port := viper.GetString("application.port")
 	// Start server

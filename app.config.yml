@@ -21,3 +21,17 @@ outbound:
     post-url: https://en8trqq30hty3.x.pipedream.net/
 
 
+cache:
+  configs:
+    redis:
+      host: localhost
+      port: 6379
+      username:
+      password:
+      db: 0
+      poolSize: 10
+  ttl:
+    short-period: 3h
+    medium-period: 24h
+    long-period: 3d
+

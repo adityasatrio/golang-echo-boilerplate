@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"myapp/ent"
@@ -15,7 +16,7 @@ import (
 	userController "myapp/internal/applications/user/controller"
 )
 
-func SetupRouteHandler(e *echo.Echo, connDb *ent.Client) {
+func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Client) {
 
 	appName := viper.GetString("application.name")
 
@@ -27,12 +28,12 @@ func SetupRouteHandler(e *echo.Echo, connDb *ent.Client) {
 		AddRoutes(e, appName)
 
 	//injection using code gen - google wire
-	systemParameterService := system_parameter.InitializedSystemParameterService(connDb)
+	systemParameterService := system_parameter.InitializedSystemParameterService(connDb, redisClient)
 	systemParameterController.
 		NewSystemParameterController(systemParameterService).
 		AddRoutes(e, appName)
 
-	userService := user.InitializedUserService(connDb)
+	userService := user.InitializedUserService(connDb, redisClient)
 	userController.
 		NewUserController(userService).
 		AddRoutes(e, appName)

@@ -4,18 +4,18 @@ import (
 	"context"
 	"myapp/ent"
 	"myapp/exceptions"
+	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository/db"
 )
 
 type SystemParameterServiceImpl struct {
 	repository db.SystemParameterRepository
+	cache      cache.CachingService
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository) *SystemParameterServiceImpl {
-	return &SystemParameterServiceImpl{
-		repository: repository,
-	}
+func NewSystemParameterService(repository db.SystemParameterRepository, cache cache.CachingService) *SystemParameterServiceImpl {
+	return &SystemParameterServiceImpl{repository: repository, cache: cache}
 }
 
 func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.SystemParameterCreateRequest) (*ent.SystemParameter, error) {
@@ -34,17 +34,20 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 	}
 
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, cache.CachingShortPeriod())
+	if err != nil {
+		//don't throw exception if create redis failed:
+		return result, nil
+	}
+
 	return result, nil
 }
 
 func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) {
 
-	existKey, err := s.repository.GetByKey(ctx, update.Key)
-	if existKey != nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.DataAlreadyExist, err)
-	}
+	_, err := s.repository.GetByKey(ctx, update.Key)
 
-	existId, err := s.repository.GetById(ctx, id)
+	existId, err := s.GetById(ctx, id)
 	if err != nil || existId == nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
 	}
@@ -57,12 +60,13 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
 	}
 
-	latestUpdated, err := s.repository.GetById(ctx, updated.ID)
-	if err != nil || existId == nil {
-		return nil, exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, cache.CachingShortPeriod())
+	if err != nil {
+		//don't throw exception if create redis failed:
+		return updated, nil
 	}
 
-	return latestUpdated, nil
+	return updated, nil
 }
 
 func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.SystemParameter, error) {
@@ -74,6 +78,11 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 	_, err = s.repository.Delete(ctx, exist.ID)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
+	}
+
+	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+	if err != nil {
+		return exist, nil
 	}
 
 	return exist, nil
@@ -90,22 +99,51 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
+	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+	if err != nil {
+		return deleted, nil
+	}
+
 	return deleted, nil
 }
 
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
+
+	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParamWithId(id), &ent.SystemParameter{})
+	if systemParameterCache != nil {
+		return systemParameterCache.(*ent.SystemParameter), nil
+	}
+
 	result, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
 	}
 
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(id), result, cache.CachingShortPeriod())
+	if err != nil {
+		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
+	}
+
 	return result, nil
+
 }
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
+
+	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParams(), &[]*ent.SystemParameter{})
+	if systemParameterCache != nil {
+		systemParameterResult := append([]*ent.SystemParameter(nil), *systemParameterCache.(*[]*ent.SystemParameter)...)
+		return systemParameterResult, err
+	}
+
 	result, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
+	}
+
+	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, cache.CachingShortPeriod())
+	if err != nil {
+		return result, nil
 	}
 
 	return result, nil
