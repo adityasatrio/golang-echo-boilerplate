@@ -4,8 +4,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/service"
-	"myapp/internal/apputils"
-	"myapp/internal/apputils/response"
+	"myapp/internal/helper"
+	"myapp/internal/helper/response"
 	"strconv"
 )
 
@@ -33,7 +33,7 @@ func NewSystemParameterController(service service.SystemParameterService) *Syste
 //	@router			/system-parameter [post]
 func (c *SystemParameterController) Create(ctx echo.Context) error {
 	request := new(dto.SystemParameterCreateRequest)
-	err := apputils.BindAndValidate(ctx, request)
+	err := helper.BindAndValidate(ctx, request)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = apputils.Mapper(&responseDto, created)
+	err = helper.Mapper(&responseDto, created)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 //	@router			/system-parameter/{id} [put]
 func (c *SystemParameterController) Update(ctx echo.Context) error {
 	request := new(dto.SystemParameterUpdateRequest)
-	err := apputils.BindAndValidate(ctx, request)
+	err := helper.BindAndValidate(ctx, request)
 
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
@@ -82,7 +82,7 @@ func (c *SystemParameterController) Update(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = apputils.Mapper(&responseDto, updated)
+	err = helper.Mapper(&responseDto, updated)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (c *SystemParameterController) Delete(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = apputils.Mapper(&responseDto, deleted)
+	err = helper.Mapper(&responseDto, deleted)
 	if err != nil {
 		return err
 	}
@@ -152,7 +152,7 @@ func (c *SystemParameterController) GetById(ctx echo.Context) error {
 	}
 
 	var responseDto = new(dto.SystemParameterResponse)
-	err = apputils.Mapper(&responseDto, result)
+	err = helper.Mapper(&responseDto, result)
 	if err != nil {
 		return err
 	}
@@ -180,7 +180,7 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error {
 	var responseDtos []*dto.SystemParameterResponse
 	for _, result := range results {
 		responseDto := new(dto.SystemParameterResponse)
-		err = apputils.Mapper(responseDto, result)
+		err = helper.Mapper(responseDto, result)
 		if err != nil {
 			return err
 		}

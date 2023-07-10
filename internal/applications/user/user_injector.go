@@ -16,11 +16,11 @@ import (
 )
 
 var providerUser = wire.NewSet(
-	repository.NewUserRepositoryImpl,
-	roleRepository.NewRoleRepositoryImpl,
-	roleUserRepository.NewRoleUserRepositoryImpl,
-	transaction.NewTrxServiceImpl,
-	service.NewUserServiceImpl,
+	repository.NewUserRepository,
+	roleRepository.NewRoleRepository,
+	roleUserRepository.NewRoleUserRepository,
+	transaction.NewTrxService,
+	service.NewUserService,
 	cache.NewCachingService,
 
 	wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)),

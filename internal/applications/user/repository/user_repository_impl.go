@@ -13,7 +13,7 @@ type UserRepositoryImpl struct {
 	client *ent.Client //non transactional client
 }
 
-func NewUserRepositoryImpl(client *ent.Client) *UserRepositoryImpl {
+func NewUserRepository(client *ent.Client) *UserRepositoryImpl {
 	return &UserRepositoryImpl{client: client}
 }
 

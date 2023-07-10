@@ -11,7 +11,7 @@ import (
 )
 
 var mockRoleRepository = new(mock_repository.RoleRepository)
-var service = NewRoleServiceImpl(mockRoleRepository)
+var service = NewRoleService(mockRoleRepository)
 
 func getRole(id uint64, name string, text string) ent.Role {
 	return ent.Role{

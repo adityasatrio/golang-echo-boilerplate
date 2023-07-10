@@ -1,4 +1,4 @@
-.PHONY: clean schema-gen mocks-gen wire-gen test build migration run
+.PHONY: clean schema mocks wire test build migration run
 
 MIGRATE_DIR := migrations/migration
 WIRE_DIR := internal/applications
@@ -21,14 +21,14 @@ test:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate ent models
-schema-gen:
+schema:
 	go generate ./ent
 
 # Generate mockery mocks
-mocks-gen:
+mocks:
 	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
 
-wire-gen:
+wire:
 	@echo "Enter directory: "; \
 	read dir; \
 	echo "Accessing directory and wire all DI $(WIRE_DIR)/$$dir"; \
@@ -39,9 +39,9 @@ docs:
 	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR) -ot $(OPENAPI_OUTPUT_TYPE)
 
 confirm:
-	@read -p "$(shell echo -e '\033[0;31m')Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
+	@read -p "$(shell echo -e '\033[0;31m') Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
 	if [ "$$choice" != "Y" ]; then \
-		echo "$(shell echo -e '\033[0;31m')Terminating the clean-up process.$(shell output sgr0)"; \
+		echo "$(shell echo -e '\033[0;31m') Terminating the clean-up process.$(shell output sgr0)"; \
     	exit 1; \
     fi
 
@@ -61,7 +61,7 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: schema-gen mocks-gen test build run
+all: schema mocks test build run
 
 migration-create:
 	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)

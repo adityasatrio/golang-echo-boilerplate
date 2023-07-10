@@ -10,11 +10,12 @@ import (
 	"myapp/configs/redis"
 	"myapp/configs/validator"
 	"myapp/ent"
-	restApi "myapp/internal/adapter/rest_api"
+	restApi "myapp/internal/adapter/rest"
 	"myapp/middleware"
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -75,7 +76,8 @@ func main() {
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
+	//signal.Notify(quit, os.Interrupt)
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM) //not tested
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

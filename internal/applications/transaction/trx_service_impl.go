@@ -10,7 +10,7 @@ type TrxServiceImpl struct {
 	client *ent.Client
 }
 
-func NewTrxServiceImpl(client *ent.Client) *TrxServiceImpl {
+func NewTrxService(client *ent.Client) *TrxServiceImpl {
 	return &TrxServiceImpl{client: client}
 }
 
