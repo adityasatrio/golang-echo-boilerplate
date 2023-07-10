@@ -17,6 +17,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	_ "myapp/cmd/docs"
 )
 
 //	@title			Echo Boilerplate Service
