@@ -5,9 +5,9 @@ import (
 	"github.com/tidwall/gjson"
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/dto"
-	"myapp/internal/apputils"
+	"myapp/internal/helper"
 	mock_service "myapp/mocks/system_parameter/service"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -16,11 +16,11 @@ import (
 
 func TestSystemParameterController_Create(t *testing.T) {
 
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// Create a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(data))
+	req := httptest.NewRequest(http.MethodPost, "/system-parameter", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -41,24 +41,24 @@ func TestSystemParameterController_Create(t *testing.T) {
 	if assert.NoError(t, controller.Create(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
-		IdKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.ID")
+		IdKey, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.ID")
 		assert.Equal(t, float64(1), IdKey)
 
-		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
 
 func TestSystemParameterController_Update(t *testing.T) {
 
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request with sample data
 	data := `{"Key":"key1","Value":"value1"}`
-	req := httptest.NewRequest(http.MethodPut, "/1", strings.NewReader(data))
+	req := httptest.NewRequest(http.MethodPut, "/system-parameter/1", strings.NewReader(data))
 	req.Header.Set("Content-Type", "application/json")
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -81,19 +81,19 @@ func TestSystemParameterController_Update(t *testing.T) {
 	if assert.NoError(t, controller.Update(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
 
 func TestSystemParameterController_Delete(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodDelete, "/1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/system-parameter/1", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -110,19 +110,19 @@ func TestSystemParameterController_Delete(t *testing.T) {
 	if assert.NoError(t, controller.Delete(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
 
 func TestSystemParameterController_GetByID(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodGet, "/1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/system-parameter/1", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -134,24 +134,24 @@ func TestSystemParameterController_GetByID(t *testing.T) {
 	// Initialize a new controller
 	controller := NewSystemParameterController(mockService)
 
-	// Test Delete function
+	// Test function
 	mockService.On("GetById", req.Context(), 1).Return(&ent.SystemParameter{Key: "key1", Value: "value1"}, nil)
 	if assert.NoError(t, controller.GetById(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		dataKey, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Key")
+		dataKey, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Key")
 		assert.Equal(t, "key1", dataKey)
 
-		dataValue, _ := apputils.GetFieldBytes(rec.Body.Bytes(), "data.Value")
+		dataValue, _ := helper.GetFieldBytes(rec.Body.Bytes(), "data.Value")
 		assert.Equal(t, "value1", dataValue)
 	}
 }
 
 func TestSystemParameterController_GetAll(t *testing.T) {
-	e := test_helper.InitEchoTest(t)
+	e := test.InitEchoTest(t)
 
 	// CreateTx a new request
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/system-parameter", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	//c.SetParamNames("id")
@@ -174,7 +174,7 @@ func TestSystemParameterController_GetAll(t *testing.T) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
 		// Assert the "data" field is an empty array
-		data, _ := apputils.GetResultBytes(rec.Body.Bytes(), "data")
+		data, _ := helper.GetResultBytes(rec.Body.Bytes(), "data")
 		assert.True(t, data.IsArray())
 		assert.Equal(t, 3, len(data.Array()))
 

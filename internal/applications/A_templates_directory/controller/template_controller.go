@@ -4,8 +4,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"myapp/internal/applications/A_templates_directory/dto"
 	"myapp/internal/applications/A_templates_directory/service"
-	"myapp/internal/apputils"
-	"myapp/internal/apputils/response"
+	"myapp/internal/helper"
+	"myapp/internal/helper/response"
 )
 
 type TemplateController struct {
@@ -24,7 +24,7 @@ func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
 	//You are forbidden to put any business logic in this layer
 
 	request := new(dto.ExampleRequest)
-	err := apputils.BindAndValidate(ctx, request)
+	err := helper.BindAndValidate(ctx, request)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
 
 	//handle response after get result from service layer
 	var responseDto = new(dto.ExampleResponse)
-	err = apputils.Mapper(&responseDto, serviceResult)
+	err = helper.Mapper(&responseDto, serviceResult)
 	if err != nil {
 		return err
 	}

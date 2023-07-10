@@ -13,7 +13,7 @@ type RoleUserRepositoryImpl struct {
 	client *ent.Client
 }
 
-func NewRoleUserRepositoryImpl(client *ent.Client) *RoleUserRepositoryImpl {
+func NewRoleUserRepository(client *ent.Client) *RoleUserRepositoryImpl {
 	return &RoleUserRepositoryImpl{
 		client: client,
 	}

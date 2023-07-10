@@ -3,13 +3,13 @@ package db
 import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
-	"myapp/test/test_helper"
+	"myapp/test"
 	"testing"
 )
 
 func TestSystemParameterRepositoryImpl_Create(t *testing.T) {
 
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -26,13 +26,13 @@ func TestSystemParameterRepositoryImpl_Create(t *testing.T) {
 	assert.Equal(t, createUser.Value, result.Value)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 
 }
 
 func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -63,13 +63,13 @@ func TestSystemParameterRepositoryImpl_Update(t *testing.T) {
 	assert.Equal(t, "value20002", afterUpdated.Value)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 
 }
 
 func TestSystemParameterRepositoryImpl_Delete(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -89,12 +89,12 @@ func TestSystemParameterRepositoryImpl_Delete(t *testing.T) {
 	assert.Nil(t, deletedResult)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestSystemParameterRepositoryImpl_SoftDelete(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -115,12 +115,12 @@ func TestSystemParameterRepositoryImpl_SoftDelete(t *testing.T) {
 	assert.NotNil(t, deletedResult.DeletedBy)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestSystemParameterRepositoryImpl_GetById(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -142,12 +142,12 @@ func TestSystemParameterRepositoryImpl_GetById(t *testing.T) {
 	assert.Equal(t, result.Value, getResult.Value)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }
 
 func TestSystemParameterRepositoryImpl_GetAll(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -167,13 +167,13 @@ func TestSystemParameterRepositoryImpl_GetAll(t *testing.T) {
 	assert.NotNil(t, getResultAll)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 
 }
 
 func TestSystemParameterRepositoryImpl_GetByKey(t *testing.T) {
-	client, ctx := test_helper.TestDbConnection(t)
+	client, ctx := test.DbConnection(t)
 
 	repo := NewSystemParameterRepository(client)
 
@@ -195,6 +195,6 @@ func TestSystemParameterRepositoryImpl_GetByKey(t *testing.T) {
 	assert.Equal(t, result.Value, getResult.Value)
 
 	t.Cleanup(func() {
-		test_helper.TestDbConnectionClose(client)
+		test.DbConnectionClose(client)
 	})
 }

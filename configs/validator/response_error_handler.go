@@ -3,7 +3,7 @@ package validator
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"myapp/internal/apputils/response"
+	"myapp/internal/helper/response"
 )
 
 func SetupGlobalHttpUnhandleErrors(e *echo.Echo) {

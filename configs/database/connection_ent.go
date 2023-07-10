@@ -34,9 +34,6 @@ func NewEntClient() *ent.Client {
 		log.Fatalf("failed opening connection to DB: %v", err)
 	}
 
-	//from docs define close on this function, but will impact cant create DB session on repository
-	//defer client.Close()
-
 	// Run the auto migration tool.
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)

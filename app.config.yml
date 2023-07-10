@@ -2,6 +2,7 @@ application:
   name: echo-boilerplate
   version: 0.0.1
   port: 8888
+  mode: dev #dev|prod
   cors:
     allowedHost: localhost, https://labstack.com, https://labstack.net
 
@@ -11,6 +12,14 @@ db.configs:
   host: localhost
   port: 3306
   database: test_ent
+  maxIdleConn: 10
+  maxOpenConn: 100
+
+outbound:
+  quotes:
+    get-url: https://programming-quotesapi.vercel.app/api/random
+    post-url: https://en8trqq30hty3.x.pipedream.net/
+
 
 cache:
   configs:

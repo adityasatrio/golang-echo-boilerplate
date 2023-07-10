@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/ent/role"
-	//"myapp/ent/role"
 	"time"
 )
 
@@ -14,7 +13,7 @@ type RoleRepositoryImpl struct {
 	client *ent.Client
 }
 
-func NewRoleRepositoryImpl(client *ent.Client) *RoleRepositoryImpl {
+func NewRoleRepository(client *ent.Client) *RoleRepositoryImpl {
 	return &RoleRepositoryImpl{client: client}
 }
 
