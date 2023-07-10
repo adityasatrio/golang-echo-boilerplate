@@ -17,7 +17,7 @@ func NewUserController(service service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
-// CreateUser godoc
+// Create is controller to create new user.
 //
 //	@summary		Create new user
 //	@description	Create new user
@@ -51,7 +51,7 @@ func (c *UserController) Create(ctx echo.Context) error {
 	return response.Created(ctx, responseDto)
 }
 
-// UpdateUser godoc
+// Update is controller to update a user.
 //
 //	@summary		Update a user
 //	@description	Update a user
@@ -92,7 +92,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
-// DeleteUser godoc
+// Delete is controller to delete a user.
 //
 //	@summary		Delete a user
 //	@description	Delete a user
@@ -126,7 +126,7 @@ func (c *UserController) Delete(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
-// GetUserById godoc
+// GetById is controller to get a user by its id.
 //
 //	@summary		Get a user by id
 //	@description	Get a user by id
@@ -160,7 +160,7 @@ func (c *UserController) GetById(ctx echo.Context) error {
 	return response.Success(ctx, responseDto)
 }
 
-// GetAllUsers godoc
+// GetAll is controller to get list of users.
 //
 //	@summary		Get all users
 //	@description	Get all users
