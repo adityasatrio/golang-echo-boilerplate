@@ -125,3 +125,21 @@ make migration-down version={your_version}
 ```
 make migration-force version={your_version}
 ```
+
+### OpenAPI Docs and Swagger
+
+Steps to generate OpenAPI Docs and use via Swagger UI:
+
+1. Install `swag` command into your local machine:
+    ```shell
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+    
+2. Annotate each controller with [Declarative Comment Format](https://github.com/swaggo/swag#declarative-comments-format)
+
+3. Update and synchronize the `cmd/docs` module with your update:
+    ```shell
+    make swagger
+    ```
+    
+4. Restart the service and access Swagger UI at `http://localhost:8888/:app-name/swagger/index.html`

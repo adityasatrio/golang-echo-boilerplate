@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
+	"github.com/swaggo/echo-swagger"
 	"myapp/ent"
 	helloController "myapp/internal/applications/health/controller"
 	"myapp/internal/applications/health/repository"
@@ -19,6 +20,9 @@ import (
 func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Client) {
 
 	appName := viper.GetString("application.name")
+
+	// Swagger OpenAPI Docs
+	e.GET(appName+"/swagger/*", echoSwagger.WrapHandler)
 
 	//manual injection
 	helloWorldsRepository := repository.NewHealthRepository(connDb)
