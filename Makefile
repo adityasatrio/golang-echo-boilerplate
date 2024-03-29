@@ -6,6 +6,9 @@ OPENAPI_OUTPUT_DIR := cmd/docs
 
 all: schema-advance mocks swagger test build run
 
+OPENAPI_ENTRY_POINT := cmd/main.go
+OPENAPI_OUTPUT_DIR := cmd/docs
+
 # Build the project
 build: test
 	go build -o main cmd/main.go
