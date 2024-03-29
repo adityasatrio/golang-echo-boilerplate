@@ -8,7 +8,7 @@ import (
 	"myapp/exceptions"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/helper"
-	mock_service "myapp/mocks/user/service"
+	mock_service "myapp/mocks/applications/user/service"
 	"myapp/test"
 	"net/http"
 	"net/http/httptest"

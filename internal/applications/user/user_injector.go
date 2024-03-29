@@ -7,27 +7,27 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"myapp/ent"
-	"myapp/internal/applications/cache"
 	roleRepository "myapp/internal/applications/role/repository"
 	roleUserRepository "myapp/internal/applications/role_user/repository"
-	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/repository"
 	"myapp/internal/applications/user/service"
+	"myapp/internal/component/cache"
+	"myapp/internal/component/transaction"
 )
 
 var providerUser = wire.NewSet(
 	repository.NewUserRepository,
 	roleRepository.NewRoleRepository,
 	roleUserRepository.NewRoleUserRepository,
-	transaction.NewTrxService,
+	transaction.NewTrx,
 	service.NewUserService,
-	cache.NewCachingService,
+	cache.NewCache,
 
 	wire.Bind(new(repository.UserRepository), new(*repository.UserRepositoryImpl)),
 	wire.Bind(new(roleRepository.RoleRepository), new(*roleRepository.RoleRepositoryImpl)),
 	wire.Bind(new(roleUserRepository.RoleUserRepository), new(*roleUserRepository.RoleUserRepositoryImpl)),
-	wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)),
-	wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)),
+	wire.Bind(new(transaction.Trx), new(*transaction.TrxImpl)),
+	wire.Bind(new(cache.Cache), new(*cache.CacheImpl)),
 	wire.Bind(new(service.UserService), new(*service.UserServiceImpl)),
 )
 

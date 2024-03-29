@@ -1,4 +1,4 @@
-basePath: /echo-boilerplate
+basePath: /micro-go-template
 definitions:
   dto.SystemParameterCreateRequest:
     properties:
@@ -130,11 +130,39 @@ definitions:
 host: localhost:8888
 info:
   contact:
-    url: https://github.com/adityasatrio/golang-echo-boilerplate
+    url: https://example.com
   description: Please welcome a holy high-speed and high-performance Echo service!
-  title: Echo Boilerplate Service
+  title: Micro Go Template Service
   version: 0.0.1
 paths:
+  /example/rabbitmq:
+    get:
+      consumes:
+      - application/json
+      description: This just sample for publish don't use this for any feature
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: This just sample for publish don't use this for any feature
+      tags:
+      - example publish
   /system-parameter:
     get:
       consumes:

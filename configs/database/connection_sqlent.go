@@ -3,11 +3,9 @@ package database
 import (
 	"database/sql"
 	entSql "entgo.io/ent/dialect/sql"
-
-	"context"
 	"fmt"
 	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
+	"myapp/configs/credential"
 	"myapp/ent"
 	"time"
 
@@ -17,11 +15,11 @@ import (
 func NewSqlEntClient() *ent.Client {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		viper.GetString("db.configs.username"),
-		viper.GetString("db.configs.password"),
-		viper.GetString("db.configs.host"),
-		viper.GetString("db.configs.port"),
-		viper.GetString("db.configs.database"))
+		credential.GetString("db.configs.username"),
+		credential.GetString("db.configs.password"),
+		credential.GetString("db.configs.host"),
+		credential.GetString("db.configs.port"),
+		credential.GetString("db.configs.database"))
 
 	log.Debug("DSN=", dsn) //for debug only
 
@@ -30,14 +28,14 @@ func NewSqlEntClient() *ent.Client {
 		log.Fatalf("failed opening connection to DB: %v", err)
 	}
 
-	db.SetMaxIdleConns(viper.GetInt("db.configs.maxIdleConn"))
-	db.SetMaxOpenConns(viper.GetInt("db.configs.maxOpenConn"))
+	db.SetMaxIdleConns(credential.GetInt("db.configs.maxIdleConn"))
+	db.SetMaxOpenConns(credential.GetInt("db.configs.maxOpenConn"))
 	db.SetConnMaxLifetime(time.Hour)
 
 	drv := entSql.OpenDB("mysql", db)
 
 	var client = &ent.Client{}
-	appMode := viper.GetString("application.mode")
+	appMode := credential.GetString("application.mode")
 	if appMode == "prod" {
 		log.Info("initialized database x sqlDb x orm ent : DEV")
 		client = ent.NewClient(ent.Driver(drv))
@@ -51,14 +49,18 @@ func NewSqlEntClient() *ent.Client {
 	}
 
 	// Run the auto migration tool.
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
+	//if err := client.Schema.Create(context.Background()); err != nil {
+	//	log.Fatalf("failed creating schema resources: %v", err)
+	//}
 
 	if err != nil {
 		log.Printf("err : %s\n", err)
 	}
 
 	log.Info("initialized database x sqlDb x orm ent : success")
+
+	//setup hooks
+	SetupHooks(client)
+
 	return client
 }

@@ -18,7 +18,7 @@ type UserDevice struct {
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
 	// Unix time of when the latest update occurred
-	Version int64 `json:"version,omitempty"`
+	Versions int64 `json:"versions,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -47,7 +47,7 @@ func (*UserDevice) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userdevice.FieldID, userdevice.FieldVersion, userdevice.FieldUserID:
+		case userdevice.FieldID, userdevice.FieldVersions, userdevice.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case userdevice.FieldCreatedBy, userdevice.FieldUpdatedBy, userdevice.FieldDeletedBy, userdevice.FieldAppVersion, userdevice.FieldPlatform, userdevice.FieldDeviceID:
 			values[i] = new(sql.NullString)
@@ -74,11 +74,11 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ud.ID = uint64(value.Int64)
-		case userdevice.FieldVersion:
+		case userdevice.FieldVersions:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field version", values[i])
+				return fmt.Errorf("unexpected type %T for field versions", values[i])
 			} else if value.Valid {
-				ud.Version = value.Int64
+				ud.Versions = value.Int64
 			}
 		case userdevice.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -176,8 +176,8 @@ func (ud *UserDevice) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserDevice(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ud.ID))
-	builder.WriteString("version=")
-	builder.WriteString(fmt.Sprintf("%v", ud.Version))
+	builder.WriteString("versions=")
+	builder.WriteString(fmt.Sprintf("%v", ud.Versions))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(ud.CreatedBy)

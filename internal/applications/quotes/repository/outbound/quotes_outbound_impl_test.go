@@ -7,10 +7,25 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"myapp/configs/http"
 	"myapp/internal/applications/quotes/dto"
 	"myapp/test"
 	"testing"
 )
+
+func TestNewQuoteOutbound(t *testing.T) {
+	// Create a mock of the resty.Client
+	mockClient := http.New()
+
+	// Assert that the NewQuoteOutbound() function returns a QuoteOutboundImpl with the mock client
+	quoteOutbound := NewQuoteOutbound()
+	assert.ObjectsAreEqual(mockClient, quoteOutbound.ClientApi)
+	assert.ObjectsAreEqualValues(mockClient, quoteOutbound.ClientApi)
+
+	//if quoteOutbound.ClientApi != mockClient {
+	//	t.Errorf("Expected service to be %v, but got %v", mockClient, quoteOutbound.ClientApi)
+	//}
+}
 
 func TestGetQuotes(t *testing.T) {
 	client := resty.New()
@@ -22,7 +37,7 @@ func TestGetQuotes(t *testing.T) {
 	httpmock.ActivateNonDefault(client.GetClient())
 	defer httpmock.DeactivateAndReset()
 
-	viper.Set("outbound.quotes.get-url", "http://test-url")
+	viper.Set("outbound.quotes.getUrl", "http://test-url")
 
 	tests := []struct {
 		name             string
@@ -68,7 +83,7 @@ func TestGetQuotes_dtoResponse(t *testing.T) {
 	httpmock.ActivateNonDefault(client.GetClient())
 	defer httpmock.DeactivateAndReset()
 
-	viper.Set("outbound.quotes.get-url", "http://test-url")
+	viper.Set("outbound.quotes.getUrl", "http://test-url")
 
 	tests := []struct {
 		name             string
@@ -91,15 +106,18 @@ func TestGetQuotes_dtoResponse(t *testing.T) {
 			name:             "Failed GET request",
 			queryParameter:   map[string]string{"query1": "value1", "query2": "value2"},
 			mockStatusCode:   500,
-			mockBodyResponse: "",
+			mockBodyResponse: `{"error" : true}`,
 			expectedResp:     &dto.QuoteApiResponse{},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			httpmock.RegisterResponder("GET", "http://test-url",
-				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse))
+			httpmock.RegisterResponder(
+				"GET",
+				"http://test-url",
+				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse),
+			)
 
 			resp, err := quoteOutboundImpl.GetQuotes(ctx, tt.queryParameter)
 
@@ -124,7 +142,7 @@ func TestPostQuotes_dtoResponse(t *testing.T) {
 	httpmock.ActivateNonDefault(client.GetClient())
 	defer httpmock.DeactivateAndReset()
 
-	viper.Set("outbound.quotes.post-url", "http://test-url")
+	viper.Set("outbound.quotes.postUrl", "http://test-url")
 
 	tests := []struct {
 		name             string
@@ -155,15 +173,18 @@ func TestPostQuotes_dtoResponse(t *testing.T) {
 				Quote:  "test response Failures",
 			},
 			mockStatusCode:   500,
-			mockBodyResponse: "",
+			mockBodyResponse: `{"err": true}`,
 			expectedResp:     &dto.QuoteApiResponse{},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			httpmock.RegisterResponder("POST", "http://test-url",
-				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse))
+			httpmock.RegisterResponder(
+				"POST",
+				"http://test-url",
+				test.ResponderJsonResponse(tt.mockStatusCode, tt.mockBodyResponse),
+			)
 
 			resp, err := quoteOutboundImpl.PostQuotes(ctx, tt.mockRequest)
 

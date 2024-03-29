@@ -33,6 +33,14 @@ func TestCachingServiceImpl(t *testing.T) {
 	expiration := 1 * time.Hour
 
 	// Test method Create
+	t.Run("Ping", func(t *testing.T) {
+		err := cachingService.Ping(context.Background())
+		if err != nil {
+			t.Errorf("Failed to create cache: %v", err)
+		}
+	})
+
+	// Test method Create
 	t.Run("Create", func(t *testing.T) {
 		_, err := cachingService.Create(context.Background(), key, data, expiration)
 		if err != nil {
@@ -60,4 +68,5 @@ func TestCachingServiceImpl(t *testing.T) {
 			t.Errorf("Failed to delete cache: %v", err)
 		}
 	})
+
 }

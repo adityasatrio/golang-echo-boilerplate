@@ -26,10 +26,10 @@ func init() {
 	_ = petMixinFields1
 	petFields := schema.Pet{}.Fields()
 	_ = petFields
-	// petDescVersion is the schema descriptor for version field.
-	petDescVersion := petMixinFields0[0].Descriptor()
-	// pet.DefaultVersion holds the default value on creation for the version field.
-	pet.DefaultVersion = petDescVersion.Default.(func() int64)
+	// petDescVersions is the schema descriptor for versions field.
+	petDescVersions := petMixinFields0[0].Descriptor()
+	// pet.DefaultVersions holds the default value on creation for the versions field.
+	pet.DefaultVersions = petDescVersions.Default.(int64)
 	// petDescCreatedBy is the schema descriptor for created_by field.
 	petDescCreatedBy := petMixinFields1[0].Descriptor()
 	// pet.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
@@ -82,10 +82,10 @@ func init() {
 	_ = roleMixinFields1
 	roleFields := schema.Role{}.Fields()
 	_ = roleFields
-	// roleDescVersion is the schema descriptor for version field.
-	roleDescVersion := roleMixinFields0[0].Descriptor()
-	// role.DefaultVersion holds the default value on creation for the version field.
-	role.DefaultVersion = roleDescVersion.Default.(func() int64)
+	// roleDescVersions is the schema descriptor for versions field.
+	roleDescVersions := roleMixinFields0[0].Descriptor()
+	// role.DefaultVersions holds the default value on creation for the versions field.
+	role.DefaultVersions = roleDescVersions.Default.(int64)
 	// roleDescCreatedBy is the schema descriptor for created_by field.
 	roleDescCreatedBy := roleMixinFields1[0].Descriptor()
 	// role.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
@@ -107,10 +107,10 @@ func init() {
 	_ = roleuserMixinFields1
 	roleuserFields := schema.RoleUser{}.Fields()
 	_ = roleuserFields
-	// roleuserDescVersion is the schema descriptor for version field.
-	roleuserDescVersion := roleuserMixinFields0[0].Descriptor()
-	// roleuser.DefaultVersion holds the default value on creation for the version field.
-	roleuser.DefaultVersion = roleuserDescVersion.Default.(func() int64)
+	// roleuserDescVersions is the schema descriptor for versions field.
+	roleuserDescVersions := roleuserMixinFields0[0].Descriptor()
+	// roleuser.DefaultVersions holds the default value on creation for the versions field.
+	roleuser.DefaultVersions = roleuserDescVersions.Default.(int64)
 	// roleuserDescCreatedBy is the schema descriptor for created_by field.
 	roleuserDescCreatedBy := roleuserMixinFields1[0].Descriptor()
 	// roleuser.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
@@ -132,10 +132,10 @@ func init() {
 	_ = systemparameterMixinFields1
 	systemparameterFields := schema.SystemParameter{}.Fields()
 	_ = systemparameterFields
-	// systemparameterDescVersion is the schema descriptor for version field.
-	systemparameterDescVersion := systemparameterMixinFields0[0].Descriptor()
-	// systemparameter.DefaultVersion holds the default value on creation for the version field.
-	systemparameter.DefaultVersion = systemparameterDescVersion.Default.(func() int64)
+	// systemparameterDescVersions is the schema descriptor for versions field.
+	systemparameterDescVersions := systemparameterMixinFields0[0].Descriptor()
+	// systemparameter.DefaultVersions holds the default value on creation for the versions field.
+	systemparameter.DefaultVersions = systemparameterDescVersions.Default.(int64)
 	// systemparameterDescCreatedBy is the schema descriptor for created_by field.
 	systemparameterDescCreatedBy := systemparameterMixinFields1[0].Descriptor()
 	// systemparameter.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
@@ -165,10 +165,10 @@ func init() {
 	_ = userMixinFields1
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescVersion is the schema descriptor for version field.
-	userDescVersion := userMixinFields0[0].Descriptor()
-	// user.DefaultVersion holds the default value on creation for the version field.
-	user.DefaultVersion = userDescVersion.Default.(func() int64)
+	// userDescVersions is the schema descriptor for versions field.
+	userDescVersions := userMixinFields0[0].Descriptor()
+	// user.DefaultVersions holds the default value on creation for the versions field.
+	user.DefaultVersions = userDescVersions.Default.(int64)
 	// userDescCreatedBy is the schema descriptor for created_by field.
 	userDescCreatedBy := userMixinFields1[0].Descriptor()
 	// user.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
@@ -190,10 +190,10 @@ func init() {
 	_ = userdeviceMixinFields1
 	userdeviceFields := schema.UserDevice{}.Fields()
 	_ = userdeviceFields
-	// userdeviceDescVersion is the schema descriptor for version field.
-	userdeviceDescVersion := userdeviceMixinFields0[0].Descriptor()
-	// userdevice.DefaultVersion holds the default value on creation for the version field.
-	userdevice.DefaultVersion = userdeviceDescVersion.Default.(func() int64)
+	// userdeviceDescVersions is the schema descriptor for versions field.
+	userdeviceDescVersions := userdeviceMixinFields0[0].Descriptor()
+	// userdevice.DefaultVersions holds the default value on creation for the versions field.
+	userdevice.DefaultVersions = userdeviceDescVersions.Default.(int64)
 	// userdeviceDescCreatedBy is the schema descriptor for created_by field.
 	userdeviceDescCreatedBy := userdeviceMixinFields1[0].Descriptor()
 	// userdevice.CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.

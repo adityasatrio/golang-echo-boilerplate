@@ -20,16 +20,16 @@ type RoleCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (rc *RoleCreate) SetVersion(i int64) *RoleCreate {
-	rc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (rc *RoleCreate) SetVersions(i int64) *RoleCreate {
+	rc.mutation.SetVersions(i)
 	return rc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (rc *RoleCreate) SetNillableVersion(i *int64) *RoleCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (rc *RoleCreate) SetNillableVersions(i *int64) *RoleCreate {
 	if i != nil {
-		rc.SetVersion(*i)
+		rc.SetVersions(*i)
 	}
 	return rc
 }
@@ -163,9 +163,9 @@ func (rc *RoleCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (rc *RoleCreate) defaults() {
-	if _, ok := rc.mutation.Version(); !ok {
-		v := role.DefaultVersion()
-		rc.mutation.SetVersion(v)
+	if _, ok := rc.mutation.Versions(); !ok {
+		v := role.DefaultVersions
+		rc.mutation.SetVersions(v)
 	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		v := role.DefaultCreatedAt()
@@ -179,8 +179,8 @@ func (rc *RoleCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rc *RoleCreate) check() error {
-	if _, ok := rc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "Role.version"`)}
+	if _, ok := rc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "Role.versions"`)}
 	}
 	if _, ok := rc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Role.created_by"`)}
@@ -234,9 +234,9 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := rc.mutation.Version(); ok {
-		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := rc.mutation.Versions(); ok {
+		_spec.SetField(role.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := rc.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)

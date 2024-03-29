@@ -18,8 +18,9 @@ import (
 // UserDeviceUpdate is the builder for updating UserDevice entities.
 type UserDeviceUpdate struct {
 	config
-	hooks    []Hook
-	mutation *UserDeviceMutation
+	hooks     []Hook
+	mutation  *UserDeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the UserDeviceUpdate builder.
@@ -28,24 +29,24 @@ func (udu *UserDeviceUpdate) Where(ps ...predicate.UserDevice) *UserDeviceUpdate
 	return udu
 }
 
-// SetVersion sets the "version" field.
-func (udu *UserDeviceUpdate) SetVersion(i int64) *UserDeviceUpdate {
-	udu.mutation.ResetVersion()
-	udu.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (udu *UserDeviceUpdate) SetVersions(i int64) *UserDeviceUpdate {
+	udu.mutation.ResetVersions()
+	udu.mutation.SetVersions(i)
 	return udu
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (udu *UserDeviceUpdate) SetNillableVersion(i *int64) *UserDeviceUpdate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableVersions(i *int64) *UserDeviceUpdate {
 	if i != nil {
-		udu.SetVersion(*i)
+		udu.SetVersions(*i)
 	}
 	return udu
 }
 
-// AddVersion adds i to the "version" field.
-func (udu *UserDeviceUpdate) AddVersion(i int64) *UserDeviceUpdate {
-	udu.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (udu *UserDeviceUpdate) AddVersions(i int64) *UserDeviceUpdate {
+	udu.mutation.AddVersions(i)
 	return udu
 }
 
@@ -217,6 +218,12 @@ func (udu *UserDeviceUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (udu *UserDeviceUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserDeviceUpdate {
+	udu.modifiers = append(udu.modifiers, modifiers...)
+	return udu
+}
+
 func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := udu.check(); err != nil {
 		return n, err
@@ -229,11 +236,11 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := udu.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
+	if value, ok := udu.mutation.Versions(); ok {
+		_spec.SetField(userdevice.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := udu.mutation.AddedVersion(); ok {
-		_spec.AddField(userdevice.FieldVersion, field.TypeInt64, value)
+	if value, ok := udu.mutation.AddedVersions(); ok {
+		_spec.AddField(userdevice.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := udu.mutation.CreatedBy(); ok {
 		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
@@ -277,6 +284,7 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if udu.mutation.DeviceIDCleared() {
 		_spec.ClearField(userdevice.FieldDeviceID, field.TypeString)
 	}
+	_spec.AddModifiers(udu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, udu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{userdevice.Label}
@@ -292,29 +300,30 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // UserDeviceUpdateOne is the builder for updating a single UserDevice entity.
 type UserDeviceUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *UserDeviceMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *UserDeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetVersion sets the "version" field.
-func (uduo *UserDeviceUpdateOne) SetVersion(i int64) *UserDeviceUpdateOne {
-	uduo.mutation.ResetVersion()
-	uduo.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (uduo *UserDeviceUpdateOne) SetVersions(i int64) *UserDeviceUpdateOne {
+	uduo.mutation.ResetVersions()
+	uduo.mutation.SetVersions(i)
 	return uduo
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (uduo *UserDeviceUpdateOne) SetNillableVersion(i *int64) *UserDeviceUpdateOne {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableVersions(i *int64) *UserDeviceUpdateOne {
 	if i != nil {
-		uduo.SetVersion(*i)
+		uduo.SetVersions(*i)
 	}
 	return uduo
 }
 
-// AddVersion adds i to the "version" field.
-func (uduo *UserDeviceUpdateOne) AddVersion(i int64) *UserDeviceUpdateOne {
-	uduo.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (uduo *UserDeviceUpdateOne) AddVersions(i int64) *UserDeviceUpdateOne {
+	uduo.mutation.AddVersions(i)
 	return uduo
 }
 
@@ -499,6 +508,12 @@ func (uduo *UserDeviceUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (uduo *UserDeviceUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserDeviceUpdateOne {
+	uduo.modifiers = append(uduo.modifiers, modifiers...)
+	return uduo
+}
+
 func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice, err error) {
 	if err := uduo.check(); err != nil {
 		return _node, err
@@ -528,11 +543,11 @@ func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice
 			}
 		}
 	}
-	if value, ok := uduo.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
+	if value, ok := uduo.mutation.Versions(); ok {
+		_spec.SetField(userdevice.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := uduo.mutation.AddedVersion(); ok {
-		_spec.AddField(userdevice.FieldVersion, field.TypeInt64, value)
+	if value, ok := uduo.mutation.AddedVersions(); ok {
+		_spec.AddField(userdevice.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := uduo.mutation.CreatedBy(); ok {
 		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)
@@ -576,6 +591,7 @@ func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice
 	if uduo.mutation.DeviceIDCleared() {
 		_spec.ClearField(userdevice.FieldDeviceID, field.TypeString)
 	}
+	_spec.AddModifiers(uduo.modifiers...)
 	_node = &UserDevice{config: uduo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

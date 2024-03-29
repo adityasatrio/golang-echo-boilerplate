@@ -18,7 +18,7 @@ type User struct {
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
 	// Unix time of when the latest update occurred
-	Version int64 `json:"version,omitempty"`
+	Versions int64 `json:"versions,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -81,7 +81,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsVerified, user.FieldPregnancyMode:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldVersion, user.FieldRoleID:
+		case user.FieldID, user.FieldVersions, user.FieldRoleID:
 			values[i] = new(sql.NullInt64)
 		case user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldName, user.FieldPassword, user.FieldAvatar, user.FieldEmail, user.FieldRememberToken, user.FieldSocialMediaID, user.FieldLoginType, user.FieldSubSpecialist, user.FieldFirebaseToken, user.FieldInfo, user.FieldDescription, user.FieldSpecialist, user.FieldPhone:
 			values[i] = new(sql.NullString)
@@ -108,11 +108,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = uint64(value.Int64)
-		case user.FieldVersion:
+		case user.FieldVersions:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field version", values[i])
+				return fmt.Errorf("unexpected type %T for field versions", values[i])
 			} else if value.Valid {
-				u.Version = value.Int64
+				u.Versions = value.Int64
 			}
 		case user.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -306,8 +306,8 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	builder.WriteString("version=")
-	builder.WriteString(fmt.Sprintf("%v", u.Version))
+	builder.WriteString("versions=")
+	builder.WriteString(fmt.Sprintf("%v", u.Versions))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(u.CreatedBy)

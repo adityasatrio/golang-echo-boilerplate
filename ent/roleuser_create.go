@@ -20,16 +20,16 @@ type RoleUserCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (ruc *RoleUserCreate) SetVersion(i int64) *RoleUserCreate {
-	ruc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (ruc *RoleUserCreate) SetVersions(i int64) *RoleUserCreate {
+	ruc.mutation.SetVersions(i)
 	return ruc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (ruc *RoleUserCreate) SetNillableVersion(i *int64) *RoleUserCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (ruc *RoleUserCreate) SetNillableVersions(i *int64) *RoleUserCreate {
 	if i != nil {
-		ruc.SetVersion(*i)
+		ruc.SetVersions(*i)
 	}
 	return ruc
 }
@@ -179,9 +179,9 @@ func (ruc *RoleUserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ruc *RoleUserCreate) defaults() {
-	if _, ok := ruc.mutation.Version(); !ok {
-		v := roleuser.DefaultVersion()
-		ruc.mutation.SetVersion(v)
+	if _, ok := ruc.mutation.Versions(); !ok {
+		v := roleuser.DefaultVersions
+		ruc.mutation.SetVersions(v)
 	}
 	if _, ok := ruc.mutation.CreatedAt(); !ok {
 		v := roleuser.DefaultCreatedAt()
@@ -195,8 +195,8 @@ func (ruc *RoleUserCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ruc *RoleUserCreate) check() error {
-	if _, ok := ruc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "RoleUser.version"`)}
+	if _, ok := ruc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "RoleUser.versions"`)}
 	}
 	if _, ok := ruc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "RoleUser.created_by"`)}
@@ -244,9 +244,9 @@ func (ruc *RoleUserCreate) createSpec() (*RoleUser, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := ruc.mutation.Version(); ok {
-		_spec.SetField(roleuser.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := ruc.mutation.Versions(); ok {
+		_spec.SetField(roleuser.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := ruc.mutation.CreatedBy(); ok {
 		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)

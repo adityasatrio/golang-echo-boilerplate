@@ -21,6 +21,7 @@ type SystemParameterQuery struct {
 	order      []systemparameter.OrderOption
 	inters     []Interceptor
 	predicates []predicate.SystemParameter
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -261,12 +262,12 @@ func (spq *SystemParameterQuery) Clone() *SystemParameterQuery {
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Versions int64 `json:"versions,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.SystemParameter.Query().
-//		GroupBy(systemparameter.FieldVersion).
+//		GroupBy(systemparameter.FieldVersions).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *SystemParameterGroupBy {
@@ -284,11 +285,11 @@ func (spq *SystemParameterQuery) GroupBy(field string, fields ...string) *System
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Versions int64 `json:"versions,omitempty"`
 //	}
 //
 //	client.SystemParameter.Query().
-//		Select(systemparameter.FieldVersion).
+//		Select(systemparameter.FieldVersions).
 //		Scan(ctx, &v)
 func (spq *SystemParameterQuery) Select(fields ...string) *SystemParameterSelect {
 	spq.ctx.Fields = append(spq.ctx.Fields, fields...)
@@ -342,6 +343,9 @@ func (spq *SystemParameterQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(spq.modifiers) > 0 {
+		_spec.Modifiers = spq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (spq *SystemParameterQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 
 func (spq *SystemParameterQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := spq.querySpec()
+	if len(spq.modifiers) > 0 {
+		_spec.Modifiers = spq.modifiers
+	}
 	_spec.Node.Columns = spq.ctx.Fields
 	if len(spq.ctx.Fields) > 0 {
 		_spec.Unique = spq.ctx.Unique != nil && *spq.ctx.Unique
@@ -418,6 +425,9 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if spq.ctx.Unique != nil && *spq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range spq.modifiers {
+		m(selector)
+	}
 	for _, p := range spq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (spq *SystemParameterQuery) Modify(modifiers ...func(s *sql.Selector)) *SystemParameterSelect {
+	spq.modifiers = append(spq.modifiers, modifiers...)
+	return spq.Select()
 }
 
 // SystemParameterGroupBy is the group-by builder for SystemParameter entities.
@@ -523,4 +539,10 @@ func (sps *SystemParameterSelect) sqlScan(ctx context.Context, root *SystemParam
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (sps *SystemParameterSelect) Modify(modifiers ...func(s *sql.Selector)) *SystemParameterSelect {
+	sps.modifiers = append(sps.modifiers, modifiers...)
+	return sps
 }

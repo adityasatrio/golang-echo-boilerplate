@@ -20,16 +20,16 @@ type UserDeviceCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (udc *UserDeviceCreate) SetVersion(i int64) *UserDeviceCreate {
-	udc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (udc *UserDeviceCreate) SetVersions(i int64) *UserDeviceCreate {
+	udc.mutation.SetVersions(i)
 	return udc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (udc *UserDeviceCreate) SetNillableVersion(i *int64) *UserDeviceCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableVersions(i *int64) *UserDeviceCreate {
 	if i != nil {
-		udc.SetVersion(*i)
+		udc.SetVersions(*i)
 	}
 	return udc
 }
@@ -183,9 +183,9 @@ func (udc *UserDeviceCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (udc *UserDeviceCreate) defaults() {
-	if _, ok := udc.mutation.Version(); !ok {
-		v := userdevice.DefaultVersion()
-		udc.mutation.SetVersion(v)
+	if _, ok := udc.mutation.Versions(); !ok {
+		v := userdevice.DefaultVersions
+		udc.mutation.SetVersions(v)
 	}
 	if _, ok := udc.mutation.CreatedAt(); !ok {
 		v := userdevice.DefaultCreatedAt()
@@ -199,8 +199,8 @@ func (udc *UserDeviceCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (udc *UserDeviceCreate) check() error {
-	if _, ok := udc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "UserDevice.version"`)}
+	if _, ok := udc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "UserDevice.versions"`)}
 	}
 	if _, ok := udc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "UserDevice.created_by"`)}
@@ -257,9 +257,9 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := udc.mutation.Version(); ok {
-		_spec.SetField(userdevice.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := udc.mutation.Versions(); ok {
+		_spec.SetField(userdevice.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := udc.mutation.CreatedBy(); ok {
 		_spec.SetField(userdevice.FieldCreatedBy, field.TypeString, value)

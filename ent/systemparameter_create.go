@@ -20,16 +20,16 @@ type SystemParameterCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (spc *SystemParameterCreate) SetVersion(i int64) *SystemParameterCreate {
-	spc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (spc *SystemParameterCreate) SetVersions(i int64) *SystemParameterCreate {
+	spc.mutation.SetVersions(i)
 	return spc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (spc *SystemParameterCreate) SetNillableVersion(i *int64) *SystemParameterCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (spc *SystemParameterCreate) SetNillableVersions(i *int64) *SystemParameterCreate {
 	if i != nil {
-		spc.SetVersion(*i)
+		spc.SetVersions(*i)
 	}
 	return spc
 }
@@ -157,9 +157,9 @@ func (spc *SystemParameterCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (spc *SystemParameterCreate) defaults() {
-	if _, ok := spc.mutation.Version(); !ok {
-		v := systemparameter.DefaultVersion()
-		spc.mutation.SetVersion(v)
+	if _, ok := spc.mutation.Versions(); !ok {
+		v := systemparameter.DefaultVersions
+		spc.mutation.SetVersions(v)
 	}
 	if _, ok := spc.mutation.CreatedAt(); !ok {
 		v := systemparameter.DefaultCreatedAt()
@@ -173,8 +173,8 @@ func (spc *SystemParameterCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (spc *SystemParameterCreate) check() error {
-	if _, ok := spc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "SystemParameter.version"`)}
+	if _, ok := spc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "SystemParameter.versions"`)}
 	}
 	if _, ok := spc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "SystemParameter.created_by"`)}
@@ -232,9 +232,9 @@ func (spc *SystemParameterCreate) createSpec() (*SystemParameter, *sqlgraph.Crea
 		_node = &SystemParameter{config: spc.config}
 		_spec = sqlgraph.NewCreateSpec(systemparameter.Table, sqlgraph.NewFieldSpec(systemparameter.FieldID, field.TypeInt))
 	)
-	if value, ok := spc.mutation.Version(); ok {
-		_spec.SetField(systemparameter.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := spc.mutation.Versions(); ok {
+		_spec.SetField(systemparameter.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := spc.mutation.CreatedBy(); ok {
 		_spec.SetField(systemparameter.FieldCreatedBy, field.TypeString, value)

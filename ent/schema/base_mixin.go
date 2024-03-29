@@ -28,7 +28,7 @@ func (BaseFieldMixin) Fields() []ent.Field {
 }
 
 // VersionMixin provides an optimistic concurrency
-// control mechanism using a "version" field.
+// control mechanism using a "versions" field.
 type VersionMixin struct {
 	mixin.Schema
 }
@@ -36,10 +36,8 @@ type VersionMixin struct {
 // Fields of the VersionMixin.
 func (VersionMixin) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("version").
-			DefaultFunc(func() int64 {
-				return time.Now().UnixNano()
-			}).
+		field.Int64("versions").
+			DefaultFunc(time.Now().UnixNano()).
 			Comment("Unix time of when the latest update occurred"),
 	}
 }

@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestHelloWorldsRepositoryImpl_Hello(t *testing.T) {
+func TestHealthRepositoryImpl_Success(t *testing.T) {
 	opts := []enttest.Option{
 		enttest.WithOptions(ent.Log(t.Log)),
 	}
@@ -24,10 +24,8 @@ func TestHelloWorldsRepositoryImpl_Hello(t *testing.T) {
 	// test case 1
 	t.Run("Health method success", func(t *testing.T) {
 		msgParameter := "hello from service layer "
-		queryFlag := "default"
-
-		expected := msgParameter + "hello from repository layer hello from query parameter=" + queryFlag
-		actual, err := repo.Health(ctx, msgParameter, queryFlag)
+		expected := msgParameter + "hello from repository layer hello from query parameter"
+		actual, err := repo.Health(ctx, msgParameter)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expected, actual["final_msg"])
@@ -35,7 +33,5 @@ func TestHelloWorldsRepositoryImpl_Hello(t *testing.T) {
 		assert.Equal(t, "echo", actual["ctx_name"])
 		assert.Equal(t, "UP", actual["db_status"])
 		assert.Equal(t, "mysql", actual["db_name"])
-
 	})
-
 }

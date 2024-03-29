@@ -5,5 +5,5 @@ import (
 )
 
 type HealthRepository interface {
-	Health(ctx context.Context, message string, queryFlag string) (map[string]string, error)
+	Health(ctx context.Context, message string) (map[string]string, error)
 }

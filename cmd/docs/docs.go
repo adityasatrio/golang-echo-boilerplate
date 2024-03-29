@@ -11,13 +11,60 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "url": "https://github.com/adityasatrio/golang-echo-boilerplate"
+            "url": "https://example.com"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/example/rabbitmq": {
+            "get": {
+                "description": "This just sample for publish don't use this for any feature",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "example publish"
+                ],
+                "summary": "This just sample for publish don't use this for any feature",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.body"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.SystemParameterResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.body"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.body"
+                        }
+                    }
+                }
+            }
+        },
         "/system-parameter": {
             "get": {
                 "description": "Get all system parameters",
@@ -791,9 +838,9 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.0.1",
 	Host:             "localhost:8888",
-	BasePath:         "/echo-boilerplate",
+	BasePath:         "/micro-go-template",
 	Schemes:          []string{},
-	Title:            "Echo Boilerplate Service",
+	Title:            "Micro Go Template Service",
 	Description:      "Please welcome a holy high-speed and high-performance Echo service!",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
