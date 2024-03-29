@@ -16,7 +16,7 @@ func NewHealthRepository(dbConn *ent.Client) *HealthRepositoryImpl {
 	}
 }
 
-func (r *HealthRepositoryImpl) Health(ctx context.Context, message string, queryFlag string) (map[string]string, error) {
+func (r *HealthRepositoryImpl) Health(ctx context.Context, message string) (map[string]string, error) {
 
 	healthCheck := map[string]string{}
 	if ctx != nil {
@@ -25,14 +25,19 @@ func (r *HealthRepositoryImpl) Health(ctx context.Context, message string, query
 		healthCheck["ctx_name"] = "echo"
 	}
 
-	if r.client != nil {
-		log.Info("client db debug", r.client.Debug())
+	finalMsg := message + "hello from repository layer " + "hello from query parameter"
+	healthCheck["final_msg"] = finalMsg
+
+	_, err := r.client.ExecContext(ctx, "SELECT 1")
+	log.Info("client db debug", r.client.Debug())
+
+	if err != nil {
+		healthCheck["db_status"] = "DOWN"
+		healthCheck["db_name"] = "mysql"
+	} else {
 		healthCheck["db_status"] = "UP"
 		healthCheck["db_name"] = "mysql"
 	}
 
-	finalMsg := message + "hello from repository layer " + "hello from query parameter=" + queryFlag
-	healthCheck["final_msg"] = finalMsg
-
-	return healthCheck, nil
+	return healthCheck, err
 }

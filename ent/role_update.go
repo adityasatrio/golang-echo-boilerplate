@@ -18,8 +18,9 @@ import (
 // RoleUpdate is the builder for updating Role entities.
 type RoleUpdate struct {
 	config
-	hooks    []Hook
-	mutation *RoleMutation
+	hooks     []Hook
+	mutation  *RoleMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the RoleUpdate builder.
@@ -28,24 +29,24 @@ func (ru *RoleUpdate) Where(ps ...predicate.Role) *RoleUpdate {
 	return ru
 }
 
-// SetVersion sets the "version" field.
-func (ru *RoleUpdate) SetVersion(i int64) *RoleUpdate {
-	ru.mutation.ResetVersion()
-	ru.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (ru *RoleUpdate) SetVersions(i int64) *RoleUpdate {
+	ru.mutation.ResetVersions()
+	ru.mutation.SetVersions(i)
 	return ru
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (ru *RoleUpdate) SetNillableVersion(i *int64) *RoleUpdate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableVersions(i *int64) *RoleUpdate {
 	if i != nil {
-		ru.SetVersion(*i)
+		ru.SetVersions(*i)
 	}
 	return ru
 }
 
-// AddVersion adds i to the "version" field.
-func (ru *RoleUpdate) AddVersion(i int64) *RoleUpdate {
-	ru.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (ru *RoleUpdate) AddVersions(i int64) *RoleUpdate {
+	ru.mutation.AddVersions(i)
 	return ru
 }
 
@@ -184,6 +185,12 @@ func (ru *RoleUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ru *RoleUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUpdate {
+	ru.modifiers = append(ru.modifiers, modifiers...)
+	return ru
+}
+
 func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ru.check(); err != nil {
 		return n, err
@@ -196,11 +203,11 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ru.mutation.Version(); ok {
-		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
+	if value, ok := ru.mutation.Versions(); ok {
+		_spec.SetField(role.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := ru.mutation.AddedVersion(); ok {
-		_spec.AddField(role.FieldVersion, field.TypeInt64, value)
+	if value, ok := ru.mutation.AddedVersions(); ok {
+		_spec.AddField(role.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := ru.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
@@ -232,6 +239,7 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ru.mutation.Text(); ok {
 		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
+	_spec.AddModifiers(ru.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{role.Label}
@@ -247,29 +255,30 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // RoleUpdateOne is the builder for updating a single Role entity.
 type RoleUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *RoleMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *RoleMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetVersion sets the "version" field.
-func (ruo *RoleUpdateOne) SetVersion(i int64) *RoleUpdateOne {
-	ruo.mutation.ResetVersion()
-	ruo.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (ruo *RoleUpdateOne) SetVersions(i int64) *RoleUpdateOne {
+	ruo.mutation.ResetVersions()
+	ruo.mutation.SetVersions(i)
 	return ruo
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (ruo *RoleUpdateOne) SetNillableVersion(i *int64) *RoleUpdateOne {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableVersions(i *int64) *RoleUpdateOne {
 	if i != nil {
-		ruo.SetVersion(*i)
+		ruo.SetVersions(*i)
 	}
 	return ruo
 }
 
-// AddVersion adds i to the "version" field.
-func (ruo *RoleUpdateOne) AddVersion(i int64) *RoleUpdateOne {
-	ruo.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (ruo *RoleUpdateOne) AddVersions(i int64) *RoleUpdateOne {
+	ruo.mutation.AddVersions(i)
 	return ruo
 }
 
@@ -421,6 +430,12 @@ func (ruo *RoleUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ruo *RoleUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUpdateOne {
+	ruo.modifiers = append(ruo.modifiers, modifiers...)
+	return ruo
+}
+
 func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) {
 	if err := ruo.check(); err != nil {
 		return _node, err
@@ -450,11 +465,11 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 			}
 		}
 	}
-	if value, ok := ruo.mutation.Version(); ok {
-		_spec.SetField(role.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruo.mutation.Versions(); ok {
+		_spec.SetField(role.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := ruo.mutation.AddedVersion(); ok {
-		_spec.AddField(role.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruo.mutation.AddedVersions(); ok {
+		_spec.AddField(role.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := ruo.mutation.CreatedBy(); ok {
 		_spec.SetField(role.FieldCreatedBy, field.TypeString, value)
@@ -486,6 +501,7 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	if value, ok := ruo.mutation.Text(); ok {
 		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
+	_spec.AddModifiers(ruo.modifiers...)
 	_node = &Role{config: ruo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

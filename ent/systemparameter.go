@@ -18,7 +18,7 @@ type SystemParameter struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Unix time of when the latest update occurred
-	Version int64 `json:"version,omitempty"`
+	Versions int64 `json:"versions,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -43,7 +43,7 @@ func (*SystemParameter) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case systemparameter.FieldID, systemparameter.FieldVersion:
+		case systemparameter.FieldID, systemparameter.FieldVersions:
 			values[i] = new(sql.NullInt64)
 		case systemparameter.FieldCreatedBy, systemparameter.FieldUpdatedBy, systemparameter.FieldDeletedBy, systemparameter.FieldKey, systemparameter.FieldValue:
 			values[i] = new(sql.NullString)
@@ -70,11 +70,11 @@ func (sp *SystemParameter) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sp.ID = int(value.Int64)
-		case systemparameter.FieldVersion:
+		case systemparameter.FieldVersions:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field version", values[i])
+				return fmt.Errorf("unexpected type %T for field versions", values[i])
 			} else if value.Valid {
-				sp.Version = value.Int64
+				sp.Versions = value.Int64
 			}
 		case systemparameter.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -160,8 +160,8 @@ func (sp *SystemParameter) String() string {
 	var builder strings.Builder
 	builder.WriteString("SystemParameter(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sp.ID))
-	builder.WriteString("version=")
-	builder.WriteString(fmt.Sprintf("%v", sp.Version))
+	builder.WriteString("versions=")
+	builder.WriteString(fmt.Sprintf("%v", sp.Versions))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(sp.CreatedBy)

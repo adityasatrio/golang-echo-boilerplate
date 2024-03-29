@@ -4,17 +4,18 @@ import (
 	"context"
 	"myapp/ent"
 	"myapp/exceptions"
-	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/applications/system_parameter/repository/db"
+	caching "myapp/internal/component/cache"
+	"myapp/internal/vars"
 )
 
 type SystemParameterServiceImpl struct {
 	repository db.SystemParameterRepository
-	cache      cache.CachingService
+	cache      caching.Cache
 }
 
-func NewSystemParameterService(repository db.SystemParameterRepository, cache cache.CachingService) *SystemParameterServiceImpl {
+func NewSystemParameterService(repository db.SystemParameterRepository, cache caching.Cache) *SystemParameterServiceImpl {
 	return &SystemParameterServiceImpl{repository: repository, cache: cache}
 }
 
@@ -34,7 +35,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, vars.GetTtlShortPeriod())
 	if err != nil {
 		//don't throw exception if create redis failed:
 		return result, nil
@@ -60,7 +61,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, vars.GetTtlShortPeriod())
 	if err != nil {
 		//don't throw exception if create redis failed:
 		return updated, nil
@@ -119,7 +120,7 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(id), result, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(id), result, vars.GetTtlShortPeriod())
 	if err != nil {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 	}
@@ -141,7 +142,7 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, vars.GetTtlShortPeriod())
 	if err != nil {
 		return result, nil
 	}

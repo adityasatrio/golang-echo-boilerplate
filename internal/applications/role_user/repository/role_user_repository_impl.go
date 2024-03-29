@@ -49,7 +49,7 @@ func (r *RoleUserRepositoryImpl) CreateTx(ctx context.Context, clientTrx *ent.Cl
 
 func (r *RoleUserRepositoryImpl) UpdateTx(ctx context.Context, clientTrx *ent.Client, updateRoleUser *ent.RoleUser) (*ent.RoleUser, error) {
 	affected, err := clientTrx.RoleUser.
-		Update().Where(roleuser.UserID(updateRoleUser.UserID), roleuser.Version(updateRoleUser.Version)).
+		Update().Where(roleuser.UserID(updateRoleUser.UserID), roleuser.Versions(updateRoleUser.Versions)).
 		SetUserID(updateRoleUser.UserID).
 		SetRoleID(updateRoleUser.RoleID).
 		SetUpdatedAt(time.Now()).

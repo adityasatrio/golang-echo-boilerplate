@@ -19,7 +19,7 @@ type Pet struct {
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
 	// Unix time of when the latest update occurred
-	Version int64 `json:"version,omitempty"`
+	Versions int64 `json:"versions,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -48,7 +48,7 @@ func (*Pet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pet.FieldVersion, pet.FieldAgeMonth:
+		case pet.FieldVersions, pet.FieldAgeMonth:
 			values[i] = new(sql.NullInt64)
 		case pet.FieldCreatedBy, pet.FieldUpdatedBy, pet.FieldDeletedBy, pet.FieldName, pet.FieldType, pet.FieldCode:
 			values[i] = new(sql.NullString)
@@ -77,11 +77,11 @@ func (pe *Pet) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				pe.ID = *value
 			}
-		case pet.FieldVersion:
+		case pet.FieldVersions:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field version", values[i])
+				return fmt.Errorf("unexpected type %T for field versions", values[i])
 			} else if value.Valid {
-				pe.Version = value.Int64
+				pe.Versions = value.Int64
 			}
 		case pet.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -179,8 +179,8 @@ func (pe *Pet) String() string {
 	var builder strings.Builder
 	builder.WriteString("Pet(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", pe.ID))
-	builder.WriteString("version=")
-	builder.WriteString(fmt.Sprintf("%v", pe.Version))
+	builder.WriteString("versions=")
+	builder.WriteString(fmt.Sprintf("%v", pe.Versions))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(pe.CreatedBy)

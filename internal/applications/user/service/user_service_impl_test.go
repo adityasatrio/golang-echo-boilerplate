@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"myapp/ent"
-	"myapp/internal/applications/cache"
 	"myapp/internal/applications/user/dto"
-	mock_cache "myapp/mocks/cache"
-	mock_repository "myapp/mocks/role/repository"
-	mock_repository3 "myapp/mocks/role_user/repository"
-	mock_transaction "myapp/mocks/transaction"
-	mock_repository2 "myapp/mocks/user/repository"
+	"myapp/internal/vars"
+	mock_repository "myapp/mocks/applications/role/repository"
+	mock_repository3 "myapp/mocks/applications/role_user/repository"
+	mock_repository2 "myapp/mocks/applications/user/repository"
+	mock_cache "myapp/mocks/component/cache"
+	mock_transaction "myapp/mocks/component/transaction"
 	"myapp/test"
 	"testing"
 	"time"
@@ -23,17 +23,17 @@ import (
 var mockUserRepository = new(mock_repository2.UserRepository)
 var mockRoleRepository = new(mock_repository.RoleRepository)
 var mockRoleUserRepository = new(mock_repository3.RoleUserRepository)
-var mockTransaction = new(mock_transaction.TrxService)
-var mockCache = new(mock_cache.CachingService)
+var mockTransaction = new(mock_transaction.Trx)
+var mockCache = new(mock_cache.Cache)
 
 var service = NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
-		ID:      id,
-		Version: int64(0),
-		Name:    name,
-		Email:   email,
+		ID:       id,
+		Versions: int64(0),
+		Name:     name,
+		Email:    email,
 		//WARNING : careful with bool value, it always has default value as FALSE,
 		//make sure when do testing DTO / request and actual mock or return value have same value
 
@@ -135,7 +135,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
 					Return(&userMock.roleRequest, nil)
 
-				mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.userServiceReturn.ID), &userMock.userServiceReturn, cache.CachingShortPeriod()).
+				mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.userServiceReturn.ID), &userMock.userServiceReturn, vars.GetTtlShortPeriod()).
 					Return(true, nil)
 
 				result, err := service.Create(ctx, &userMock.request)
@@ -215,7 +215,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 	userRoleExisting.RoleID = uint64(1)
 	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting).Return(&userRoleUpdated, nil)
 
-	mockCache.On("Create", ctx, CacheKeyUserWithId(userExisting.ID), &userExisting, cache.CachingShortPeriod()).
+	mockCache.On("Create", ctx, CacheKeyUserWithId(userExisting.ID), &userExisting, vars.GetTtlShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.Update(ctx, id, &requestUpdate)
@@ -364,7 +364,7 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 			mockCache.On("Get", ctx, CacheKeyUserWithId(userMock.id), &ent.User{}).
 				Return(nil, nil)
 			mockUserRepository.On("GetById", ctx, uint64(10)).Return(&userMock.expected, nil).Once()
-			mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.id), &userMock.expected, cache.CachingShortPeriod()).
+			mockCache.On("Create", ctx, CacheKeyUserWithId(userMock.id), &userMock.expected, vars.GetTtlShortPeriod()).
 				Return(true, nil)
 			result, err := service.GetById(ctx, userMock.id)
 			assert.NoError(t, err)
@@ -397,7 +397,7 @@ func TestUserServiceImpl_GetAll(t *testing.T) {
 		mockCache.On("Get", ctx, CacheKeyUsers(), &[]*ent.User{}).
 			Return(nil, nil)
 		mockUserRepository.On("GetAll", ctx).Return(mockListUser, nil).Once()
-		mockCache.On("Create", ctx, CacheKeyUsers(), &mockListUser, cache.CachingShortPeriod()).
+		mockCache.On("Create", ctx, CacheKeyUsers(), &mockListUser, vars.GetTtlShortPeriod()).
 			Return(true, nil)
 		result, err := service.GetAll(ctx)
 		assert.NoError(t, err)

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"myapp/configs"
+	"myapp/internal/vars"
 	"strconv"
 	"strings"
 )
@@ -12,9 +12,9 @@ const (
 )
 
 func CacheKeyUserWithId(id uint64) string {
-	return strings.Join([]string{configs.ApplicationName, User, strconv.FormatUint(id, 10)}, Separator)
+	return strings.Join([]string{vars.ApplicationName(), User, strconv.FormatUint(id, 10)}, Separator)
 }
 
 func CacheKeyUsers() string {
-	return strings.Join([]string{configs.ApplicationName, User, "list"}, Separator)
+	return strings.Join([]string{vars.ApplicationName(), User, "list"}, Separator)
 }

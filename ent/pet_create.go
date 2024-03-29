@@ -21,16 +21,16 @@ type PetCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (pc *PetCreate) SetVersion(i int64) *PetCreate {
-	pc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (pc *PetCreate) SetVersions(i int64) *PetCreate {
+	pc.mutation.SetVersions(i)
 	return pc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (pc *PetCreate) SetNillableVersion(i *int64) *PetCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (pc *PetCreate) SetNillableVersions(i *int64) *PetCreate {
 	if i != nil {
-		pc.SetVersion(*i)
+		pc.SetVersions(*i)
 	}
 	return pc
 }
@@ -184,9 +184,9 @@ func (pc *PetCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *PetCreate) defaults() {
-	if _, ok := pc.mutation.Version(); !ok {
-		v := pet.DefaultVersion()
-		pc.mutation.SetVersion(v)
+	if _, ok := pc.mutation.Versions(); !ok {
+		v := pet.DefaultVersions
+		pc.mutation.SetVersions(v)
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		v := pet.DefaultCreatedAt()
@@ -204,8 +204,8 @@ func (pc *PetCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *PetCreate) check() error {
-	if _, ok := pc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "Pet.version"`)}
+	if _, ok := pc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "Pet.versions"`)}
 	}
 	if _, ok := pc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Pet.created_by"`)}
@@ -288,9 +288,9 @@ func (pc *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := pc.mutation.Version(); ok {
-		_spec.SetField(pet.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := pc.mutation.Versions(); ok {
+		_spec.SetField(pet.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := pc.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)

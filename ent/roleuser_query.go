@@ -21,6 +21,7 @@ type RoleUserQuery struct {
 	order      []roleuser.OrderOption
 	inters     []Interceptor
 	predicates []predicate.RoleUser
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -261,12 +262,12 @@ func (ruq *RoleUserQuery) Clone() *RoleUserQuery {
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Versions int64 `json:"versions,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.RoleUser.Query().
-//		GroupBy(roleuser.FieldVersion).
+//		GroupBy(roleuser.FieldVersions).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ruq *RoleUserQuery) GroupBy(field string, fields ...string) *RoleUserGroupBy {
@@ -284,11 +285,11 @@ func (ruq *RoleUserQuery) GroupBy(field string, fields ...string) *RoleUserGroup
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Versions int64 `json:"versions,omitempty"`
 //	}
 //
 //	client.RoleUser.Query().
-//		Select(roleuser.FieldVersion).
+//		Select(roleuser.FieldVersions).
 //		Scan(ctx, &v)
 func (ruq *RoleUserQuery) Select(fields ...string) *RoleUserSelect {
 	ruq.ctx.Fields = append(ruq.ctx.Fields, fields...)
@@ -342,6 +343,9 @@ func (ruq *RoleUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ro
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(ruq.modifiers) > 0 {
+		_spec.Modifiers = ruq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (ruq *RoleUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ro
 
 func (ruq *RoleUserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ruq.querySpec()
+	if len(ruq.modifiers) > 0 {
+		_spec.Modifiers = ruq.modifiers
+	}
 	_spec.Node.Columns = ruq.ctx.Fields
 	if len(ruq.ctx.Fields) > 0 {
 		_spec.Unique = ruq.ctx.Unique != nil && *ruq.ctx.Unique
@@ -418,6 +425,9 @@ func (ruq *RoleUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ruq.ctx.Unique != nil && *ruq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range ruq.modifiers {
+		m(selector)
+	}
 	for _, p := range ruq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (ruq *RoleUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ruq *RoleUserQuery) Modify(modifiers ...func(s *sql.Selector)) *RoleUserSelect {
+	ruq.modifiers = append(ruq.modifiers, modifiers...)
+	return ruq.Select()
 }
 
 // RoleUserGroupBy is the group-by builder for RoleUser entities.
@@ -523,4 +539,10 @@ func (rus *RoleUserSelect) sqlScan(ctx context.Context, root *RoleUserQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (rus *RoleUserSelect) Modify(modifiers ...func(s *sql.Selector)) *RoleUserSelect {
+	rus.modifiers = append(rus.modifiers, modifiers...)
+	return rus
 }

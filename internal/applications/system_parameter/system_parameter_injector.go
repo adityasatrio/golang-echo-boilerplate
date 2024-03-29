@@ -7,17 +7,17 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"myapp/ent"
-	"myapp/internal/applications/cache"
 	"myapp/internal/applications/system_parameter/repository/db"
 	"myapp/internal/applications/system_parameter/service"
+	"myapp/internal/component/cache"
 )
 
 var providerSetSystemParameter = wire.NewSet(
 	db.NewSystemParameterRepository,
 	service.NewSystemParameterService,
-	cache.NewCachingService,
+	cache.NewCache,
 	wire.Bind(new(db.SystemParameterRepository), new(*db.SystemParameterRepositoryImpl)),
-	wire.Bind(new(cache.CachingService), new(*cache.CachingServiceImpl)),
+	wire.Bind(new(cache.Cache), new(*cache.CacheImpl)),
 	wire.Bind(new(service.SystemParameterService), new(*service.SystemParameterServiceImpl)),
 )
 

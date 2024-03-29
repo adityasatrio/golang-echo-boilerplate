@@ -20,16 +20,16 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetVersion sets the "version" field.
-func (uc *UserCreate) SetVersion(i int64) *UserCreate {
-	uc.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (uc *UserCreate) SetVersions(i int64) *UserCreate {
+	uc.mutation.SetVersions(i)
 	return uc
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (uc *UserCreate) SetNillableVersion(i *int64) *UserCreate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (uc *UserCreate) SetNillableVersions(i *int64) *UserCreate {
 	if i != nil {
-		uc.SetVersion(*i)
+		uc.SetVersions(*i)
 	}
 	return uc
 }
@@ -391,9 +391,9 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
-	if _, ok := uc.mutation.Version(); !ok {
-		v := user.DefaultVersion()
-		uc.mutation.SetVersion(v)
+	if _, ok := uc.mutation.Versions(); !ok {
+		v := user.DefaultVersions
+		uc.mutation.SetVersions(v)
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
@@ -407,8 +407,8 @@ func (uc *UserCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "User.version"`)}
+	if _, ok := uc.mutation.Versions(); !ok {
+		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "User.versions"`)}
 	}
 	if _, ok := uc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "User.created_by"`)}
@@ -471,9 +471,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := uc.mutation.Version(); ok {
-		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
-		_node.Version = value
+	if value, ok := uc.mutation.Versions(); ok {
+		_spec.SetField(user.FieldVersions, field.TypeInt64, value)
+		_node.Versions = value
 	}
 	if value, ok := uc.mutation.CreatedBy(); ok {
 		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)

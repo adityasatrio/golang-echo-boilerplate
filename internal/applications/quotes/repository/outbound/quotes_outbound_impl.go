@@ -7,7 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
-	"myapp/configs"
+	"myapp/configs/http"
 	"myapp/internal/applications/quotes/dto"
 )
 
@@ -16,19 +16,8 @@ type QuoteOutboundImpl struct {
 }
 
 func NewQuoteOutbound() *QuoteOutboundImpl {
-	//clientApi.
-	//	SetTimeout(60 * time.Second).
-	//	SetRetryCount(3).                            // Maximum number of retries
-	//	SetRetryWaitTime(100 * time.Millisecond).    // Time to wait between retries
-	//	SetRetryMaxWaitTime(500 * time.Millisecond). // Maximum time to wait between retries
-	//	AddRetryCondition(func(response *resty.Response, err error) bool {
-	//		return response.StatusCode() != http.StatusOK
-	//	}).
-	//	OnRequestLog(middleware.LogRequest("NewQuoteOutboundImpl")).
-	//	OnResponseLog(middleware.LogResponse("NewQuoteOutboundImpl"))
-
 	return &QuoteOutboundImpl{
-		ClientApi: configs.NewDefaultResty(),
+		ClientApi: http.New(),
 	}
 }
 
@@ -43,7 +32,7 @@ func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, queryParameter map[st
 		"sampleString": fmt.Sprintf("%s", "string"),
 	}
 
-	hostQuoteUrl := viper.GetString("outbound.quotes.get-url")
+	hostQuoteUrl := viper.GetString("outbound.quotes.getUrl")
 	response := &dto.QuoteApiResponse{}
 	resp, err := o.ClientApi.R().
 		SetResult(response).
@@ -52,7 +41,7 @@ func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, queryParameter map[st
 		SetQueryParams(queryParameter).
 		Get(hostQuoteUrl)
 
-	fmt.Printf("Response body: %s\n", resp.String())
+	log.Infof("Response body: %s\n", resp.String())
 	if err != nil {
 		log.Errorf("error http libs ", err)
 		return response, err
@@ -73,7 +62,7 @@ func (o *QuoteOutboundImpl) PostQuotes(ctx context.Context, reqBody dto.QuoteApi
 		"x-custom-header": "custom value",
 	}
 
-	hostQuoteUrl := viper.GetString("outbound.quotes.post-url")
+	hostQuoteUrl := viper.GetString("outbound.quotes.postUrl")
 	response := &dto.QuoteApiResponse{}
 	resp, err := o.ClientApi.R().
 		SetResult(response).

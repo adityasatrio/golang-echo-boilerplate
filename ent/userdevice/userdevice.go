@@ -13,8 +13,8 @@ const (
 	Label = "user_device"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldVersion holds the string denoting the version field in the database.
-	FieldVersion = "version"
+	// FieldVersions holds the string denoting the versions field in the database.
+	FieldVersions = "versions"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -42,7 +42,7 @@ const (
 // Columns holds all SQL columns for userdevice fields.
 var Columns = []string{
 	FieldID,
-	FieldVersion,
+	FieldVersions,
 	FieldCreatedBy,
 	FieldCreatedAt,
 	FieldUpdatedBy,
@@ -66,8 +66,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultVersion holds the default value on creation for the "version" field.
-	DefaultVersion func() int64
+	// DefaultVersions holds the default value on creation for the "versions" field.
+	DefaultVersions int64
 	// CreatedByValidator is a validator for the "created_by" field. It is called by the builders before save.
 	CreatedByValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -86,9 +86,9 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByVersion orders the results by the version field.
-func ByVersion(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+// ByVersions orders the results by the versions field.
+func ByVersions(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVersions, opts...).ToFunc()
 }
 
 // ByCreatedBy orders the results by the created_by field.

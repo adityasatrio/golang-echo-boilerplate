@@ -16,11 +16,19 @@ func NewCachingService(redisClient *redis.Client) *CachingServiceImpl {
 	return &CachingServiceImpl{redisClient: redisClient}
 }
 
+func (c *CachingServiceImpl) Ping(ctx context.Context) error {
+	_, err := c.redisClient.Ping(ctx).Result()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *CachingServiceImpl) Create(ctx context.Context, key string, data interface{}, expiration time.Duration) (bool, error) {
 
 	serializedData, err := msgpack.Marshal(&data)
 	if err != nil {
-
 		if err == redis.Nil {
 			return false, nil
 		}
@@ -44,7 +52,6 @@ func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface
 
 	redisData, err := c.redisClient.Get(ctx, key).Bytes()
 	if err != nil {
-
 		if err == redis.Nil {
 			return nil, nil
 		}

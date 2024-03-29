@@ -1,0 +1,522 @@
+basePath: /micro-go-template
+definitions:
+  dto.SystemParameterCreateRequest:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    required:
+    - key
+    - value
+    type: object
+  dto.SystemParameterResponse:
+    properties:
+      ID:
+        type: integer
+      Key:
+        type: string
+      Value:
+        type: string
+    required:
+    - ID
+    - Key
+    - Value
+    type: object
+  dto.SystemParameterUpdateRequest:
+    properties:
+      key:
+        maxLength: 50
+        minLength: 3
+        type: string
+      value:
+        maxLength: 50
+        minLength: 3
+        type: string
+    type: object
+  dto.UserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+    required:
+    - email
+    - name
+    - password
+    - role_id
+    type: object
+  dto.UserResponse:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      firebase_token:
+        type: string
+      id:
+        type: integer
+      info:
+        type: string
+      is_verified:
+        type: boolean
+      last_access_at:
+        type: string
+      latest_deleted_at:
+        type: string
+      latest_skip_update:
+        type: string
+      login_type:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      pregnancy_mode:
+        type: boolean
+      remember_token:
+        type: string
+      role_id:
+        type: integer
+      social_media_id:
+        type: string
+      specialist:
+        type: string
+      sub_specialist:
+        type: string
+      update_at:
+        type: string
+    required:
+    - avatar
+    - created_at
+    - deleted_at
+    - email
+    - email_verified_at
+    - id
+    - is_verified
+    - last_access_at
+    - name
+    - password
+    - pregnancy_mode
+    - role_id
+    - update_at
+    type: object
+  response.body:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      serverTime:
+        type: string
+    type: object
+host: localhost:8888
+info:
+  contact:
+    url: https://example.com
+  description: Please welcome a holy high-speed and high-performance Echo service!
+  title: Micro Go Template Service
+  version: 0.0.1
+paths:
+  /example/rabbitmq:
+    get:
+      consumes:
+      - application/json
+      description: This just sample for publish don't use this for any feature
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: This just sample for publish don't use this for any feature
+      tags:
+      - example publish
+  /system-parameter:
+    get:
+      consumes:
+      - application/json
+      description: Get all system parameters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SystemParameterResponse'
+                  type: array
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Get all system parameters
+      tags:
+      - system parameter
+    post:
+      consumes:
+      - application/json
+      description: Create new system parameter
+      parameters:
+      - description: Create System Parameter DTO
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SystemParameterCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Create new system parameter
+      tags:
+      - system parameter
+  /system-parameter/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a system parameter
+      parameters:
+      - description: Existing system parameter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.body'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Delete a system parameter
+      tags:
+      - system parameter
+    get:
+      consumes:
+      - application/json
+      description: Get a system parameter by id
+      parameters:
+      - description: Existing system parameter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.body'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Get a system parameter by id
+      tags:
+      - system parameter
+    put:
+      consumes:
+      - application/json
+      description: Update a system parameter
+      parameters:
+      - description: Existing system parameter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update System Parameter DTO
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SystemParameterUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SystemParameterResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.body'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Update a system parameter
+      tags:
+      - system parameter
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.UserResponse'
+                  type: array
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Get all users
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Create new user
+      parameters:
+      - description: Create User DTO
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Create new user
+      tags:
+      - user
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user
+      parameters:
+      - description: User's ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Delete a user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get a user by id
+      parameters:
+      - description: User's ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Get a user by id
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update a user
+      parameters:
+      - description: User's ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update User DTO
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.body'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.body'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.body'
+      summary: Update a user
+      tags:
+      - user
+swagger: "2.0"

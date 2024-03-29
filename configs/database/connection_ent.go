@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
+	"myapp/configs/credential"
 	"myapp/ent"
 	"time"
 
@@ -17,11 +17,12 @@ import (
 func NewEntClient() *ent.Client {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		viper.GetString("db.configs.username"),
-		viper.GetString("db.configs.password"),
-		viper.GetString("db.configs.host"),
-		viper.GetString("db.configs.port"),
-		viper.GetString("db.configs.database"))
+		credential.GetString("db.configs.username"),
+		credential.GetString("db.configs.password"),
+		credential.GetString("db.configs.host"),
+		credential.GetString("db.configs.port"),
+		credential.GetString("db.configs.database"))
+
 	log.Debugf("DSN ", dsn)
 
 	client, err := ent.Open("mysql", dsn, ent.Debug(), ent.Log(func(i ...interface{}) {

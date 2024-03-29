@@ -5,23 +5,24 @@ import (
 	"github.com/labstack/gommon/log"
 	"myapp/ent"
 	"myapp/exceptions"
-	"myapp/internal/applications/cache"
 	roleRepository "myapp/internal/applications/role/repository"
 	roleUserRepository "myapp/internal/applications/role_user/repository"
-	"myapp/internal/applications/transaction"
 	"myapp/internal/applications/user/dto"
 	userRepository "myapp/internal/applications/user/repository"
+	caching "myapp/internal/component/cache"
+	"myapp/internal/component/transaction"
+	"myapp/internal/vars"
 )
 
 type UserServiceImpl struct {
 	userRepository     userRepository.UserRepository
 	roleRepository     roleRepository.RoleRepository
 	roleUserRepository roleUserRepository.RoleUserRepository
-	transaction        transaction.TrxService
-	cache              cache.CachingService
+	transaction        transaction.Trx
+	cache              caching.Cache
 }
 
-func NewUserService(userRepository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.TrxService, cache cache.CachingService) *UserServiceImpl {
+func NewUserService(userRepository userRepository.UserRepository, roleRepository roleRepository.RoleRepository, roleUserRepository roleUserRepository.RoleUserRepository, transaction transaction.Trx, cache caching.Cache) *UserServiceImpl {
 	return &UserServiceImpl{userRepository: userRepository, roleRepository: roleRepository, roleUserRepository: roleUserRepository, transaction: transaction, cache: cache}
 }
 
@@ -60,7 +61,7 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 		}
 
 		//create cache, don't throw exception if failed:
-		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, cache.CachingShortPeriod())
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, vars.GetTtlShortPeriod())
 
 		return nil
 
@@ -115,7 +116,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		userUpdated = userResult
 
 		//create cache, don't throw exception if failed:
-		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, cache.CachingShortPeriod())
+		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, vars.GetTtlShortPeriod())
 
 		return nil
 
@@ -154,7 +155,7 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, vars.GetTtlShortPeriod())
 	if err != nil {
 		return result, nil
 	}
@@ -174,7 +175,7 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, cache.CachingShortPeriod())
+	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, vars.GetTtlShortPeriod())
 	if err != nil {
 		return result, nil
 	}

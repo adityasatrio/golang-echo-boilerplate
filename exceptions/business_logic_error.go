@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/labstack/gommon/log"
+	"runtime"
 )
 
 var TargetBusinessLogicError = errors.New(businessLogicFailed)
@@ -19,6 +20,8 @@ type (
 		Message   string `json:"message"`
 		ErrorCode int    `json:"errorCode"`
 		Err       error  `json:"-"`
+		File      string `json:"file"`
+		Line      int    `json:"line"`
 	}
 )
 
@@ -27,10 +30,18 @@ func (e *BusinessLogicError) Error() string {
 }
 
 func NewBusinessLogicError(ErrorCode int, err error) error {
+	_, file, line, ok := runtime.Caller(1) // Capture caller info
+	if !ok {
+		file = "???"
+		line = 0
+	}
+
 	return &BusinessLogicError{
 		Message:   businessLogicFailed,
 		ErrorCode: ErrorCode,
 		Err:       err,
+		File:      file,
+		Line:      line,
 	}
 }
 
@@ -39,9 +50,9 @@ func (e *BusinessLogicError) Unwrap() error {
 	errorLogic := BusinessLogicReason(e.ErrorCode)
 	jsonByte, err := json.Marshal(errorLogic)
 	if err != nil {
-		log.Error(errorLogic, e.Err)
+		log.Errorf("BusinessException: %s, FileCaller: %s, LineCaller: %d, error: %v", errorLogic, e.File, e.Line, e.Err)
 	} else {
-		log.Error(string(jsonByte), e.Err)
+		log.Errorf("BusinessException: %s, FileCaller: %s, LineCaller: %d, error: %v", string(jsonByte), e.File, e.Line, e.Err)
 	}
 
 	return TargetBusinessLogicError

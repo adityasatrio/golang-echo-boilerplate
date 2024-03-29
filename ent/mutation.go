@@ -44,8 +44,8 @@ type PetMutation struct {
 	op            Op
 	typ           string
 	id            *uuid.UUID
-	version       *int64
-	addversion    *int64
+	versions      *int64
+	addversions   *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
@@ -167,60 +167,60 @@ func (m *PetMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *PetMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *PetMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *PetMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *PetMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the Pet entity.
+// OldVersions returns the old "versions" field's value of the Pet entity.
 // If the Pet object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PetMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *PetMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *PetMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *PetMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *PetMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *PetMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *PetMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *PetMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -677,8 +677,8 @@ func (m *PetMutation) Type() string {
 // AddedFields().
 func (m *PetMutation) Fields() []string {
 	fields := make([]string, 0, 11)
-	if m.version != nil {
-		fields = append(fields, pet.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, pet.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, pet.FieldCreatedBy)
@@ -718,8 +718,8 @@ func (m *PetMutation) Fields() []string {
 // schema.
 func (m *PetMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case pet.FieldVersion:
-		return m.Version()
+	case pet.FieldVersions:
+		return m.Versions()
 	case pet.FieldCreatedBy:
 		return m.CreatedBy()
 	case pet.FieldCreatedAt:
@@ -749,8 +749,8 @@ func (m *PetMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PetMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case pet.FieldVersion:
-		return m.OldVersion(ctx)
+	case pet.FieldVersions:
+		return m.OldVersions(ctx)
 	case pet.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case pet.FieldCreatedAt:
@@ -780,12 +780,12 @@ func (m *PetMutation) OldField(ctx context.Context, name string) (ent.Value, err
 // type.
 func (m *PetMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case pet.FieldVersion:
+	case pet.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case pet.FieldCreatedBy:
 		v, ok := value.(string)
@@ -865,8 +865,8 @@ func (m *PetMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *PetMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, pet.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, pet.FieldVersions)
 	}
 	if m.addage_month != nil {
 		fields = append(fields, pet.FieldAgeMonth)
@@ -879,8 +879,8 @@ func (m *PetMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *PetMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case pet.FieldVersion:
-		return m.AddedVersion()
+	case pet.FieldVersions:
+		return m.AddedVersions()
 	case pet.FieldAgeMonth:
 		return m.AddedAgeMonth()
 	}
@@ -892,12 +892,12 @@ func (m *PetMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *PetMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case pet.FieldVersion:
+	case pet.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	case pet.FieldAgeMonth:
 		v, ok := value.(int)
@@ -954,8 +954,8 @@ func (m *PetMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PetMutation) ResetField(name string) error {
 	switch name {
-	case pet.FieldVersion:
-		m.ResetVersion()
+	case pet.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case pet.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -1045,8 +1045,8 @@ type RoleMutation struct {
 	op            Op
 	typ           string
 	id            *uint64
-	version       *int64
-	addversion    *int64
+	versions      *int64
+	addversions   *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
@@ -1165,60 +1165,60 @@ func (m *RoleMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *RoleMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *RoleMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *RoleMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *RoleMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the Role entity.
+// OldVersions returns the old "versions" field's value of the Role entity.
 // If the Role object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RoleMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *RoleMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *RoleMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *RoleMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *RoleMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *RoleMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *RoleMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *RoleMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1583,8 +1583,8 @@ func (m *RoleMutation) Type() string {
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
 	fields := make([]string, 0, 9)
-	if m.version != nil {
-		fields = append(fields, role.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, role.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, role.FieldCreatedBy)
@@ -1618,8 +1618,8 @@ func (m *RoleMutation) Fields() []string {
 // schema.
 func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case role.FieldVersion:
-		return m.Version()
+	case role.FieldVersions:
+		return m.Versions()
 	case role.FieldCreatedBy:
 		return m.CreatedBy()
 	case role.FieldCreatedAt:
@@ -1645,8 +1645,8 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case role.FieldVersion:
-		return m.OldVersion(ctx)
+	case role.FieldVersions:
+		return m.OldVersions(ctx)
 	case role.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case role.FieldCreatedAt:
@@ -1672,12 +1672,12 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *RoleMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case role.FieldVersion:
+	case role.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case role.FieldCreatedBy:
 		v, ok := value.(string)
@@ -1743,8 +1743,8 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *RoleMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, role.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, role.FieldVersions)
 	}
 	return fields
 }
@@ -1754,8 +1754,8 @@ func (m *RoleMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *RoleMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case role.FieldVersion:
-		return m.AddedVersion()
+	case role.FieldVersions:
+		return m.AddedVersions()
 	}
 	return nil, false
 }
@@ -1765,12 +1765,12 @@ func (m *RoleMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RoleMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case role.FieldVersion:
+	case role.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Role numeric field %s", name)
@@ -1820,8 +1820,8 @@ func (m *RoleMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *RoleMutation) ResetField(name string) error {
 	switch name {
-	case role.FieldVersion:
-		m.ResetVersion()
+	case role.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case role.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -1905,8 +1905,8 @@ type RoleUserMutation struct {
 	op            Op
 	typ           string
 	id            *uint64
-	version       *int64
-	addversion    *int64
+	versions      *int64
+	addversions   *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
@@ -2027,60 +2027,60 @@ func (m *RoleUserMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *RoleUserMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *RoleUserMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *RoleUserMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *RoleUserMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the RoleUser entity.
+// OldVersions returns the old "versions" field's value of the RoleUser entity.
 // If the RoleUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RoleUserMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *RoleUserMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *RoleUserMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *RoleUserMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *RoleUserMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *RoleUserMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *RoleUserMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *RoleUserMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -2513,8 +2513,8 @@ func (m *RoleUserMutation) Type() string {
 // AddedFields().
 func (m *RoleUserMutation) Fields() []string {
 	fields := make([]string, 0, 9)
-	if m.version != nil {
-		fields = append(fields, roleuser.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, roleuser.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, roleuser.FieldCreatedBy)
@@ -2548,8 +2548,8 @@ func (m *RoleUserMutation) Fields() []string {
 // schema.
 func (m *RoleUserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case roleuser.FieldVersion:
-		return m.Version()
+	case roleuser.FieldVersions:
+		return m.Versions()
 	case roleuser.FieldCreatedBy:
 		return m.CreatedBy()
 	case roleuser.FieldCreatedAt:
@@ -2575,8 +2575,8 @@ func (m *RoleUserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *RoleUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case roleuser.FieldVersion:
-		return m.OldVersion(ctx)
+	case roleuser.FieldVersions:
+		return m.OldVersions(ctx)
 	case roleuser.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case roleuser.FieldCreatedAt:
@@ -2602,12 +2602,12 @@ func (m *RoleUserMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *RoleUserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case roleuser.FieldVersion:
+	case roleuser.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case roleuser.FieldCreatedBy:
 		v, ok := value.(string)
@@ -2673,8 +2673,8 @@ func (m *RoleUserMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *RoleUserMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, roleuser.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, roleuser.FieldVersions)
 	}
 	if m.adduser_id != nil {
 		fields = append(fields, roleuser.FieldUserID)
@@ -2690,8 +2690,8 @@ func (m *RoleUserMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *RoleUserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case roleuser.FieldVersion:
-		return m.AddedVersion()
+	case roleuser.FieldVersions:
+		return m.AddedVersions()
 	case roleuser.FieldUserID:
 		return m.AddedUserID()
 	case roleuser.FieldRoleID:
@@ -2705,12 +2705,12 @@ func (m *RoleUserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RoleUserMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case roleuser.FieldVersion:
+	case roleuser.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	case roleuser.FieldUserID:
 		v, ok := value.(int64)
@@ -2786,8 +2786,8 @@ func (m *RoleUserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *RoleUserMutation) ResetField(name string) error {
 	switch name {
-	case roleuser.FieldVersion:
-		m.ResetVersion()
+	case roleuser.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case roleuser.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -2871,8 +2871,8 @@ type SystemParameterMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	version       *int64
-	addversion    *int64
+	versions      *int64
+	addversions   *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
@@ -2985,60 +2985,60 @@ func (m *SystemParameterMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *SystemParameterMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *SystemParameterMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *SystemParameterMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *SystemParameterMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the SystemParameter entity.
+// OldVersions returns the old "versions" field's value of the SystemParameter entity.
 // If the SystemParameter object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SystemParameterMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *SystemParameterMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *SystemParameterMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *SystemParameterMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *SystemParameterMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *SystemParameterMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *SystemParameterMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *SystemParameterMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -3403,8 +3403,8 @@ func (m *SystemParameterMutation) Type() string {
 // AddedFields().
 func (m *SystemParameterMutation) Fields() []string {
 	fields := make([]string, 0, 9)
-	if m.version != nil {
-		fields = append(fields, systemparameter.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, systemparameter.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, systemparameter.FieldCreatedBy)
@@ -3438,8 +3438,8 @@ func (m *SystemParameterMutation) Fields() []string {
 // schema.
 func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case systemparameter.FieldVersion:
-		return m.Version()
+	case systemparameter.FieldVersions:
+		return m.Versions()
 	case systemparameter.FieldCreatedBy:
 		return m.CreatedBy()
 	case systemparameter.FieldCreatedAt:
@@ -3465,8 +3465,8 @@ func (m *SystemParameterMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case systemparameter.FieldVersion:
-		return m.OldVersion(ctx)
+	case systemparameter.FieldVersions:
+		return m.OldVersions(ctx)
 	case systemparameter.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case systemparameter.FieldCreatedAt:
@@ -3492,12 +3492,12 @@ func (m *SystemParameterMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case systemparameter.FieldVersion:
+	case systemparameter.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case systemparameter.FieldCreatedBy:
 		v, ok := value.(string)
@@ -3563,8 +3563,8 @@ func (m *SystemParameterMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *SystemParameterMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, systemparameter.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, systemparameter.FieldVersions)
 	}
 	return fields
 }
@@ -3574,8 +3574,8 @@ func (m *SystemParameterMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *SystemParameterMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case systemparameter.FieldVersion:
-		return m.AddedVersion()
+	case systemparameter.FieldVersions:
+		return m.AddedVersions()
 	}
 	return nil, false
 }
@@ -3585,12 +3585,12 @@ func (m *SystemParameterMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SystemParameterMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case systemparameter.FieldVersion:
+	case systemparameter.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SystemParameter numeric field %s", name)
@@ -3640,8 +3640,8 @@ func (m *SystemParameterMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *SystemParameterMutation) ResetField(name string) error {
 	switch name {
-	case systemparameter.FieldVersion:
-		m.ResetVersion()
+	case systemparameter.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case systemparameter.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -3725,8 +3725,8 @@ type UserMutation struct {
 	op                 Op
 	typ                string
 	id                 *uint64
-	version            *int64
-	addversion         *int64
+	versions           *int64
+	addversions        *int64
 	created_by         *string
 	created_at         *time.Time
 	updated_by         *string
@@ -3864,60 +3864,60 @@ func (m *UserMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *UserMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *UserMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *UserMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *UserMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the User entity.
+// OldVersions returns the old "versions" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *UserMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *UserMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *UserMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *UserMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *UserMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *UserMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *UserMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -5145,8 +5145,8 @@ func (m *UserMutation) Type() string {
 // AddedFields().
 func (m *UserMutation) Fields() []string {
 	fields := make([]string, 0, 27)
-	if m.version != nil {
-		fields = append(fields, user.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, user.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
@@ -5234,8 +5234,8 @@ func (m *UserMutation) Fields() []string {
 // schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldVersion:
-		return m.Version()
+	case user.FieldVersions:
+		return m.Versions()
 	case user.FieldCreatedBy:
 		return m.CreatedBy()
 	case user.FieldCreatedAt:
@@ -5297,8 +5297,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case user.FieldVersion:
-		return m.OldVersion(ctx)
+	case user.FieldVersions:
+		return m.OldVersions(ctx)
 	case user.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case user.FieldCreatedAt:
@@ -5360,12 +5360,12 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldVersion:
+	case user.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case user.FieldCreatedBy:
 		v, ok := value.(string)
@@ -5557,8 +5557,8 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, user.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, user.FieldVersions)
 	}
 	if m.addrole_id != nil {
 		fields = append(fields, user.FieldRoleID)
@@ -5571,8 +5571,8 @@ func (m *UserMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldVersion:
-		return m.AddedVersion()
+	case user.FieldVersions:
+		return m.AddedVersions()
 	case user.FieldRoleID:
 		return m.AddedRoleID()
 	}
@@ -5584,12 +5584,12 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldVersion:
+	case user.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	case user.FieldRoleID:
 		v, ok := value.(int64)
@@ -5736,8 +5736,8 @@ func (m *UserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
 	switch name {
-	case user.FieldVersion:
-		m.ResetVersion()
+	case user.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case user.FieldCreatedBy:
 		m.ResetCreatedBy()
@@ -5875,8 +5875,8 @@ type UserDeviceMutation struct {
 	op            Op
 	typ           string
 	id            *uint64
-	version       *int64
-	addversion    *int64
+	versions      *int64
+	addversions   *int64
 	created_by    *string
 	created_at    *time.Time
 	updated_by    *string
@@ -5998,60 +5998,60 @@ func (m *UserDeviceMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
-// SetVersion sets the "version" field.
-func (m *UserDeviceMutation) SetVersion(i int64) {
-	m.version = &i
-	m.addversion = nil
+// SetVersions sets the "versions" field.
+func (m *UserDeviceMutation) SetVersions(i int64) {
+	m.versions = &i
+	m.addversions = nil
 }
 
-// Version returns the value of the "version" field in the mutation.
-func (m *UserDeviceMutation) Version() (r int64, exists bool) {
-	v := m.version
+// Versions returns the value of the "versions" field in the mutation.
+func (m *UserDeviceMutation) Versions() (r int64, exists bool) {
+	v := m.versions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVersion returns the old "version" field's value of the UserDevice entity.
+// OldVersions returns the old "versions" field's value of the UserDevice entity.
 // If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserDeviceMutation) OldVersion(ctx context.Context) (v int64, err error) {
+func (m *UserDeviceMutation) OldVersions(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+		return v, errors.New("OldVersions is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVersion requires an ID field in the mutation")
+		return v, errors.New("OldVersions requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+		return v, fmt.Errorf("querying old value for OldVersions: %w", err)
 	}
-	return oldValue.Version, nil
+	return oldValue.Versions, nil
 }
 
-// AddVersion adds i to the "version" field.
-func (m *UserDeviceMutation) AddVersion(i int64) {
-	if m.addversion != nil {
-		*m.addversion += i
+// AddVersions adds i to the "versions" field.
+func (m *UserDeviceMutation) AddVersions(i int64) {
+	if m.addversions != nil {
+		*m.addversions += i
 	} else {
-		m.addversion = &i
+		m.addversions = &i
 	}
 }
 
-// AddedVersion returns the value that was added to the "version" field in this mutation.
-func (m *UserDeviceMutation) AddedVersion() (r int64, exists bool) {
-	v := m.addversion
+// AddedVersions returns the value that was added to the "versions" field in this mutation.
+func (m *UserDeviceMutation) AddedVersions() (r int64, exists bool) {
+	v := m.addversions
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVersion resets all changes to the "version" field.
-func (m *UserDeviceMutation) ResetVersion() {
-	m.version = nil
-	m.addversion = nil
+// ResetVersions resets all changes to the "versions" field.
+func (m *UserDeviceMutation) ResetVersions() {
+	m.versions = nil
+	m.addversions = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -6521,8 +6521,8 @@ func (m *UserDeviceMutation) Type() string {
 // AddedFields().
 func (m *UserDeviceMutation) Fields() []string {
 	fields := make([]string, 0, 11)
-	if m.version != nil {
-		fields = append(fields, userdevice.FieldVersion)
+	if m.versions != nil {
+		fields = append(fields, userdevice.FieldVersions)
 	}
 	if m.created_by != nil {
 		fields = append(fields, userdevice.FieldCreatedBy)
@@ -6562,8 +6562,8 @@ func (m *UserDeviceMutation) Fields() []string {
 // schema.
 func (m *UserDeviceMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case userdevice.FieldVersion:
-		return m.Version()
+	case userdevice.FieldVersions:
+		return m.Versions()
 	case userdevice.FieldCreatedBy:
 		return m.CreatedBy()
 	case userdevice.FieldCreatedAt:
@@ -6593,8 +6593,8 @@ func (m *UserDeviceMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserDeviceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case userdevice.FieldVersion:
-		return m.OldVersion(ctx)
+	case userdevice.FieldVersions:
+		return m.OldVersions(ctx)
 	case userdevice.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case userdevice.FieldCreatedAt:
@@ -6624,12 +6624,12 @@ func (m *UserDeviceMutation) OldField(ctx context.Context, name string) (ent.Val
 // type.
 func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case userdevice.FieldVersion:
+	case userdevice.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetVersion(v)
+		m.SetVersions(v)
 		return nil
 	case userdevice.FieldCreatedBy:
 		v, ok := value.(string)
@@ -6709,8 +6709,8 @@ func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *UserDeviceMutation) AddedFields() []string {
 	var fields []string
-	if m.addversion != nil {
-		fields = append(fields, userdevice.FieldVersion)
+	if m.addversions != nil {
+		fields = append(fields, userdevice.FieldVersions)
 	}
 	if m.adduser_id != nil {
 		fields = append(fields, userdevice.FieldUserID)
@@ -6723,8 +6723,8 @@ func (m *UserDeviceMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *UserDeviceMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case userdevice.FieldVersion:
-		return m.AddedVersion()
+	case userdevice.FieldVersions:
+		return m.AddedVersions()
 	case userdevice.FieldUserID:
 		return m.AddedUserID()
 	}
@@ -6736,12 +6736,12 @@ func (m *UserDeviceMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserDeviceMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case userdevice.FieldVersion:
+	case userdevice.FieldVersions:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddVersion(v)
+		m.AddVersions(v)
 		return nil
 	case userdevice.FieldUserID:
 		v, ok := value.(int64)
@@ -6804,8 +6804,8 @@ func (m *UserDeviceMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserDeviceMutation) ResetField(name string) error {
 	switch name {
-	case userdevice.FieldVersion:
-		m.ResetVersion()
+	case userdevice.FieldVersions:
+		m.ResetVersions()
 		return nil
 	case userdevice.FieldCreatedBy:
 		m.ResetCreatedBy()

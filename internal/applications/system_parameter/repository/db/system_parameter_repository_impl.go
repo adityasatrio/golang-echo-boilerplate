@@ -36,7 +36,7 @@ func (r *SystemParameterRepositoryImpl) Create(ctx context.Context, newData *ent
 
 func (r *SystemParameterRepositoryImpl) Update(ctx context.Context, updateData *ent.SystemParameter) (*ent.SystemParameter, error) {
 	affected, err := r.client.SystemParameter.
-		Update().Where(systemparameter.ID(updateData.ID), systemparameter.Version(updateData.Version)).
+		Update().Where(systemparameter.ID(updateData.ID), systemparameter.Versions(updateData.Versions)).
 		SetKey(updateData.Key).
 		SetValue(updateData.Value).
 		Save(ctx)

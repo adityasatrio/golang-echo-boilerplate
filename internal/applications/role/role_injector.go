@@ -8,14 +8,14 @@ import (
 	"myapp/ent"
 	"myapp/internal/applications/role/repository"
 	"myapp/internal/applications/role/service"
-	"myapp/internal/applications/transaction"
+	"myapp/internal/component/transaction"
 )
 
 var provider = wire.NewSet(
 	repository.NewRoleRepository,
 	service.NewRoleService,
-	transaction.NewTrxService,
-	wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)),
+	transaction.NewTrx,
+	wire.Bind(new(transaction.Trx), new(*transaction.TrxImpl)),
 	wire.Bind(new(repository.RoleRepository), new(*repository.RoleRepositoryImpl)),
 	wire.Bind(new(service.RoleService), new(*service.RoleServiceImpl)),
 )

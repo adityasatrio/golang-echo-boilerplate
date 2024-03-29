@@ -39,7 +39,7 @@ func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client,
 func (r *UserRepositoryImpl) UpdateTx(ctx context.Context, txClient *ent.Client, updateUser *ent.User) (*ent.User, error) {
 
 	affected, err := txClient.User.Update().
-		Where(user.ID(updateUser.ID), user.Version(updateUser.Version)).
+		Where(user.ID(updateUser.ID), user.Versions(updateUser.Versions)).
 		SetName(updateUser.Name).
 		SetEmail(updateUser.Email).
 		SetPassword(updateUser.Password).

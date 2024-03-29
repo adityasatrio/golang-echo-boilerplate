@@ -35,7 +35,7 @@ func (r *RoleRepositoryImpl) Create(ctx context.Context, role ent.Role) (*ent.Ro
 
 func (r *RoleRepositoryImpl) Update(ctx context.Context, updateRole *ent.Role) (*ent.Role, error) {
 	affected, err := r.client.Role.
-		Update().Where(role.ID(updateRole.ID), role.Version(updateRole.Version)).
+		Update().Where(role.ID(updateRole.ID), role.Versions(updateRole.Versions)).
 		SetName(updateRole.Name).
 		SetText(updateRole.Text).
 		Save(ctx)

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"myapp/ent"
 	"myapp/internal/applications/role/dto"
-	mock_repository "myapp/mocks/role/repository"
+	mock_repository "myapp/mocks/applications/role/repository"
 	"testing"
 )
 

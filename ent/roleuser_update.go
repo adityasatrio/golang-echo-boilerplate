@@ -18,8 +18,9 @@ import (
 // RoleUserUpdate is the builder for updating RoleUser entities.
 type RoleUserUpdate struct {
 	config
-	hooks    []Hook
-	mutation *RoleUserMutation
+	hooks     []Hook
+	mutation  *RoleUserMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the RoleUserUpdate builder.
@@ -28,24 +29,24 @@ func (ruu *RoleUserUpdate) Where(ps ...predicate.RoleUser) *RoleUserUpdate {
 	return ruu
 }
 
-// SetVersion sets the "version" field.
-func (ruu *RoleUserUpdate) SetVersion(i int64) *RoleUserUpdate {
-	ruu.mutation.ResetVersion()
-	ruu.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (ruu *RoleUserUpdate) SetVersions(i int64) *RoleUserUpdate {
+	ruu.mutation.ResetVersions()
+	ruu.mutation.SetVersions(i)
 	return ruu
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (ruu *RoleUserUpdate) SetNillableVersion(i *int64) *RoleUserUpdate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (ruu *RoleUserUpdate) SetNillableVersions(i *int64) *RoleUserUpdate {
 	if i != nil {
-		ruu.SetVersion(*i)
+		ruu.SetVersions(*i)
 	}
 	return ruu
 }
 
-// AddVersion adds i to the "version" field.
-func (ruu *RoleUserUpdate) AddVersion(i int64) *RoleUserUpdate {
-	ruu.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (ruu *RoleUserUpdate) AddVersions(i int64) *RoleUserUpdate {
+	ruu.mutation.AddVersions(i)
 	return ruu
 }
 
@@ -226,6 +227,12 @@ func (ruu *RoleUserUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ruu *RoleUserUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUserUpdate {
+	ruu.modifiers = append(ruu.modifiers, modifiers...)
+	return ruu
+}
+
 func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ruu.check(); err != nil {
 		return n, err
@@ -238,11 +245,11 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ruu.mutation.Version(); ok {
-		_spec.SetField(roleuser.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruu.mutation.Versions(); ok {
+		_spec.SetField(roleuser.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := ruu.mutation.AddedVersion(); ok {
-		_spec.AddField(roleuser.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruu.mutation.AddedVersions(); ok {
+		_spec.AddField(roleuser.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := ruu.mutation.CreatedBy(); ok {
 		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)
@@ -286,6 +293,7 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ruu.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
+	_spec.AddModifiers(ruu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ruu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{roleuser.Label}
@@ -301,29 +309,30 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // RoleUserUpdateOne is the builder for updating a single RoleUser entity.
 type RoleUserUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *RoleUserMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *RoleUserMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetVersion sets the "version" field.
-func (ruuo *RoleUserUpdateOne) SetVersion(i int64) *RoleUserUpdateOne {
-	ruuo.mutation.ResetVersion()
-	ruuo.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (ruuo *RoleUserUpdateOne) SetVersions(i int64) *RoleUserUpdateOne {
+	ruuo.mutation.ResetVersions()
+	ruuo.mutation.SetVersions(i)
 	return ruuo
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (ruuo *RoleUserUpdateOne) SetNillableVersion(i *int64) *RoleUserUpdateOne {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (ruuo *RoleUserUpdateOne) SetNillableVersions(i *int64) *RoleUserUpdateOne {
 	if i != nil {
-		ruuo.SetVersion(*i)
+		ruuo.SetVersions(*i)
 	}
 	return ruuo
 }
 
-// AddVersion adds i to the "version" field.
-func (ruuo *RoleUserUpdateOne) AddVersion(i int64) *RoleUserUpdateOne {
-	ruuo.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (ruuo *RoleUserUpdateOne) AddVersions(i int64) *RoleUserUpdateOne {
+	ruuo.mutation.AddVersions(i)
 	return ruuo
 }
 
@@ -517,6 +526,12 @@ func (ruuo *RoleUserUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ruuo *RoleUserUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUserUpdateOne {
+	ruuo.modifiers = append(ruuo.modifiers, modifiers...)
+	return ruuo
+}
+
 func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, err error) {
 	if err := ruuo.check(); err != nil {
 		return _node, err
@@ -546,11 +561,11 @@ func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, er
 			}
 		}
 	}
-	if value, ok := ruuo.mutation.Version(); ok {
-		_spec.SetField(roleuser.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruuo.mutation.Versions(); ok {
+		_spec.SetField(roleuser.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := ruuo.mutation.AddedVersion(); ok {
-		_spec.AddField(roleuser.FieldVersion, field.TypeInt64, value)
+	if value, ok := ruuo.mutation.AddedVersions(); ok {
+		_spec.AddField(roleuser.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := ruuo.mutation.CreatedBy(); ok {
 		_spec.SetField(roleuser.FieldCreatedBy, field.TypeString, value)
@@ -594,6 +609,7 @@ func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, er
 	if ruuo.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
+	_spec.AddModifiers(ruuo.modifiers...)
 	_node = &RoleUser{config: ruuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

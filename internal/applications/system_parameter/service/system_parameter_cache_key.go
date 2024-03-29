@@ -1,7 +1,7 @@
 package service
 
 import (
-	"myapp/configs"
+	"myapp/internal/vars"
 	"strconv"
 	"strings"
 )
@@ -12,9 +12,9 @@ const (
 )
 
 func CacheKeySysParamWithId(id int) string {
-	return strings.Join([]string{configs.ApplicationName, SystemParameter, strconv.Itoa(id)}, Separator)
+	return strings.Join([]string{vars.ApplicationName(), SystemParameter, strconv.Itoa(id)}, Separator)
 }
 
 func CacheKeySysParams() string {
-	return strings.Join([]string{configs.ApplicationName, SystemParameter, "list"}, Separator)
+	return strings.Join([]string{vars.ApplicationName(), SystemParameter, "list"}, Separator)
 }

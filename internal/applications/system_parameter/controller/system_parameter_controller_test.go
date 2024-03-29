@@ -6,7 +6,7 @@ import (
 	"myapp/ent"
 	"myapp/internal/applications/system_parameter/dto"
 	"myapp/internal/helper"
-	mock_service "myapp/mocks/system_parameter/service"
+	mock_service "myapp/mocks/applications/system_parameter/service"
 	"myapp/test"
 	"net/http"
 	"net/http/httptest"

@@ -1,10 +1,13 @@
-.PHONY: clean schema mocks wire test build migration run
+.PHONY: clean schema-advance mocks wire test build migration run
 
-MIGRATE_DIR := migrations/migration
 WIRE_DIR := internal/applications
+OPENAPI_ENTRY_POINT := cmd/main.go
+OPENAPI_OUTPUT_DIR := cmd/docs
+
+all: schema-advance mocks swagger test build run
 
 # Build the project
-build:
+build: test
 	go build -o main cmd/main.go
 
 # Run tests and generate coverage report
@@ -20,15 +23,23 @@ test:
 schema:
 	go generate ./ent
 
+schema-advance:
+	@echo "*****\n Advance mode will granted you a super power, use it wisely\n [Generate with entgo feature sql/modifier,sql/execquery]\n*****"
+	go run -mod=mod entgo.io/ent/cmd/ent generate --feature sql/modifier,sql/execquery ./ent/schema
+
 # Generate mockery mocks
 mocks:
-	mockery --all --dir internal/applications --output mocks --packageprefix mock_ --keeptree
+	mockery --all --dir internal --output mocks --packageprefix mock_ --keeptree
 
 wire:
-	@echo "Enter directory: "; \
+	@echo "This command will add wire_gen.go in PATH={root}/internal/applications/{your-directory} make sure you already create {domain}_injector.go \nEnter directory: {your-directory} "; \
 	read dir; \
 	echo "Accessing directory and wire all DI $(WIRE_DIR)/$$dir"; \
 	cd $(WIRE_DIR)/$$dir && wire
+
+# Generate OpenAPI Docs
+swagger:
+	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR)
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m') Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
@@ -53,16 +64,20 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
-all: schema mocks test build run
+migration-build:
+	@echo "Warning this action will build unix executable file "
+	go build -v -o migration migrations/cmd/main.go
 
 migration-create:
-	migrate create -ext sql -dir $(MIGRATE_DIR) -seq $(name)
+	./migration mysql create $(name) $(type)
 
 migration-up:
-	 go run database/cmd/main.go -type up
+	go build -v -o migration migrations/cmd/main.go
+	 ./migration mysql up
 
 migration-down:
-	go run database/cmd/main.go -type down -version $(version)
+	go build -v -o migration migrations/cmd/main.go
+	./migration mysql down
 
-migration-force:
-	go run database/cmd/main.go -type force -version $(version)
+migration-status:
+	./migration mysql status

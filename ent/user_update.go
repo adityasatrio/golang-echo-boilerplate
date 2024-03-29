@@ -18,8 +18,9 @@ import (
 // UserUpdate is the builder for updating User entities.
 type UserUpdate struct {
 	config
-	hooks    []Hook
-	mutation *UserMutation
+	hooks     []Hook
+	mutation  *UserMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -28,24 +29,24 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetVersion sets the "version" field.
-func (uu *UserUpdate) SetVersion(i int64) *UserUpdate {
-	uu.mutation.ResetVersion()
-	uu.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (uu *UserUpdate) SetVersions(i int64) *UserUpdate {
+	uu.mutation.ResetVersions()
+	uu.mutation.SetVersions(i)
 	return uu
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableVersion(i *int64) *UserUpdate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableVersions(i *int64) *UserUpdate {
 	if i != nil {
-		uu.SetVersion(*i)
+		uu.SetVersions(*i)
 	}
 	return uu
 }
 
-// AddVersion adds i to the "version" field.
-func (uu *UserUpdate) AddVersion(i int64) *UserUpdate {
-	uu.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (uu *UserUpdate) AddVersions(i int64) *UserUpdate {
+	uu.mutation.AddVersions(i)
 	return uu
 }
 
@@ -509,6 +510,12 @@ func (uu *UserUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (uu *UserUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserUpdate {
+	uu.modifiers = append(uu.modifiers, modifiers...)
+	return uu
+}
+
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := uu.check(); err != nil {
 		return n, err
@@ -521,11 +528,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.Version(); ok {
-		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
+	if value, ok := uu.mutation.Versions(); ok {
+		_spec.SetField(user.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := uu.mutation.AddedVersion(); ok {
-		_spec.AddField(user.FieldVersion, field.TypeInt64, value)
+	if value, ok := uu.mutation.AddedVersions(); ok {
+		_spec.AddField(user.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := uu.mutation.CreatedBy(); ok {
 		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
@@ -659,6 +666,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.LatestDeletedAtCleared() {
 		_spec.ClearField(user.FieldLatestDeletedAt, field.TypeTime)
 	}
+	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -674,29 +682,30 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // UserUpdateOne is the builder for updating a single User entity.
 type UserUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *UserMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *UserMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetVersion sets the "version" field.
-func (uuo *UserUpdateOne) SetVersion(i int64) *UserUpdateOne {
-	uuo.mutation.ResetVersion()
-	uuo.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (uuo *UserUpdateOne) SetVersions(i int64) *UserUpdateOne {
+	uuo.mutation.ResetVersions()
+	uuo.mutation.SetVersions(i)
 	return uuo
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableVersion(i *int64) *UserUpdateOne {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableVersions(i *int64) *UserUpdateOne {
 	if i != nil {
-		uuo.SetVersion(*i)
+		uuo.SetVersions(*i)
 	}
 	return uuo
 }
 
-// AddVersion adds i to the "version" field.
-func (uuo *UserUpdateOne) AddVersion(i int64) *UserUpdateOne {
-	uuo.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (uuo *UserUpdateOne) AddVersions(i int64) *UserUpdateOne {
+	uuo.mutation.AddVersions(i)
 	return uuo
 }
 
@@ -1173,6 +1182,12 @@ func (uuo *UserUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (uuo *UserUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserUpdateOne {
+	uuo.modifiers = append(uuo.modifiers, modifiers...)
+	return uuo
+}
+
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	if err := uuo.check(); err != nil {
 		return _node, err
@@ -1202,11 +1217,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.Version(); ok {
-		_spec.SetField(user.FieldVersion, field.TypeInt64, value)
+	if value, ok := uuo.mutation.Versions(); ok {
+		_spec.SetField(user.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := uuo.mutation.AddedVersion(); ok {
-		_spec.AddField(user.FieldVersion, field.TypeInt64, value)
+	if value, ok := uuo.mutation.AddedVersions(); ok {
+		_spec.AddField(user.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := uuo.mutation.CreatedBy(); ok {
 		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
@@ -1340,6 +1355,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.LatestDeletedAtCleared() {
 		_spec.ClearField(user.FieldLatestDeletedAt, field.TypeTime)
 	}
+	_spec.AddModifiers(uuo.modifiers...)
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

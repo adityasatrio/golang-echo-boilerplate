@@ -18,7 +18,7 @@ type RoleUser struct {
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
 	// Unix time of when the latest update occurred
-	Version int64 `json:"version,omitempty"`
+	Versions int64 `json:"versions,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy string `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -43,7 +43,7 @@ func (*RoleUser) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case roleuser.FieldID, roleuser.FieldVersion, roleuser.FieldUserID, roleuser.FieldRoleID:
+		case roleuser.FieldID, roleuser.FieldVersions, roleuser.FieldUserID, roleuser.FieldRoleID:
 			values[i] = new(sql.NullInt64)
 		case roleuser.FieldCreatedBy, roleuser.FieldUpdatedBy, roleuser.FieldDeletedBy:
 			values[i] = new(sql.NullString)
@@ -70,11 +70,11 @@ func (ru *RoleUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ru.ID = uint64(value.Int64)
-		case roleuser.FieldVersion:
+		case roleuser.FieldVersions:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field version", values[i])
+				return fmt.Errorf("unexpected type %T for field versions", values[i])
 			} else if value.Valid {
-				ru.Version = value.Int64
+				ru.Versions = value.Int64
 			}
 		case roleuser.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -160,8 +160,8 @@ func (ru *RoleUser) String() string {
 	var builder strings.Builder
 	builder.WriteString("RoleUser(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ru.ID))
-	builder.WriteString("version=")
-	builder.WriteString(fmt.Sprintf("%v", ru.Version))
+	builder.WriteString("versions=")
+	builder.WriteString(fmt.Sprintf("%v", ru.Versions))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(ru.CreatedBy)

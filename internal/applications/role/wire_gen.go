@@ -11,7 +11,7 @@ import (
 	"myapp/ent"
 	"myapp/internal/applications/role/repository"
 	"myapp/internal/applications/role/service"
-	"myapp/internal/applications/transaction"
+	"myapp/internal/component/transaction"
 )
 
 // Injectors from role_injector.go:
@@ -24,4 +24,4 @@ func InitializedRoleService(dbClient *ent.Client) *service.RoleServiceImpl {
 
 // role_injector.go:
 
-var provider = wire.NewSet(repository.NewRoleRepository, service.NewRoleService, transaction.NewTrxService, wire.Bind(new(transaction.TrxService), new(*transaction.TrxServiceImpl)), wire.Bind(new(repository.RoleRepository), new(*repository.RoleRepositoryImpl)), wire.Bind(new(service.RoleService), new(*service.RoleServiceImpl)))
+var provider = wire.NewSet(repository.NewRoleRepository, service.NewRoleService, transaction.NewTrx, wire.Bind(new(transaction.Trx), new(*transaction.TrxImpl)), wire.Bind(new(repository.RoleRepository), new(*repository.RoleRepositoryImpl)), wire.Bind(new(service.RoleService), new(*service.RoleServiceImpl)))

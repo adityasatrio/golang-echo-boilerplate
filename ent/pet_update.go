@@ -18,8 +18,9 @@ import (
 // PetUpdate is the builder for updating Pet entities.
 type PetUpdate struct {
 	config
-	hooks    []Hook
-	mutation *PetMutation
+	hooks     []Hook
+	mutation  *PetMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the PetUpdate builder.
@@ -28,24 +29,24 @@ func (pu *PetUpdate) Where(ps ...predicate.Pet) *PetUpdate {
 	return pu
 }
 
-// SetVersion sets the "version" field.
-func (pu *PetUpdate) SetVersion(i int64) *PetUpdate {
-	pu.mutation.ResetVersion()
-	pu.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (pu *PetUpdate) SetVersions(i int64) *PetUpdate {
+	pu.mutation.ResetVersions()
+	pu.mutation.SetVersions(i)
 	return pu
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (pu *PetUpdate) SetNillableVersion(i *int64) *PetUpdate {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableVersions(i *int64) *PetUpdate {
 	if i != nil {
-		pu.SetVersion(*i)
+		pu.SetVersions(*i)
 	}
 	return pu
 }
 
-// AddVersion adds i to the "version" field.
-func (pu *PetUpdate) AddVersion(i int64) *PetUpdate {
-	pu.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (pu *PetUpdate) AddVersions(i int64) *PetUpdate {
+	pu.mutation.AddVersions(i)
 	return pu
 }
 
@@ -223,6 +224,12 @@ func (pu *PetUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pu *PetUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PetUpdate {
+	pu.modifiers = append(pu.modifiers, modifiers...)
+	return pu
+}
+
 func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pu.check(); err != nil {
 		return n, err
@@ -235,11 +242,11 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := pu.mutation.Version(); ok {
-		_spec.SetField(pet.FieldVersion, field.TypeInt64, value)
+	if value, ok := pu.mutation.Versions(); ok {
+		_spec.SetField(pet.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := pu.mutation.AddedVersion(); ok {
-		_spec.AddField(pet.FieldVersion, field.TypeInt64, value)
+	if value, ok := pu.mutation.AddedVersions(); ok {
+		_spec.AddField(pet.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := pu.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
@@ -280,6 +287,7 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
 	}
+	_spec.AddModifiers(pu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{pet.Label}
@@ -295,29 +303,30 @@ func (pu *PetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // PetUpdateOne is the builder for updating a single Pet entity.
 type PetUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *PetMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *PetMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetVersion sets the "version" field.
-func (puo *PetUpdateOne) SetVersion(i int64) *PetUpdateOne {
-	puo.mutation.ResetVersion()
-	puo.mutation.SetVersion(i)
+// SetVersions sets the "versions" field.
+func (puo *PetUpdateOne) SetVersions(i int64) *PetUpdateOne {
+	puo.mutation.ResetVersions()
+	puo.mutation.SetVersions(i)
 	return puo
 }
 
-// SetNillableVersion sets the "version" field if the given value is not nil.
-func (puo *PetUpdateOne) SetNillableVersion(i *int64) *PetUpdateOne {
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableVersions(i *int64) *PetUpdateOne {
 	if i != nil {
-		puo.SetVersion(*i)
+		puo.SetVersions(*i)
 	}
 	return puo
 }
 
-// AddVersion adds i to the "version" field.
-func (puo *PetUpdateOne) AddVersion(i int64) *PetUpdateOne {
-	puo.mutation.AddVersion(i)
+// AddVersions adds i to the "versions" field.
+func (puo *PetUpdateOne) AddVersions(i int64) *PetUpdateOne {
+	puo.mutation.AddVersions(i)
 	return puo
 }
 
@@ -508,6 +517,12 @@ func (puo *PetUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (puo *PetUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PetUpdateOne {
+	puo.modifiers = append(puo.modifiers, modifiers...)
+	return puo
+}
+
 func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	if err := puo.check(); err != nil {
 		return _node, err
@@ -537,11 +552,11 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 			}
 		}
 	}
-	if value, ok := puo.mutation.Version(); ok {
-		_spec.SetField(pet.FieldVersion, field.TypeInt64, value)
+	if value, ok := puo.mutation.Versions(); ok {
+		_spec.SetField(pet.FieldVersions, field.TypeInt64, value)
 	}
-	if value, ok := puo.mutation.AddedVersion(); ok {
-		_spec.AddField(pet.FieldVersion, field.TypeInt64, value)
+	if value, ok := puo.mutation.AddedVersions(); ok {
+		_spec.AddField(pet.FieldVersions, field.TypeInt64, value)
 	}
 	if value, ok := puo.mutation.CreatedBy(); ok {
 		_spec.SetField(pet.FieldCreatedBy, field.TypeString, value)
@@ -582,6 +597,7 @@ func (puo *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	if value, ok := puo.mutation.AddedAgeMonth(); ok {
 		_spec.AddField(pet.FieldAgeMonth, field.TypeInt, value)
 	}
+	_spec.AddModifiers(puo.modifiers...)
 	_node = &Pet{config: puo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

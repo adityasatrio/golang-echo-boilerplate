@@ -54,9 +54,9 @@ func IDLTE(id uint64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldLTE(FieldID, id))
 }
 
-// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
-func Version(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldVersion, v))
+// Versions applies equality check predicate on the "versions" field. It's identical to VersionsEQ.
+func Versions(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldVersions, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
@@ -109,44 +109,44 @@ func DeviceID(v string) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
 }
 
-// VersionEQ applies the EQ predicate on the "version" field.
-func VersionEQ(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldEQ(FieldVersion, v))
+// VersionsEQ applies the EQ predicate on the "versions" field.
+func VersionsEQ(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldVersions, v))
 }
 
-// VersionNEQ applies the NEQ predicate on the "version" field.
-func VersionNEQ(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNEQ(FieldVersion, v))
+// VersionsNEQ applies the NEQ predicate on the "versions" field.
+func VersionsNEQ(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldVersions, v))
 }
 
-// VersionIn applies the In predicate on the "version" field.
-func VersionIn(vs ...int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldIn(FieldVersion, vs...))
+// VersionsIn applies the In predicate on the "versions" field.
+func VersionsIn(vs ...int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldVersions, vs...))
 }
 
-// VersionNotIn applies the NotIn predicate on the "version" field.
-func VersionNotIn(vs ...int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldNotIn(FieldVersion, vs...))
+// VersionsNotIn applies the NotIn predicate on the "versions" field.
+func VersionsNotIn(vs ...int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldVersions, vs...))
 }
 
-// VersionGT applies the GT predicate on the "version" field.
-func VersionGT(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGT(FieldVersion, v))
+// VersionsGT applies the GT predicate on the "versions" field.
+func VersionsGT(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldVersions, v))
 }
 
-// VersionGTE applies the GTE predicate on the "version" field.
-func VersionGTE(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldGTE(FieldVersion, v))
+// VersionsGTE applies the GTE predicate on the "versions" field.
+func VersionsGTE(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldVersions, v))
 }
 
-// VersionLT applies the LT predicate on the "version" field.
-func VersionLT(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLT(FieldVersion, v))
+// VersionsLT applies the LT predicate on the "versions" field.
+func VersionsLT(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldVersions, v))
 }
 
-// VersionLTE applies the LTE predicate on the "version" field.
-func VersionLTE(v int64) predicate.UserDevice {
-	return predicate.UserDevice(sql.FieldLTE(FieldVersion, v))
+// VersionsLTE applies the LTE predicate on the "versions" field.
+func VersionsLTE(v int64) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldVersions, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.

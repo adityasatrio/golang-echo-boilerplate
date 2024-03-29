@@ -14,7 +14,7 @@ func VersionHook() ent.Hook {
 
 			if m.Op().Is(1) || m.Op().Is(2) || m.Op().Is(3) {
 				start := time.Now()
-				err := m.SetField("version", time.Now().UnixNano())
+				err := m.SetField("versions", time.Now().UnixNano())
 				if err != nil {
 					// An error is returned, if the field is not defined in
 					// the schema, or if the type mismatch the field type.

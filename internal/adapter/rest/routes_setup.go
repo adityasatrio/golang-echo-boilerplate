@@ -4,26 +4,31 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
+	"github.com/swaggo/echo-swagger"
+	"myapp/configs/rabbitmq/connection"
 	"myapp/ent"
-	helloController "myapp/internal/applications/health/controller"
-	"myapp/internal/applications/health/repository"
-	"myapp/internal/applications/health/service"
+	exampleRabbit "myapp/internal/applications/example/rabbitmq/controller"
+	"myapp/internal/applications/health"
+	"myapp/internal/applications/health/controller"
 	quotes "myapp/internal/applications/quotes"
 	quotesController "myapp/internal/applications/quotes/controller"
 	"myapp/internal/applications/system_parameter"
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
 	"myapp/internal/applications/user"
 	userController "myapp/internal/applications/user/controller"
+	"myapp/internal/component/rabbitmq/producer"
 )
 
-func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Client) {
+func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Client, connRabbitMQ *connection.RabbitMQConnection) {
 
 	appName := viper.GetString("application.name")
 
+	// Swagger OpenAPI Docs
+	e.GET(appName+"/swagger/*", echoSwagger.WrapHandler)
+
 	//manual injection
-	helloWorldsRepository := repository.NewHealthRepository(connDb)
-	helloWorldsService := service.NewHealthService(helloWorldsRepository)
-	helloController.
+	helloWorldsService := health.InitializeHealthService(connDb, redisClient)
+	controller.
 		NewHealthController(helloWorldsService).
 		AddRoutes(e, appName)
 
@@ -42,4 +47,8 @@ func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Clie
 	quotesController.
 		NewQuotesController(quotesService).
 		AddRoutes(e, appName)
+
+	//add example controller:
+	producerService := producer.InitializedProducer(connRabbitMQ)
+	exampleRabbit.NewExampleRabbitMQController(producerService).AddRoutes(e, appName)
 }
