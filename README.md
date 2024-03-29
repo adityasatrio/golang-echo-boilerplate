@@ -40,7 +40,7 @@ go install github.com/vektra/mockery/v2@v2.32.0
 then generate mock using below command
 ```shell
  mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
-```
+``` 
 
 ### Generate Dependency Injection
 1. Install google wire CLI
