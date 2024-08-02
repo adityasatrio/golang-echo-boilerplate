@@ -33,8 +33,8 @@ import (
 
 //	@contact.url	https://example.com
 
-// @host		localhost:8888
-// @basePath	/micro-go-template
+//	@host		localhost:8888
+//	@basePath	/micro-go-template
 func main() {
 	e := echo.New()
 	fmt.Println("initialized echo framework")

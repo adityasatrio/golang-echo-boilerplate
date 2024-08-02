@@ -18,8 +18,9 @@ import (
 // SystemParameterUpdate is the builder for updating SystemParameter entities.
 type SystemParameterUpdate struct {
 	config
-	hooks    []Hook
-	mutation *SystemParameterMutation
+	hooks     []Hook
+	mutation  *SystemParameterMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the SystemParameterUpdate builder.
@@ -194,6 +195,12 @@ func (spu *SystemParameterUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (spu *SystemParameterUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SystemParameterUpdate {
+	spu.modifiers = append(spu.modifiers, modifiers...)
+	return spu
+}
+
 func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := spu.check(); err != nil {
 		return n, err
@@ -242,6 +249,7 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := spu.mutation.Value(); ok {
 		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
+	_spec.AddModifiers(spu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, spu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{systemparameter.Label}
@@ -257,9 +265,10 @@ func (spu *SystemParameterUpdate) sqlSave(ctx context.Context) (n int, err error
 // SystemParameterUpdateOne is the builder for updating a single SystemParameter entity.
 type SystemParameterUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *SystemParameterMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *SystemParameterMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetVersions sets the "versions" field.
@@ -441,6 +450,12 @@ func (spuo *SystemParameterUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (spuo *SystemParameterUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SystemParameterUpdateOne {
+	spuo.modifiers = append(spuo.modifiers, modifiers...)
+	return spuo
+}
+
 func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *SystemParameter, err error) {
 	if err := spuo.check(); err != nil {
 		return _node, err
@@ -506,6 +521,7 @@ func (spuo *SystemParameterUpdateOne) sqlSave(ctx context.Context) (_node *Syste
 	if value, ok := spuo.mutation.Value(); ok {
 		_spec.SetField(systemparameter.FieldValue, field.TypeString, value)
 	}
+	_spec.AddModifiers(spuo.modifiers...)
 	_node = &SystemParameter{config: spuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

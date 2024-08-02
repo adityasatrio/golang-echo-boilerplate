@@ -11,7 +11,7 @@ var (
 	// PetsColumns holds the columns for the "pets" table.
 	PetsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904241363968},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112960208896},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
@@ -44,7 +44,7 @@ var (
 	// RolesColumns holds the columns for the "roles" table.
 	RolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904241964032},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112961262080},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
@@ -63,7 +63,7 @@ var (
 	// RoleUsersColumns holds the columns for the "role_users" table.
 	RoleUsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904241984000},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112961282048},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
@@ -82,7 +82,7 @@ var (
 	// SystemParametersColumns holds the columns for the "system_parameters" table.
 	SystemParametersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904242000896},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112961296896},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
@@ -113,7 +113,7 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904242024960},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112961321984},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
@@ -150,7 +150,7 @@ var (
 	// UserDevicesColumns holds the columns for the "user_devices" table.
 	UserDevicesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "versions", Type: field.TypeInt64, Default: 1722609904242072064},
+		{Name: "versions", Type: field.TypeInt64, Default: 1722611112961364992},
 		{Name: "created_by", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},

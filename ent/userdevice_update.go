@@ -18,8 +18,9 @@ import (
 // UserDeviceUpdate is the builder for updating UserDevice entities.
 type UserDeviceUpdate struct {
 	config
-	hooks    []Hook
-	mutation *UserDeviceMutation
+	hooks     []Hook
+	mutation  *UserDeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the UserDeviceUpdate builder.
@@ -217,6 +218,12 @@ func (udu *UserDeviceUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (udu *UserDeviceUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserDeviceUpdate {
+	udu.modifiers = append(udu.modifiers, modifiers...)
+	return udu
+}
+
 func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := udu.check(); err != nil {
 		return n, err
@@ -277,6 +284,7 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if udu.mutation.DeviceIDCleared() {
 		_spec.ClearField(userdevice.FieldDeviceID, field.TypeString)
 	}
+	_spec.AddModifiers(udu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, udu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{userdevice.Label}
@@ -292,9 +300,10 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // UserDeviceUpdateOne is the builder for updating a single UserDevice entity.
 type UserDeviceUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *UserDeviceMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *UserDeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetVersions sets the "versions" field.
@@ -499,6 +508,12 @@ func (uduo *UserDeviceUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (uduo *UserDeviceUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserDeviceUpdateOne {
+	uduo.modifiers = append(uduo.modifiers, modifiers...)
+	return uduo
+}
+
 func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice, err error) {
 	if err := uduo.check(); err != nil {
 		return _node, err
@@ -576,6 +591,7 @@ func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice
 	if uduo.mutation.DeviceIDCleared() {
 		_spec.ClearField(userdevice.FieldDeviceID, field.TypeString)
 	}
+	_spec.AddModifiers(uduo.modifiers...)
 	_node = &UserDevice{config: uduo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

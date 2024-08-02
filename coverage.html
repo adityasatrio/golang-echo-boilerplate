@@ -774,6 +774,8 @@ func (r *HealthRepositoryImpl) Health(ctx context.Context, message string) (map[
         _, err := r.client.ExecContext(ctx, "SELECT 1")
         log.Info("client db debug", r.client.Debug())
 
+        //err := errors.New("error in health check")
+
         if err != nil </span><span class="cov0" title="0">{
                 healthCheck["db_status"] = "DOWN"
                 healthCheck["db_name"] = "mysql"
