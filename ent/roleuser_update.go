@@ -18,9 +18,8 @@ import (
 // RoleUserUpdate is the builder for updating RoleUser entities.
 type RoleUserUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *RoleUserMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *RoleUserMutation
 }
 
 // Where appends a list predicates to the RoleUserUpdate builder.
@@ -227,12 +226,6 @@ func (ruu *RoleUserUpdate) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ruu *RoleUserUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUserUpdate {
-	ruu.modifiers = append(ruu.modifiers, modifiers...)
-	return ruu
-}
-
 func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ruu.check(); err != nil {
 		return n, err
@@ -293,7 +286,6 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ruu.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
-	_spec.AddModifiers(ruu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ruu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{roleuser.Label}
@@ -309,10 +301,9 @@ func (ruu *RoleUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // RoleUserUpdateOne is the builder for updating a single RoleUser entity.
 type RoleUserUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *RoleUserMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *RoleUserMutation
 }
 
 // SetVersions sets the "versions" field.
@@ -526,12 +517,6 @@ func (ruuo *RoleUserUpdateOne) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ruuo *RoleUserUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUserUpdateOne {
-	ruuo.modifiers = append(ruuo.modifiers, modifiers...)
-	return ruuo
-}
-
 func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, err error) {
 	if err := ruuo.check(); err != nil {
 		return _node, err
@@ -609,7 +594,6 @@ func (ruuo *RoleUserUpdateOne) sqlSave(ctx context.Context) (_node *RoleUser, er
 	if ruuo.mutation.RoleIDCleared() {
 		_spec.ClearField(roleuser.FieldRoleID, field.TypeUint64)
 	}
-	_spec.AddModifiers(ruuo.modifiers...)
 	_node = &RoleUser{config: ruuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

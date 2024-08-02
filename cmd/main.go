@@ -18,7 +18,6 @@ import (
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest"
 	"myapp/internal/component/rabbitmq/registry"
-	"myapp/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -44,7 +43,7 @@ func main() {
 	credential.InitCredentialEnv(e)
 	configs.SetupLogger(e)
 
-	middleware.SetupMiddlewares(e)
+	configs.SetupMiddlewares(e)
 
 	validator.SetupValidator(e)
 	validator.SetupGlobalHttpUnhandleErrors(e)

@@ -18,9 +18,8 @@ import (
 // RoleUpdate is the builder for updating Role entities.
 type RoleUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *RoleMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *RoleMutation
 }
 
 // Where appends a list predicates to the RoleUpdate builder.
@@ -185,12 +184,6 @@ func (ru *RoleUpdate) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ru *RoleUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUpdate {
-	ru.modifiers = append(ru.modifiers, modifiers...)
-	return ru
-}
-
 func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ru.check(); err != nil {
 		return n, err
@@ -239,7 +232,6 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ru.mutation.Text(); ok {
 		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
-	_spec.AddModifiers(ru.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{role.Label}
@@ -255,10 +247,9 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // RoleUpdateOne is the builder for updating a single Role entity.
 type RoleUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *RoleMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *RoleMutation
 }
 
 // SetVersions sets the "versions" field.
@@ -430,12 +421,6 @@ func (ruo *RoleUpdateOne) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ruo *RoleUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RoleUpdateOne {
-	ruo.modifiers = append(ruo.modifiers, modifiers...)
-	return ruo
-}
-
 func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) {
 	if err := ruo.check(); err != nil {
 		return _node, err
@@ -501,7 +486,6 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 	if value, ok := ruo.mutation.Text(); ok {
 		_spec.SetField(role.FieldText, field.TypeString, value)
 	}
-	_spec.AddModifiers(ruo.modifiers...)
 	_node = &Role{config: ruo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

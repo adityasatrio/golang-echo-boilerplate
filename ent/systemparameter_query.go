@@ -21,7 +21,6 @@ type SystemParameterQuery struct {
 	order      []systemparameter.OrderOption
 	inters     []Interceptor
 	predicates []predicate.SystemParameter
-	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -343,9 +342,6 @@ func (spq *SystemParameterQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
-	if len(spq.modifiers) > 0 {
-		_spec.Modifiers = spq.modifiers
-	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -360,9 +356,6 @@ func (spq *SystemParameterQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 
 func (spq *SystemParameterQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := spq.querySpec()
-	if len(spq.modifiers) > 0 {
-		_spec.Modifiers = spq.modifiers
-	}
 	_spec.Node.Columns = spq.ctx.Fields
 	if len(spq.ctx.Fields) > 0 {
 		_spec.Unique = spq.ctx.Unique != nil && *spq.ctx.Unique
@@ -425,9 +418,6 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if spq.ctx.Unique != nil && *spq.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, m := range spq.modifiers {
-		m(selector)
-	}
 	for _, p := range spq.predicates {
 		p(selector)
 	}
@@ -443,12 +433,6 @@ func (spq *SystemParameterQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (spq *SystemParameterQuery) Modify(modifiers ...func(s *sql.Selector)) *SystemParameterSelect {
-	spq.modifiers = append(spq.modifiers, modifiers...)
-	return spq.Select()
 }
 
 // SystemParameterGroupBy is the group-by builder for SystemParameter entities.
@@ -539,10 +523,4 @@ func (sps *SystemParameterSelect) sqlScan(ctx context.Context, root *SystemParam
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (sps *SystemParameterSelect) Modify(modifiers ...func(s *sql.Selector)) *SystemParameterSelect {
-	sps.modifiers = append(sps.modifiers, modifiers...)
-	return sps
 }
