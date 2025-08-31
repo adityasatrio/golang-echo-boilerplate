@@ -60,8 +60,8 @@ template:
 	Pascal=$$(printf '%s' "$$name" | awk '{print toupper(substr($$0,1,1)) substr($$0,2)}'); \
 	find "$$newdir" -type f \( -name '*.go' -o -name '*.MD' \) -print0 | xargs -0 sed -i -e "s|A_templates_directory|$$name|g" -e "s|/A_templates_directory|/$$name|g"; \
 	find "$$newdir" -type f -name '*.go' -print0 | xargs -0 sed -i -e "s|Template|$$Pascal|g" -e "s|template|$$name|g"; \
-	if [ -f "$$newdir/template_injector.go" ]; then sed -i "s/^package .*/package $$name/" "$$newdir/template_injector.go"; mv "$$newdir/template_injector.go" "$$newdir/$$name_injector.go"; fi; \
-	for f in $$(find "$$newdir" -type f -name 'template_*'); do newf=$$(echo "$$f" | sed "s/\/template_/\/$$name_/g"); mv "$$f" "$$newf"; done; \
+	if [ -f "$$newdir/template_injector.go" ]; then sed -i "s/^package .*/package $$name/" "$$newdir/template_injector.go"; mv "$$newdir/template_injector.go" "$$newdir/$${name}_injector.go"; fi; \
+	for f in $$(find "$$newdir" -type f -name 'template_*'); do newf=$$(echo "$$f" | sed "s/\/template_/\/$${name}_/g"); mv "$$f" "$$newf"; done; \
 	bash scripts/adjust_routes.sh "$$name"; \
 	echo "Done. Next steps:"; \
 	echo "  - Update routes in $$newdir/controller to use your desired path (currently '/$$name')."; \
