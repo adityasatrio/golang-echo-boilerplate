@@ -1,4 +1,4 @@
-.PHONY: clean schema-advance mocks wire test build migration run
+.PHONY: clean schema-advance mocks wire test build migration run template
 
 WIRE_DIR := internal/applications
 OPENAPI_ENTRY_POINT := cmd/main.go
@@ -43,6 +43,30 @@ wire:
 # Generate OpenAPI Docs
 swagger:
 	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR)
+
+# Scaffold a new module from A_templates_directory
+# Usage:
+#   make template name=<module_name>
+# Prompts for name if not provided. Creates internal/applications/<module_name>
+# and performs placeholder replacements (imports, identifiers, routes).
+template:
+	@set -e; \
+	if [ -z "$(name)" ]; then read -p "Enter module name (e.g., user): " name; else name="$(name)"; fi; \
+	newdir="internal/applications/$$name"; \
+	if [ -d "$$newdir" ]; then echo "Module directory already exists: $$newdir"; exit 1; fi; \
+	echo "Scaffolding module at $$newdir from A_templates_directory"; \
+	cp -R internal/applications/A_templates_directory "$$newdir"; \
+	rm -f "$$newdir/wire_gen.go" || true; \
+	Pascal=$$(printf '%s' "$$name" | awk '{print toupper(substr($$0,1,1)) substr($$0,2)}'); \
+	find "$$newdir" -type f \( -name '*.go' -o -name '*.MD' \) -print0 | xargs -0 sed -i -e "s|A_templates_directory|$$name|g" -e "s|/A_templates_directory|/$$name|g"; \
+	find "$$newdir" -type f -name '*.go' -print0 | xargs -0 sed -i -e "s|Template|$$Pascal|g" -e "s|template|$$name|g"; \
+	if [ -f "$$newdir/template_injector.go" ]; then sed -i "s/^package .*/package $$name/" "$$newdir/template_injector.go"; mv "$$newdir/template_injector.go" "$$newdir/$$name_injector.go"; fi; \
+	for f in $$(find "$$newdir" -type f -name 'template_*'); do newf=$$(echo "$$f" | sed "s/\/template_/\/$$name_/g"); mv "$$f" "$$newf"; done; \
+	bash scripts/adjust_routes.sh "$$name"; \
+	echo "Done. Next steps:"; \
+	echo "  - Update routes in $$newdir/controller to use your desired path (currently '/$$name')."; \
+	echo "  - Run: make wire (select '$$name') and make mocks"; \
+	echo "  - Integrate routes in internal/adapter/rest/routes_setup.go (match your AddRoutes signature)."
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m') Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
