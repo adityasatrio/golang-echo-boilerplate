@@ -274,11 +274,15 @@ func (spc *SystemParameterCreate) createSpec() (*SystemParameter, *sqlgraph.Crea
 // SystemParameterCreateBulk is the builder for creating many SystemParameter entities in bulk.
 type SystemParameterCreateBulk struct {
 	config
+	err      error
 	builders []*SystemParameterCreate
 }
 
 // Save creates the SystemParameter entities in the database.
 func (spcb *SystemParameterCreateBulk) Save(ctx context.Context) ([]*SystemParameter, error) {
+	if spcb.err != nil {
+		return nil, spcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(spcb.builders))
 	nodes := make([]*SystemParameter, len(spcb.builders))
 	mutators := make([]Mutator, len(spcb.builders))

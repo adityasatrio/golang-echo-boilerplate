@@ -56,6 +56,14 @@ func (ruu *RoleUserUpdate) SetCreatedBy(s string) *RoleUserUpdate {
 	return ruu
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ruu *RoleUserUpdate) SetNillableCreatedBy(s *string) *RoleUserUpdate {
+	if s != nil {
+		ruu.SetCreatedBy(*s)
+	}
+	return ruu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ruu *RoleUserUpdate) SetUpdatedBy(s string) *RoleUserUpdate {
 	ruu.mutation.SetUpdatedBy(s)
@@ -339,6 +347,14 @@ func (ruuo *RoleUserUpdateOne) AddVersions(i int64) *RoleUserUpdateOne {
 // SetCreatedBy sets the "created_by" field.
 func (ruuo *RoleUserUpdateOne) SetCreatedBy(s string) *RoleUserUpdateOne {
 	ruuo.mutation.SetCreatedBy(s)
+	return ruuo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ruuo *RoleUserUpdateOne) SetNillableCreatedBy(s *string) *RoleUserUpdateOne {
+	if s != nil {
+		ruuo.SetCreatedBy(*s)
+	}
 	return ruuo
 }
 

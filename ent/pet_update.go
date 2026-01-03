@@ -56,6 +56,14 @@ func (pu *PetUpdate) SetCreatedBy(s string) *PetUpdate {
 	return pu
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableCreatedBy(s *string) *PetUpdate {
+	if s != nil {
+		pu.SetCreatedBy(*s)
+	}
+	return pu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (pu *PetUpdate) SetUpdatedBy(s string) *PetUpdate {
 	pu.mutation.SetUpdatedBy(s)
@@ -128,9 +136,25 @@ func (pu *PetUpdate) SetName(s string) *PetUpdate {
 	return pu
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableName(s *string) *PetUpdate {
+	if s != nil {
+		pu.SetName(*s)
+	}
+	return pu
+}
+
 // SetType sets the "type" field.
 func (pu *PetUpdate) SetType(pe pet.Type) *PetUpdate {
 	pu.mutation.SetType(pe)
+	return pu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableType(pe *pet.Type) *PetUpdate {
+	if pe != nil {
+		pu.SetType(*pe)
+	}
 	return pu
 }
 
@@ -140,10 +164,26 @@ func (pu *PetUpdate) SetCode(s string) *PetUpdate {
 	return pu
 }
 
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableCode(s *string) *PetUpdate {
+	if s != nil {
+		pu.SetCode(*s)
+	}
+	return pu
+}
+
 // SetAgeMonth sets the "age_month" field.
 func (pu *PetUpdate) SetAgeMonth(i int) *PetUpdate {
 	pu.mutation.ResetAgeMonth()
 	pu.mutation.SetAgeMonth(i)
+	return pu
+}
+
+// SetNillableAgeMonth sets the "age_month" field if the given value is not nil.
+func (pu *PetUpdate) SetNillableAgeMonth(i *int) *PetUpdate {
+	if i != nil {
+		pu.SetAgeMonth(*i)
+	}
 	return pu
 }
 
@@ -336,6 +376,14 @@ func (puo *PetUpdateOne) SetCreatedBy(s string) *PetUpdateOne {
 	return puo
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableCreatedBy(s *string) *PetUpdateOne {
+	if s != nil {
+		puo.SetCreatedBy(*s)
+	}
+	return puo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (puo *PetUpdateOne) SetUpdatedBy(s string) *PetUpdateOne {
 	puo.mutation.SetUpdatedBy(s)
@@ -408,9 +456,25 @@ func (puo *PetUpdateOne) SetName(s string) *PetUpdateOne {
 	return puo
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableName(s *string) *PetUpdateOne {
+	if s != nil {
+		puo.SetName(*s)
+	}
+	return puo
+}
+
 // SetType sets the "type" field.
 func (puo *PetUpdateOne) SetType(pe pet.Type) *PetUpdateOne {
 	puo.mutation.SetType(pe)
+	return puo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableType(pe *pet.Type) *PetUpdateOne {
+	if pe != nil {
+		puo.SetType(*pe)
+	}
 	return puo
 }
 
@@ -420,10 +484,26 @@ func (puo *PetUpdateOne) SetCode(s string) *PetUpdateOne {
 	return puo
 }
 
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableCode(s *string) *PetUpdateOne {
+	if s != nil {
+		puo.SetCode(*s)
+	}
+	return puo
+}
+
 // SetAgeMonth sets the "age_month" field.
 func (puo *PetUpdateOne) SetAgeMonth(i int) *PetUpdateOne {
 	puo.mutation.ResetAgeMonth()
 	puo.mutation.SetAgeMonth(i)
+	return puo
+}
+
+// SetNillableAgeMonth sets the "age_month" field if the given value is not nil.
+func (puo *PetUpdateOne) SetNillableAgeMonth(i *int) *PetUpdateOne {
+	if i != nil {
+		puo.SetAgeMonth(*i)
+	}
 	return puo
 }
 

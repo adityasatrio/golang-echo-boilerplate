@@ -9,6 +9,7 @@ import (
 	"myapp/ent/predicate"
 	"myapp/ent/systemparameter"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -61,7 +62,7 @@ func (spq *SystemParameterQuery) Order(o ...systemparameter.OrderOption) *System
 // First returns the first SystemParameter entity from the query.
 // Returns a *NotFoundError when no SystemParameter was found.
 func (spq *SystemParameterQuery) First(ctx context.Context) (*SystemParameter, error) {
-	nodes, err := spq.Limit(1).All(setContextOp(ctx, spq.ctx, "First"))
+	nodes, err := spq.Limit(1).All(setContextOp(ctx, spq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +85,7 @@ func (spq *SystemParameterQuery) FirstX(ctx context.Context) *SystemParameter {
 // Returns a *NotFoundError when no SystemParameter ID was found.
 func (spq *SystemParameterQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = spq.Limit(1).IDs(setContextOp(ctx, spq.ctx, "FirstID")); err != nil {
+	if ids, err = spq.Limit(1).IDs(setContextOp(ctx, spq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -107,7 +108,7 @@ func (spq *SystemParameterQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one SystemParameter entity is found.
 // Returns a *NotFoundError when no SystemParameter entities are found.
 func (spq *SystemParameterQuery) Only(ctx context.Context) (*SystemParameter, error) {
-	nodes, err := spq.Limit(2).All(setContextOp(ctx, spq.ctx, "Only"))
+	nodes, err := spq.Limit(2).All(setContextOp(ctx, spq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (spq *SystemParameterQuery) OnlyX(ctx context.Context) *SystemParameter {
 // Returns a *NotFoundError when no entities are found.
 func (spq *SystemParameterQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = spq.Limit(2).IDs(setContextOp(ctx, spq.ctx, "OnlyID")); err != nil {
+	if ids, err = spq.Limit(2).IDs(setContextOp(ctx, spq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -160,7 +161,7 @@ func (spq *SystemParameterQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of SystemParameters.
 func (spq *SystemParameterQuery) All(ctx context.Context) ([]*SystemParameter, error) {
-	ctx = setContextOp(ctx, spq.ctx, "All")
+	ctx = setContextOp(ctx, spq.ctx, ent.OpQueryAll)
 	if err := spq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -182,7 +183,7 @@ func (spq *SystemParameterQuery) IDs(ctx context.Context) (ids []int, err error)
 	if spq.ctx.Unique == nil && spq.path != nil {
 		spq.Unique(true)
 	}
-	ctx = setContextOp(ctx, spq.ctx, "IDs")
+	ctx = setContextOp(ctx, spq.ctx, ent.OpQueryIDs)
 	if err = spq.Select(systemparameter.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -200,7 +201,7 @@ func (spq *SystemParameterQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (spq *SystemParameterQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, spq.ctx, "Count")
+	ctx = setContextOp(ctx, spq.ctx, ent.OpQueryCount)
 	if err := spq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -218,7 +219,7 @@ func (spq *SystemParameterQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (spq *SystemParameterQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, spq.ctx, "Exist")
+	ctx = setContextOp(ctx, spq.ctx, ent.OpQueryExist)
 	switch _, err := spq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -465,7 +466,7 @@ func (spgb *SystemParameterGroupBy) Aggregate(fns ...AggregateFunc) *SystemParam
 
 // Scan applies the selector query and scans the result into the given value.
 func (spgb *SystemParameterGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, spgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, spgb.build.ctx, ent.OpQueryGroupBy)
 	if err := spgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -513,7 +514,7 @@ func (sps *SystemParameterSelect) Aggregate(fns ...AggregateFunc) *SystemParamet
 
 // Scan applies the selector query and scans the result into the given value.
 func (sps *SystemParameterSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, sps.ctx, "Select")
+	ctx = setContextOp(ctx, sps.ctx, ent.OpQuerySelect)
 	if err := sps.prepareQuery(ctx); err != nil {
 		return err
 	}

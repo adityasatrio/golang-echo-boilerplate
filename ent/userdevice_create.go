@@ -307,11 +307,15 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 // UserDeviceCreateBulk is the builder for creating many UserDevice entities in bulk.
 type UserDeviceCreateBulk struct {
 	config
+	err      error
 	builders []*UserDeviceCreate
 }
 
 // Save creates the UserDevice entities in the database.
 func (udcb *UserDeviceCreateBulk) Save(ctx context.Context) ([]*UserDevice, error) {
+	if udcb.err != nil {
+		return nil, udcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(udcb.builders))
 	nodes := make([]*UserDevice, len(udcb.builders))
 	mutators := make([]Mutator, len(udcb.builders))

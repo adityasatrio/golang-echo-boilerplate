@@ -56,6 +56,14 @@ func (spu *SystemParameterUpdate) SetCreatedBy(s string) *SystemParameterUpdate 
 	return spu
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableCreatedBy(s *string) *SystemParameterUpdate {
+	if s != nil {
+		spu.SetCreatedBy(*s)
+	}
+	return spu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (spu *SystemParameterUpdate) SetUpdatedBy(s string) *SystemParameterUpdate {
 	spu.mutation.SetUpdatedBy(s)
@@ -128,9 +136,25 @@ func (spu *SystemParameterUpdate) SetKey(s string) *SystemParameterUpdate {
 	return spu
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableKey(s *string) *SystemParameterUpdate {
+	if s != nil {
+		spu.SetKey(*s)
+	}
+	return spu
+}
+
 // SetValue sets the "value" field.
 func (spu *SystemParameterUpdate) SetValue(s string) *SystemParameterUpdate {
 	spu.mutation.SetValue(s)
+	return spu
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (spu *SystemParameterUpdate) SetNillableValue(s *string) *SystemParameterUpdate {
+	if s != nil {
+		spu.SetValue(*s)
+	}
 	return spu
 }
 
@@ -298,6 +322,14 @@ func (spuo *SystemParameterUpdateOne) SetCreatedBy(s string) *SystemParameterUpd
 	return spuo
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableCreatedBy(s *string) *SystemParameterUpdateOne {
+	if s != nil {
+		spuo.SetCreatedBy(*s)
+	}
+	return spuo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (spuo *SystemParameterUpdateOne) SetUpdatedBy(s string) *SystemParameterUpdateOne {
 	spuo.mutation.SetUpdatedBy(s)
@@ -370,9 +402,25 @@ func (spuo *SystemParameterUpdateOne) SetKey(s string) *SystemParameterUpdateOne
 	return spuo
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableKey(s *string) *SystemParameterUpdateOne {
+	if s != nil {
+		spuo.SetKey(*s)
+	}
+	return spuo
+}
+
 // SetValue sets the "value" field.
 func (spuo *SystemParameterUpdateOne) SetValue(s string) *SystemParameterUpdateOne {
 	spuo.mutation.SetValue(s)
+	return spuo
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (spuo *SystemParameterUpdateOne) SetNillableValue(s *string) *SystemParameterUpdateOne {
+	if s != nil {
+		spuo.SetValue(*s)
+	}
 	return spuo
 }
 
