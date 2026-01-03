@@ -56,6 +56,14 @@ func (udu *UserDeviceUpdate) SetCreatedBy(s string) *UserDeviceUpdate {
 	return udu
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableCreatedBy(s *string) *UserDeviceUpdate {
+	if s != nil {
+		udu.SetCreatedBy(*s)
+	}
+	return udu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (udu *UserDeviceUpdate) SetUpdatedBy(s string) *UserDeviceUpdate {
 	udu.mutation.SetUpdatedBy(s)
@@ -129,6 +137,14 @@ func (udu *UserDeviceUpdate) SetUserID(u uint64) *UserDeviceUpdate {
 	return udu
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableUserID(u *uint64) *UserDeviceUpdate {
+	if u != nil {
+		udu.SetUserID(*u)
+	}
+	return udu
+}
+
 // AddUserID adds u to the "user_id" field.
 func (udu *UserDeviceUpdate) AddUserID(u int64) *UserDeviceUpdate {
 	udu.mutation.AddUserID(u)
@@ -141,9 +157,25 @@ func (udu *UserDeviceUpdate) SetAppVersion(s string) *UserDeviceUpdate {
 	return udu
 }
 
+// SetNillableAppVersion sets the "app_version" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableAppVersion(s *string) *UserDeviceUpdate {
+	if s != nil {
+		udu.SetAppVersion(*s)
+	}
+	return udu
+}
+
 // SetPlatform sets the "platform" field.
 func (udu *UserDeviceUpdate) SetPlatform(s string) *UserDeviceUpdate {
 	udu.mutation.SetPlatform(s)
+	return udu
+}
+
+// SetNillablePlatform sets the "platform" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillablePlatform(s *string) *UserDeviceUpdate {
+	if s != nil {
+		udu.SetPlatform(*s)
+	}
 	return udu
 }
 
@@ -333,6 +365,14 @@ func (uduo *UserDeviceUpdateOne) SetCreatedBy(s string) *UserDeviceUpdateOne {
 	return uduo
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableCreatedBy(s *string) *UserDeviceUpdateOne {
+	if s != nil {
+		uduo.SetCreatedBy(*s)
+	}
+	return uduo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uduo *UserDeviceUpdateOne) SetUpdatedBy(s string) *UserDeviceUpdateOne {
 	uduo.mutation.SetUpdatedBy(s)
@@ -406,6 +446,14 @@ func (uduo *UserDeviceUpdateOne) SetUserID(u uint64) *UserDeviceUpdateOne {
 	return uduo
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableUserID(u *uint64) *UserDeviceUpdateOne {
+	if u != nil {
+		uduo.SetUserID(*u)
+	}
+	return uduo
+}
+
 // AddUserID adds u to the "user_id" field.
 func (uduo *UserDeviceUpdateOne) AddUserID(u int64) *UserDeviceUpdateOne {
 	uduo.mutation.AddUserID(u)
@@ -418,9 +466,25 @@ func (uduo *UserDeviceUpdateOne) SetAppVersion(s string) *UserDeviceUpdateOne {
 	return uduo
 }
 
+// SetNillableAppVersion sets the "app_version" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableAppVersion(s *string) *UserDeviceUpdateOne {
+	if s != nil {
+		uduo.SetAppVersion(*s)
+	}
+	return uduo
+}
+
 // SetPlatform sets the "platform" field.
 func (uduo *UserDeviceUpdateOne) SetPlatform(s string) *UserDeviceUpdateOne {
 	uduo.mutation.SetPlatform(s)
+	return uduo
+}
+
+// SetNillablePlatform sets the "platform" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillablePlatform(s *string) *UserDeviceUpdateOne {
+	if s != nil {
+		uduo.SetPlatform(*s)
+	}
 	return uduo
 }
 

@@ -3,10 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
+	"testing"
+	"time"
+
 	"myapp/ent"
 	"myapp/internal/applications/user/dto"
 	"myapp/internal/vars"
@@ -16,17 +15,12 @@ import (
 	mock_cache "myapp/mocks/component/cache"
 	mock_transaction "myapp/mocks/component/transaction"
 	"myapp/test"
-	"testing"
-	"time"
+
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
-
-var mockUserRepository = new(mock_repository2.UserRepository)
-var mockRoleRepository = new(mock_repository.RoleRepository)
-var mockRoleUserRepository = new(mock_repository3.RoleUserRepository)
-var mockTransaction = new(mock_transaction.Trx)
-var mockCache = new(mock_cache.Cache)
-
-var service = NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
@@ -34,12 +28,12 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 		Versions: int64(0),
 		Name:     name,
 		Email:    email,
-		//WARNING : careful with bool value, it always has default value as FALSE,
-		//make sure when do testing DTO / request and actual mock or return value have same value
+		// WARNING : careful with bool value, it always has default value as FALSE,
+		// make sure when do testing DTO / request and actual mock or return value have same value
 
 		// uncomment IsVerified will impact on failed test, because expected value false from default value,
-		//if you must true then need to adjust logic on service to always set as true or get from method parameter / request
-		//IsVerified: true,
+		// if you must true then need to adjust logic on service to always set as true or get from method parameter / request
+		// IsVerified: true,
 
 		EmailVerifiedAt:  time.Time{},
 		Password:         password,
@@ -58,7 +52,7 @@ func getUserMock(id uint64, name string, email string, password string) ent.User
 		PregnancyMode:    false,
 		LatestSkipUpdate: time.Time{},
 		LatestDeletedAt:  time.Time{},
-		//DeletedAt:        nil,
+		// DeletedAt:        nil,
 	}
 }
 
@@ -108,12 +102,19 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
+			// Create fresh mock instances for each test iteration
+			mockUserRepository := new(mock_repository2.UserRepository)
+			mockRoleRepository := new(mock_repository.RoleRepository)
+			mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+			mockTransaction := new(mock_transaction.Trx)
+			mockCache := new(mock_cache.Cache)
+
+			service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
 
 			if userMock.scenario {
 				// Set up mock behavior
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
-
 						fnTx := args.Get(1).(func(tx *ent.Tx) error)
 
 						errTx := fnTx(txClient)
@@ -123,12 +124,11 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 						if errTx != nil {
 							return
 						}
-
 					}).
 					Return(nil).
 					Once()
 
-				//the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
+				// the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
 				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
 					Return(&userMock.userServiceReturn, nil)
 
@@ -145,6 +145,8 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 				assert.Equal(t, &userMock.userServiceReturn, result)
 
 			} else {
+				// Test failure scenario
+				errFailed := errors.New("fake failed saved")
 				mockTransaction.On("WithTx", ctx, mock.Anything).
 					Run(func(args mock.Arguments) {
 						fnTx := args.Get(1).(func(tx *ent.Tx) error)
@@ -155,14 +157,14 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 							return
 						}
 					}).
-					Return(errors.New("fake failed saved")). //this return is the key for `withTx` do rollback process
+					Return(errFailed). // this return is the key for `withTx` do rollback process
 					Once()
 
 				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
 					Return(&userMock.userServiceReturn, nil)
 
 				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
-					Panic("failed saved")
+					Return(nil, errFailed)
 
 				result, err := service.Create(ctx, &request)
 				assert.NotNil(t, err)
@@ -177,6 +179,15 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 }
 
 func TestUserServiceImpl_Update_Success(t *testing.T) {
+	// Create fresh mock instances
+	mockUserRepository := new(mock_repository2.UserRepository)
+	mockRoleRepository := new(mock_repository.RoleRepository)
+	mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+	mockTransaction := new(mock_transaction.Trx)
+	mockCache := new(mock_cache.Cache)
+
+	service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 	requestUpdate := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User update",
@@ -203,7 +214,6 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 			if errTx != nil {
 				return
 			}
-
 		}).Return(nil).
 		Once()
 
@@ -230,6 +240,15 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 }
 
 func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
+	// Create fresh mock instances
+	mockUserRepository := new(mock_repository2.UserRepository)
+	mockRoleRepository := new(mock_repository.RoleRepository)
+	mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+	mockTransaction := new(mock_transaction.Trx)
+	mockCache := new(mock_cache.Cache)
+
+	service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 	requestUpdate := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User2 update",
@@ -268,10 +287,18 @@ func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
 	defer func() {
 		test.DbConnectionCloseTx(txClient)
 	}()
-
 }
 
 func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
+	// Create fresh mock instances
+	mockUserRepository := new(mock_repository2.UserRepository)
+	mockRoleRepository := new(mock_repository.RoleRepository)
+	mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+	mockTransaction := new(mock_transaction.Trx)
+	mockCache := new(mock_cache.Cache)
+
+	service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 	requestUpdate := dto.UserRequest{
 		RoleId:   0,
 		Name:     "User3 update",
@@ -320,7 +347,17 @@ func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
 func TestUserServiceImpl_Delete(t *testing.T) {
 	ctx := context.Background()
 	userMock := getUserMock(uint64(123000), "User-1", "user1@email.com", "12345")
+
 	t.Run("Delete_success", func(t *testing.T) {
+		// Create fresh mock instances
+		mockUserRepository := new(mock_repository2.UserRepository)
+		mockRoleRepository := new(mock_repository.RoleRepository)
+		mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+		mockTransaction := new(mock_transaction.Trx)
+		mockCache := new(mock_cache.Cache)
+
+		service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 		mockUserRepository.On("SoftDelete", ctx, uint64(123000)).Return(&userMock, nil).Once()
 		mockCache.On("Delete", ctx, CacheKeyUserWithId(uint64(123000))).
 			Return(true, nil)
@@ -330,13 +367,21 @@ func TestUserServiceImpl_Delete(t *testing.T) {
 	})
 
 	t.Run("Delete_failed", func(t *testing.T) {
+		// Create fresh mock instances
+		mockUserRepository := new(mock_repository2.UserRepository)
+		mockRoleRepository := new(mock_repository.RoleRepository)
+		mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+		mockTransaction := new(mock_transaction.Trx)
+		mockCache := new(mock_cache.Cache)
+
+		service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 		errorMessage := errors.New("failed got user")
 		mockUserRepository.On("SoftDelete", ctx, uint64(123000)).Return(nil, errorMessage).Once()
 		result, err := service.Delete(context.Background(), userMock.ID)
 		assert.NotNil(t, err)
 		assert.Nil(t, result)
 	})
-
 }
 
 func TestUserServiceImpl_GetById(t *testing.T) {
@@ -358,9 +403,18 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 		},
 	}
 
-	//table test:
+	// table test:
 	for _, userMock := range userMocks {
 		t.Run(userMock.name, func(t *testing.T) {
+			// Create fresh mock instances
+			mockUserRepository := new(mock_repository2.UserRepository)
+			mockRoleRepository := new(mock_repository.RoleRepository)
+			mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+			mockTransaction := new(mock_transaction.Trx)
+			mockCache := new(mock_cache.Cache)
+
+			service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 			mockCache.On("Get", ctx, CacheKeyUserWithId(userMock.id), &ent.User{}).
 				Return(nil, nil)
 			mockUserRepository.On("GetById", ctx, uint64(10)).Return(&userMock.expected, nil).Once()
@@ -372,8 +426,17 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 		})
 	}
 
-	//subtest failed:
+	// subtest failed:
 	t.Run("GetById_failed", func(t *testing.T) {
+		// Create fresh mock instances
+		mockUserRepository := new(mock_repository2.UserRepository)
+		mockRoleRepository := new(mock_repository.RoleRepository)
+		mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+		mockTransaction := new(mock_transaction.Trx)
+		mockCache := new(mock_cache.Cache)
+
+		service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 		errorMessage := errors.New("failed got user")
 		mockCache.On("Get", ctx, CacheKeyUserWithId(uint64(10)), &ent.User{}).
 			Return(nil, nil)
@@ -387,8 +450,17 @@ func TestUserServiceImpl_GetById(t *testing.T) {
 func TestUserServiceImpl_GetAll(t *testing.T) {
 	ctx := context.Background()
 
-	//subtest success:
+	// subtest success:
 	t.Run("GetAll_success", func(t *testing.T) {
+		// Create fresh mock instances
+		mockUserRepository := new(mock_repository2.UserRepository)
+		mockRoleRepository := new(mock_repository.RoleRepository)
+		mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+		mockTransaction := new(mock_transaction.Trx)
+		mockCache := new(mock_cache.Cache)
+
+		service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 		user := getUserMock(uint64(13000), "user example", "example@email.com", "12345")
 
 		mockListUser := make([]*ent.User, 0)
@@ -404,8 +476,17 @@ func TestUserServiceImpl_GetAll(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 
-	//subtest failed:
+	// subtest failed:
 	t.Run("GetAll_failed", func(t *testing.T) {
+		// Create fresh mock instances
+		mockUserRepository := new(mock_repository2.UserRepository)
+		mockRoleRepository := new(mock_repository.RoleRepository)
+		mockRoleUserRepository := new(mock_repository3.RoleUserRepository)
+		mockTransaction := new(mock_transaction.Trx)
+		mockCache := new(mock_cache.Cache)
+
+		service := NewUserService(mockUserRepository, mockRoleRepository, mockRoleUserRepository, mockTransaction, mockCache)
+
 		errorMessage := errors.New("failed get all user")
 		mockCache.On("Get", ctx, CacheKeyUsers(), &[]*ent.User{}).
 			Return(nil, nil)
@@ -414,5 +495,4 @@ func TestUserServiceImpl_GetAll(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Nil(t, result)
 	})
-
 }

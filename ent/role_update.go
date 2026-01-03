@@ -56,6 +56,14 @@ func (ru *RoleUpdate) SetCreatedBy(s string) *RoleUpdate {
 	return ru
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableCreatedBy(s *string) *RoleUpdate {
+	if s != nil {
+		ru.SetCreatedBy(*s)
+	}
+	return ru
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ru *RoleUpdate) SetUpdatedBy(s string) *RoleUpdate {
 	ru.mutation.SetUpdatedBy(s)
@@ -128,9 +136,25 @@ func (ru *RoleUpdate) SetName(s string) *RoleUpdate {
 	return ru
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableName(s *string) *RoleUpdate {
+	if s != nil {
+		ru.SetName(*s)
+	}
+	return ru
+}
+
 // SetText sets the "text" field.
 func (ru *RoleUpdate) SetText(s string) *RoleUpdate {
 	ru.mutation.SetText(s)
+	return ru
+}
+
+// SetNillableText sets the "text" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableText(s *string) *RoleUpdate {
+	if s != nil {
+		ru.SetText(*s)
+	}
 	return ru
 }
 
@@ -288,6 +312,14 @@ func (ruo *RoleUpdateOne) SetCreatedBy(s string) *RoleUpdateOne {
 	return ruo
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableCreatedBy(s *string) *RoleUpdateOne {
+	if s != nil {
+		ruo.SetCreatedBy(*s)
+	}
+	return ruo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ruo *RoleUpdateOne) SetUpdatedBy(s string) *RoleUpdateOne {
 	ruo.mutation.SetUpdatedBy(s)
@@ -360,9 +392,25 @@ func (ruo *RoleUpdateOne) SetName(s string) *RoleUpdateOne {
 	return ruo
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableName(s *string) *RoleUpdateOne {
+	if s != nil {
+		ruo.SetName(*s)
+	}
+	return ruo
+}
+
 // SetText sets the "text" field.
 func (ruo *RoleUpdateOne) SetText(s string) *RoleUpdateOne {
 	ruo.mutation.SetText(s)
+	return ruo
+}
+
+// SetNillableText sets the "text" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableText(s *string) *RoleUpdateOne {
+	if s != nil {
+		ruo.SetText(*s)
+	}
 	return ruo
 }
 
