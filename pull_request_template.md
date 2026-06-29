@@ -30,6 +30,7 @@
 - [ ] Any technical debt is marked with `// TODO: <debt details>`
 - [ ] My code follows the code style of this project.
 - [ ] My change requires a change to the documentation and I have updated the docs.
+- [ ] If I added a new service/domain, I updated the builder container in `internal/builder/services.go` with a `Build*Service()` method.
 - [ ] I have checked new dependencies for security vulnerabilities.
 
 ## Screenshots if any

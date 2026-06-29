@@ -1,6 +1,4 @@
-.PHONY: clean schema-advance mocks wire test build migration run template
-
-WIRE_DIR := internal/applications
+.PHONY: clean schema-advance mocks test build migration run template
 OPENAPI_ENTRY_POINT := cmd/main.go
 OPENAPI_OUTPUT_DIR := cmd/docs
 
@@ -34,12 +32,6 @@ schema-advance:
 mocks:
 	mockery --all --dir internal --output mocks --packageprefix mock_ --keeptree
 
-wire:
-	@echo "This command will add wire_gen.go in PATH={root}/internal/applications/{your-directory} make sure you already create {domain}_injector.go \nEnter directory: {your-directory} "; \
-	read dir; \
-	echo "Accessing directory and wire all DI $(WIRE_DIR)/$$dir"; \
-	cd $(WIRE_DIR)/$$dir && wire
-
 # Generate OpenAPI Docs
 swagger:
 	swag fmt && swag init -g $(OPENAPI_ENTRY_POINT) -o $(OPENAPI_OUTPUT_DIR)
@@ -56,7 +48,6 @@ template:
 	if [ -d "$$newdir" ]; then echo "Module directory already exists: $$newdir"; exit 1; fi; \
 	echo "Scaffolding module at $$newdir from A_templates_directory"; \
 	cp -R internal/applications/A_templates_directory "$$newdir"; \
-	rm -f "$$newdir/wire_gen.go" || true; \
 	Pascal=$$(printf '%s' "$$name" | awk '{print toupper(substr($$0,1,1)) substr($$0,2)}'); \
 	find "$$newdir" -type f \( -name '*.go' -o -name '*.MD' \) -print0 | xargs -0 sed -i -e "s|A_templates_directory|$$name|g" -e "s|/A_templates_directory|/$$name|g"; \
 	find "$$newdir" -type f -name '*.go' -print0 | xargs -0 sed -i -e "s|Template|$$Pascal|g" -e "s|template|$$name|g"; \
@@ -65,8 +56,9 @@ template:
 	bash scripts/adjust_routes.sh "$$name"; \
 	echo "Done. Next steps:"; \
 	echo "  - Update routes in $$newdir/controller to use your desired path (currently '/$$name')."; \
-	echo "  - Run: make wire (select '$$name') and make mocks"; \
-	echo "  - Integrate routes in internal/adapter/rest/routes_setup.go (match your AddRoutes signature)."
+	echo "  - Run: make mocks (to generate repository mocks)"; \
+	echo "  - Add builder method to internal/builder/services.go: Build$$Pascal$$Service()"; \
+	echo "  - Register routes in internal/adapter/rest/routes_setup.go with container.Build$$Pascal$$Service()."
 
 confirm:
 	@read -p "$(shell echo -e '\033[0;31m') Warning: This action will clean up coverage reports, ent schema, and mockery generated codes. Do you want to continue? [Y/n]: $(shell tput sgr0)" choice; \
