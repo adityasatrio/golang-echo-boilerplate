@@ -22,9 +22,9 @@ func TestNewQuoteOutbound(t *testing.T) {
 	assert.ObjectsAreEqual(mockClient, quoteOutbound.ClientApi)
 	assert.ObjectsAreEqualValues(mockClient, quoteOutbound.ClientApi)
 
-	//if quoteOutbound.ClientApi != mockClient {
+	// if quoteOutbound.ClientApi != mockClient {
 	//	t.Errorf("Expected service to be %v, but got %v", mockClient, quoteOutbound.ClientApi)
-	//}
+	// }
 }
 
 func TestGetQuotes(t *testing.T) {

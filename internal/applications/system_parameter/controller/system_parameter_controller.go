@@ -68,7 +68,9 @@ func (c *SystemParameterController) Create(ctx echo.Context) error {
 //	@router			/system-parameter/{id} [put]
 func (c *SystemParameterController) Update(ctx echo.Context) error {
 	request := new(dto.SystemParameterUpdateRequest)
-	err := helper.BindAndValidate(ctx, request)
+	if err := helper.BindAndValidate(ctx, request); err != nil {
+		return err
+	}
 
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
@@ -177,7 +179,7 @@ func (c *SystemParameterController) GetAll(ctx echo.Context) error {
 		return err
 	}
 
-	var responseDtos []*dto.SystemParameterResponse
+	responseDtos := make([]*dto.SystemParameterResponse, 0, len(results))
 	for _, result := range results {
 		responseDto := new(dto.SystemParameterResponse)
 		err = helper.Mapper(responseDto, result)

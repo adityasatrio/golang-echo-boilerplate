@@ -16,13 +16,13 @@ func NewConsumerRegistry(container *builder.Container) *ConsumerRegistry {
 
 func (f *ConsumerRegistry) Register() {
 
-	//init testing inbound:
+	// init testing inbound:
 	inbound := f.container.BuildExampleRabbitMQInbound()
 	_, err := inbound.GetMessage(config.NewRabbitMQConfigExample())
 	if err != nil {
 		log.Fatalf("Failed to consume messages: %v", err)
 	}
 
-	//init other consumer here...
+	// init other consumer here...
 
 }

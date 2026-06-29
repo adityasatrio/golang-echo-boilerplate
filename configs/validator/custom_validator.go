@@ -20,13 +20,13 @@ func NewValidator() *validator.Validate {
 
 	validate = validator.New()
 
-	//register password:
+	// register password:
 	err := validate.RegisterValidation(passwordTag, IsValidPassword)
 	if err != nil {
 		return nil
 	}
 
-	//register email:
+	// register email:
 	err = validate.RegisterValidation(emailTag, IsValidEmail)
 	if err != nil {
 		return nil

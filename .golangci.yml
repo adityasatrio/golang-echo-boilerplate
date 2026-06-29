@@ -1,54 +1,63 @@
-# golangci-lint configuration
-# For more information see: https://golangci-lint.run/
-
 run:
   timeout: 5m
-  go: '1.22'
-
-linters-settings:
-  gofmt:
-    simplify: true
-  goimports:
-    local-prefixes: myapp
-  govet:
-    enable-all: true
-  errcheck:
-    check-type-assertions: true
-    check-blank: true
-  staticcheck:
-    go: '1.22'
-  stylecheck:
-    go: '1.22'
 
 linters:
   enable:
-    - gofmt
-    - goimports
-    - govet
     - errcheck
-    - ineffassign
     - gosimple
+    - govet
+    - ineffassign
     - staticcheck
     - unused
-    - misspell
+    - bodyclose
+    - durationcheck
+    - errname
+    - errorlint
+    - exhaustive
+    - gocritic
+    - gosec
+    - makezero
+    - nilerr
     - prealloc
-    - stylecheck
-  disable-all: false
+    - predeclared
+    - revive
+    - unconvert
+    - unparam
+    - wastedassign
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  gosec:
+    excludes:
+      - G101
+      - G115
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+    disabled-checks:
+      - ifElseChain
+      - hugeParam
+      - commentedOutCode
+  revive:
+    rules:
+      - name: unexported-return
+        disabled: true
 
 issues:
   exclude-dirs:
-    - mocks
     - ent
-  exclude-files:
-    - ".*_test.go"
-    - "wire_gen.go"
+    - mocks
+    - cmd/docs
   exclude-rules:
-    - path: "ent/"
+    - path: _test\.go
       linters:
-        - all
-    - path: "mocks/"
-      linters:
-        - all
-    - text: "by other packages, and that will cause a test failure"
-      linters:
-        - staticcheck
+        - errcheck
+        - gosec
+        - bodyclose
+        - unparam

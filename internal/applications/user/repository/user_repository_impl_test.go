@@ -30,12 +30,12 @@ func TestUserRepositoryImpl_Create(t *testing.T) {
 			expectedResult: &ent.User{ID: 1},
 			expectedError:  nil,
 		},
-		//{
+		// {
 		//	name:           "error creating user",
 		//	newUser:        ent.User{},
 		//	expectedResult: nil,
 		//	expectedError:  errors.New("error creating user"),
-		//},
+		// },
 	}
 
 	client, ctx := test.DbConnection(t)

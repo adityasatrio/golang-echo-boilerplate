@@ -11,14 +11,14 @@ type application struct {
 var app *application
 
 func newApplication() *application {
-	app := new(application)
+	a := new(application)
 	name := viper.GetString("application.name")
 	if name == "" {
 		name = "myApp"
 	}
 
-	app.name = name
-	return app
+	a.name = name
+	return a
 }
 
 func init() {

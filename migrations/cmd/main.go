@@ -38,8 +38,8 @@ func main() {
 	}
 
 	if len(args) > 1 && args[0] == "create" {
-		if err := goose.Run("create", nil, *dir, args[1:]...); err != nil {
-			log.Fatalf("goose run: %v", err)
+		if createErr := goose.Run("create", nil, *dir, args[1:]...); createErr != nil {
+			log.Fatalf("goose run: %v", createErr)
 		}
 		return
 	}
@@ -58,8 +58,8 @@ func main() {
 
 	switch driver {
 	case "postgres", "mysql", "sqlite3":
-		if err := goose.SetDialect(driver); err != nil {
-			log.Fatal(err)
+		if dialectErr := goose.SetDialect(driver); dialectErr != nil {
+			log.Fatal(dialectErr)
 		}
 	default:
 		log.Fatalf("%q driver not supported\n", driver)

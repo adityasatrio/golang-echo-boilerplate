@@ -26,7 +26,7 @@ func NewRedisClient() *redis.Client {
 	if isUseTls {
 
 		tlsConfig := &tls.Config{
-			InsecureSkipVerify: credential.GetBool("cache.configs.redis.insecureSkipVerify"),
+			InsecureSkipVerify: credential.GetBool("cache.configs.redis.insecureSkipVerify"), // #nosec G402 -- controlled by deployment config
 		}
 
 		redisOptions.TLSConfig = tlsConfig

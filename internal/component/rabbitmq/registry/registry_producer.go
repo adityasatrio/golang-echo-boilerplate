@@ -18,7 +18,7 @@ func (f *ProducerRegistry) Register() {
 	mqConfigs := []config.IRabbitMQConfig{
 		config.NewRabbitMQConfigExample(),
 
-		//add config here ...
+		// add config here ...
 	}
 
 	// run registry:

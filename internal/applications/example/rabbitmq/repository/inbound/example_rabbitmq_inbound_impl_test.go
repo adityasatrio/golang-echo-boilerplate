@@ -38,13 +38,13 @@ func TestExampleInbound_GetMessage_Failed_GetConsumer(t *testing.T) {
 	exampleInbound := NewExampleRabbitMQInbound(mockChannel, mockExampleService, mockProducer)
 
 	// Prepare test data
-	//example request:
+	// example request:
 	request := dto.SystemParameterCreateRequest{
 		Key:   "example_rabbit_key",
 		Value: "example_rabbit_values",
 	}
 
-	//parsing to json:
+	// parsing to json:
 	jsonMessage, err := json.Marshal(request)
 	if err != nil {
 		fmt.Println(err)
@@ -70,13 +70,13 @@ func TestExampleInbound_GetMessage(t *testing.T) {
 	exampleInbound := NewExampleRabbitMQInbound(mockChannel, mockExampleService, mockProducer)
 
 	// Prepare test data
-	//example request:
+	// example request:
 	request := dto.SystemParameterCreateRequest{
 		Key:   "example_rabbit_key",
 		Value: "example_rabbit_values",
 	}
 
-	//parsing to json:
+	// parsing to json:
 	jsonMessage, err := json.Marshal(request)
 	if err != nil {
 		fmt.Println(err)
@@ -125,13 +125,13 @@ func TestExampleInbound_GetMessage_Failed(t *testing.T) {
 	exampleInbound := NewExampleRabbitMQInbound(mockChannel, mockExampleService, mockProducer)
 
 	// Prepare test data
-	//example request:
+	// example request:
 	request := dto.SystemParameterCreateRequest{
 		Key:   "example_rabbit_key",
 		Value: "example_rabbit_values",
 	}
 
-	//parsing to json:
+	// parsing to json:
 	jsonMessage, err := json.Marshal(request)
 	if err != nil {
 		fmt.Println(err)
@@ -184,13 +184,13 @@ func TestExampleInbound_GetMessage_Failed_Send_Junk(t *testing.T) {
 	exampleInbound := NewExampleRabbitMQInbound(mockChannel, mockExampleService, mockProducer)
 
 	// Prepare test data
-	//example request:
+	// example request:
 	request := dto.SystemParameterCreateRequest{
 		Key:   "example_rabbit_key",
 		Value: "example_rabbit_values",
 	}
 
-	//parsing to json:
+	// parsing to json:
 	jsonMessage, err := json.Marshal(request)
 	if err != nil {
 		fmt.Println(err)

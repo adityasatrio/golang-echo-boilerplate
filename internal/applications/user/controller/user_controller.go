@@ -176,7 +176,7 @@ func (c *UserController) GetAll(ctx echo.Context) error {
 		return err
 	}
 
-	var responseDtos []*dto.UserResponse
+	responseDtos := make([]*dto.UserResponse, 0, len(results))
 	for _, result := range results {
 		responseDto := new(dto.UserResponse)
 		err = helper.Mapper(responseDto, result)
@@ -186,5 +186,5 @@ func (c *UserController) GetAll(ctx echo.Context) error {
 		responseDtos = append(responseDtos, responseDto)
 	}
 
-	return response.Success(ctx, results)
+	return response.Success(ctx, responseDtos)
 }

@@ -15,7 +15,7 @@ func InitGeneralEnv(e *echo.Echo) {
 	viper.SetConfigFile(fileConfigType)
 	viper.AddConfigPath(".")
 
-	//set default variable for undefined on .env
+	// set default variable for undefined on .env
 	setDefaultKeys()
 
 	log.Debugf("credential file : " + viper.ConfigFileUsed())

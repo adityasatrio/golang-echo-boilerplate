@@ -10,9 +10,9 @@ import (
 func RabbitMQInitialize(client *ent.Client) *connection.RabbitMQConnection {
 	conf := RabbitMQInitializeWithoutRecovery(client)
 
-	//for recovery reconnection RabbitMQ (backward compatibility):
+	// for recovery reconnection RabbitMQ (backward compatibility):
 	consumerFactory := func() recovery.ConsumerRegisterer {
-		//fallback to nil for backward compatibility
+		// fallback to nil for backward compatibility
 		return nil
 	}
 	SetupRabbitMQRecovery(conf, consumerFactory)
@@ -37,6 +37,6 @@ func RabbitMQInitializeWithoutRecovery(client *ent.Client) *connection.RabbitMQC
 }
 
 func SetupRabbitMQRecovery(rabbitConf *connection.RabbitMQConnection, consumerFactory func() recovery.ConsumerRegisterer) {
-	//for recovery reconnection RabbitMQ:
+	// for recovery reconnection RabbitMQ:
 	go recovery.RabbitMQRecovery(rabbitConf, consumerFactory)
 }

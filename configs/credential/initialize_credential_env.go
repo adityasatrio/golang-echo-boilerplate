@@ -35,7 +35,7 @@ func InitCredentialEnv(e *echo.Echo) {
 		panic(e)
 	}
 
-	//set default variable for undefined on credential/secret.env
+	// set default variable for undefined on credential/secret.env
 	initDefaultCredential()
 
 	credential.WatchConfig()
@@ -52,7 +52,7 @@ func initDefaultCredential() {
 
 	credential := GetCredential()
 
-	//comment when config is not use passwords
+	// comment when config is not use passwords
 	credential.SetDefault("db.configs.username", "root")
 	credential.SetDefault("db.configs.password", "password")
 
@@ -60,7 +60,7 @@ func initDefaultCredential() {
 	credential.SetDefault("db.configs.port", "3306")
 	credential.SetDefault("db.configs.database", "echo_sample")
 
-	//comment when config is not use password
+	// comment when config is not use password
 	credential.SetDefault("cache.configs.redis.username", "root")
 	credential.SetDefault("cache.configs.redis.password", "password")
 
