@@ -8,6 +8,19 @@ import (
 )
 
 func RabbitMQInitialize(client *ent.Client) *connection.RabbitMQConnection {
+	conf := RabbitMQInitializeWithoutRecovery(client)
+
+	//for recovery reconnection RabbitMQ (backward compatibility):
+	consumerFactory := func() recovery.ConsumerRegisterer {
+		//fallback to nil for backward compatibility
+		return nil
+	}
+	SetupRabbitMQRecovery(conf, consumerFactory)
+
+	return conf
+}
+
+func RabbitMQInitializeWithoutRecovery(client *ent.Client) *connection.RabbitMQConnection {
 
 	newRabbitMQ := connection.NewRabbitMQ()
 	_, err := newRabbitMQ.Connection()
@@ -20,8 +33,10 @@ func RabbitMQInitialize(client *ent.Client) *connection.RabbitMQConnection {
 		log.Errorf("Error closing RabbitMQConnection connection: %v", err)
 	}
 
-	//for recovery reconnection RabbitMQ:
-	go recovery.RabbitMQRecovery(client, rabbitConf)
-
 	return rabbitConf
+}
+
+func SetupRabbitMQRecovery(rabbitConf *connection.RabbitMQConnection, consumerFactory func() recovery.ConsumerRegisterer) {
+	//for recovery reconnection RabbitMQ:
+	go recovery.RabbitMQRecovery(rabbitConf, consumerFactory)
 }

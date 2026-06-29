@@ -17,6 +17,8 @@ import (
 	"myapp/configs/validator"
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest"
+	"myapp/internal/builder"
+	"myapp/configs/rabbitmq/recovery"
 	"myapp/internal/component/rabbitmq/registry"
 	"myapp/middleware"
 	"net/http"
@@ -72,12 +74,18 @@ func main() {
 		}
 	}()
 
+	//setup dependency container
+	container := builder.NewBuilder().
+		WithDatabase(dbConnection).
+		WithCache(redisConnection)
+
 	isQueueEnable := viper.GetBool("rabbitmq.configs.enable")
 	var rabbitInit *connection.RabbitMQConnection
 
 	if isQueueEnable {
 		//configuration for rabbit client:
-		rabbitInit := initialize.RabbitMQInitialize(dbConnection)
+		rabbitInit = initialize.RabbitMQInitializeWithoutRecovery(dbConnection)
+		container.WithRabbit(rabbitInit)
 		defer func() {
 			err := rabbitInit.GetConnection().Close()
 			if err != nil {
@@ -90,15 +98,21 @@ func main() {
 		registerMq.Register()
 
 		//rabbitmq registry consumer:
-		registerConsumer := registry.NewConsumerRegistry(dbConnection, rabbitInit)
+		registerConsumer := registry.NewConsumerRegistry(container)
 		registerConsumer.Register()
+
+		// setup recovery with consumer factory that uses container
+		consumerFactory := func() recovery.ConsumerRegisterer {
+			return registry.NewConsumerRegistry(container)
+		}
+		initialize.SetupRabbitMQRecovery(rabbitInit, consumerFactory)
 	}
 
 	//setup swagger:
 	swagger.InitSwagger()
 
 	//setup router
-	restApi.SetupRouteHandler(e, dbConnection, redisConnection, rabbitInit)
+	restApi.SetupRouteHandler(e, container)
 
 	port := viper.GetString("application.port")
 	// Start server

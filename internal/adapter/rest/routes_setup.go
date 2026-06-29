@@ -1,54 +1,49 @@
 package rest
 
 import (
-	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"github.com/swaggo/echo-swagger"
-	"myapp/configs/rabbitmq/connection"
-	"myapp/ent"
 	exampleRabbit "myapp/internal/applications/example/rabbitmq/controller"
-	"myapp/internal/applications/health"
-	"myapp/internal/applications/health/controller"
-	quotes "myapp/internal/applications/quotes"
+	healthController "myapp/internal/applications/health/controller"
 	quotesController "myapp/internal/applications/quotes/controller"
-	"myapp/internal/applications/system_parameter"
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
-	"myapp/internal/applications/user"
 	userController "myapp/internal/applications/user/controller"
-	"myapp/internal/component/rabbitmq/producer"
+	"myapp/internal/builder"
 )
 
-func SetupRouteHandler(e *echo.Echo, connDb *ent.Client, redisClient *redis.Client, connRabbitMQ *connection.RabbitMQConnection) {
+func SetupRouteHandler(e *echo.Echo, container *builder.Container) {
 
 	appName := viper.GetString("application.name")
 
 	// Swagger OpenAPI Docs
 	e.GET(appName+"/swagger/*", echoSwagger.WrapHandler)
 
-	//manual injection
-	helloWorldsService := health.InitializeHealthService(connDb, redisClient)
-	controller.
-		NewHealthController(helloWorldsService).
+	// Health service
+	healthService := container.BuildHealthService()
+	healthController.
+		NewHealthController(healthService).
 		AddRoutes(e, appName)
 
-	//injection using code gen - google wire
-	systemParameterService := system_parameter.InitializedSystemParameterService(connDb, redisClient)
+	// System parameter service
+	systemParameterService := container.BuildSystemParameterService()
 	systemParameterController.
 		NewSystemParameterController(systemParameterService).
 		AddRoutes(e, appName)
 
-	userService := user.InitializedUserService(connDb, redisClient)
+	// User service
+	userService := container.BuildUserService()
 	userController.
 		NewUserController(userService).
 		AddRoutes(e, appName)
 
-	quotesService := quotes.InitializedQuotesService()
+	// Quotes service
+	quotesService := container.BuildQuotesService()
 	quotesController.
 		NewQuotesController(quotesService).
 		AddRoutes(e, appName)
 
-	//add example controller:
-	producerService := producer.InitializedProducer(connRabbitMQ)
+	// RabbitMQ producer
+	producerService := container.BuildProducer()
 	exampleRabbit.NewExampleRabbitMQController(producerService).AddRoutes(e, appName)
 }
