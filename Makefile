@@ -1,4 +1,4 @@
-.PHONY: clean schema-advance mocks test build migration run template
+.PHONY: clean schema-advance mocks test build migration run template lint security-scan coverage-report deps-check ci-all docker-build docker-compose-up docker-compose-down
 OPENAPI_ENTRY_POINT := cmd/main.go
 OPENAPI_OUTPUT_DIR := cmd/docs
 
@@ -100,3 +100,53 @@ migration-down:
 
 migration-status:
 	./migration mysql status
+
+# Linting
+lint:
+	@echo "Running golangci-lint..."
+	golangci-lint run ./...
+
+# Security scanning
+security-scan:
+	@echo "Running gosec security scan..."
+	gosec ./...
+
+# Coverage report
+coverage-report:
+	@if [ ! -f coverage.html ]; then \
+		echo "Coverage report not found. Running tests..."; \
+		make test; \
+	fi
+	@echo "Opening coverage report..."
+	@which xdg-open > /dev/null && xdg-open coverage.html || \
+	  which open > /dev/null && open coverage.html || \
+	  echo "Please open coverage.html manually in your browser"
+
+# Dependency checks
+deps-check:
+	@echo "Verifying module integrity..."
+	go mod verify
+	@echo "Checking for outdated dependencies..."
+	go list -u -m all
+
+# Run all CI checks locally
+ci-all: lint security-scan test deps-check
+	@echo "All CI checks completed successfully!"
+
+# Docker image build
+docker-build:
+	@echo "Building Docker image..."
+	docker build -t golang-echo-boilerplate:latest .
+	@echo "Docker image built successfully!"
+
+# Docker Compose - start services
+docker-compose-up:
+	@echo "Starting Docker Compose services (MySQL, Redis, RabbitMQ)..."
+	docker-compose up -d
+	@echo "Services started. RabbitMQ management UI: http://localhost:15672 (guest/guest)"
+
+# Docker Compose - stop services
+docker-compose-down:
+	@echo "Stopping Docker Compose services..."
+	docker-compose down
+	@echo "Services stopped."

@@ -1,0 +1,127 @@
+# Comprehensive CI pipeline: build, test, lint, security, and docker
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: CI
+
+on:
+  push:
+    branches: ["master", "release", "develop", "claude/**"]
+  pull_request:
+    branches: ["master", "release", "develop"]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+          check-latest: true
+          cache-dependency-path: './go.sum'
+
+      - name: Go version
+        run: go version
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Generate mocks
+        run: make mocks
+
+      - name: Build
+        run: go build -v ./cmd/main.go
+
+      - name: Run tests with coverage
+        run: make test
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.out
+          fail_ci_if_error: false
+          verbose: true
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+          check-latest: true
+          cache-dependency-path: './go.sum'
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout 5m
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+          check-latest: true
+
+      - name: Run Gosec
+        uses: securego/gosec@master
+        with:
+          args: '-no-fail -fmt sarif -out gosec-report.sarif ./...'
+
+      - name: Upload Gosec report to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: gosec-report.sarif
+
+  dependencies:
+    name: Check Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './go.mod'
+          check-latest: true
+          cache-dependency-path: './go.sum'
+
+      - name: Verify module integrity
+        run: go mod verify
+
+      - name: Check for outdated dependencies
+        run: go list -u -m all
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          tags: golang-echo-boilerplate:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

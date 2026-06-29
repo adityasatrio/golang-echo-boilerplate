@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.circleci
+
+# Development
+.env
+.env.local
+secret.env
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Build artifacts
+main
+coverage.out
+coverage.html
+migration
+
+# Node/npm (if any)
+node_modules
+npm-debug.log
+
+# Documentation
+docs
+*.md
+README*
+
+# Testing
+*.test
+.coverage
+
+# Mocks and generated code
+mocks/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
