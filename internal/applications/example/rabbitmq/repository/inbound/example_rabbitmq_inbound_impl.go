@@ -40,19 +40,19 @@ func (t *ExampleRabbitMQInboundImpl) GetMessage(cfg config.IRabbitMQConfig) (boo
 
 			// Process message here:
 			data := parsingData(msg.Body)
-			_, err := t.exampleService.GetMessage(context.Background(), &data)
-			if err != nil {
-				log.Warnf("Failed to process service %v", err)
+			_, processErr := t.exampleService.GetMessage(context.Background(), &data)
+			if processErr != nil {
+				log.Warnf("Failed to process service %v", processErr)
 			} else {
-				err = msg.Ack(false)
+				processErr = msg.Ack(false)
 			}
 
-			if err != nil {
+			if processErr != nil {
 				isHasExceeded := utils.IsHasExceeded(cfg.GetLimit(), count, msg)
 				if isHasExceeded {
 					// Process message to junk here:
-					_, err := t.producer.SendToJunk(cfg, msg.Body)
-					if err != nil {
+					_, junkErr := t.producer.SendToJunk(cfg, msg.Body)
+					if junkErr != nil {
 						log.Warnf("Failed to publish a message junk: %v", err)
 					}
 				}

@@ -1,4 +1,4 @@
-//reference : https://dev.to/tigorlazuardi/go-creating-custom-error-wrapper-and-do-proper-error-equality-check-11k7
+// reference : https://dev.to/tigorlazuardi/go-creating-custom-error-wrapper-and-do-proper-error-equality-check-11k7
 
 package exceptions
 
@@ -9,7 +9,7 @@ import (
 	"runtime"
 )
 
-var TargetBusinessLogicError = errors.New(businessLogicFailed)
+var ErrBusinessLogic = errors.New(businessLogicFailed)
 
 const (
 	businessLogicFailed = "business logic error"
@@ -29,7 +29,7 @@ func (e *BusinessLogicError) Error() string {
 	return e.Message
 }
 
-func NewBusinessLogicError(ErrorCode int, err error) error {
+func NewBusinessLogicError(errorCode int, err error) error {
 	_, file, line, ok := runtime.Caller(1) // Capture caller info
 	if !ok {
 		file = "???"
@@ -38,7 +38,7 @@ func NewBusinessLogicError(ErrorCode int, err error) error {
 
 	return &BusinessLogicError{
 		Message:   businessLogicFailed,
-		ErrorCode: ErrorCode,
+		ErrorCode: errorCode,
 		Err:       err,
 		File:      file,
 		Line:      line,
@@ -55,7 +55,7 @@ func (e *BusinessLogicError) Unwrap() error {
 		log.Errorf("BusinessException: %s, FileCaller: %s, LineCaller: %d, error: %v", string(jsonByte), e.File, e.Line, e.Err)
 	}
 
-	return TargetBusinessLogicError
+	return ErrBusinessLogic
 }
 
 // Dig Returns the innermost CustomErrorWrapper

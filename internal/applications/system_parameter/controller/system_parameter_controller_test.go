@@ -154,8 +154,8 @@ func TestSystemParameterController_GetAll(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/system-parameter", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	//c.SetParamNames("id")
-	//c.SetParamValues("1")
+	// c.SetParamNames("id")
+	// c.SetParamValues("1")
 
 	// CreateTx a new mock service
 	mockService := &mock_service.SystemParameterService{}

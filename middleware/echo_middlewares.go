@@ -1,4 +1,5 @@
-//references :
+// references :
+//
 //	https://dasarpemrogramangolang.novalagung.com/C-advanced-middleware-and-logging.html
 //	https://echo.labstack.com/middleware
 
@@ -20,7 +21,6 @@ func SetupMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Gzip())
-	//e.Use(middleware.CSRF())
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Secure())

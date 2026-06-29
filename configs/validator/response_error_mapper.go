@@ -11,29 +11,30 @@ import (
 // MapperErrorCode all mapper goes here
 func MapperErrorCode(err error) (errHttpCode int, errBusinessCode int, errMessage string, errUnexpected error) {
 
-	if errors.Is(err, exceptions.TargetBusinessLogicError) {
-		errorCode := err.(*exceptions.BusinessLogicError).ErrorCode
-		errorLogic := exceptions.BusinessLogicReason(errorCode)
+	var bizErr *exceptions.BusinessLogicError
+	if errors.As(err, &bizErr) {
+		errorLogic := exceptions.BusinessLogicReason(bizErr.ErrorCode)
 
 		return errorLogic.HttpCode, errorLogic.ErrCode, errorLogic.Message, nil
 	}
 
 	errorMessage := err.Error()
-	if castedObject, ok := err.(validator.ValidationErrors); ok {
-		for _, err := range castedObject {
-			switch err.Tag() {
+	var castedObject validator.ValidationErrors
+	if errors.As(err, &castedObject) {
+		for _, e := range castedObject {
+			switch e.Tag() {
 			case "required":
-				errorMessage = fmt.Sprintf("%s is required", err.Field())
+				errorMessage = fmt.Sprintf("%s is required", e.Field())
 			case "email":
-				errorMessage = fmt.Sprintf("%s is not valid email", err.Field())
+				errorMessage = fmt.Sprintf("%s is not valid email", e.Field())
 			case "gte":
-				errorMessage = fmt.Sprintf("%s value must be greater than %s", err.Field(), err.Param())
+				errorMessage = fmt.Sprintf("%s value must be greater than %s", e.Field(), e.Param())
 			case "lte":
-				errorMessage = fmt.Sprintf("%s value must be lower than %s", err.Field(), err.Param())
+				errorMessage = fmt.Sprintf("%s value must be lower than %s", e.Field(), e.Param())
 			case "password":
-				errorMessage = fmt.Sprintf("%s %s", err.Field(), err.Value())
+				errorMessage = fmt.Sprintf("%s %s", e.Field(), e.Value())
 			}
-			break
+			break //nolint:staticcheck // only first validation error is used
 		}
 
 		return http.StatusBadRequest, http.StatusBadRequest, errorMessage, nil

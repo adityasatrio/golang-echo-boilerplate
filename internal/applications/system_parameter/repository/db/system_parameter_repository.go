@@ -13,6 +13,6 @@ type SystemParameterRepository interface {
 	GetById(ctx context.Context, id int) (*ent.SystemParameter, error)
 	GetAll(ctx context.Context) ([]*ent.SystemParameter, error)
 	GetByKey(ctx context.Context, key string) (*ent.SystemParameter, error)
-	//GetByIdAndNotDeleted(ctx context.Context, id int) (*ent.System_parameter, error)
-	//GetAllAndNotDeleted(ctx context.Context) ([]*ent.System_parameter, error)
+	// GetByIdAndNotDeleted(ctx context.Context, id int) (*ent.System_parameter, error)
+	// GetAllAndNotDeleted(ctx context.Context) ([]*ent.System_parameter, error)
 }

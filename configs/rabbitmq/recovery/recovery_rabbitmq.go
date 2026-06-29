@@ -24,7 +24,7 @@ func RabbitMQRecovery(rabbitConf *connection.RabbitMQConnection, consumerFactory
 			log.Errorf("connection closed, reason: %v", reason)
 
 			for {
-				//time sleep for waiting connection up:
+				// time sleep for waiting connection up:
 				timeRecovery := viper.GetInt("rabbitmq.configs.recovery")
 				time.Sleep(time.Duration(timeRecovery) * time.Second)
 
@@ -32,11 +32,11 @@ func RabbitMQRecovery(rabbitConf *connection.RabbitMQConnection, consumerFactory
 				if err == nil {
 					log.Infof("reconnect rabbitmq success")
 
-					//rabbitmq registry exchange, queue, dlq and other:
+					// rabbitmq registry exchange, queue, dlq and other:
 					registerMq := registry.NewProducerRegistry(rabbitConf)
 					registerMq.Register()
 
-					//rabbitmq registry consumer:
+					// rabbitmq registry consumer:
 					registerConsumer := consumerFactory()
 					registerConsumer.Register()
 
