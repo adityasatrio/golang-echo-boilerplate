@@ -21,15 +21,15 @@ func NewQuoteOutbound() *QuoteOutboundImpl {
 	}
 }
 
-func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, queryParameter map[string]string) (*dto.QuoteApiResponse, error) {
+func (o *QuoteOutboundImpl) GetQuotes(ctx context.Context, _ map[string]string) (*dto.QuoteApiResponse, error) {
 	headers := map[string]string{
 		"Content-Type":    "application/json",
 		"x-custom-header": "custom value",
 	}
 
-	queryParameter = map[string]string{
+	queryParameter := map[string]string{
 		"sampleInt":    fmt.Sprintf("%d", 1),
-		"sampleString": fmt.Sprintf("%s", "string"),
+		"sampleString": "string",
 	}
 
 	hostQuoteUrl := viper.GetString("outbound.quotes.getUrl")

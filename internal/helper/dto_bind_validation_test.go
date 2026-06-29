@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"errors"
 	validator2 "github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -44,8 +45,8 @@ func TestBindAndValidate_BindError(t *testing.T) {
 	err := BindAndValidate(c, data)
 	assert.Error(t, err)
 
-	// Check if the error is of type echo.HTTPError
-	if httpErr, ok := err.(*echo.HTTPError); ok {
+	var httpErr *echo.HTTPError
+	if errors.As(err, &httpErr) {
 		// Assert specific properties of the HTTP error
 		assert.Equal(t, http.StatusBadRequest, httpErr.Code)
 		assert.Equal(t, "unexpected EOF", httpErr.Message)

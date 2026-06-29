@@ -173,9 +173,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 		})
 	}
 
-	defer func() {
-		test.DbConnectionCloseTx(txClient)
-	}()
+	test.DbConnectionCloseTx(txClient)
 }
 
 func TestUserServiceImpl_Update_Success(t *testing.T) {
@@ -234,9 +232,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 	assert.Equal(t, requestUpdate.Email, result.Email)
 	assert.Equal(t, requestUpdate.Password, result.Password)
 
-	defer func() {
-		test.DbConnectionCloseTx(txClient)
-	}()
+	test.DbConnectionCloseTx(txClient)
 }
 
 func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
@@ -284,9 +280,7 @@ func TestUserServiceImpl_Update_UserFailed(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, result)
 
-	defer func() {
-		test.DbConnectionCloseTx(txClient)
-	}()
+	test.DbConnectionCloseTx(txClient)
 }
 
 func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
@@ -339,9 +333,7 @@ func TestUserServiceImpl_Update_UserRoleFailed(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, result)
 
-	defer func() {
-		test.DbConnectionCloseTx(txClient)
-	}()
+	test.DbConnectionCloseTx(txClient)
 }
 
 func TestUserServiceImpl_Delete(t *testing.T) {

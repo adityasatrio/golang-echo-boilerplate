@@ -135,8 +135,8 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, err = s.cache.Delete(ctx, CacheKeyUserWithId(id))
-	if err != nil {
+	_, cacheErr := s.cache.Delete(ctx, CacheKeyUserWithId(id))
+	if cacheErr != nil {
 		return data, nil
 	}
 
@@ -145,9 +145,9 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 
 func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, error) {
 
-	userCache, err := s.cache.Get(ctx, CacheKeyUserWithId(id), &ent.User{})
-	if userCache != nil {
-		return userCache.(*ent.User), nil
+	userCache, _ := s.cache.Get(ctx, CacheKeyUserWithId(id), &ent.User{})
+	if u, ok := userCache.(*ent.User); ok && u != nil {
+		return u, nil
 	}
 
 	result, err := s.userRepository.GetById(ctx, id)
@@ -155,8 +155,8 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeyUserWithId(id), result, vars.GetTtlShortPeriod())
-	if err != nil {
+	_, cacheErr := s.cache.Create(ctx, CacheKeyUserWithId(id), result, vars.GetTtlShortPeriod())
+	if cacheErr != nil {
 		return result, nil
 	}
 
@@ -164,10 +164,10 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 }
 
 func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
-	userCache, err := s.cache.Get(ctx, CacheKeyUsers(), &[]*ent.User{})
-	if userCache != nil {
-		userResult := append([]*ent.User(nil), *userCache.(*[]*ent.User)...)
-		return userResult, err
+	userCache, _ := s.cache.Get(ctx, CacheKeyUsers(), &[]*ent.User{})
+	if cached, ok := userCache.(*[]*ent.User); ok && cached != nil {
+		userResult := append([]*ent.User(nil), *cached...)
+		return userResult, nil
 	}
 
 	result, err := s.userRepository.GetAll(ctx)
@@ -175,8 +175,8 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeyUsers(), &result, vars.GetTtlShortPeriod())
-	if err != nil {
+	_, cacheErr := s.cache.Create(ctx, CacheKeyUsers(), &result, vars.GetTtlShortPeriod())
+	if cacheErr != nil {
 		return result, nil
 	}
 

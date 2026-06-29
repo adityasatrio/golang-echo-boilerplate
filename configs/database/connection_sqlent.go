@@ -21,7 +21,7 @@ func NewSqlEntClient() *ent.Client {
 		credential.GetString("db.configs.port"),
 		credential.GetString("db.configs.database"))
 
-	log.Debug("DSN=", dsn) //for debug only
+	log.Debug("DSN=", dsn) // for debug only
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -34,7 +34,7 @@ func NewSqlEntClient() *ent.Client {
 
 	drv := entSql.OpenDB("mysql", db)
 
-	var client = &ent.Client{}
+	var client *ent.Client
 	appMode := credential.GetString("application.mode")
 	if appMode == "prod" {
 		log.Info("initialized database x sqlDb x orm ent : DEV")
@@ -49,9 +49,9 @@ func NewSqlEntClient() *ent.Client {
 	}
 
 	// Run the auto migration tool.
-	//if err := client.Schema.Create(context.Background()); err != nil {
-	//	log.Fatalf("failed creating schema resources: %v", err)
-	//}
+	// if err := client.Schema.Create(context.Background()); err != nil {
+	// 	log.Fatalf("failed creating schema resources: %v", err)
+	// }
 
 	if err != nil {
 		log.Printf("err : %s\n", err)

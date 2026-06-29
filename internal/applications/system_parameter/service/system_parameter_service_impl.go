@@ -35,9 +35,8 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, vars.GetTtlShortPeriod())
-	if err != nil {
-		//don't throw exception if create redis failed:
+	_, cacheErr := s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, vars.GetTtlShortPeriod())
+	if cacheErr != nil {
 		return result, nil
 	}
 
@@ -46,7 +45,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 
 func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update *dto.SystemParameterUpdateRequest) (*ent.SystemParameter, error) {
 
-	_, err := s.repository.GetByKey(ctx, update.Key)
+	_, _ = s.repository.GetByKey(ctx, update.Key)
 
 	existId, err := s.GetById(ctx, id)
 	if err != nil || existId == nil {
@@ -61,9 +60,8 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, vars.GetTtlShortPeriod())
-	if err != nil {
-		//don't throw exception if create redis failed:
+	_, cacheErr := s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, vars.GetTtlShortPeriod())
+	if cacheErr != nil {
 		return updated, nil
 	}
 
@@ -81,8 +79,8 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
-	if err != nil {
+	_, cacheErr := s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+	if cacheErr != nil {
 		return exist, nil
 	}
 
@@ -100,8 +98,8 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, err = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
-	if err != nil {
+	_, cacheErr := s.cache.Delete(ctx, CacheKeySysParamWithId(id))
+	if cacheErr != nil {
 		return deleted, nil
 	}
 
@@ -110,9 +108,9 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 
 func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.SystemParameter, error) {
 
-	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParamWithId(id), &ent.SystemParameter{})
-	if systemParameterCache != nil {
-		return systemParameterCache.(*ent.SystemParameter), nil
+	systemParameterCache, _ := s.cache.Get(ctx, CacheKeySysParamWithId(id), &ent.SystemParameter{})
+	if sp, ok := systemParameterCache.(*ent.SystemParameter); ok && sp != nil {
+		return sp, nil
 	}
 
 	result, err := s.repository.GetById(ctx, id)
@@ -131,10 +129,10 @@ func (s *SystemParameterServiceImpl) GetById(ctx context.Context, id int) (*ent.
 
 func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemParameter, error) {
 
-	systemParameterCache, err := s.cache.Get(ctx, CacheKeySysParams(), &[]*ent.SystemParameter{})
-	if systemParameterCache != nil {
-		systemParameterResult := append([]*ent.SystemParameter(nil), *systemParameterCache.(*[]*ent.SystemParameter)...)
-		return systemParameterResult, err
+	systemParameterCache, _ := s.cache.Get(ctx, CacheKeySysParams(), &[]*ent.SystemParameter{})
+	if cached, ok := systemParameterCache.(*[]*ent.SystemParameter); ok && cached != nil {
+		systemParameterResult := append([]*ent.SystemParameter(nil), *cached...)
+		return systemParameterResult, nil
 	}
 
 	result, err := s.repository.GetAll(ctx)
@@ -142,8 +140,8 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, err = s.cache.Create(ctx, CacheKeySysParams(), &result, vars.GetTtlShortPeriod())
-	if err != nil {
+	_, cacheErr := s.cache.Create(ctx, CacheKeySysParams(), &result, vars.GetTtlShortPeriod())
+	if cacheErr != nil {
 		return result, nil
 	}
 

@@ -13,16 +13,7 @@ func SetupGlobalHttpUnhandleErrors(e *echo.Echo) {
 
 func GlobalUnHandleErrors() func(err error, ctx echo.Context) {
 	return func(err error, ctx echo.Context) {
-		_, ok := err.(*echo.HTTPError)
-		if !ok {
-
-			errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
-			_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
-			return
-		}
-
 		errHttpCode, errBusinessCode, msg, errCode := MapperErrorCode(err)
 		_ = response.Base(ctx, errHttpCode, errBusinessCode, msg, nil, errCode)
-		return
 	}
 }

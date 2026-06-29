@@ -8,7 +8,6 @@ import (
 )
 
 type RabbitMQConnection struct {
-	name    string
 	conn    *amqp.Connection
 	channel *amqp.Channel
 	err     chan error

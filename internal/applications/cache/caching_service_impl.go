@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/gommon/log"
 	"github.com/vmihailenco/msgpack/v4"
@@ -29,7 +30,7 @@ func (c *CachingServiceImpl) Create(ctx context.Context, key string, data interf
 
 	serializedData, err := msgpack.Marshal(&data)
 	if err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return false, nil
 		}
 
@@ -37,8 +38,11 @@ func (c *CachingServiceImpl) Create(ctx context.Context, key string, data interf
 		return false, err
 	}
 
-	//compress data:
 	compressedData, err := CompressData(serializedData)
+	if err != nil {
+		log.Errorf("Failed for compressing data:", err)
+		return false, err
+	}
 
 	err = c.redisClient.Set(ctx, key, compressedData, expiration).Err()
 	if err != nil {
@@ -52,7 +56,7 @@ func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface
 
 	redisData, err := c.redisClient.Get(ctx, key).Bytes()
 	if err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return nil, nil
 		}
 
@@ -60,8 +64,11 @@ func (c *CachingServiceImpl) Get(ctx context.Context, key string, data interface
 		return nil, err
 	}
 
-	//decompress data:
 	decompressedData, err := DecompressData(redisData, len(redisData))
+	if err != nil {
+		log.Errorf("Failed for decompressing data:", err)
+		return nil, err
+	}
 
 	err = msgpack.Unmarshal(decompressedData, data)
 	if err != nil {

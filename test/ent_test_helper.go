@@ -35,19 +35,15 @@ func DbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.Tx, n
 }
 
 func DbConnectionClose(client *ent.Client) {
-	defer func(client *ent.Client) {
-		err := client.Close()
-		if err != nil {
-			fmt.Printf("error on connection db %s\n", err)
-		}
-	}(client)
+	err := client.Close()
+	if err != nil {
+		fmt.Printf("error on connection db %s\n", err)
+	}
 }
 
 func DbConnectionCloseTx(transaction *ent.Tx) {
-	defer func(transaction *ent.Tx) {
-		err := transaction.Client().Close()
-		if err != nil {
-			fmt.Printf("error on connection db %s\n", err)
-		}
-	}(transaction)
+	err := transaction.Client().Close()
+	if err != nil {
+		fmt.Printf("error on connection db %s\n", err)
+	}
 }

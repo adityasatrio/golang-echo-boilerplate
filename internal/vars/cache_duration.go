@@ -15,27 +15,27 @@ type ttlPeriod struct {
 var ttl *ttlPeriod
 
 func newTtlPeriod() *ttlPeriod {
-	ttl := new(ttlPeriod)
+	t := new(ttlPeriod)
 
 	ttlShortPeriod := viper.GetString("cache.ttl.short")
 	if ttlShortPeriod == "" {
 		ttlShortPeriod = "3h"
 	}
-	ttl.ttlShortPeriod = ttlShortPeriod
+	t.ttlShortPeriod = ttlShortPeriod
 
 	ttlMediumPeriod := viper.GetString("cache.ttl.medium")
 	if ttlMediumPeriod == "" {
 		ttlMediumPeriod = "24h"
 	}
-	ttl.ttlMediumPeriod = ttlMediumPeriod
+	t.ttlMediumPeriod = ttlMediumPeriod
 
 	ttlLongPeriod := viper.GetString("cache.ttl.long")
 	if ttlLongPeriod == "" {
 		ttlLongPeriod = "72h"
 	}
-	ttl.ttlLongPeriod = ttlLongPeriod
+	t.ttlLongPeriod = ttlLongPeriod
 
-	return ttl
+	return t
 }
 
 func init() {
