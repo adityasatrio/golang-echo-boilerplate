@@ -52,10 +52,10 @@ func main() {
 	validator.SetupGlobalHttpUnhandleErrors(e)
 
 	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
-	//dbConnection := database.NewEntClient() //using ent only
+	// dbConnection := database.NewEntClient() //using ent only
 	log.Info("initialized database configuration=", dbConnection)
 
-	//from docs define close on this function, but will impact cant create DB session on repository:
+	// from docs define close on this function, but will impact cant create DB session on repository:
 	defer func(dbConnection *ent.Client) {
 		err := dbConnection.Close()
 		if err != nil {
@@ -63,10 +63,10 @@ func main() {
 		}
 	}(dbConnection)
 
-	//configuration for redis client:
+	// configuration for redis client:
 	redisConnection := cache.NewRedisClient()
 
-	//configuration for redis client, for close connection:
+	// configuration for redis client, for close connection:
 	defer func() {
 		err := redisConnection.Close()
 		if err != nil {
@@ -74,7 +74,7 @@ func main() {
 		}
 	}()
 
-	//setup dependency container
+	// setup dependency container
 	container := builder.NewBuilder().
 		WithDatabase(dbConnection).
 		WithCache(redisConnection)
@@ -83,7 +83,7 @@ func main() {
 	var rabbitInit *connection.RabbitMQConnection
 
 	if isQueueEnable {
-		//configuration for rabbit client:
+		// configuration for rabbit client:
 		rabbitInit = initialize.RabbitMQInitializeWithoutRecovery(dbConnection)
 		container.WithRabbit(rabbitInit)
 		defer func() {
@@ -97,7 +97,7 @@ func main() {
 		registerMq := registry.NewProducerRegistry(rabbitInit)
 		registerMq.Register()
 
-		//rabbitmq registry consumer:
+		// rabbitmq registry consumer:
 		registerConsumer := registry.NewConsumerRegistry(container)
 		registerConsumer.Register()
 
@@ -108,10 +108,10 @@ func main() {
 		initialize.SetupRabbitMQRecovery(rabbitInit, consumerFactory)
 	}
 
-	//setup swagger:
+	// setup swagger:
 	swagger.InitSwagger()
 
-	//setup router
+	// setup router
 	restApi.SetupRouteHandler(e, container)
 
 	port := viper.GetString("application.port")
@@ -126,7 +126,7 @@ func main() {
 	// Wait for interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	//signal.Notify(quit, os.Interrupt)
+	// signal.Notify(quit, os.Interrupt)
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM) //not tested
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

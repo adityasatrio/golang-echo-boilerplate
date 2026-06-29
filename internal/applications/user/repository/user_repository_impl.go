@@ -18,7 +18,7 @@ func NewUserRepository(client *ent.Client) *UserRepositoryImpl {
 }
 
 func (r *UserRepositoryImpl) CreateTx(ctx context.Context, txClient *ent.Client, newUser ent.User) (*ent.User, error) {
-	//txClient is transactional client that handled in service layer for post rollback logic
+	// txClient is transactional client that handled in service layer for post rollback logic
 	response, err := txClient.User.Create().
 		SetName(newUser.Name).
 		SetEmail(newUser.Email).

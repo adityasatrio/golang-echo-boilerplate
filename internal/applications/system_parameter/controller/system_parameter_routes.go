@@ -2,11 +2,11 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	//"myapp/internal/applications/system_parameter/controller"
-	//"myapp/internal/applications/system_parameter/controller"
-	//"myapp/internal/applications/system_parameter/controller"
-	//handler2 "myapp/internal/applications/system_parameter/controller"
-	//"myapp/internal/applications/system_parameter/service"
+	// "myapp/internal/applications/system_parameter/controller"
+	// "myapp/internal/applications/system_parameter/controller"
+	// "myapp/internal/applications/system_parameter/controller"
+	// handler2 "myapp/internal/applications/system_parameter/controller"
+	// "myapp/internal/applications/system_parameter/service"
 )
 
 func (c *SystemParameterController) AddRoutes(e *echo.Echo, appName string) {

@@ -3,7 +3,7 @@ package exceptions
 import "net/http"
 
 type ErrorLogic struct {
-	//ErrName  string
+	// ErrName  string
 	ErrCode  int
 	HttpCode int
 	Message  string
@@ -17,7 +17,7 @@ const (
 	DataUpdateFailed = 10004
 	DataDeleteFailed = 10005
 	DataGetFailed    = 10006
-	//OtherError         = 10007
+	// OtherError         = 10007
 )
 
 var businessLogicReason = map[int]ErrorLogic{
@@ -27,7 +27,7 @@ var businessLogicReason = map[int]ErrorLogic{
 	DataUpdateFailed: {ErrCode: DataUpdateFailed, HttpCode: http.StatusUnprocessableEntity, Message: "update data failed"},
 	DataDeleteFailed: {ErrCode: DataDeleteFailed, HttpCode: http.StatusUnprocessableEntity, Message: "delete data failed"},
 	DataGetFailed:    {ErrCode: DataGetFailed, HttpCode: http.StatusUnprocessableEntity, Message: "get data failed"},
-	//OtherError:         {ErrCode: ABC, HttpCode: http.StatusInternalServerError, Message: "your explanation of error EBL = error business logic"},
+	// OtherError:         {ErrCode: ABC, HttpCode: http.StatusInternalServerError, Message: "your explanation of error EBL = error business logic"},
 }
 
 func BusinessLogicReason(code int) ErrorLogic {

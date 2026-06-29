@@ -19,9 +19,9 @@ func NewTemplateController(service service.TemplateService) *TemplateController 
 }
 
 func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
-	//TLDR; controller layer is only to handle input and output from external domain from this application commonly to handle API request and response.
-	//If needed validation logic for request, you can do validation using validators
-	//You are forbidden to put any business logic in this layer
+	// TLDR; controller layer is only to handle input and output from external domain from this application commonly to handle API request and response.
+	// If needed validation logic for request, you can do validation using validators
+	// You are forbidden to put any business logic in this layer
 
 	request := new(dto.ExampleRequest)
 	err := helper.BindAndValidate(ctx, request)
@@ -29,10 +29,10 @@ func (c *TemplateController) validateAndParseFunction(ctx echo.Context) error {
 		return err
 	}
 
-	//call service
+	// call service
 	serviceResult := "service_result"
 
-	//handle response after get result from service layer
+	// handle response after get result from service layer
 	var responseDto = new(dto.ExampleResponse)
 	err = helper.Mapper(&responseDto, serviceResult)
 	if err != nil {

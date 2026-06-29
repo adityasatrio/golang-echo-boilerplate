@@ -28,11 +28,11 @@ func NewUserService(userRepository userRepository.UserRepository, roleRepository
 
 func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) (*ent.User, error) {
 
-	//start transaction:
+	// start transaction:
 	var userNew = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
-		//create user object:
+		// create user object:
 		userRequest := ent.User{
 			Name:     request.Name,
 			Email:    request.Email,
@@ -41,32 +41,32 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 			RoleID:   request.RoleId,
 		}
 
-		//save user:
+		// save user:
 		userResult, err := s.userRepository.CreateTx(ctx, tx.Client(), userRequest)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 		}
 		userNew = userResult
 
-		//create role user object:
+		// create role user object:
 		roleUserRequest := ent.RoleUser{
 			UserID: userNew.ID,
 			RoleID: request.RoleId,
 		}
 
-		//save role_user:
+		// save role_user:
 		_, errRoleUser := s.roleUserRepository.CreateTx(ctx, tx.Client(), roleUserRequest)
 		if errRoleUser != nil {
 			return exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 		}
 
-		//create cache, don't throw exception if failed:
+		// create cache, don't throw exception if failed:
 		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(userNew.ID), userNew, vars.GetTtlShortPeriod())
 
 		return nil
 
 	}); err != nil {
-		//add rollback logic here
+		// add rollback logic here
 		log.Error("do rollback from transactional database operation")
 		return nil, err
 	}
@@ -76,17 +76,17 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 
 func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.UserRequest) (*ent.User, error) {
 
-	//start transaction:
+	// start transaction:
 	var userUpdated = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
 		userExisting, err := s.userRepository.GetById(ctx, id)
 		if userExisting == nil || err != nil {
-			//log.Errorf("user data is not exist ID = %d", id)
+			// log.Errorf("user data is not exist ID = %d", id)
 			return exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
 		}
 
-		//get existing data for role_user based on old value
+		// get existing data for role_user based on old value
 		existingRoleUser, err := s.roleUserRepository.GetByUserIdAndRoleId(ctx, userExisting.ID, userExisting.RoleID)
 		if existingRoleUser == nil || err != nil {
 			log.Errorf("user role data is not exist ID = %d RoleId = %d", userExisting.ID, userExisting.RoleID)
@@ -98,7 +98,7 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 		userExisting.Password = request.Password
 		userExisting.Avatar = ""
 
-		//update user:
+		// update user:
 		userResult, err := s.userRepository.UpdateTx(ctx, tx.Client(), userExisting)
 		if err != nil {
 			return exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
@@ -112,16 +112,16 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			return exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
 		}
 
-		//set value to userUpdated for return value:
+		// set value to userUpdated for return value:
 		userUpdated = userResult
 
-		//create cache, don't throw exception if failed:
+		// create cache, don't throw exception if failed:
 		_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), userUpdated, vars.GetTtlShortPeriod())
 
 		return nil
 
 	}); err != nil {
-		//add rollback logic here
+		// add rollback logic here
 		log.Error("do rollback from transactional database operation")
 		return nil, err
 	}

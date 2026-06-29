@@ -80,7 +80,7 @@ func TestCachingServiceImpl_failureConnection(t *testing.T) {
 	if err := mockRedis.Start(); err != nil {
 		t.Fatalf("Failed to start mock Redis server: %v", err)
 	}
-	//defer mockRedis.Close()
+	// defer mockRedis.Close()
 
 	// Create a Redis client using a mock Redis address:
 	redisClient := redis.NewClient(&redis.Options{
@@ -135,7 +135,7 @@ func TestCachingServiceImpl_failureMsgPack(t *testing.T) {
 	if err := mockRedis.Start(); err != nil {
 		t.Fatalf("Failed to start mock Redis server: %v", err)
 	}
-	//defer mockRedis.Close()
+	// defer mockRedis.Close()
 
 	// Create a Redis client using a mock Redis address:
 	redisClient := redis.NewClient(&redis.Options{
@@ -144,10 +144,10 @@ func TestCachingServiceImpl_failureMsgPack(t *testing.T) {
 
 	// Create a CachingServiceImpl instance with Redis client:
 	cachingService := NewCache(redisClient)
-	//mockRedis.Close()
+	// mockRedis.Close()
 
 	// Data to be stored and retrieved from cache:
-	//data := "Hello, world!"
+	// data := "Hello, world!"
 	key := "myKey"
 	expiration := 1 * time.Hour
 

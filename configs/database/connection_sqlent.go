@@ -59,7 +59,7 @@ func NewSqlEntClient() *ent.Client {
 
 	log.Info("initialized database x sqlDb x orm ent : success")
 
-	//setup hooks
+	// setup hooks
 	SetupHooks(client)
 
 	return client

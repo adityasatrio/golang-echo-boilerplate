@@ -32,7 +32,7 @@ func (s *HealthServiceImpl) Health(ctx context.Context, message string) (map[str
 		result["cache_name"] = "redis"
 	}
 
-	//database will have first err priority
+	// database will have first err priority
 	if errRepo != nil {
 		return result, errRepo
 	}
@@ -47,7 +47,7 @@ func (s *HealthServiceImpl) Health(ctx context.Context, message string) (map[str
 func (s *HealthServiceImpl) HealthDatabase(ctx context.Context, message string) (map[string]string, error) {
 	messageService := message + "hello from service layer "
 	result, errRepo := s.repository.Health(ctx, messageService)
-	//database will have first err priority
+	// database will have first err priority
 	if errRepo != nil {
 		return result, errRepo
 	}

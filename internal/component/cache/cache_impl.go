@@ -37,7 +37,7 @@ func (c *CacheImpl) Create(ctx context.Context, key string, data interface{}, ex
 		return false, err
 	}
 
-	//compress data:
+	// compress data:
 	compressedData, err := CompressData(serializedData)
 
 	err = c.redisClient.Set(ctx, key, compressedData, expiration).Err()
@@ -61,7 +61,7 @@ func (c *CacheImpl) Get(ctx context.Context, key string, data interface{}) (inte
 		return nil, err
 	}
 
-	//decompress data:
+	// decompress data:
 	decompressedData, err := DecompressData(redisData, len(redisData))
 
 	err = msgpack.Unmarshal(decompressedData, data)
