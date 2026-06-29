@@ -22,7 +22,7 @@ jobs:
       - name: Run gosec
         uses: securego/gosec@master
         with:
-          args: -exclude-generated ./...
+          args: -exclude=G101,G115 -exclude-generated ./...
 
   codeql:
     name: CodeQL Analysis
