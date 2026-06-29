@@ -5,12 +5,15 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
 	"myapp/configs/rabbitmq/connection"
-	"myapp/ent"
 	"myapp/internal/component/rabbitmq/registry"
 	"time"
 )
 
-func RabbitMQRecovery(client *ent.Client, rabbitConf *connection.RabbitMQConnection) {
+type ConsumerRegisterer interface {
+	Register()
+}
+
+func RabbitMQRecovery(rabbitConf *connection.RabbitMQConnection, consumerFactory func() ConsumerRegisterer) {
 	go func() {
 		for {
 			reason, ok := <-rabbitConf.GetConnection().NotifyClose(make(chan *amqp.Error))
@@ -34,7 +37,7 @@ func RabbitMQRecovery(client *ent.Client, rabbitConf *connection.RabbitMQConnect
 					registerMq.Register()
 
 					//rabbitmq registry consumer:
-					registerConsumer := registry.NewConsumerRegistry(client, rabbitConf)
+					registerConsumer := consumerFactory()
 					registerConsumer.Register()
 
 					break

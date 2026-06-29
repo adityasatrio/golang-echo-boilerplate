@@ -2,25 +2,22 @@ package registry
 
 import (
 	"github.com/labstack/gommon/log"
-	"myapp/configs/rabbitmq/connection"
-	"myapp/ent"
-	example "myapp/internal/applications/example/rabbitmq"
+	"myapp/internal/builder"
 	"myapp/internal/component/rabbitmq/config"
 )
 
 type ConsumerRegistry struct {
-	client *ent.Client
-	conn   *connection.RabbitMQConnection
+	container *builder.Container
 }
 
-func NewConsumerRegistry(client *ent.Client, conn *connection.RabbitMQConnection) *ConsumerRegistry {
-	return &ConsumerRegistry{client: client, conn: conn}
+func NewConsumerRegistry(container *builder.Container) *ConsumerRegistry {
+	return &ConsumerRegistry{container: container}
 }
 
 func (f *ConsumerRegistry) Register() {
 
 	//init testing inbound:
-	inbound := example.InitializedExampleInbound(f.client, f.conn)
+	inbound := f.container.BuildExampleRabbitMQInbound()
 	_, err := inbound.GetMessage(config.NewRabbitMQConfigExample())
 	if err != nil {
 		log.Fatalf("Failed to consume messages: %v", err)
