@@ -135,10 +135,7 @@ func (s *UserServiceImpl) Delete(ctx context.Context, id uint64) (*ent.User, err
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, cacheErr := s.cache.Delete(ctx, CacheKeyUserWithId(id))
-	if cacheErr != nil {
-		return data, nil
-	}
+	_, _ = s.cache.Delete(ctx, CacheKeyUserWithId(id))
 
 	return data, nil
 }
@@ -155,10 +152,7 @@ func (s *UserServiceImpl) GetById(ctx context.Context, id uint64) (*ent.User, er
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, cacheErr := s.cache.Create(ctx, CacheKeyUserWithId(id), result, vars.GetTtlShortPeriod())
-	if cacheErr != nil {
-		return result, nil
-	}
+	_, _ = s.cache.Create(ctx, CacheKeyUserWithId(id), result, vars.GetTtlShortPeriod())
 
 	return result, nil
 }
@@ -175,10 +169,7 @@ func (s *UserServiceImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, cacheErr := s.cache.Create(ctx, CacheKeyUsers(), &result, vars.GetTtlShortPeriod())
-	if cacheErr != nil {
-		return result, nil
-	}
+	_, _ = s.cache.Create(ctx, CacheKeyUsers(), &result, vars.GetTtlShortPeriod())
 
 	return result, nil
 }

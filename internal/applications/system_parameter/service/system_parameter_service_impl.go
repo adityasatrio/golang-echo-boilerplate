@@ -35,10 +35,7 @@ func (s *SystemParameterServiceImpl) Create(ctx context.Context, create *dto.Sys
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
 	}
 
-	_, cacheErr := s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, vars.GetTtlShortPeriod())
-	if cacheErr != nil {
-		return result, nil
-	}
+	_, _ = s.cache.Create(ctx, CacheKeySysParamWithId(result.ID), result, vars.GetTtlShortPeriod())
 
 	return result, nil
 }
@@ -60,10 +57,7 @@ func (s *SystemParameterServiceImpl) Update(ctx context.Context, id int, update 
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
 	}
 
-	_, cacheErr := s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, vars.GetTtlShortPeriod())
-	if cacheErr != nil {
-		return updated, nil
-	}
+	_, _ = s.cache.Create(ctx, CacheKeySysParamWithId(updated.ID), updated, vars.GetTtlShortPeriod())
 
 	return updated, nil
 }
@@ -79,10 +73,7 @@ func (s *SystemParameterServiceImpl) Delete(ctx context.Context, id int) (*ent.S
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, cacheErr := s.cache.Delete(ctx, CacheKeySysParamWithId(id))
-	if cacheErr != nil {
-		return exist, nil
-	}
+	_, _ = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 
 	return exist, nil
 }
@@ -98,10 +89,7 @@ func (s *SystemParameterServiceImpl) SoftDelete(ctx context.Context, id int) (*e
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataDeleteFailed, err)
 	}
 
-	_, cacheErr := s.cache.Delete(ctx, CacheKeySysParamWithId(id))
-	if cacheErr != nil {
-		return deleted, nil
-	}
+	_, _ = s.cache.Delete(ctx, CacheKeySysParamWithId(id))
 
 	return deleted, nil
 }
@@ -140,10 +128,7 @@ func (s *SystemParameterServiceImpl) GetAll(ctx context.Context) ([]*ent.SystemP
 		return nil, exceptions.NewBusinessLogicError(exceptions.DataGetFailed, err)
 	}
 
-	_, cacheErr := s.cache.Create(ctx, CacheKeySysParams(), &result, vars.GetTtlShortPeriod())
-	if cacheErr != nil {
-		return result, nil
-	}
+	_, _ = s.cache.Create(ctx, CacheKeySysParams(), &result, vars.GetTtlShortPeriod())
 
 	return result, nil
 }

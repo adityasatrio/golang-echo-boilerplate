@@ -14,7 +14,7 @@ type (
 		Ctx   Details `json:"ctx" validate:"required"`
 		Db    Details `json:"db" validate:"required"`
 		Cache Details `json:"cache" validate:"required"`
-		//other   Details    `json:"other" validate:"required"`
+		// other   Details    `json:"other" validate:"required"`
 	}
 
 	Details struct {

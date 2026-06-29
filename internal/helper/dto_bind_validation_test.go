@@ -70,7 +70,8 @@ func TestBindAndValidate_ValidationError(t *testing.T) {
 	assert.Error(t, err)
 
 	// Check if the error is of type echo.HTTPError
-	if vErr, ok := err.(validator2.ValidationErrors); ok {
+	var vErr validator2.ValidationErrors
+	if errors.As(err, &vErr) {
 		// Assert specific properties of the HTTP error
 		assert.Equal(t, "required", vErr[0].Tag())
 		assert.Equal(t, "Name", vErr[0].Field())

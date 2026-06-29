@@ -17,14 +17,14 @@ func TestBase(t *testing.T) {
 	c := e.NewContext(req, rec)
 
 	// Call the Base function with all possible variations
-	err := errors.New("some error")
+	someErr := errors.New("some error")
 	data := struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}{ID: 1, Name: "John Doe"}
 
 	// Test with nil data and nil error
-	err = Base(c, http.StatusOK, 200, "OK", nil, nil)
+	err := Base(c, http.StatusOK, 200, "OK", nil, nil)
 	if err != nil {
 		t.Fatalf("Expected error to be nil, but got: %v", err)
 	}
@@ -36,13 +36,13 @@ func TestBase(t *testing.T) {
 	}
 
 	// Test with data and error
-	err = Base(c, http.StatusInternalServerError, 500, "Internal Server Error", data, err)
+	err = Base(c, http.StatusInternalServerError, 500, "Internal Server Error", data, someErr)
 	if err != nil {
 		t.Fatalf("Expected error to be nil, but got: %v", err)
 	}
 
 	// Test with nil data and error
-	err = Base(c, http.StatusNotFound, 404, "Not Found", nil, err)
+	err = Base(c, http.StatusNotFound, 404, "Not Found", nil, someErr)
 	if err != nil {
 		t.Fatalf("Expected error to be nil, but got: %v", err)
 	}

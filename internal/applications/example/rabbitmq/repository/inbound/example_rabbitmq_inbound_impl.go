@@ -51,8 +51,8 @@ func (t *ExampleRabbitMQInboundImpl) GetMessage(cfg config.IRabbitMQConfig) (boo
 				isHasExceeded := utils.IsHasExceeded(cfg.GetLimit(), count, msg)
 				if isHasExceeded {
 					// Process message to junk here:
-					_, err := t.producer.SendToJunk(cfg, msg.Body)
-					if err != nil {
+					_, junkErr := t.producer.SendToJunk(cfg, msg.Body)
+					if junkErr != nil {
 						log.Warnf("Failed to publish a message junk: %v", err)
 					}
 				}
