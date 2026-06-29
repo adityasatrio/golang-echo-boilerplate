@@ -43,6 +43,7 @@ linters-settings:
     disabled-checks:
       - ifElseChain
       - hugeParam
+      - commentedOutCode
   revive:
     rules:
       - name: unexported-return

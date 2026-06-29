@@ -51,8 +51,7 @@ func main() {
 	validator.SetupValidator(e)
 	validator.SetupGlobalHttpUnhandleErrors(e)
 
-	dbConnection := database.NewSqlEntClient() //using sqlDb wrapped by ent
-	// dbConnection := database.NewEntClient() //using ent only
+	dbConnection := database.NewSqlEntClient() // using sqlDb wrapped by ent
 	log.Info("initialized database configuration=", dbConnection)
 
 	// from docs define close on this function, but will impact cant create DB session on repository:
@@ -126,8 +125,7 @@ func main() {
 	// Wait for interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
 	// Use a buffered channel to avoid missing signals as recommended for signal.Notify
 	quit := make(chan os.Signal, 1)
-	// signal.Notify(quit, os.Interrupt)
-	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM) //not tested
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

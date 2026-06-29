@@ -18,7 +18,7 @@ func DbConnection(t *testing.T) (newClient *ent.Client, newContext context.Conte
 	ctx := context.Background()
 
 	require.NotNil(t, ctx)
-	require.NotNil(t, client) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
+	require.NotNil(t, client)
 
 	return client, ctx
 }
@@ -29,7 +29,7 @@ func DbConnectionTx(t *testing.T) (newClient *ent.Client, transaction *ent.Tx, n
 	txClient, err := client.Tx(ctx)
 
 	require.NoError(t, err)
-	require.NotNil(t, txClient.Client()) //this lazy caller, mandatory for calling txClient.Client() so singleton struct will have same address
+	require.NotNil(t, txClient.Client())
 
 	return client, txClient, ctx
 }

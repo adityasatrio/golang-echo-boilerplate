@@ -10,7 +10,7 @@ import (
 )
 
 type UserRepositoryImpl struct {
-	client *ent.Client //non transactional client
+	client *ent.Client // non transactional client
 }
 
 func NewUserRepository(client *ent.Client) *UserRepositoryImpl {
