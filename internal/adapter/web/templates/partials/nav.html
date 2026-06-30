@@ -1,0 +1,14 @@
+{{define "nav"}}
+<nav class="nav-bar">
+  <span class="nav-brand">myapp</span>
+  <div class="nav-links">
+    <a href="/system-parameters" class="{{if eq .Active "system-parameters"}}active{{end}}">System Parameters</a>
+    {{if .IsAdmin}}
+    <a href="/users" class="{{if eq .Active "users"}}active{{end}}">Users</a>
+    {{end}}
+    <form method="post" action="/auth/logout" style="margin:0;">
+      <button type="submit" class="button-pill-sm">Logout</button>
+    </form>
+  </div>
+</nav>
+{{end}}

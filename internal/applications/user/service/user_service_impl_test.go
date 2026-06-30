@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 	"time"
 
@@ -20,7 +21,21 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/bcrypt"
 )
+
+// matchUserExceptPassword matches an ent.User argument whose Password is a bcrypt
+// hash of plainPassword, and whose remaining fields equal expected exactly.
+func matchUserExceptPassword(expected ent.User, plainPassword string) interface{} {
+	return mock.MatchedBy(func(actual ent.User) bool {
+		if bcrypt.CompareHashAndPassword([]byte(actual.Password), []byte(plainPassword)) != nil {
+			return false
+		}
+		expectedCopy := expected
+		expectedCopy.Password = actual.Password
+		return reflect.DeepEqual(expectedCopy, actual)
+	})
+}
 
 func getUserMock(id uint64, name string, email string, password string) ent.User {
 	return ent.User{
@@ -129,7 +144,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 					Once()
 
 				// the key for successful transaction mock is make sure `txClient` from withTx inner function use current struct
-				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), matchUserExceptPassword(userMock.userServiceParameter, userMock.request.Password)).
 					Return(&userMock.userServiceReturn, nil)
 
 				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
@@ -160,7 +175,7 @@ func TestUserServiceImpl_Create_Success(t *testing.T) {
 					Return(errFailed). // this return is the key for `withTx` do rollback process
 					Once()
 
-				mockUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.userServiceParameter).
+				mockUserRepository.On("CreateTx", ctx, txClient.Client(), matchUserExceptPassword(userMock.userServiceParameter, userMock.request.Password)).
 					Return(&userMock.userServiceReturn, nil)
 
 				mockRoleUserRepository.On("CreateTx", ctx, txClient.Client(), userMock.roleRequest).
@@ -223,7 +238,7 @@ func TestUserServiceImpl_Update_Success(t *testing.T) {
 	userRoleExisting.RoleID = uint64(1)
 	mockRoleUserRepository.On("UpdateTx", ctx, txClient.Client(), &userRoleExisting).Return(&userRoleUpdated, nil)
 
-	mockCache.On("Create", ctx, CacheKeyUserWithId(userExisting.ID), &userExisting, vars.GetTtlShortPeriod()).
+	mockCache.On("Create", ctx, CacheKeyUserWithId(userExisting.ID), mock.Anything, vars.GetTtlShortPeriod()).
 		Return(true, nil)
 
 	result, err := service.Update(ctx, id, &requestUpdate)

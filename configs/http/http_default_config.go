@@ -3,7 +3,6 @@ package http
 import (
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/viper"
-	"myapp/middleware"
 	"net/http"
 	"time"
 )
@@ -23,8 +22,8 @@ func New() *resty.Client {
 		AddRetryCondition(func(response *resty.Response, err error) bool {
 			return response.StatusCode() != http.StatusOK
 		}).
-		OnRequestLog(middleware.LogRequest("")).
-		OnResponseLog(middleware.LogResponse(""))
+		OnRequestLog(logRequest("")).
+		OnResponseLog(logResponse(""))
 
 	return clientApi
 }

@@ -1,0 +1,32 @@
+{{define "users.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Users - myapp</title>
+  {{template "head" .}}
+</head>
+<body>
+  {{template "nav" .}}
+  <div class="page-container">
+    <div class="page-header">
+      <h1>Users</h1>
+      <button class="button-dark" hx-get="/users/new" hx-target="#modal-root" hx-swap="innerHTML">+ New User</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="user-table-body">
+        {{range .Users}}{{template "user_row" .}}{{end}}
+      </tbody>
+    </table>
+  </div>
+  <div id="modal-root"></div>
+</body>
+</html>
+{{end}}

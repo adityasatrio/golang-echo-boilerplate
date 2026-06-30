@@ -105,6 +105,21 @@ func (r *UserRepositoryImpl) GetById(ctx context.Context, id uint64) (*ent.User,
 	return data, err
 }
 
+func (r *UserRepositoryImpl) GetByEmail(ctx context.Context, email string) (*ent.User, error) {
+	data, err := r.client.User.Query().
+		Where(user.And(
+			user.Email(email),
+			user.DeletedAtIsNil(),
+		)).
+		Only(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return data, err
+}
+
 func (r *UserRepositoryImpl) GetAll(ctx context.Context) ([]*ent.User, error) {
 	data, err := r.client.User.Query().
 		Where(user.DeletedAtIsNil()).

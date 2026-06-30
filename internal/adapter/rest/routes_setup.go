@@ -10,6 +10,7 @@ import (
 	systemParameterController "myapp/internal/applications/system_parameter/controller"
 	userController "myapp/internal/applications/user/controller"
 	"myapp/internal/builder"
+	"myapp/middleware"
 )
 
 func SetupRouteHandler(e *echo.Echo, container *builder.Container) {
@@ -25,17 +26,22 @@ func SetupRouteHandler(e *echo.Echo, container *builder.Container) {
 		NewHealthController(healthService).
 		AddRoutes(e, appName)
 
-	// System parameter service
+	// Auth-aware middleware for protected API routes
+	authSvc := container.BuildAuthService()
+	requireAuth := middleware.RequireAuth(authSvc)
+	requireAdmin := middleware.RequireAdmin()
+
+	// System parameter service: readable by Admin + User, writes Admin-only (enforced per-route)
 	systemParameterService := container.BuildSystemParameterService()
 	systemParameterController.
 		NewSystemParameterController(systemParameterService).
-		AddRoutes(e, appName)
+		AddRoutes(e, appName, requireAuth)
 
-	// User service
+	// User service: Admin-only, User role has zero access
 	userService := container.BuildUserService()
 	userController.
 		NewUserController(userService).
-		AddRoutes(e, appName)
+		AddRoutes(e, appName, requireAuth, requireAdmin)
 
 	// Quotes service
 	quotesService := container.BuildQuotesService()

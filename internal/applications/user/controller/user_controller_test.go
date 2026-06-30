@@ -38,12 +38,11 @@ func TestUserController_Create(t *testing.T) {
 				Password: "Password123!",
 			},
 			resBodyJson: dto.UserResponse{
-				ID:       1,
-				RoleId:   1,
-				Name:     "testing name",
-				Email:    "testing@email.id",
-				Password: "Password123!",
-				Avatar:   "xx/ava.png",
+				ID:     1,
+				RoleId: 1,
+				Name:   "testing name",
+				Email:  "testing@email.id",
+				Avatar: "xx/ava.png",
 			},
 			userServiceResult: ent.User{
 				ID:       1,
@@ -65,12 +64,11 @@ func TestUserController_Create(t *testing.T) {
 				Password: "Password123!",
 			},
 			resBodyJson: dto.UserResponse{
-				ID:       1,
-				RoleId:   1,
-				Name:     "testing name",
-				Email:    "testing@email.id",
-				Password: "Password123!",
-				Avatar:   "xx/ava.png",
+				ID:     1,
+				RoleId: 1,
+				Name:   "testing name",
+				Email:  "testing@email.id",
+				Avatar: "xx/ava.png",
 			},
 			userServiceResult: ent.User{
 				ID:       1,
@@ -115,7 +113,7 @@ func TestUserController_Create(t *testing.T) {
 				assert.Equal(t, "testing@email.id", resEmail)
 
 				resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
-				assert.Equal(t, "Password123!", resPassword)
+				assert.Nil(t, resPassword)
 
 			} else {
 
@@ -216,7 +214,7 @@ func TestUserController_Update(t *testing.T) {
 		assert.Equal(t, "testing@email.id", resEmail)
 
 		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
-		assert.Equal(t, "Password123!", resPassword)
+		assert.Nil(t, resPassword)
 	})
 
 	t.Run("Update_failed_on_service", func(t *testing.T) {
@@ -323,7 +321,7 @@ func TestUserController_Delete(t *testing.T) {
 		assert.Equal(t, "testing@email.id", resEmail)
 
 		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
-		assert.Equal(t, "Password123!", resPassword)
+		assert.Nil(t, resPassword)
 
 		deletedAt, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.deleted_at")
 		assert.NotNil(t, deletedAt)
@@ -404,7 +402,7 @@ func TestUserController_GetById(t *testing.T) {
 		assert.Equal(t, "testing@email.id", resEmail)
 
 		resPassword, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.password")
-		assert.Equal(t, "Password123!", resPassword)
+		assert.Nil(t, resPassword)
 
 	})
 
@@ -498,10 +496,10 @@ func TestUserController_GetAll(t *testing.T) {
 		assert.Equal(t, "testing2@email.id", resEmail2)
 
 		resPassword1, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.0.password")
-		assert.Equal(t, "Password123!", resPassword1)
+		assert.Nil(t, resPassword1)
 
 		resPassword2, _ := helper.GetFieldBytes(res.Body.Bytes(), "data.1.password")
-		assert.Equal(t, "Password123!", resPassword2)
+		assert.Nil(t, resPassword2)
 
 	})
 

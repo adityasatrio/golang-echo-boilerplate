@@ -4,19 +4,18 @@ import "time"
 
 type (
 	UserRequest struct {
-		RoleId   uint64 `json:"role_id" validate:"required"`
-		Name     string `json:"name" validate:"required"`
-		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required,password"`
+		RoleId   uint64 `json:"role_id" form:"role_id" validate:"required"`
+		Name     string `json:"name" form:"name" validate:"required"`
+		Email    string `json:"email" form:"email" validate:"required,email"`
+		Password string `json:"password" form:"password" validate:"required,password"`
 	}
 
 	UserResponse struct {
-		ID       int64  `json:"id" validate:"required"`
-		Name     string `json:"name" validate:"required"`
-		Email    string `json:"email" validate:"required"`
-		Avatar   string `json:"avatar" validate:"required"`
-		Password string `json:"password" validate:"required"`
-		RoleId   int32  `json:"role_id" validate:"required"`
+		ID     int64  `json:"id" validate:"required"`
+		Name   string `json:"name" validate:"required"`
+		Email  string `json:"email" validate:"required"`
+		Avatar string `json:"avatar" validate:"required"`
+		RoleId int32  `json:"role_id" validate:"required"`
 
 		IsVerified      bool      `json:"is_verified" validate:"required"`
 		EmailVerifiedAt time.Time `json:"email_verified_at" validate:"required"`

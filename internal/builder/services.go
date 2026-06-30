@@ -1,6 +1,8 @@
 package builder
 
 import (
+	"myapp/internal/applications/auth/repository/auth0"
+	authService "myapp/internal/applications/auth/service"
 	"myapp/internal/applications/cache"
 	cacheApp "myapp/internal/applications/cache"
 	exampleInbound "myapp/internal/applications/example/rabbitmq/repository/inbound"
@@ -28,6 +30,16 @@ func (c *Container) BuildUserService() userService.UserService {
 	cacheDep := c.BuildCache()
 
 	return userService.NewUserService(userRepository, roleRepository, roleUserRepository, trx, cacheDep)
+}
+
+// BuildAuthService builds the auth service with all dependencies.
+func (c *Container) BuildAuthService() authService.AuthService {
+	userRepository := userRepo.NewUserRepository(c.db)
+	roleUserRepository := roleUserRepo.NewRoleUserRepository(c.db)
+	trx := c.BuildTrx()
+	auth0Client := auth0.NewAuth0Client()
+
+	return authService.NewAuthService(userRepository, roleUserRepository, trx, auth0Client)
 }
 
 // BuildHealthService builds the health service with all dependencies.

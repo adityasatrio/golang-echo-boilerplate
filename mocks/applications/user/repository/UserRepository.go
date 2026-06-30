@@ -92,6 +92,32 @@ func (_m *UserRepository) GetAll(ctx context.Context) ([]*ent.User, error) {
 	return r0, r1
 }
 
+// GetByEmail provides a mock function with given fields: ctx, email
+func (_m *UserRepository) GetByEmail(ctx context.Context, email string) (*ent.User, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 *ent.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*ent.User, error)); ok {
+		return rf(ctx, email)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *ent.User); ok {
+		r0 = rf(ctx, email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetById provides a mock function with given fields: ctx, id
 func (_m *UserRepository) GetById(ctx context.Context, id uint64) (*ent.User, error) {
 	ret := _m.Called(ctx, id)
