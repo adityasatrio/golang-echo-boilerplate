@@ -63,7 +63,7 @@ func setSessionCookie(c echo.Context, token string) {
 		Path:     "/",
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Secure:   c.Request().TLS != nil,
+		Secure:   true,
 		MaxAge:   expiryMinutes * 60,
 	})
 }
@@ -74,6 +74,8 @@ func clearCookie(c echo.Context, name string) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
 		MaxAge:   -1,
 	})
 }
@@ -117,6 +119,8 @@ func (h *WebHandler) GoogleLoginRedirect(c echo.Context) error {
 		Value:    state,
 		Path:     "/",
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
 		MaxAge:   5 * 60,
 	})
 

@@ -1,6 +1,14 @@
-version: "2"
+run:
+  timeout: 5m
+
 linters:
   enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
     - bodyclose
     - durationcheck
     - errname
@@ -16,54 +24,40 @@ linters:
     - unconvert
     - unparam
     - wastedassign
-  settings:
-    errcheck:
-      check-type-assertions: true
-    gocritic:
-      disabled-checks:
-        - ifElseChain
-        - hugeParam
-        - commentedOutCode
-      enabled-tags:
-        - diagnostic
-        - performance
-    gosec:
-      excludes:
-        - G101
-        - G115
-    govet:
-      disable:
-        - fieldalignment
-      enable-all: true
-    revive:
-      rules:
-        - name: unexported-return
-          disabled: true
-  exclusions:
-    generated: lax
-    presets:
-      - comments
-      - common-false-positives
-      - legacy
-      - std-error-handling
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  gosec:
+    excludes:
+      - G101
+      - G115
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+    disabled-checks:
+      - ifElseChain
+      - hugeParam
+      - commentedOutCode
+  revive:
     rules:
-      - linters:
-          - bodyclose
-          - errcheck
-          - gosec
-          - unparam
-        path: _test\.go
-    paths:
-      - ent
-      - mocks
-      - cmd/docs
-      - third_party$
-      - builtin$
-      - examples$
-formatters:
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+      - name: unexported-return
+        disabled: true
+
+issues:
+  exclude-dirs:
+    - ent
+    - mocks
+    - cmd/docs
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+        - bodyclose
+        - unparam
