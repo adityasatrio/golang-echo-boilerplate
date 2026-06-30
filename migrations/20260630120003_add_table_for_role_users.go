@@ -6,6 +6,10 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
+// Table shape matches ent/schema/role_user.go (entimport-generated; DO NOT EDIT there).
+// Ent automigrate is disabled (configs/database/connection_sqlent.go); this Goose
+// migration is the executed source of truth for DDL, ent/schema/*.go documents the
+// entity shape for code generation only. No drift: verified against ent/migrate/schema.go.
 func init() {
 	goose.AddMigrationContext(upAddTableForRoleUsers, downAddTableForRoleUsers)
 }

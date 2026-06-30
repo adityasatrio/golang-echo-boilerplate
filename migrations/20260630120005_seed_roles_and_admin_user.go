@@ -12,6 +12,9 @@ import (
 // account. Rotate it immediately in any non-local environment.
 const bootstrapAdminPassword = "ChangeMe123!"
 
+// Seeds rows for roles/users tables defined in ent/schema/role.go and
+// ent/schema/user.go (entimport-generated; DO NOT EDIT there). No drift:
+// verified against ent/migrate/schema.go.
 func init() {
 	goose.AddMigrationContext(upSeedRolesAndAdminUser, downSeedRolesAndAdminUser)
 }
