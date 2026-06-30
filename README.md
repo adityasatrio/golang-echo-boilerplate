@@ -8,6 +8,8 @@ Boilerplate template for backend project using go language for optimize and effi
   - [Dependency Injection](#dependency-injection)
   - [OpenAPI Docs and Swagger](#openapi-docs-and-swagger)
   - [Migration](#migration)
+  - [Switching database driver (MySQL / PostgreSQL)](#switching-database-driver)
+  - [Seeders](#seeders)
   - [Running with config](#run-config)
 - [Example code](#example-code)
 - [Build project](#build-project)
@@ -110,6 +112,30 @@ make migration-down
 ```shell
 make migration-status
 ```
+6. All `migration-*` targets default to the `mysql` driver. Override with `DRIVER=postgres` to target PostgreSQL instead:
+```shell
+make migration-up DRIVER=postgres
+```
+7. Migrations can also be run/rolled back from GitHub Actions via the **DB Migration** workflow (`.github/workflows/migration.yml`, `workflow_dispatch`). Pick the action (`up`, `up-to`, `down`, `down-to`, `redo`, `status`), the `db_driver`, and the target GitHub Environment holding the `DB_HOST` / `DB_PORT` / `DB_USERNAME` / `DB_PASSWORD` / `DB_NAME` secrets.
+
+> Note: the bundled migration files under `migrations/` are written with MySQL-specific DDL (`AUTO_INCREMENT`, `bigint unsigned`, `tinyint(1)`, `datetime`). When targeting PostgreSQL for the first time, add Postgres-compatible migration files (or port the existing ones) before running `up`.
+
+### Switching database driver
+
+The ent client (`configs/database/connection_sqlent.go`, `connection_ent.go`) and the migration runner build their DSN from `configs/database/dsn.go`, which reads:
+- `db.configs.driver` (`.env`) - `mysql` (default) or `postgres`
+- `db.configs.username` / `db.configs.password` / `db.configs.host` / `db.configs.port` / `db.configs.database` (`secret.env`)
+- `db.configs.sslmode` (`.env`, PostgreSQL only) - defaults to `disable`
+
+To switch the running application to PostgreSQL, set `db.configs.driver = "postgres"` in `.env` (and adjust credentials in `secret.env`). No code changes are required.
+
+### Seeders
+Plain, idempotent `.sql` files under `seeders/` (numbered, e.g. `0001_seed_default_roles.sql`) that can be re-run safely - each statement guards itself with `WHERE NOT EXISTS (...)`. Run them via the **DB Seeder** GitHub Actions workflow (`.github/workflows/seeder.yml`, `workflow_dispatch`):
+- `seeder_file`: pick a specific file under `seeders/`, or `all` to run every file in order
+- `db_driver`: `mysql` or `postgres`
+- `target_environment`: the GitHub Environment holding the `DB_HOST` / `DB_PORT` / `DB_USERNAME` / `DB_PASSWORD` / `DB_NAME` secrets
+
+When adding a new seeder file, also add it to the `seeder_file` choice list in `.github/workflows/seeder.yml`.
 
 ### Run config
 - Default general config is located in `root-project-path/.env`

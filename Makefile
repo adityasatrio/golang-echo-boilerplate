@@ -83,23 +83,26 @@ clean: confirm
 	sleep 5
 	rm -rf ./mocks/*
 
+# DB driver used by the migration/seeder tooling: mysql or postgres
+DRIVER ?= mysql
+
 migration-build:
 	@echo "Warning this action will build unix executable file "
 	go build -v -o migration migrations/cmd/main.go
 
 migration-create:
-	./migration mysql create $(name) $(type)
+	./migration $(DRIVER) create $(name) $(type)
 
 migration-up:
 	go build -v -o migration migrations/cmd/main.go
-	 ./migration mysql up
+	 ./migration $(DRIVER) up
 
 migration-down:
 	go build -v -o migration migrations/cmd/main.go
-	./migration mysql down
+	./migration $(DRIVER) down
 
 migration-status:
-	./migration mysql status
+	./migration $(DRIVER) status
 
 # Linting
 lint:

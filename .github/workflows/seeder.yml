@@ -1,0 +1,105 @@
+name: DB Seeder
+
+on:
+  workflow_dispatch:
+    inputs:
+      seeder_file:
+        description: "Seeder SQL file under seeders/ to run, or 'all' to run every file in order"
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - 0001_seed_default_roles.sql
+          - 0002_seed_admin_user.sql
+      db_driver:
+        description: "Target database driver"
+        required: true
+        type: choice
+        default: mysql
+        options:
+          - mysql
+          - postgres
+      target_environment:
+        description: "GitHub Environment holding the DB connection secrets"
+        required: true
+        type: choice
+        default: development
+        options:
+          - development
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    name: Run seeder
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve seeder file list
+        id: files
+        run: |
+          if [ "${{ inputs.seeder_file }}" = "all" ]; then
+            files=$(find seeders -maxdepth 1 -name '*.sql' | sort)
+          else
+            file="seeders/${{ inputs.seeder_file }}"
+            if [ ! -f "$file" ]; then
+              echo "::error::Seeder file not found: $file"
+              exit 1
+            fi
+            files="$file"
+          fi
+
+          if [ -z "$files" ]; then
+            echo "::error::No seeder files found to run"
+            exit 1
+          fi
+
+          {
+            echo "list<<EOF"
+            echo "$files"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install MySQL client
+        if: inputs.db_driver == 'mysql'
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Install PostgreSQL client
+        if: inputs.db_driver == 'postgres'
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run seeder(s) against MySQL
+        if: inputs.db_driver == 'mysql'
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            echo "Running $file"
+            mysql --host="$DB_HOST" --port="$DB_PORT" --user="$DB_USER" --password="$DB_PASSWORD" "$DB_NAME" < "$file"
+          done <<< "${{ steps.files.outputs.list }}"
+
+      - name: Run seeder(s) against PostgreSQL
+        if: inputs.db_driver == 'postgres'
+        env:
+          PGHOST: ${{ secrets.DB_HOST }}
+          PGPORT: ${{ secrets.DB_PORT }}
+          PGUSER: ${{ secrets.DB_USERNAME }}
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          PGDATABASE: ${{ secrets.DB_NAME }}
+        run: |
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            echo "Running $file"
+            psql -v ON_ERROR_STOP=1 -f "$file"
+          done <<< "${{ steps.files.outputs.list }}"
