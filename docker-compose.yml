@@ -19,9 +19,18 @@ services:
       - REDIS_PORT=6379
       - RABBITMQ_CONFIGS_HOST=rabbitmq
       - RABBITMQ_CONFIGS_PORT=5672
+      - AUTH0_DOMAIN=CHANGEME_AUTH0_DOMAIN.auth0.com
+      - AUTH0_CLIENT_ID=CHANGEME_AUTH0_CLIENT_ID
+      - AUTH0_AUDIENCE=CHANGEME_AUTH0_AUDIENCE
+      - AUTH0_CALLBACK_URL=http://localhost:8888/micro-go-template/auth/callback
+      - JWT_EXPIRY_MINUTES=60
+      - RATELIMIT_GLOBAL_RPS=20
+      - RATELIMIT_LOGIN_RPS=5
     secrets:
       - db_password
       - rabbitmq_password
+      - auth0_client_secret
+      - jwt_secret
     depends_on:
       mysql:
         condition: service_healthy
@@ -107,3 +116,7 @@ secrets:
     environment: DB_PASSWORD
   rabbitmq_password:
     environment: RABBITMQ_PASSWORD
+  auth0_client_secret:
+    environment: AUTH0_CLIENT_SECRET
+  jwt_secret:
+    environment: JWT_SECRET

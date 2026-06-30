@@ -1,7 +1,8 @@
 package builder
 
 import (
-	"myapp/internal/applications/cache"
+	"myapp/internal/applications/auth/repository/auth0"
+	authService "myapp/internal/applications/auth/service"
 	cacheApp "myapp/internal/applications/cache"
 	exampleInbound "myapp/internal/applications/example/rabbitmq/repository/inbound"
 	exampleService "myapp/internal/applications/example/rabbitmq/service"
@@ -28,6 +29,16 @@ func (c *Container) BuildUserService() userService.UserService {
 	cacheDep := c.BuildCache()
 
 	return userService.NewUserService(userRepository, roleRepository, roleUserRepository, trx, cacheDep)
+}
+
+// BuildAuthService builds the auth service with all dependencies.
+func (c *Container) BuildAuthService() authService.AuthService {
+	userRepository := userRepo.NewUserRepository(c.db)
+	roleUserRepository := roleUserRepo.NewRoleUserRepository(c.db)
+	trx := c.BuildTrx()
+	auth0Client := auth0.NewAuth0Client()
+
+	return authService.NewAuthService(userRepository, roleUserRepository, trx, auth0Client)
 }
 
 // BuildHealthService builds the health service with all dependencies.
@@ -62,7 +73,7 @@ func (c *Container) BuildQuotesService() quotesService.QuotesService {
 
 // BuildCachingService builds the caching service with all dependencies.
 func (c *Container) BuildCachingService() cacheApp.CachingService {
-	return cache.NewCachingService(c.redis)
+	return cacheApp.NewCachingService(c.redis)
 }
 
 // BuildExampleRabbitMQService builds the example rabbitmq service with all dependencies.

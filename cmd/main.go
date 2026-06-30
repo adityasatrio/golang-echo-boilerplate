@@ -17,6 +17,7 @@ import (
 	"myapp/configs/validator"
 	"myapp/ent"
 	restApi "myapp/internal/adapter/rest"
+	webApi "myapp/internal/adapter/web"
 	"myapp/internal/builder"
 	"myapp/configs/rabbitmq/recovery"
 	"myapp/internal/component/rabbitmq/registry"
@@ -110,8 +111,13 @@ func main() {
 	// setup swagger:
 	swagger.InitSwagger()
 
+	// setup web UI (HTMX + Alpine.js): template renderer + static assets
+	e.Renderer = webApi.NewTemplateRenderer("internal/adapter/web/templates")
+	e.Static("/static", "internal/adapter/web/static")
+
 	// setup router
 	restApi.SetupRouteHandler(e, container)
+	webApi.SetupWebRouteHandler(e, container)
 
 	port := viper.GetString("application.port")
 	// Start server

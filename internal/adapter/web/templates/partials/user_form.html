@@ -1,0 +1,40 @@
+{{define "user_form"}}
+<div class="modal-backdrop" x-data x-on:keydown.escape.window="document.getElementById('modal-root').innerHTML=''">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{if .IsEdit}}Edit User{{else}}New User{{end}}</h3>
+      <button class="button-pill-sm" type="button" onclick="document.getElementById('modal-root').innerHTML=''">Close</button>
+    </div>
+    {{if .GeneralError}}<div class="alert-error">{{.GeneralError}}</div>{{end}}
+    <form
+      {{if .IsEdit}}hx-put="/users/{{.ID}}"{{else}}hx-post="/users"{{end}}
+      hx-target="#modal-root" hx-swap="innerHTML">
+      <div class="field">
+        <label for="name">Name</label>
+        <input class="text-input" type="text" id="name" name="name" value="{{.Name}}" required />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input class="text-input" type="email" id="email" name="email" value="{{.Email}}" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input class="text-input" type="password" id="password" name="password" required />
+      </div>
+      <div class="field">
+        <label for="role_id">Role</label>
+        <select class="text-input" id="role_id" name="role_id" required>
+          {{$selected := .RoleID}}
+          {{range .Roles}}
+          <option value="{{.ID}}" {{if eq .ID $selected}}selected{{end}}>{{.Name}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="button-soft" onclick="document.getElementById('modal-root').innerHTML=''">Cancel</button>
+        <button type="submit" class="button-dark">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{{end}}

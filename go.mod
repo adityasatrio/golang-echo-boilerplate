@@ -9,7 +9,6 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.0
-	github.com/google/wire v0.7.0 //only support go 1.25
 	github.com/labstack/echo/v4 v4.12.0 //after v4.12.0 need to use golang 1.25
 	github.com/labstack/gommon v0.4.2
 	github.com/mattn/go-sqlite3 v1.14.16
@@ -22,6 +21,7 @@ require (
 	github.com/dranikpg/dto-mapper v0.1.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/lib/pq v1.10.9
 	github.com/pierrec/lz4/v4 v4.1.18
@@ -91,12 +91,12 @@ require (
 	github.com/vmihailenco/tagparser v0.1.1 // indirect
 	github.com/yuin/gopher-lua v1.1.0 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
-	golang.org/x/crypto v0.26.0 // indirect
+	golang.org/x/crypto v0.26.0
 	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
+	golang.org/x/time v0.5.0
 	golang.org/x/tools v0.24.1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect

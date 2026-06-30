@@ -1,0 +1,13 @@
+{{define "user_row"}}
+<tr id="user-row-{{.ID}}"{{if .OOBMode}} hx-swap-oob="{{.OOBMode}}"{{end}}>
+  <td>{{.Name}}</td>
+  <td>{{.Email}}</td>
+  <td><span class="badge-tag">{{.RoleName}}</span></td>
+  <td>
+    <div class="row-actions">
+      <button class="button-pill-sm" hx-get="/users/{{.ID}}/edit" hx-target="#modal-root" hx-swap="innerHTML">Edit</button>
+      <button class="button-pill-sm" hx-delete="/users/{{.ID}}" hx-target="closest tr" hx-swap="outerHTML" hx-confirm="Delete this user?">Delete</button>
+    </div>
+  </td>
+</tr>
+{{end}}

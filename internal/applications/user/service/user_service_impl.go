@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/labstack/gommon/log"
+	"golang.org/x/crypto/bcrypt"
 	"myapp/ent"
 	"myapp/exceptions"
 	roleRepository "myapp/internal/applications/role/repository"
@@ -32,11 +33,16 @@ func (s *UserServiceImpl) Create(ctx context.Context, request *dto.UserRequest) 
 	var userNew = &ent.User{}
 	if err := s.transaction.WithTx(ctx, func(tx *ent.Tx) error {
 
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.DataCreateFailed, err)
+		}
+
 		// create user object:
 		userRequest := ent.User{
 			Name:     request.Name,
 			Email:    request.Email,
-			Password: request.Password,
+			Password: string(hashedPassword),
 			Avatar:   "",
 			RoleID:   request.RoleId,
 		}
@@ -93,9 +99,14 @@ func (s *UserServiceImpl) Update(ctx context.Context, id uint64, request *dto.Us
 			return exceptions.NewBusinessLogicError(exceptions.DataNotFound, err)
 		}
 
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return exceptions.NewBusinessLogicError(exceptions.DataUpdateFailed, err)
+		}
+
 		userExisting.Name = request.Name
 		userExisting.Email = request.Email
-		userExisting.Password = request.Password
+		userExisting.Password = string(hashedPassword)
 		userExisting.Avatar = ""
 
 		// update user:

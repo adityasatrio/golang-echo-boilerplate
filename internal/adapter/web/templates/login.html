@@ -1,0 +1,32 @@
+{{define "login.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign in - myapp</title>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <div id="login-alert">
+        {{if .Error}}<div class="alert-error">{{.Error}}</div>{{end}}
+      </div>
+      <form hx-post="/auth/login" hx-target="#login-alert" hx-swap="innerHTML">
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="text-input" type="email" id="email" name="email" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="text-input" type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="button-dark" style="width:100%;">Sign in</button>
+      </form>
+      <div class="login-divider">or</div>
+      <a href="/auth/google" class="button-outline-light" style="width:100%;">Continue with Google</a>
+    </div>
+  </div>
+</body>
+</html>
+{{end}}

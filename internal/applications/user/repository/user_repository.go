@@ -12,5 +12,6 @@ type UserRepository interface {
 	Delete(ctx context.Context, id uint64) (*ent.User, error)
 	SoftDelete(ctx context.Context, id uint64) (*ent.User, error)
 	GetById(ctx context.Context, id uint64) (*ent.User, error)
+	GetByEmail(ctx context.Context, email string) (*ent.User, error)
 	GetAll(ctx context.Context) ([]*ent.User, error)
 }

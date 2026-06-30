@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo/v4"
 	"myapp/exceptions"
 	"net/http"
 )
@@ -38,6 +39,15 @@ func MapperErrorCode(err error) (errHttpCode int, errBusinessCode int, errMessag
 		}
 
 		return http.StatusBadRequest, http.StatusBadRequest, errorMessage, nil
+	}
+
+	var httpErr *echo.HTTPError
+	if errors.As(err, &httpErr) {
+		message, ok := httpErr.Message.(string)
+		if !ok {
+			message = http.StatusText(httpErr.Code)
+		}
+		return httpErr.Code, httpErr.Code, message, nil
 	}
 
 	return http.StatusInternalServerError, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), errors.New(errorMessage)

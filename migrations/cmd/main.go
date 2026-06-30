@@ -13,9 +13,6 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/ziutek/mymysql/godrv"
-
-	// here our migrations will live  -- use your path
-	_ "myapp/migrations"
 )
 
 var (

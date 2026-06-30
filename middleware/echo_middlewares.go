@@ -24,6 +24,7 @@ func SetupMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Secure())
+	e.Use(GlobalRateLimiter())
 	log.Info("initialized middleware : success")
 
 }

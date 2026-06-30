@@ -1,0 +1,27 @@
+{{define "system_parameter_form"}}
+<div class="modal-backdrop" x-data x-on:keydown.escape.window="document.getElementById('modal-root').innerHTML=''">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{if .IsEdit}}Edit Parameter{{else}}New Parameter{{end}}</h3>
+      <button class="button-pill-sm" type="button" onclick="document.getElementById('modal-root').innerHTML=''">Close</button>
+    </div>
+    {{if .GeneralError}}<div class="alert-error">{{.GeneralError}}</div>{{end}}
+    <form
+      {{if .IsEdit}}hx-put="/system-parameters/{{.ID}}"{{else}}hx-post="/system-parameters"{{end}}
+      hx-target="#modal-root" hx-swap="innerHTML">
+      <div class="field">
+        <label for="key">Key</label>
+        <input class="text-input" type="text" id="key" name="key" value="{{.Key}}" {{if .IsEdit}}readonly{{end}} required />
+      </div>
+      <div class="field">
+        <label for="value">Value</label>
+        <input class="text-input" type="text" id="value" name="value" value="{{.Value}}" required />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="button-soft" onclick="document.getElementById('modal-root').innerHTML=''">Cancel</button>
+        <button type="submit" class="button-dark">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{{end}}

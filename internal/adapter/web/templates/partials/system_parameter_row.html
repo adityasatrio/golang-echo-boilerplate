@@ -1,0 +1,14 @@
+{{define "system_parameter_row"}}
+<tr id="system-parameter-row-{{.ID}}"{{if .OOBMode}} hx-swap-oob="{{.OOBMode}}"{{end}}>
+  <td>{{.Key}}</td>
+  <td>{{.Value}}</td>
+  {{if .IsAdmin}}
+  <td>
+    <div class="row-actions">
+      <button class="button-pill-sm" hx-get="/system-parameters/{{.ID}}/edit" hx-target="#modal-root" hx-swap="innerHTML">Edit</button>
+      <button class="button-pill-sm" hx-delete="/system-parameters/{{.ID}}" hx-target="closest tr" hx-swap="outerHTML" hx-confirm="Delete this parameter?">Delete</button>
+    </div>
+  </td>
+  {{end}}
+</tr>
+{{end}}
