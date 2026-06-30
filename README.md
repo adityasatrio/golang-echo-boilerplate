@@ -137,10 +137,44 @@ Plain, idempotent `.sql` files under `seeders/` (numbered, e.g. `0001_seed_defau
 
 When adding a new seeder file, also add it to the `seeder_file` choice list in `.github/workflows/seeder.yml`.
 
+### GitHub Secrets required for the Seeder / Migration workflows
+Both `.github/workflows/seeder.yml` and `.github/workflows/migration.yml` run against a real database, so they read connection details from secrets rather than the committed `.env`/`secret.env` files. Add these under **Settings → Environments** for each environment named in the `target_environment` input (`development`, `staging`, `production`), or as repository-level secrets if you don't use GitHub Environments:
+
+| Secret          | Required | Notes                                                              |
+|-----------------|----------|----------------------------------------------------------------------|
+| `DB_HOST`       | Yes      | Database host reachable from GitHub-hosted runners                  |
+| `DB_PORT`       | Yes      | `3306` for MySQL, `5432` for PostgreSQL                             |
+| `DB_USERNAME`   | Yes      | Connects with permission to run DDL (migration) / DML (seeder)      |
+| `DB_PASSWORD`   | Yes      |                                                                       |
+| `DB_NAME`       | Yes      |                                                                       |
+| `DB_SSLMODE`    | No       | Migration workflow only; PostgreSQL only. Defaults to `disable`     |
+
+The `db_driver` workflow input (`mysql` or `postgres`) controls which client/DSN format is used; it does not need its own secret.
+
 ### Run config
 - Default general config is located in `root-project-path/.env`
 - For credential the default config is located in `root-project-path/secret.env`
   - We can use custom path on running the executable application `./main -credentials-path="ABC" -credentials-name="XYZ"`
+
+#### Environment / config variables required to run the application
+The app does **not** read OS environment variables directly - configuration is loaded from the two files above. Both files are committed with working local-dev defaults; edit the ones below before running outside local dev:
+
+| Key (`.env` / `secret.env`)                                        | File         | Required | Default in repo                  |
+|----------------------------------------------------------------------|--------------|----------|-----------------------------------|
+| `db.configs.driver`                                                   | `.env`       | No       | `mysql` (or `postgres`)           |
+| `db.configs.database`                                                 | `.env`       | Yes      | `test_ent`                        |
+| `db.configs.sslmode`                                                  | `.env`       | No       | `disable` (PostgreSQL only)       |
+| `db.configs.maxIdleConn` / `db.configs.maxOpenConn`                   | `.env`       | No       | `10` / `100`                      |
+| `db.configs.username` / `db.configs.password`                         | `secret.env` | Yes      | `root` / `root`                   |
+| `db.configs.host` / `db.configs.port`                                  | `secret.env` | Yes      | `localhost` / `3306`              |
+| `cache.configs.redis.host` / `port` / `username` / `password`          | `secret.env` | Yes (if using cache) | `localhost` / `6379` / `""` / `""` |
+| `rabbitmq.configs.username` / `password` / `host` / `port`             | `secret.env` | Yes (if `rabbitmq.configs.enable = true`) | `guest` / `guest` / `localhost` / `5672` |
+| `auth0.domain` / `auth0.clientId` / `auth0.audience` / `auth0.callbackUrl` | `.env`   | Yes (if using Auth0) | `CHANGEME_*` placeholders - replace with your Auth0 tenant |
+| `auth0.clientSecret`                                                   | `secret.env` | Yes (if using Auth0) | `CHANGEME_AUTH0_CLIENT_SECRET` placeholder |
+| `jwt.secret`                                                           | `secret.env` | Yes      | `CHANGEME_JWT_SECRET_REPLACE_WITH_RANDOM_VALUE` placeholder - rotate before production use |
+| `jwt.expiryMinutes`                                                    | `.env`       | No       | `60`                              |
+
+Everything else in `.env` (`application.*`, `swagger.*`, `ratelimit.*`, `cache.ttl.*`, `rabbitmq.example.*`) has a working default and only needs changing if you want different behavior.
 
 
 ## Build project

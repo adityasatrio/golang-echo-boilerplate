@@ -52,6 +52,8 @@ func buildDSN(driver SupportedDriver) (string, string) {
 		dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 			host, port, username, password, database, sslMode)
 		return dialect.Postgres, dsn
+	case DriverMySQL:
+		fallthrough
 	default:
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 			username, password, host, port, database)
