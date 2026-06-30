@@ -25,7 +25,7 @@ func upSeedRolesAndAdminUser(ctx context.Context, tx *sql.Tx) error {
 		return err
 	}
 	if adminRoleID == 0 {
-		if _, err := tx.ExecContext(ctx,
+		if _, err = tx.ExecContext(ctx,
 			"INSERT INTO roles (id, versions, created_by, created_at, updated_at, name, text) VALUES (1, 1, 'system', NOW(), NOW(), ?, ?)",
 			"Admin", "Full access to all pages and resources"); err != nil {
 			return err
@@ -37,7 +37,7 @@ func upSeedRolesAndAdminUser(ctx context.Context, tx *sql.Tx) error {
 		return err
 	}
 	if userRoleID == 0 {
-		if _, err := tx.ExecContext(ctx,
+		if _, err = tx.ExecContext(ctx,
 			"INSERT INTO roles (id, versions, created_by, created_at, updated_at, name, text) VALUES (2, 1, 'system', NOW(), NOW(), ?, ?)",
 			"User", "Read-only access to system parameters"); err != nil {
 			return err

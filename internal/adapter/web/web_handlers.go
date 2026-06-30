@@ -267,7 +267,7 @@ func (h *WebHandler) UserUpdate(c echo.Context) error {
 	}
 
 	request := new(userDto.UserRequest)
-	if err := helper.BindAndValidate(c, request); err != nil {
+	if err = helper.BindAndValidate(c, request); err != nil {
 		return h.renderUserFormError(c, true, id, "please fill in all fields correctly")
 	}
 
@@ -372,7 +372,7 @@ func (h *WebHandler) SystemParameterUpdate(c echo.Context) error {
 	}
 
 	request := new(sysParamDto.SystemParameterUpdateRequest)
-	if err := helper.BindAndValidate(c, request); err != nil {
+	if err = helper.BindAndValidate(c, request); err != nil {
 		return c.Render(http.StatusOK, "system_parameter_form", SystemParameterFormData{IsEdit: true, ID: id, GeneralError: "please fill in all fields correctly"})
 	}
 

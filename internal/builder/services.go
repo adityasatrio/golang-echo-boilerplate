@@ -3,7 +3,6 @@ package builder
 import (
 	"myapp/internal/applications/auth/repository/auth0"
 	authService "myapp/internal/applications/auth/service"
-	"myapp/internal/applications/cache"
 	cacheApp "myapp/internal/applications/cache"
 	exampleInbound "myapp/internal/applications/example/rabbitmq/repository/inbound"
 	exampleService "myapp/internal/applications/example/rabbitmq/service"
@@ -74,7 +73,7 @@ func (c *Container) BuildQuotesService() quotesService.QuotesService {
 
 // BuildCachingService builds the caching service with all dependencies.
 func (c *Container) BuildCachingService() cacheApp.CachingService {
-	return cache.NewCachingService(c.redis)
+	return cacheApp.NewCachingService(c.redis)
 }
 
 // BuildExampleRabbitMQService builds the example rabbitmq service with all dependencies.
