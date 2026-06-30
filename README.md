@@ -5,7 +5,7 @@ Boilerplate template for backend project using go language for optimize and effi
 - [Getting started](#getting-started)
   - [Install and generate ORM](#install-and-generate-orm)
   - [Install and generate mock using Mockery](#install-and-generate-mock-using-mockery)
-  - [Generate Dependency Injection](#generate-dependency-injection)
+  - [Dependency Injection](#dependency-injection)
   - [OpenAPI Docs and Swagger](#openapi-docs-and-swagger)
   - [Migration](#migration)
   - [Running with config](#run-config)
@@ -42,19 +42,37 @@ then generate mock using below command
  mockery --all --dir internal/applications --output mocks --keeptree --packageprefix mock_
 ``` 
 
-### Generate Dependency Injection
-1. Install google wire CLI
-```shell
-go install github.com/google/wire/cmd/wire@latest
+### Dependency Injection
+
+This project uses a **fluent builder pattern** for dependency injection instead of code generation.
+
+**Setup** - The builder container is initialized in `cmd/main.go`:
+```go
+container := builder.NewBuilder().
+    WithDatabase(dbClient).
+    WithCache(redisClient).
+    WithRabbit(rabbitConn)
+
+restApi.SetupRouteHandler(e, container)
 ```
-2. Add wire on your $PATH, so we can use wire CLI on every project
-3. Create {domains}_injector.go in your feature directory
-4. Then Run wire using makefile
-```shell
->> make wire
->> Enter directory: 
->> A_templates_directory
+
+**Adding a New Service** - When creating a new feature domain:
+1. Create your service interface and implementation in `internal/applications/{domain}/service/`
+2. Create your repository interface and implementation in `internal/applications/{domain}/repository/`
+3. Add a builder method in `internal/builder/services.go`:
+```go
+func (c *Container) BuildMyDomainService() mydomain.Service {
+    repo := repository.NewMyDomainRepository(c.db)
+    return service.NewMyDomainService(repo)
+}
 ```
+4. Register your controller routes in `internal/adapter/rest/routes_setup.go`:
+```go
+myService := container.BuildMyDomainService()
+controller.NewMyDomainController(myService).AddRoutes(e, appName)
+```
+
+No code generation or CLI commands needed - the builder pattern provides type-safe, explicit dependency injection.
 
 ### OpenAPI Docs and Swagger
 Steps to generate OpenAPI Docs and use via Swagger UI:
@@ -126,10 +144,10 @@ make all
   - https://entgo.io/
     - New kids on the block, developed by facebook team. Not the fastest, but better than gorm and have generated query builder! 
     - See benchmark : [ent benchmark](https://github.com/efectn/go-orm-benchmarks/blob/master/results.md)
-- Google wire - code gen for dependency injection
-  - https://github.com/google/wire, DI code generator
-  - Good tutorial for getting started with example [tutorial google DI with google wire](https://clavinjune.dev/en/blogs/golang-dependency-injection-using-wire/)
-  - [Video references from PZN - golang DI with google wire](https://www.youtube.com/watch?v=dZ8Ir4Gc8D0&list=PL-CtdCApEFH-0i9dzMzLw6FKVrFWv3QvQ&index=14)
+- Dependency Injection - Builder Pattern
+  - This project uses a fluent builder pattern for dependency injection
+  - Service builders are registered in `internal/builder/services.go`
+  - All dependencies are explicitly visible and type-safe
 - testify : [assert test](https://github.com/stretchr/testify) 
 - mockery : [mock test](https://vektra.github.io/mockery/latest/)
 - Cache : {to add explanation later}
@@ -145,7 +163,7 @@ make all
 - [x] implement repository + database connection using ent in system param example domains
 - [x] implement optimistic locking https://github.com/ent/ent/blob/master/examples/version/README.md
 - [x] implement global error handling
-- [x] implement DI google wire
+- [x] implement builder pattern dependency injection
 - [x] implement redis cache
 - [x] implement migration files, instead of using ent / atlas we decide to use https://pkg.go.dev/github.com/golang-migrate/migrate/v4 for easiness and simplicity
 - [x] Example - implement test for CRUD example

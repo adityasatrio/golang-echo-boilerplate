@@ -1,0 +1,54 @@
+# Pre-commit hooks for local development
+# Install: pre-commit install
+# Uninstall: pre-commit uninstall
+# Run manually: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.55.2
+    hooks:
+      - id: golangci-lint
+        args: [--timeout=5m]
+
+  - repo: local
+    hooks:
+      - id: go-fmt
+        name: go fmt
+        entry: gofmt -w
+        language: golang
+        types: [go]
+        pass_filenames: true
+
+      - id: go-imports
+        name: go imports
+        entry: goimports -w
+        language: golang
+        types: [go]
+        pass_filenames: true
+
+      - id: go-mod-tidy
+        name: go mod tidy
+        entry: go mod tidy
+        language: golang
+        types: [go]
+        pass_filenames: false
+        always_run: true
+
+      - id: gosec
+        name: gosec
+        entry: gosec ./...
+        language: golang
+        types: [go]
+        pass_filenames: false
+        always_run: true
+
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []

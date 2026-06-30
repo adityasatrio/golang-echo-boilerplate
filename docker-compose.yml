@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Go application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golang-echo-app
+    ports:
+      - "8888:8888"
+    environment:
+      - APPLICATION_NAME=/micro-go-template
+      - APPLICATION_PORT=8888
+      - DB_CONFIGS_HOST=mysql
+      - DB_CONFIGS_PORT=3306
+      - DB_CONFIGS_DATABASE=echo_sample
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_CONFIGS_HOST=rabbitmq
+      - RABBITMQ_CONFIGS_PORT=5672
+    secrets:
+      - db_password
+      - rabbitmq_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # MySQL database
+  mysql:
+    image: mysql:8.0
+    container_name: golang-echo-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: echo_sample
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: golang-echo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # RabbitMQ message broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: golang-echo-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+
+networks:
+  app-network:
+    driver: bridge
+
+secrets:
+  db_password:
+    environment: DB_PASSWORD
+  rabbitmq_password:
+    environment: RABBITMQ_PASSWORD
