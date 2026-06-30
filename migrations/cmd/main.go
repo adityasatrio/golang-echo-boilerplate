@@ -62,10 +62,10 @@ func main() {
 		log.Fatalf("%q driver not supported\n", driver)
 	}
 
-	dbSource := migrations.MigrationConnection()
+	dbSource, dbSourceRedacted := migrations.MigrationConnection(driver)
 	db, err := sql.Open(driver, dbSource)
 	if err != nil {
-		log.Fatalf("-dbstring=%q: %v\n", dbSource, err)
+		log.Fatalf("-dbstring=%q: %v\n", dbSourceRedacted, err)
 	}
 
 	executeCommand(args, command, db)

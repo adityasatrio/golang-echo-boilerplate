@@ -1,0 +1,92 @@
+name: DB Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Migration command to run"
+        required: true
+        type: choice
+        default: status
+        options:
+          - up
+          - up-to
+          - down
+          - down-to
+          - redo
+          - status
+      version:
+        description: "Migration version (required for up-to / down-to, e.g. 20260630120004)"
+        required: false
+        type: string
+      db_driver:
+        description: "Target database driver"
+        required: true
+        type: choice
+        default: mysql
+        options:
+          - mysql
+          - postgres
+      target_environment:
+        description: "GitHub Environment holding the DB connection secrets"
+        required: true
+        type: choice
+        default: development
+        options:
+          - development
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: Run migration
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+          cache-dependency-path: ./go.sum
+
+      - name: Validate version input
+        if: inputs.action == 'up-to' || inputs.action == 'down-to'
+        run: |
+          if [ -z "${{ inputs.version }}" ]; then
+            echo "::error::'version' input is required for action '${{ inputs.action }}'"
+            exit 1
+          fi
+
+      - name: Write DB connection config
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+        run: |
+          {
+            echo "db.configs.username = \"$DB_USERNAME\""
+            echo "db.configs.password = \"$DB_PASSWORD\""
+            echo "db.configs.host = \"$DB_HOST\""
+            echo "db.configs.port = \"$DB_PORT\""
+            echo "db.configs.database = \"$DB_NAME\""
+            echo "db.configs.sslmode = \"${DB_SSLMODE:-disable}\""
+          } >> .env
+
+      - name: Build migration binary
+        run: go build -v -o migration migrations/cmd/main.go
+
+      - name: Run migration
+        run: |
+          if [ "${{ inputs.action }}" = "up-to" ] || [ "${{ inputs.action }}" = "down-to" ]; then
+            ./migration ${{ inputs.db_driver }} ${{ inputs.action }} ${{ inputs.version }}
+          else
+            ./migration ${{ inputs.db_driver }} ${{ inputs.action }}
+          fi

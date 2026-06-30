@@ -3,27 +3,22 @@ package database
 import (
 	"database/sql"
 	entSql "entgo.io/ent/dialect/sql"
-	"fmt"
 	"github.com/labstack/gommon/log"
 	"myapp/configs/credential"
 	"myapp/ent"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func NewSqlEntClient() *ent.Client {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		credential.GetString("db.configs.username"),
-		credential.GetString("db.configs.password"),
-		credential.GetString("db.configs.host"),
-		credential.GetString("db.configs.port"),
-		credential.GetString("db.configs.database"))
+	driverName, dsn := BuildDSN()
 
-	log.Debug("DSN=", dsn) // for debug only
+	log.Debug("DB driver=", driverName) // for debug only
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open(driverName, dsn)
 	if err != nil {
 		log.Fatalf("failed opening connection to DB: %v", err)
 	}
@@ -32,7 +27,7 @@ func NewSqlEntClient() *ent.Client {
 	db.SetMaxOpenConns(credential.GetInt("db.configs.maxOpenConn"))
 	db.SetConnMaxLifetime(time.Hour)
 
-	drv := entSql.OpenDB("mysql", db)
+	drv := entSql.OpenDB(driverName, db)
 
 	var client *ent.Client
 	appMode := credential.GetString("application.mode")

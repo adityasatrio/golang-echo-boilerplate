@@ -2,13 +2,12 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"github.com/labstack/gommon/log"
-	"myapp/configs/credential"
 	"myapp/ent"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 // NewEntClient use if not wrap sql db
@@ -16,16 +15,11 @@ import (
 //goland:noinspection GoUnusedExportedFunction
 func NewEntClient() *ent.Client {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		credential.GetString("db.configs.username"),
-		credential.GetString("db.configs.password"),
-		credential.GetString("db.configs.host"),
-		credential.GetString("db.configs.port"),
-		credential.GetString("db.configs.database"))
+	driverName, dsn := BuildDSN()
 
-	log.Debugf("DSN ", dsn)
+	log.Debugf("DB driver=", driverName)
 
-	client, err := ent.Open("mysql", dsn, ent.Debug(), ent.Log(func(i ...interface{}) {
+	client, err := ent.Open(driverName, dsn, ent.Debug(), ent.Log(func(i ...interface{}) {
 		for _, v := range i {
 			log.Debugf(time.Now().Format("2006-01-02 15:04:05"), v)
 		}
