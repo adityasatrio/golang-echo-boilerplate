@@ -1,5 +1,19 @@
-# Repository Guidelines
+Project: ERP-intools — PO delay & penalty tracking platform, replacing a manual Excel-based process.
 
+Docs: Read `docs/prd/PO-Delay-Penalty-Tracking-Platform.md` before working on PO, batch, delay, or penalty logic. It defines the data model (PO Header → Line Item → Batch), RBAC roles (Admin, Supplier PIC, QC), and the MVP field naming convention.
+
+Core rules:
+- MVP uses sheet-based field names for UI/demo labels (see PRD Section 8 mapping table). Don't rename to "proper" names yet — that's Phase 2.
+- Delay calculation baseline is revised ETD vs New ETD, not original SAP due date. This is intentional, not a bug — don't "fix" it without checking the PRD's Section 7 assumptions first.
+- Penalty tiers and item prices must be config-driven / versioned, never hardcoded in logic.
+- RBAC permission checks must be permission-based (`has_permission(...)`), never identity-based (`user.role == 'admin'`).
+- Admin acting as another role must be logged distinctly from that role's native actions.
+
+Out of scope for MVP: SAP API integration (manual upload only), stage-level timestamped event log (still checkbox-based for now).
+
+---
+
+# Repository Guidelines
 ## Project Structure & Module Organization
 - `cmd/main.go`: service entry. `cmd/docs`: generated Swagger/OpenAPI.
 - `internal/adapter/rest`: centralized route wiring.
